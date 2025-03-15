@@ -20,7 +20,7 @@
     "nipplejs": "^0.10.2",
     "plotly.js": "^2.35.0",
     "quasar": "^2.16.9",
-    "socket.io": "^4.7.5",
+    "socket.io": "^4.8.1",
     "tailwindcss": "^3.4.10",
     "three": "^0.168.0",
     "vanilla-jsoneditor": "^0.23.8",
