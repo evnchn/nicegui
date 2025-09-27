@@ -1,3 +1,4 @@
+from io import BytesIO
 from typing import Optional, cast
 
 from fastapi import Request
@@ -98,19 +99,21 @@ class Upload(LabelElement, DisableableElement, component='upload.js'):
                 except Exception:
                     pass
 
-        for upload in uploads:
+        uploads_bytes = [upload.file.read() for upload in uploads]
+
+        for upload, upload_bytes in zip(uploads, uploads_bytes):
             for upload_handler in self._upload_handlers:
                 handle_event(upload_handler, UploadEventArguments(
                     sender=self,
                     client=self.client,
-                    content=upload.file,
+                    content=BytesIO(upload_bytes),
                     name=upload.filename or '',
                     type=upload.content_type or '',
                 ), cleanup=lambda upload=upload: handler_done(upload))
         multi_upload_args = MultiUploadEventArguments(
             sender=self,
             client=self.client,
-            contents=[upload.file for upload in uploads],
+            contents=[BytesIO(bio) for bio in uploads_bytes],
             names=[upload.filename or '' for upload in uploads],
             types=[upload.content_type or '' for upload in uploads],
         )

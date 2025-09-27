@@ -124,3 +124,20 @@ def test_multi_upload_event(screen: Screen):
     assert len(results) == 1
     assert results[0].names == [test_path1.name, test_path2.name]
     assert results_bytes == [test_path1.read_bytes(), test_path2.read_bytes()]
+
+
+def test_two_handlers_can_read_file(screen: Screen):
+    reads: list[bytes] = []
+
+    @ui.page('/')
+    def page():
+        upload = ui.upload(auto_upload=True, label='A')
+        upload.on_upload(lambda e: reads.append(e.content.read()))
+        upload.on_upload(lambda e: reads.append(e.content.read()))
+
+    screen.open('/')
+    screen.find_by_class('q-uploader__input').send_keys(str(test_path1))
+    screen.wait(0.1)
+
+    assert len(reads) == 2
+    assert reads == [test_path1.read_bytes(), test_path1.read_bytes()]
