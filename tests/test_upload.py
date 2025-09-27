@@ -9,11 +9,10 @@ test_path2 = Path('tests/test_scene.py').resolve()
 
 def test_uploading_text_file(screen: Screen):
     results: list[events.UploadEventArguments] = []
-    results_bytes: list[bytes] = []
 
     @ui.page('/')
     def page():
-        ui.upload(on_upload=lambda e: results.append(e) or results_bytes.append(e.content.read()), label='Test Title')
+        ui.upload(on_upload=results.append, label='Test Title')
 
     screen.open('/')
     screen.should_contain('Test Title')
@@ -24,7 +23,7 @@ def test_uploading_text_file(screen: Screen):
     assert len(results) == 1
     assert results[0].name == test_path1.name
     assert results[0].type in {'text/x-python', 'text/x-python-script'}
-    assert results_bytes[0] == test_path1.read_bytes()
+    assert results[0].content.read() == test_path1.read_bytes()
 
 
 def test_two_upload_elements(screen: Screen):
@@ -108,12 +107,10 @@ def test_reset_upload(screen: Screen):
 
 def test_multi_upload_event(screen: Screen):
     results: list[events.MultiUploadEventArguments] = []
-    results_bytes: list[bytes] = []
 
     @ui.page('/')
     def page():
-        ui.upload(on_multi_upload=lambda e: results.append(e) or results_bytes.extend(
-            [content.read() for content in e.contents]), multiple=True)
+        ui.upload(on_multi_upload=results.append, multiple=True)
 
     screen.open('/')
     screen.find_by_class('q-uploader__input').send_keys(f'{test_path1}\n{test_path2}')
@@ -123,7 +120,8 @@ def test_multi_upload_event(screen: Screen):
 
     assert len(results) == 1
     assert results[0].names == [test_path1.name, test_path2.name]
-    assert results_bytes == [test_path1.read_bytes(), test_path2.read_bytes()]
+    assert results[0].contents[0].read() == test_path1.read_bytes()
+    assert results[0].contents[1].read() == test_path2.read_bytes()
 
 
 def test_two_handlers_can_read_file(screen: Screen):

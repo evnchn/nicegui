@@ -403,26 +403,18 @@ EventT = TypeVar('EventT', bound=EventArguments)
 Handler = Union[Callable[[EventT], Any], Callable[[], Any]]
 
 
-def handle_event(
-    handler: Handler[EventT] | None,
-    arguments: EventT,
-    cleanup: Callable[[], None] | None = None
-) -> None:
+def handle_event(handler: Handler[EventT] | None, arguments: EventT) -> None:
     """Call the given event handler.
 
     The handler is called within the context of the parent slot of the sender.
     If the handler is a coroutine, it is scheduled as a background task.
     If the handler expects arguments, the arguments are passed to the handler.
     Exceptions are caught and handled globally.
-    Optionally, a cleanup handler can be called after the event handler.
 
     :param handler: the event handler
     :param arguments: the event arguments
-    :param cleanup: optional cleanup handler (synchronous)
     """
     if handler is None:
-        if cleanup:
-            cleanup()
         return
     try:
         parent_slot: Slot | nullcontext
@@ -450,6 +442,3 @@ def handle_event(
                 core.app.on_startup(wait_for_result())
     except Exception as e:
         core.app.handle_exception(e)
-    finally:
-        if cleanup:
-            cleanup()

@@ -88,17 +88,6 @@ class Upload(LabelElement, DisableableElement, component='upload.js'):
 
         This method is primarily intended for internal use and for simulating file uploads in tests.
         """
-        pending_handlers = {upload: len(self._upload_handlers) +
-                            len(self._multi_upload_handlers) for upload in uploads}
-
-        def handler_done(upload: UploadFile):
-            pending_handlers[upload] -= 1
-            if pending_handlers[upload] == 0:
-                try:
-                    upload.file.close()
-                except Exception:
-                    pass
-
         uploads_bytes = [upload.file.read() for upload in uploads]
 
         for upload, upload_bytes in zip(uploads, uploads_bytes):
@@ -109,7 +98,7 @@ class Upload(LabelElement, DisableableElement, component='upload.js'):
                     content=BytesIO(upload_bytes),
                     name=upload.filename or '',
                     type=upload.content_type or '',
-                ), cleanup=lambda upload=upload: handler_done(upload))
+                ))
         multi_upload_args = MultiUploadEventArguments(
             sender=self,
             client=self.client,
@@ -118,8 +107,7 @@ class Upload(LabelElement, DisableableElement, component='upload.js'):
             types=[upload.content_type or '' for upload in uploads],
         )
         for multi_upload_handler in self._multi_upload_handlers:
-            handle_event(multi_upload_handler, multi_upload_args,
-                         cleanup=lambda: [handler_done(upload) for upload in uploads])
+            handle_event(multi_upload_handler, multi_upload_args)
 
     def on_begin_upload(self, callback: Handler[UiEventArguments]) -> Self:
         """Add a callback to be invoked when the upload begins."""
