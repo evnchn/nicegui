@@ -88,7 +88,7 @@ class Upload(LabelElement, DisableableElement, component='upload.js'):
         This method is primarily intended for internal use and for simulating file uploads in tests.
         """
         pending_handlers = {upload: len(self._upload_handlers) +
-                            (1 if self._multi_upload_handlers else 0) for upload in uploads}
+                            len(self._multi_upload_handlers) for upload in uploads}
 
         def handler_done(upload: UploadFile):
             pending_handlers[upload] -= 1
