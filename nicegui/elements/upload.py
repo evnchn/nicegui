@@ -88,7 +88,10 @@ class Upload(LabelElement, DisableableElement, component='upload.js'):
 
         This method is primarily intended for internal use and for simulating file uploads in tests.
         """
-        uploads_bytes = [upload.file.read() for upload in uploads]
+        uploads_bytes = []
+        for upload in uploads:
+            uploads_bytes.append(upload.file.read())
+            upload.file.close()
 
         for upload, upload_bytes in zip(uploads, uploads_bytes):
             for upload_handler in self._upload_handlers:
