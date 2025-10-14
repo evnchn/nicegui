@@ -48,6 +48,8 @@ jobs:
       - name: setup chromedriver
         uses: nanasess/setup-chromedriver@v2.3.0
       - name: pytest (parallelized)
+        env:
+          PYTHONTRACEMALLOC: 25
         run: |
           poetry run pytest -n auto --ignore=tests/test_download.py --ignore=tests/test_storage.py
       - name: pytest (non-parallelized)
