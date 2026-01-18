@@ -56,6 +56,9 @@ class Client:
     instances: ClassVar[dict[str, Client]] = {}
     '''Maps client IDs to clients.'''
 
+    sid_to_client: ClassVar[dict[str, Client]] = {}
+    '''Maps socket IDs to clients.'''
+
     shared_head_html = ''
     '''HTML to be inserted in the <head> of every page template.'''
 
@@ -84,6 +87,9 @@ class Client:
 
         self.page = page
         self.outbox = Outbox(self)
+
+        self._last_ping = 0.0
+        self._latency = 0.0
 
         if self._request is not None:
             self._request.scope['nicegui_page_path'] = self.page.path
@@ -290,6 +296,7 @@ class Client:
         self._waiting_for_connection.clear()
         self._connected.set()
         self._socket_to_document_id[socket_id] = document_id
+        self.sid_to_client[socket_id] = self
         self._cancel_delete_task(document_id)
         self._num_connections[document_id] += 1
         if next_message_id is not None:
@@ -314,6 +321,7 @@ class Client:
             self.safe_invoke(t)
         for t in core.app._disconnect_handlers:  # pylint: disable=protected-access
             self.safe_invoke(t)
+        self.sid_to_client.pop(socket_id, None)
 
         async def delete_content() -> None:
             await asyncio.sleep(self.page.resolve_reconnect_timeout())
