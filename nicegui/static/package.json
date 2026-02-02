@@ -1,0 +1,12 @@
+{
+  "name": "nicegui-static",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "clean": "rm -f nicegui.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.2"
+  }
+}

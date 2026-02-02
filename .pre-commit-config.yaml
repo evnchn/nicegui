@@ -18,6 +18,7 @@ repos:
             nicegui/static/fonts/.*|
             nicegui/static/fonts\.css|
             nicegui/static/lang/.*|
+            nicegui/static/nicegui\.js|
             nicegui/static/quasar\..*|
             nicegui/static/socket\..*|
             nicegui/static/tailwindcss\..*|
@@ -48,3 +49,11 @@ repos:
           )$
         additional_dependencies:
           - tomli; python_version<'3.11'
+  - repo: local
+    hooks:
+      - id: nicegui-js-build
+        name: Build nicegui.js from src
+        entry: bash -c 'cd nicegui/static && npm run build'
+        language: system
+        files: ^nicegui/static/src/.*\.js$
+        pass_filenames: false
