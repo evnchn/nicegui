@@ -48,3 +48,11 @@ repos:
           )$
         additional_dependencies:
           - tomli; python_version<'3.11'
+  - repo: local
+    hooks:
+      - id: nicegui-js-build
+        name: Build nicegui.js from src
+        entry: bash -c 'cd nicegui/static && npm run build'
+        language: system
+        files: ^nicegui/static/src/.*\.js$
+        pass_filenames: false

@@ -368,6 +368,45 @@ To update or add new dependencies, we follow these steps:
 3. Run `npm run build` to copy the dependencies into the `nicegui/static/` directory or
    to bundle the dependencies in the `nicegui/elements/.../` directories.
 
+### JavaScript Development for nicegui.js
+
+NiceGUI's core JavaScript is modularized in `nicegui/static/src/` and built into `nicegui/static/nicegui.js`.
+
+**Setup:**
+
+```bash
+cd nicegui/static
+npm install
+```
+
+**Development workflow:**
+
+```bash
+# Terminal 1: Watch and auto-rebuild
+cd nicegui/static
+npm run watch
+
+# Terminal 2: Run dev server
+python main.py
+```
+
+**Module structure:**
+
+- `src/index.js` - Entry point
+- `src/constants.js` - Python-style constants
+- `src/colors.js` - Color utilities
+- `src/elements.js` - Element access
+- `src/events.js` - Event handling and throttling
+- `src/render.js` - Vue rendering logic
+- `src/socket.js` - Socket.IO handlers (integrated in app.js)
+- `src/utils.js` - General utilities
+- `src/app.js` - Vue app creation
+- `src/quasar-hack.js` - Quasar CSS fixes
+
+The pre-commit hook automatically rebuilds `nicegui.js` when you modify `src/` files.
+
+**Testing:** Run `pytest tests/` after JavaScript changes.
+
 The following tools are used to update other resources:
 
 - fetch_google_fonts.py for fetching the Google Fonts
