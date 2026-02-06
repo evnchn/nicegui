@@ -20,14 +20,9 @@ if importlib.util.find_spec('polars'):
         import polars as pl
 
 
-# AG Grid version used by NiceGUI
-AGGRID_VERSION = '34.2.0'
-
-
 class AgGrid(Element, component='aggrid.js', esm={'nicegui-aggrid': 'dist'}, default_classes='nicegui-aggrid'):
 
-    # Public API: AG Grid version string
-    version = AGGRID_VERSION
+    VERSION = '34.2.0'  # AG Grid version used by NiceGUI
 
     @resolve_defaults
     def __init__(self,

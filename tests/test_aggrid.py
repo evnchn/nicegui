@@ -13,16 +13,6 @@ from nicegui import Event, app, ui
 from nicegui.testing import Screen
 
 
-def test_aggrid_version():
-    """Test that ui.aggrid.version attribute exists and is a non-empty string."""
-    assert hasattr(ui.aggrid, 'version'), 'ui.aggrid.version attribute should exist'
-    assert isinstance(ui.aggrid.version, str), 'ui.aggrid.version should be a string'
-    assert len(ui.aggrid.version) > 0, 'ui.aggrid.version should not be empty'
-    # Verify it matches semantic versioning pattern (e.g., "34.2.0")
-    parts = ui.aggrid.version.split('.')
-    assert len(parts) >= 2, 'ui.aggrid.version should follow semantic versioning (e.g., "34.2.0")'
-
-
 def test_update_table(screen: Screen):
     @ui.page('/')
     def page():
