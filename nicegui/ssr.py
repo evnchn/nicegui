@@ -17,11 +17,11 @@ _init_text: str | None = None
 
 def _get_context():
     """Get or create a MiniRacer context with the SSR bundle loaded."""
-    global _ctx, _init_text  # noqa: PLW0603
+    global _ctx, _init_text  # pylint: disable=global-statement  # noqa: PLW0603
     if _ctx is not None:
         return _ctx
     try:
-        from py_mini_racer import MiniRacer  # pylint: disable=import-outside-toplevel
+        from py_mini_racer import MiniRacer  # type: ignore[import-not-found]  # pylint: disable=import-outside-toplevel
     except ImportError:
         log.warning('mini-racer not installed; SSR disabled. Install with: pip install mini-racer')
         return None
@@ -44,7 +44,7 @@ def _get_context():
 
 def _reset_context() -> None:
     """Reset the MiniRacer context (e.g., after event loop changes)."""
-    global _ctx  # noqa: PLW0603
+    global _ctx  # pylint: disable=global-statement  # noqa: PLW0603
     if _ctx is not None:
         try:
             _ctx.close()

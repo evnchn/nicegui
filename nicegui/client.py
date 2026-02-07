@@ -44,7 +44,7 @@ HEADWIND_CONTENT = (Path(__file__).parent / 'static' / 'headwind.css').read_text
 
 def _render_ssr_html(elements: dict[int, Element]) -> str:
     """Render element tree to HTML string for SSR hydration using Vue's server renderer."""
-    from .ssr import render_to_string
+    from .ssr import render_to_string  # pylint: disable=import-outside-toplevel
     elements_dict = {
         id: element._to_dict() for id, element in elements.items()  # pylint: disable=protected-access
     }
