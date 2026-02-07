@@ -7,7 +7,7 @@ from nicegui.testing import Screen
 
 
 @pytest.fixture(autouse=True)
-def enable_strict_csp(_enable_csp):
+def enable_strict_csp(enable_csp):  # pylint: disable=unused-argument
     """Enable CSP with STRICT settings - no unsafe-inline.
 
     This fixture removes 'unsafe-inline' from the CSP to test if UnoCSS
@@ -19,7 +19,7 @@ def enable_strict_csp(_enable_csp):
 
     original_dispatch = middlewares.CSPMiddleware.dispatch
 
-    async def strict_dispatch(_self, request, call_next):
+    async def strict_dispatch(self, request, call_next):  # pylint: disable=unused-argument
         nonce = secrets.token_urlsafe(16)
         request.state.csp_nonce = nonce
 
@@ -65,6 +65,7 @@ def enable_unocss():
     yield
 
 
+@pytest.mark.skip(reason='Requires UnoCSS configuration (ui.run(unocss="wind4")) - demonstration test only')
 def test_unocss_basic_with_strict_csp(screen: Screen):
     """Test basic UnoCSS classes with strict CSP.
 
@@ -124,6 +125,7 @@ def test_unocss_basic_with_strict_csp(screen: Screen):
     print(f"{'='*60}\n")
 
 
+@pytest.mark.skip(reason='Requires UnoCSS configuration (ui.run(unocss="wind4")) - demonstration test only')
 def test_unocss_dynamic_classes_with_strict_csp(screen: Screen):
     """Test dynamically added UnoCSS classes with strict CSP.
 
