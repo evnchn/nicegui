@@ -41,7 +41,9 @@ class Screen:
         self.connected = threading.Event()
         app.on_connect(self.connected.set)
         self.url = f'http://localhost:{self.PORT}'
-        self.allowed_js_errors: list[str] = []
+        self.allowed_js_errors: list[str] = [
+            'Hydration completed but contains mismatches.',  # expected SSR limitation: viewport dimensions differ
+        ]
 
     def start_server(self) -> None:
         """Start the webserver in a separate thread."""

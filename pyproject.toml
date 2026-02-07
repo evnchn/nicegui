@@ -137,6 +137,7 @@ testpaths = ["tests"]
 filterwarnings = [
   'error',
   "ignore:'asyncio\\.iscoroutinefunction' is deprecated and slated for removal:DeprecationWarning",
+  "ignore:Exception ignored in.*MiniRacer:pytest.PytestUnraisableExceptionWarning",
 ]
 
 [tool.mypy]
@@ -231,6 +232,6 @@ disable = [
 ]
 
 [tool.codespell]
-skip = '*.min.js,*.min.js.map,*.prod.js,*.lock'
+skip = '*.min.js,*.min.js.map,*.prod.js,*.lock,*ssr-bundle.js'
 check-hidden = true
 ignore-words-list = 'simpy'
