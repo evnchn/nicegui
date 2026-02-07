@@ -11,7 +11,7 @@ _STATIC_DIR = Path(__file__).parent / 'static'
 _SSR_POLYFILLS_PATH = _STATIC_DIR / 'ssr-polyfills.js'
 _SSR_BUNDLE_PATH = _STATIC_DIR / 'ssr-bundle.js'
 _QUASAR_UMD_PATH = _STATIC_DIR / 'quasar.umd.prod.js'
-_ctx: object = None
+_ctx = None
 _import_failed = False
 _init_text: str | None = None
 
