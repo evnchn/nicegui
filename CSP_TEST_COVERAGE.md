@@ -2,6 +2,18 @@
 
 This document tracks which test files have CSP (Content Security Policy) enabled.
 
+## ⚠️ Important: CSP Strictness
+
+**Our CSP implementation uses `'unsafe-inline'` for styles, making it "CSP-Lite" rather than strict CSP.**
+
+This means:
+- ✅ Scripts ARE protected (require nonce)
+- ❌ Styles are NOT fully protected (`'unsafe-inline'` allows any inline style)
+- ❌ Dynamic style injection is NOT blocked
+- ⚠️ This is a tradeoff to support Tailwind JIT
+
+See [CSP_STRICTNESS_ANALYSIS.md](CSP_STRICTNESS_ANALYSIS.md) for full details.
+
 ## Summary
 
 - **Total test files**: 117
