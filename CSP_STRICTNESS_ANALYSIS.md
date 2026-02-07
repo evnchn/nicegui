@@ -54,9 +54,11 @@ Color changes from black to red, proving the style was applied.
 ### Stated Reason
 The code comment says: "unsafe-inline for Tailwind JIT"
 
-### The Tailwind JIT Issue
+### The Runtime CSS Issue
 
-Tailwind JIT (Just-In-Time) works by:
+**Important:** This is not Tailwind-specific! Both Tailwind JIT and UnoCSS runtime have this issue.
+
+Runtime CSS frameworks (Tailwind JIT, UnoCSS runtime) work by:
 1. Scanning the DOM for class names
 2. Dynamically generating CSS
 3. Injecting `<style>` tags into the document
@@ -67,7 +69,9 @@ These dynamically generated `<style>` tags need either:
 
 **Current approach:** We chose `'unsafe-inline'` as the easy solution.
 
-**Problem:** This allows ALL inline styles, not just Tailwind's.
+**Problem:** This allows ALL inline styles, not just framework-generated ones.
+
+**Note:** See [UNOCSS_CSP_INVESTIGATION.md](UNOCSS_CSP_INVESTIGATION.md) for investigation into whether UnoCSS could solve this problem (spoiler: it can't, in runtime mode).
 
 ## Comparison with PR #5345
 
@@ -128,14 +132,17 @@ An attacker who can inject content could still:
 - More complex configuration
 - Tailwind might still break in strict mode
 
-### Option 4: Replace Tailwind JIT
+### Option 4: Switch to Build-Time CSS
 **Pros:**
 - Could achieve strict CSP
 - Better security
+- Works with both Tailwind and UnoCSS
 
 **Cons:**
 - Major breaking change
 - Would require build-time CSS generation
+- May break dynamic class generation
+- See [UNOCSS_CSP_INVESTIGATION.md](UNOCSS_CSP_INVESTIGATION.md) for detailed analysis
 
 ## Recommendations
 
@@ -156,21 +163,25 @@ An attacker who can inject content could still:
 
 ### Long-term Solutions
 
-1. **Investigate Tailwind alternatives**
-   - Build-time Tailwind compilation
+1. **Switch to build-time CSS compilation**
+   - Build-time Tailwind/UnoCSS compilation
    - Pre-generate all possible classes
-   - Switch to different CSS framework
+   - See [UNOCSS_CSP_INVESTIGATION.md](UNOCSS_CSP_INVESTIGATION.md) for detailed analysis
 
-2. **Add nonce to Tailwind-generated styles**
-   - Monkey-patch Tailwind to add nonces
-   - May require forking/modifying Tailwind
+2. **Add nonce to runtime-generated styles**
+   - Monkey-patch runtime CSS framework to add nonces
+   - Works for both Tailwind JIT and UnoCSS runtime
+   - May require forking/modifying the framework
 
-3. **Make CSP configurable**
-   - Let security-conscious users disable Tailwind
-   - Allow strict CSP mode for those who don't need JIT
+3. **Make CSP strictness configurable**
+   - Let security-conscious users enable strict CSP
+   - `ui.run(csp_strict=True)` disables runtime CSS
+   - Allow runtime mode for those who need dynamic classes
 
 ## Conclusion
 
-Our current CSP implementation is **not strict**. It provides script protection but allows inline styles. This is a reasonable tradeoff for compatibility with Tailwind JIT, but should be clearly documented as "Partial CSP" or "CSP-Lite" rather than implying full CSP protection.
+Our current CSP implementation is **not strict**. It provides script protection but allows inline styles. This is a reasonable tradeoff for compatibility with runtime CSS frameworks (Tailwind JIT, UnoCSS runtime), but should be clearly documented as "Partial CSP" or "CSP-Lite" rather than implying full CSP protection.
 
 The 55% test coverage is less impressive when we realize those tests pass because CSP is relaxed, not because the features are truly CSP-compatible.
+
+**Note:** Switching from Tailwind to UnoCSS would NOT solve this problem, as both frameworks use runtime DOM injection in their default configurations. See [UNOCSS_CSP_INVESTIGATION.md](UNOCSS_CSP_INVESTIGATION.md) for a detailed investigation of UnoCSS and CSP compatibility.
