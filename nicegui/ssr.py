@@ -11,19 +11,23 @@ _STATIC_DIR = Path(__file__).parent / 'static'
 _SSR_POLYFILLS_PATH = _STATIC_DIR / 'ssr-polyfills.js'
 _SSR_BUNDLE_PATH = _STATIC_DIR / 'ssr-bundle.js'
 _QUASAR_UMD_PATH = _STATIC_DIR / 'quasar.umd.prod.js'
-_ctx = None
+_ctx: object = None
+_import_failed = False
 _init_text: str | None = None
 
 
 def _get_context():
     """Get or create a MiniRacer context with the SSR bundle loaded."""
-    global _ctx, _init_text  # pylint: disable=global-statement  # noqa: PLW0603
+    global _ctx, _import_failed, _init_text  # pylint: disable=global-statement  # noqa: PLW0603
     if _ctx is not None:
         return _ctx
+    if _import_failed:
+        return None
     try:
         from py_mini_racer import MiniRacer  # type: ignore[import-not-found]  # pylint: disable=import-outside-toplevel
     except ImportError:
-        log.warning('mini-racer not installed; SSR disabled. Install with: pip install mini-racer')
+        log.info('mini-racer not installed; SSR disabled. Install with: pip install mini-racer')
+        _import_failed = True
         return None
     _ctx = MiniRacer()
     if _init_text is None:
