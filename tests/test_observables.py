@@ -1,6 +1,7 @@
 import asyncio
 import copy
 
+import pytest
 from nicegui import ui
 from nicegui.observables import ObservableDict, ObservableList, ObservableSet
 from nicegui.testing import Screen, User
@@ -24,6 +25,12 @@ async def increment_counter_slowly(_):
     await asyncio.sleep(0.1)
     count += 1
 
+
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
 
 def test_observable_dict():
     reset_counter()

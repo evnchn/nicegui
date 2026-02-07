@@ -4,10 +4,17 @@ import time
 import webbrowser
 from pathlib import Path
 
+import pytest
 from nicegui import helpers
 
 TEST_DIR = Path(__file__).parent
 
+
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
 
 def test_is_port_open():
     with contextlib.closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:

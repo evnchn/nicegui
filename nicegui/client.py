@@ -163,6 +163,8 @@ class Client:
         }
         vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls = \
             generate_resources(prefix, self.elements.values())
+        # Get CSP nonce from request state (set by CSPMiddleware)
+        csp_nonce = getattr(request.state, 'csp_nonce', '')
         return templates.TemplateResponse(
             request=request,
             name='index.html',
@@ -192,6 +194,7 @@ class Client:
                 'socket_io_js_query_params': socket_io_js_query_params,
                 'socket_io_js_extra_headers': core.app.config.socket_io_js_extra_headers,
                 'socket_io_js_transports': core.app.config.socket_io_js_transports,
+                'csp_nonce': csp_nonce,
             },
             status_code=status_code,
             headers={'Cache-Control': 'no-store', 'X-NiceGUI-Content': 'page'},

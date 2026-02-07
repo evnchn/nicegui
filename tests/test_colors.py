@@ -1,6 +1,13 @@
+import pytest
 from nicegui import app, ui
 from nicegui.testing import Screen
 
+
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
 
 def test_appwide_colors(screen: Screen):
     app.colors(primary='#ff0000', brand='#00ff00')

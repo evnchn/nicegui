@@ -35,3 +35,22 @@ def nicegui_reset_globals():
     """Reset the global state of the NiceGUI package."""
     with general.nicegui_reset_globals():
         yield
+
+
+@pytest.fixture
+def enable_csp():
+    """Enable CSP for a specific test to verify CSP-compatible functionality.
+
+    When CSP is enabled, Tailwind is automatically disabled because it requires 'unsafe-inline'.
+
+    Example:
+        @pytest.fixture(autouse=True)
+        def enable_csp_for_module(enable_csp):
+            '''Enable CSP for all tests in this module.'''
+            yield
+    """
+    from .. import core
+    original_value = core.app.config.csp_enabled
+    core.app.config.csp_enabled = True
+    yield
+    core.app.config.csp_enabled = original_value

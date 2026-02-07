@@ -4,6 +4,12 @@ from nicegui import ui
 from nicegui.testing import Screen
 
 
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
+
+
 @pytest.mark.parametrize('new_tab', [False, True])
 def test_navigate_to(screen: Screen, new_tab: bool):
     @ui.page('/test_page')

@@ -1,3 +1,4 @@
+import pytest
 from nicegui import app, ui
 from nicegui.testing import Screen
 
@@ -7,6 +8,12 @@ def _serve_empty_file(path: str):
     def get_empty_file():
         return b''
 
+
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
 
 def test_replace_video(screen: Screen):
     _serve_empty_file(VIDEO1 := '/video1.mp4')

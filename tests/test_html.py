@@ -1,8 +1,15 @@
 from html_sanitizer import Sanitizer
 
+import pytest
 from nicegui import html, ui
 from nicegui.testing import Screen
 
+
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
 
 def test_html_element(screen: Screen):
     @ui.page('/')

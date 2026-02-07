@@ -6,6 +6,12 @@ from nicegui.testing import Screen
 
 
 @pytest.mark.parametrize('new_value_mode', ['add', 'add-unique', 'toggle'])
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
+
 def test_add_new_values(screen: Screen, new_value_mode: str):
     @ui.page('/')
     def page():

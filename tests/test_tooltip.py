@@ -6,6 +6,12 @@ from nicegui.testing.screen import Screen
 
 
 @pytest.mark.parametrize('element', [ui.label, ui.button, ui.markdown])
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
+
 def test_tooltip_method(screen: Screen, element: type[ui.element]):
     @ui.page('/')
     def page():

@@ -24,6 +24,12 @@ def rows() -> list:
     ]
 
 
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
+
 def test_table(screen: Screen):
     @ui.page('/')
     def page():

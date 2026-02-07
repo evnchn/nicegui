@@ -18,6 +18,12 @@ except ImportError:
 
 
 @pytest.mark.skipif('orjson' not in sys.modules, reason='requires the orjson library.')
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
+
 def test_json():
     # only run test if orjson is available to not break it on 32 bit systems
     # or architectures where orjson is not supported.

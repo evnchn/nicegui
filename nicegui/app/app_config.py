@@ -9,6 +9,21 @@ from ..language import Language
 @dataclass(**KWONLY_SLOTS)
 class AppConfig:
     endpoint_documentation: Literal['none', 'internal', 'page', 'all'] = 'none'
+    _csp_enabled: bool = False  # Internal flag
+    csp_extra_directives: list[str] = field(default_factory=list)
+
+    @property
+    def csp_enabled(self) -> bool:
+        """Whether CSP is enabled."""
+        return self._csp_enabled
+
+    @csp_enabled.setter
+    def csp_enabled(self, value: bool) -> None:
+        """Enable or disable CSP. When enabled, Tailwind is automatically disabled."""
+        self._csp_enabled = value
+        # Auto-disable Tailwind when CSP is enabled (if run config has been set)
+        if value and hasattr(self, 'tailwind'):
+            self.tailwind = False
     socket_io_js_query_params: dict = field(default_factory=dict)
     socket_io_js_extra_headers: dict = field(default_factory=dict)
     socket_io_js_transports: list[Literal['websocket', 'polling']] = \
@@ -39,7 +54,8 @@ class AppConfig:
     reconnect_timeout: float = field(init=False)
     message_history_length: int = field(init=False)
     cache_control_directives: str = field(init=False)
-    tailwind: bool = field(init=False)
+    _tailwind_requested: bool = field(init=False, default=False)  # User's requested value
+    tailwind: bool = field(init=False)  # Actual value (may be disabled by CSP)
     unocss: Literal['mini', 'wind3', 'wind4'] | None = field(init=False)
     prod_js: bool = field(init=False)
     show_welcome_message: bool = field(init=False)
@@ -73,7 +89,9 @@ class AppConfig:
         self.reconnect_timeout = reconnect_timeout
         self.message_history_length = message_history_length
         self.cache_control_directives = cache_control_directives
-        self.tailwind = tailwind if unocss is None else False
+        self._tailwind_requested = tailwind
+        # Auto-disable Tailwind when CSP is enabled (Tailwind requires 'unsafe-inline' which breaks strict CSP)
+        self.tailwind = tailwind if (unocss is None and not self.csp_enabled) else False
         self.unocss = unocss
         self.prod_js = prod_js
         self.show_welcome_message = show_welcome_message

@@ -1,8 +1,15 @@
 import weakref
 
+import pytest
 from nicegui import binding, ui
 from nicegui.testing import Screen
 
+
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
 
 def test_remove_element_by_reference(screen: Screen):
     texts = {'a': 'Label A', 'b': 'Label B', 'c': 'Label C'}

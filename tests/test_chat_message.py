@@ -1,9 +1,16 @@
 from html_sanitizer import Sanitizer
 from selenium.webdriver.common.by import By
 
+import pytest
 from nicegui import ui
 from nicegui.testing import Screen
 
+
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
 
 def test_text_vs_html(screen: Screen):
     @ui.page('/')

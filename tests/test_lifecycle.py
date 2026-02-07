@@ -1,8 +1,15 @@
 import asyncio
 
+import pytest
 from nicegui import Client, app, ui
 from nicegui.testing import Screen
 
+
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
 
 def test_adding_elements_during_onconnect_on_auto_index_page(screen: Screen):
     connections = {'count': 0}
