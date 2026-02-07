@@ -386,9 +386,7 @@ function createApp(elements, options) {
   Object.entries(elements).forEach(([_, element]) => replaceUndefinedAttributes(element));
   setInterval(() => ack(), 3000);
   initUnoCss();
-  const hasSSR = document.getElementById("app").children.length > 0;
-  const vueCreateApp = hasSSR ? Vue.createSSRApp : Vue.createApp;
-  return (app = vueCreateApp({
+  return (app = Vue.createApp({
     data() {
       return {
         elements,
