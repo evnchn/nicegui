@@ -152,6 +152,8 @@ module = [
     "polars.*",
     "pyecharts.*",
     "scipy.*",
+    "engineio",
+    "engineio.*",
     "socketio.*",
 ]
 ignore_missing_imports = true

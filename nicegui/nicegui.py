@@ -155,6 +155,12 @@ async def _shutdown() -> None:
     if app.native.main_window:
         app.native.main_window.signal_server_shutdown()
     air.disconnect()
+    for socket in list(eio.sockets.values()):
+        socket.closed = True
+    eio.sockets.clear()
+    if eio.service_task_event:
+        eio.service_task_event.set()
+    eio.start_service_task = True
     await app.stop()
     run.tear_down()
 
@@ -221,7 +227,8 @@ async def _on_handshake(sid: str, data: dict[str, Any]) -> bool:
 @eio.on('disconnect')
 def _on_disconnect(sid: str) -> None:
     client_id = core.sid_to_client.pop(sid, None)
-    core.client_to_sid.pop(client_id, None) if client_id else None
+    if client_id:
+        core.client_to_sid.pop(client_id, None)
     core.sid_environ.pop(sid, None)
     if client_id:
         client = Client.instances.get(client_id)
