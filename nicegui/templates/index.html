@@ -45,7 +45,7 @@
     {{ head_html | safe }}
     <!-- prevent Prettier from removing this line -->
     {% for url in js_imports_urls %}
-    <link rel="modulepreload" href="{{ url }}" />
+    <link rel="modulepreload" href="{{ url }}" fetchpriority="low" />
     {% endfor %}
     <!-- prevent Prettier from removing this line -->
     {% if tailwind %}
@@ -55,7 +55,11 @@
     {% endif %}
     <!-- prevent Prettier from removing this line -->
     {% if unocss %}
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/unocss/preset-{{unocss}}.global.js"></script>
+    <script
+      defer
+      src="{{ prefix | safe }}/_nicegui/{{version}}/static/unocss/preset-{{unocss}}.global.js"
+      fetchpriority="high"
+    ></script>
     <script>
       window.__unocss = {
         presets: [
@@ -76,7 +80,11 @@
         },
       };
     </script>
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/unocss/core.global.js"></script>
+    <script
+      defer
+      src="{{ prefix | safe }}/_nicegui/{{version}}/static/unocss/core.global.js"
+      fetchpriority="high"
+    ></script>
     <style>
       #app.nicegui-unocss-loading {
         visibility: hidden;
@@ -85,22 +93,33 @@
     {% endif %}
   </head>
   <body>
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/socket.io.min.js"></script>
+    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/socket.io.min.js" fetchpriority="high"></script>
     {% if tailwind %}
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/tailwindcss.min.js"></script>
+    <script
+      defer
+      src="{{ prefix | safe }}/_nicegui/{{version}}/static/tailwindcss.min.js"
+      fetchpriority="high"
+    ></script>
     {% endif %}
     <script type="module">
       import * as Vue from "vue";
       globalThis.Vue = Vue;
     </script>
     {% if prod_js %}
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/quasar.umd.prod.js"></script>
+    <script
+      defer
+      src="{{ prefix | safe }}/_nicegui/{{version}}/static/quasar.umd.prod.js"
+      fetchpriority="high"
+    ></script>
     {% else %}
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/quasar.umd.js"></script>
+    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/quasar.umd.js" fetchpriority="high"></script>
     {% endif %}
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/nicegui.js"></script>
-
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/lang/{{ language }}.umd.prod.js"></script>
+    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/nicegui.js" fetchpriority="high"></script>
+    <script
+      defer
+      src="{{ prefix | safe }}/_nicegui/{{version}}/static/lang/{{ language }}.umd.prod.js"
+      fetchpriority="high"
+    ></script>
     {{ body_html | safe }}
 
     <div id="app" {% if unocss %}class="nicegui-unocss-loading" {% endif %}></div>
