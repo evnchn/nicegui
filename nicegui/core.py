@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Callable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from socketio import AsyncServer
+from engineio import AsyncServer
 
 if TYPE_CHECKING:
     from .air import Air
@@ -12,12 +12,17 @@ if TYPE_CHECKING:
     from .client import Client
 
 app: App
-sio: AsyncServer
+eio: AsyncServer
 loop: asyncio.AbstractEventLoop | None = None
 air: Air | None = None
 root: Callable | None = None
 script_mode: bool = False
 script_client: Client | None = None
+
+# Engine.IO session tracking (replaces Socket.IO rooms)
+client_to_sid: dict[str, str] = {}   # client_id → Engine.IO sid
+sid_to_client: dict[str, str] = {}   # Engine.IO sid → client_id
+sid_environ: dict[str, dict[str, Any]] = {}  # Engine.IO sid → ASGI environ
 
 
 def is_script_mode_preflight() -> bool:
@@ -33,3 +38,6 @@ def reset() -> None:
     root = None
     script_mode = False
     script_client = None
+    client_to_sid.clear()
+    sid_to_client.clear()
+    sid_environ.clear()

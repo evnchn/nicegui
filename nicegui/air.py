@@ -255,10 +255,10 @@ class Air:
 
     @staticmethod
     def is_air_target(target_id: str) -> bool:
-        """Whether the given target ID is an On Air client or a SocketIO room."""
+        """Whether the given target ID is an On Air client or has an active Engine.IO connection."""
         if target_id in Client.instances:
             return Client.instances[target_id].on_air
-        return target_id in core.sio.manager.rooms
+        return target_id in core.client_to_sid
 
 
 def connect() -> None:

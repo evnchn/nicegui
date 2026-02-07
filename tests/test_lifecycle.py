@@ -125,12 +125,12 @@ def test_all_lifecycle_handlers_are_called(screen: Screen):
     screen.wait(0.5)
     assert events == ['page connect', 'app connect']
 
-    screen.selenium.execute_script('window.socket.disconnect();')
+    screen.selenium.execute_script('window._manualClose = true; window.socket.close();')
     screen.wait(0.5)
     assert events == ['page connect', 'app connect',
                       'page disconnect', 'app disconnect']
 
-    screen.selenium.execute_script('window.socket.connect();')
+    screen.selenium.execute_script('window.connectSocket();')
     screen.wait(0.5)
     assert events == ['page connect', 'app connect',
                       'page disconnect', 'app disconnect',

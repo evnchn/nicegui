@@ -131,10 +131,10 @@ def test_reconnect(screen: Screen):
     screen.click('Click me')
     screen.should_contain('Click me!')
 
-    screen.selenium.execute_script('window.socket.disconnect();')
+    screen.selenium.execute_script('window._manualClose = true; window.socket.close();')
     screen.wait(0.5)
 
-    screen.selenium.execute_script('window.socket.connect();')
+    screen.selenium.execute_script('window.connectSocket();')
     screen.wait(0.5)
 
     screen.click('Click me!')

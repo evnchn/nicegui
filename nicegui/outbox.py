@@ -142,14 +142,17 @@ class Outbox:
         client_id, message_type, data = message
         data['_id'] = self.next_message_id
 
-        await core.sio.emit(message_type, data, room=client_id)
+        sid = core.client_to_sid.get(client_id)
+        if sid:
+            data['type'] = message_type
+            await core.eio.send(sid, data)
         if core.air is not None and core.air.is_air_target(client_id):
             await core.air.emit(message_type, data, room=client_id)
 
         client = self.client
         if client:
             self.message_history.append((self.next_message_id, time.time(), message))
-            max_age = core.sio.eio.ping_interval + core.sio.eio.ping_timeout + client.page.resolve_reconnect_timeout()
+            max_age = core.eio.ping_interval + core.eio.ping_timeout + client.page.resolve_reconnect_timeout()
             while self.message_history and self.message_history[0][1] < time.time() - max_age:
                 self.message_history.popleft()
             while len(self.message_history) > core.app.config.message_history_length:

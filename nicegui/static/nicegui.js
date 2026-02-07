@@ -163,7 +163,7 @@ function logAndEmit(level, message) {
   } else {
     console.log(message);
   }
-  window.socket.emit("log", { client_id: window.clientId, level, message });
+  window.socketSend?.({ type: "log", client_id: window.clientId, level, message });
 }
 
 function stringifyEventArgs(args, event_args) {
@@ -258,7 +258,8 @@ function renderRecursively(elements, id, propsContext) {
 
     const emit = (...args) => {
       const emitter = () =>
-        window.socket?.emit("event", {
+        window.socketSend?.({
+          type: "event",
           id: id,
           client_id: window.clientId,
           listener_id: event.listener_id,
@@ -329,7 +330,7 @@ function runJavascript(code, request_id) {
     })
     .then((result) => {
       if (request_id) {
-        window.socket.emit("javascript_response", { request_id, client_id: window.clientId, result });
+        window.socketSend?.({ type: "javascript_response", request_id, client_id: window.clientId, result });
       }
     });
 }
@@ -352,12 +353,9 @@ function download(src, filename, mediaType, prefix) {
 }
 
 function ack() {
-  if (!window.socket || !window.did_handshake) return;
+  if (!window.socketSend || !window.did_handshake) return;
   if (window.ackedMessageId >= window.nextMessageId) return;
-  window.socket.emit("ack", {
-    client_id: window.clientId,
-    next_message_id: window.nextMessageId,
-  });
+  window.socketSend({ type: "ack", client_id: window.clientId, next_message_id: window.nextMessageId });
   window.ackedMessageId = window.nextMessageId;
 }
 
@@ -399,77 +397,52 @@ function createApp(elements, options) {
       mounted_app = this;
       window.documentId = createRandomUUID();
       window.clientId = options.query.client_id;
-      const url = window.location.protocol === "https:" ? "wss://" : "ws://" + window.location.host;
+      const url = window.location.origin;
       window.path_prefix = options.prefix;
       window.nextMessageId = options.query.next_message_id;
       window.ackedMessageId = -1;
       options.query.document_id = window.documentId;
       options.query.tab_id = TAB_ID;
       options.query.old_tab_id = OLD_TAB_ID;
-      window.socket = io(url, {
-        path: `${options.prefix}/_nicegui_ws/socket.io`,
-        query: options.query,
-        extraHeaders: options.extraHeaders,
-        transports:
-          "prerendering" in document && document.prerendering === true
-            ? ["polling", ...options.transports]
-            : options.transports,
-      });
-      window.did_handshake = false;
+
+      const MAX_MESSAGE_SIZE = 1000000 - 100;
+      window.socketSend = function (data) {
+        if (!window.socket || window.socket.readyState !== "open") return;
+        const msg = JSON.stringify(data);
+        if (msg.length > MAX_MESSAGE_SIZE) {
+          const errorMessage = `Payload size ${msg.length} exceeds the maximum allowed limit.`;
+          console.error(errorMessage);
+          window.socket.send(JSON.stringify({ type: "log", client_id: window.clientId, level: "error", message: errorMessage }));
+          if (window.tooLongMessageTimerId) clearTimeout(window.tooLongMessageTimerId);
+          const popup = document.getElementById("too_long_message_popup");
+          popup.ariaHidden = false;
+          window.tooLongMessageTimerId = setTimeout(() => (popup.ariaHidden = true), 5000);
+          return;
+        }
+        window.socket.send(msg);
+      };
+
       const messageHandlers = {
-        connect: () => {
-          function wrapFunction(originalFunction) {
-            const MAX_WEBSOCKET_MESSAGE_SIZE = 1000000 - 100; // 1MB without 100 bytes of slack for the message header
-            return function (...args) {
-              const msg = args[0];
-              if (typeof msg === "string" && msg.length > MAX_WEBSOCKET_MESSAGE_SIZE) {
-                const errorMessage = `Payload size ${msg.length} exceeds the maximum allowed limit.`;
-                console.error(errorMessage);
-                args[0] = `42["log",{"client_id":"${window.clientId}","level":"error","message":"${errorMessage}"}]`;
-                if (window.tooLongMessageTimerId) clearTimeout(window.tooLongMessageTimerId);
-                const popup = document.getElementById("too_long_message_popup");
-                popup.ariaHidden = false;
-                window.tooLongMessageTimerId = setTimeout(() => (popup.ariaHidden = true), 5000);
-              }
-              return originalFunction.call(this, ...args);
-            };
+        handshake_response: (msg) => {
+          if (!msg.ok) {
+            console.log("reloading because handshake failed for clientId " + window.clientId);
+            window.location.reload();
+            return;
           }
-          const transport = window.socket.io.engine.transport;
-          if (transport?.ws?.send) transport.ws.send = wrapFunction(transport.ws.send);
-          if (transport?.doWrite) transport.doWrite = wrapFunction(transport.doWrite);
-
-          function finishHandshake(ok) {
-            if (!ok) {
-              console.log("reloading because handshake failed for clientId " + window.clientId);
-              window.location.reload();
-            }
-            window.did_handshake = true;
-            document.getElementById("popup").ariaHidden = true;
-          }
-
-          if (options.query.implicit_handshake) {
-            finishHandshake(true);
-          } else {
-            window.socket.emit("handshake", options.query, finishHandshake);
-          }
+          window.did_handshake = true;
+          document.getElementById("popup").ariaHidden = true;
         },
-        connect_error: (err) => {
-          if (err.message == "timeout") {
-            console.log("reloading because connection timed out");
-            window.location.reload(); // see https://github.com/zauberzeug/nicegui/issues/198
-          } else if (err.message == "Implicit handshake failed") {
+        error: (msg) => {
+          if (msg.message === "Implicit handshake failed") {
             console.log("reloading because implicit handshake failed for clientId " + window.clientId);
             window.location.reload();
           }
         },
-        try_reconnect: async () => {
+        try_reconnect: async (msg) => {
           document.getElementById("popup").ariaHidden = false;
           await fetch(window.location.href, { headers: { "NiceGUI-Check": "try_reconnect" } });
           console.log("reloading because reconnect was requested");
           window.location.reload();
-        },
-        disconnect: () => {
-          document.getElementById("popup").ariaHidden = false;
         },
         load_js_components: async (msg) => {
           const urls = msg.components.map((c) => `${options.prefix}/_nicegui/${options.version}/components/${c.key}`);
@@ -517,31 +490,84 @@ function createApp(elements, options) {
         download: (msg) => download(msg.src, msg.filename, msg.media_type, options.prefix),
         notify: (msg) => Quasar.Notify.create(msg),
       };
+
       const socketMessageQueue = [];
       let isProcessingSocketMessage = false;
-      for (const [event, handler] of Object.entries(messageHandlers)) {
-        window.socket.on(event, async (...args) => {
-          if (args.length > 0 && args[0]._id !== undefined) {
-            const message_id = args[0]._id;
-            if (message_id < window.nextMessageId) return;
-            window.nextMessageId = message_id + 1;
-            delete args[0]._id;
-          }
-          socketMessageQueue.push(() => handler(...args));
-          if (!isProcessingSocketMessage) {
+
+      function dispatchMessage(raw) {
+        const msg = typeof raw === "string" ? JSON.parse(raw) : raw;
+        const type = msg.type;
+        delete msg.type;
+
+        if (msg._id !== undefined) {
+          const message_id = msg._id;
+          if (message_id < window.nextMessageId) return;
+          window.nextMessageId = message_id + 1;
+          delete msg._id;
+        }
+
+        const handler = messageHandlers[type];
+        if (!handler) return;
+
+        socketMessageQueue.push(() => handler(msg));
+        if (!isProcessingSocketMessage) {
+          (async () => {
             while (socketMessageQueue.length > 0) {
-              const handler = socketMessageQueue.shift();
+              const fn = socketMessageQueue.shift();
               isProcessingSocketMessage = true;
               try {
-                await handler();
+                await fn();
               } catch (e) {
                 console.error(e);
               }
               isProcessingSocketMessage = false;
             }
+          })();
+        }
+      }
+
+      function connectSocket() {
+        options.query.next_message_id = window.nextMessageId;
+        window.socket = eio(url, {
+          path: `${options.prefix}/_nicegui_ws/engine.io`,
+          query: options.query,
+          extraHeaders: options.extraHeaders,
+          transports:
+            "prerendering" in document && document.prerendering === true
+              ? ["polling", ...options.transports]
+              : options.transports,
+        });
+        window.did_handshake = false;
+
+        window.socket.on("open", () => {
+          if (options.query.implicit_handshake) {
+            window.did_handshake = true;
+            document.getElementById("popup").ariaHidden = true;
+          } else {
+            window.socketSend({ type: "handshake", ...options.query });
           }
         });
+
+        window.socket.on("message", dispatchMessage);
+
+        window.socket.on("close", () => {
+          document.getElementById("popup").ariaHidden = false;
+          if (!window._isUnloading && !window._manualClose) {
+            setTimeout(() => connectSocket(), 1000);
+          }
+          window._manualClose = false;
+        });
+
+        window.socket.on("error", (err) => {
+          console.error("Engine.IO error:", err);
+        });
       }
+
+      window.addEventListener("beforeunload", () => {
+        window._isUnloading = true;
+      });
+      window.connectSocket = connectSocket;
+      connectSocket();
     },
   }));
 }

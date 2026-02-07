@@ -50,8 +50,10 @@ def setup() -> None:
 
     async def disconnect() -> None:
         """Disconnect all clients from current running server."""
-        for client_id in Client.instances:
-            await core.sio.disconnect(client_id)
+        for client_id in list(Client.instances):
+            sid = core.client_to_sid.get(client_id)
+            if sid:
+                await core.eio.disconnect(sid)
 
     def handle_sigint(signum, frame) -> None:
         # `disconnect` is async, so it must be called from the event loop; we use `ui.timer` to do so.

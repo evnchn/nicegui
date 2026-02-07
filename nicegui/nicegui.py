@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
-import socketio
+import engineio
 from fastapi import HTTPException, Request
 from fastapi.responses import FileResponse, Response
 
@@ -33,7 +33,7 @@ async def _lifespan(_: App):
     await _shutdown()
 
 
-class SocketIoApp(socketio.ASGIApp):
+class EngineIoApp(engineio.ASGIApp):
     """Custom ASGI app to handle root_path.
 
     This is a workaround for https://github.com/miguelgrinberg/python-engineio/pull/345
@@ -48,9 +48,9 @@ class SocketIoApp(socketio.ASGIApp):
 
 core.app = app = App(default_response_class=NiceGUIJSONResponse, lifespan=_lifespan)
 core.app.storage.general.initialize_sync()
-core.sio = sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*', json=json)  # custom orjson wrapper
-sio_app = SocketIoApp(socketio_server=sio, socketio_path='/socket.io')
-app.mount('/_nicegui_ws/', sio_app)
+core.eio = eio = engineio.AsyncServer(async_mode='asgi', cors_allowed_origins='*', json=json)  # custom orjson wrapper
+eio_app = EngineIoApp(engineio_server=eio, engineio_path='/engine.io')
+app.mount('/_nicegui_ws/', eio_app)
 
 
 mimetypes.add_type('text/javascript', '.js')
@@ -129,8 +129,8 @@ async def _startup() -> None:
                            'to allow for multiprocessing.')
     await welcome.collect_urls()
     # NOTE ping interval and timeout need to be lower than the reconnect timeout, but can't be too low
-    sio.eio.ping_interval = max(app.config.reconnect_timeout * 0.8, 4)
-    sio.eio.ping_timeout = max(app.config.reconnect_timeout * 0.4, 2)
+    eio.ping_interval = max(app.config.reconnect_timeout * 0.8, 4)
+    eio.ping_timeout = max(app.config.reconnect_timeout * 0.4, 2)
     if core.app.config.favicon:
         if helpers.is_file(core.app.config.favicon):
             app.add_route('/favicon.ico', lambda _: FileResponse(core.app.config.favicon))  # type: ignore
@@ -188,14 +188,16 @@ async def _exception_handler_500(request: Request, exception: Exception) -> Resp
     return client.build_response(request, 500)
 
 
-@sio.on('connect')
-async def _on_connect(sid: str, data: dict[str, Any], _=None) -> None:
-    query = {k: v[0] for k, v in urllib.parse.parse_qs(data.get('QUERY_STRING', '')).items()}
-    if query.get('implicit_handshake', '') == 'true' and not await _on_handshake(sid, query):
-        raise socketio.exceptions.ConnectionRefusedError('Implicit handshake failed')
+@eio.on('connect')
+async def _on_connect(sid: str, environ: dict[str, Any]) -> None:
+    core.sid_environ[sid] = environ
+    query = {k: v[0] for k, v in urllib.parse.parse_qs(environ.get('QUERY_STRING', '')).items()}
+    if query.get('implicit_handshake', '') == 'true':
+        if not await _on_handshake(sid, query):
+            await eio.send(sid, {'type': 'error', 'message': 'Implicit handshake failed'})
+            await eio.disconnect(sid)
 
 
-@sio.on('handshake')
 async def _on_handshake(sid: str, data: dict[str, Any]) -> bool:
     client = Client.instances.get(data['client_id'])
     if not client:
@@ -206,8 +208,9 @@ async def _on_handshake(sid: str, data: dict[str, Any]) -> bool:
     if sid.startswith('test-'):
         client.environ = {'asgi.scope': {'description': 'test client', 'type': 'test'}}
     else:
-        client.environ = sio.get_environ(sid)
-        await sio.enter_room(sid, client.id)
+        client.environ = core.sid_environ.get(sid, {})
+        core.client_to_sid[client.id] = sid
+        core.sid_to_client[sid] = client.id
     client.handle_handshake(sid, data['document_id'],
                             int(data['next_message_id']) if 'next_message_id' in data else None)
     assert client.tab_id is not None
@@ -215,40 +218,37 @@ async def _on_handshake(sid: str, data: dict[str, Any]) -> bool:
     return True
 
 
-@sio.on('disconnect')
+@eio.on('disconnect')
 def _on_disconnect(sid: str) -> None:
-    query_bytes: bytearray = sio.get_environ(sid)['asgi.scope']['query_string']
-    query = urllib.parse.parse_qs(query_bytes.decode())
-    client_id = query['client_id'][0]
-    client = Client.instances.get(client_id)
-    if client:
-        client.handle_disconnect(sid)
+    client_id = core.sid_to_client.pop(sid, None)
+    core.client_to_sid.pop(client_id, None) if client_id else None
+    core.sid_environ.pop(sid, None)
+    if client_id:
+        client = Client.instances.get(client_id)
+        if client:
+            client.handle_disconnect(sid)
 
 
-@sio.on('event')
-def _on_event(_: str, msg: dict) -> None:
-    client = Client.instances.get(msg['client_id'])
-    if not client or not client.has_socket_connection:
-        return
-    client.handle_event(msg)
-
-
-@sio.on('javascript_response')
-def _on_javascript_response(_: str, msg: dict) -> None:
-    if client := Client.instances.get(msg['client_id']):
-        client.handle_javascript_response(msg)
-
-
-@sio.on('ack')
-def _on_ack(_: str, msg: dict) -> None:
-    if client := Client.instances.get(msg['client_id']):
-        client.outbox.prune_history(msg['next_message_id'])
-
-
-@sio.on('log')
-def _on_log(_: str, msg: dict) -> None:
-    if client := Client.instances.get(msg['client_id']):
-        client.handle_log_message(msg)
+@eio.on('message')
+async def _on_message(sid: str, data: Any) -> None:
+    msg = json.loads(data) if isinstance(data, str) else data
+    msg_type = msg.pop('type', None)
+    if msg_type == 'handshake':
+        ok = await _on_handshake(sid, msg)
+        await eio.send(sid, {'type': 'handshake_response', 'ok': ok})
+    elif msg_type == 'event':
+        client = Client.instances.get(msg['client_id'])
+        if client and client.has_socket_connection:
+            client.handle_event(msg)
+    elif msg_type == 'javascript_response':
+        if client := Client.instances.get(msg['client_id']):
+            client.handle_javascript_response(msg)
+    elif msg_type == 'ack':
+        if client := Client.instances.get(msg['client_id']):
+            client.outbox.prune_history(msg['next_message_id'])
+    elif msg_type == 'log':
+        if client := Client.instances.get(msg['client_id']):
+            client.handle_log_message(msg)
 
 
 async def prune_tab_storage(*, force: bool = False) -> None:
