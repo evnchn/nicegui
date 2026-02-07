@@ -314,7 +314,7 @@ class SharedScreen(Screen):
 
     def start_server(self) -> None:
         """Start the shared webserver if not already running."""
-        global _shared_server_thread  # noqa: PLW0603
+        global _shared_server_thread  # noqa: PLW0603  # pylint: disable=global-statement
 
         # Check if server is in a valid state (thread alive AND loop exists and not closed)
         needs_restart = (
@@ -360,7 +360,7 @@ class SharedScreen(Screen):
 
 def stop_shared_server() -> None:
     """Stop the shared server (called at session end or before Screen tests)."""
-    global _shared_server_thread  # noqa: PLW0603
+    global _shared_server_thread  # noqa: PLW0603  # pylint: disable=global-statement
     if _shared_server_thread is not None and _shared_server_thread.is_alive():
         if hasattr(Server, 'instance'):
             Server.instance.should_exit = True

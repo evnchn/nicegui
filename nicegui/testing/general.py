@@ -149,9 +149,12 @@ def nicegui_reset_globals_for_shared_server():
 
     app.openapi_schema = None
     app.middleware_stack = None
-    app.user_middleware.clear()
+    # NOTE: save user_middleware instead of clearing - it contains SetCacheControlMiddleware added during ui.run()
+    saved_user_middleware = list(app.user_middleware)
     app.urls.clear()
     # NOTE: do NOT call core.reset() as it would clear the event loop
+    # But we do need to reset script_mode to avoid polluting User fixture tests
+    core.script_mode = False
 
     element_types: list[type[ui.element]] = [ui.element, *_find_all_subclasses(ui.element)]
     default_classes = {t: copy(t._default_classes) for t in element_types}  # pylint: disable=protected-access
@@ -181,6 +184,10 @@ def nicegui_reset_globals_for_shared_server():
         _reset_app_handlers_only()
         event.reset()
         # NOTE: do NOT call run.reset() as it would shut down pools used by the running server
+
+        # Restore middleware that was set up during server startup (e.g., SetCacheControlMiddleware)
+        app.user_middleware[:] = saved_user_middleware
+        app.middleware_stack = None  # Force rebuild on next request
 
         for t in element_types:
             t._default_classes = default_classes[t]  # pylint: disable=protected-access
