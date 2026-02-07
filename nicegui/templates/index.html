@@ -92,17 +92,12 @@
     <script type="module">
       import * as Vue from "vue";
       globalThis.Vue = Vue;
+      await import("quasar");
     </script>
-    {% if prod_js %}
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/quasar.umd.prod.js"></script>
-    {% else %}
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/quasar.umd.js"></script>
-    {% endif %}
     <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/nicegui.js"></script>
-
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/lang/{{ language }}.umd.prod.js"></script>
     {{ body_html | safe }}
 
+    <script id="qmeta-init"></script>
     <div id="app" {% if unocss %}class="nicegui-unocss-loading" {% endif %}>{{ ssr_html | safe }}</div>
     <div id="popup" class="nicegui-error-popup" aria-hidden="true">
       <span>{{ translations.connection_lost }}</span>
@@ -121,6 +116,9 @@
         };
       }
 
+      // Load Quasar language pack
+      await import("{{ prefix | safe }}/_nicegui/{{version}}/static/lang/{{ language }}.umd.prod.js");
+
       const app = createApp(parseElements(String.raw`{{ elements | safe }}`), {
         version: "{{ version }}",
         prefix: "{{ prefix | safe }}",
@@ -132,6 +130,11 @@
       const language = "{{ language }}";
       const vue_config = {{ vue_config | safe }};
       {{ vue_config_script | safe }}
+      // Apply brand colors (Quasar's Body plugin defers this during SSR pre-hydration)
+      if (vue_config.brand) {
+        for (const color in vue_config.brand)
+          document.body.style.setProperty(`--q-${color}`, vue_config.brand[color]);
+      }
 
       {{ js_imports | safe }}
       {{ vue_scripts | safe }}
