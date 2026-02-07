@@ -335,9 +335,14 @@ function runJavascript(code, request_id) {
     });
 }
 
-function download(src, filename, mediaType, prefix) {
+function download(src, filename, mediaType, prefix, isBase64) {
   const anchor = document.createElement("a");
-  if (typeof src === "string") {
+  if (isBase64) {
+    const binaryString = atob(src);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+    anchor.href = URL.createObjectURL(new Blob([bytes], { type: mediaType }));
+  } else if (typeof src === "string") {
     anchor.href = src.startsWith("/") ? prefix + src : src;
   } else {
     anchor.href = URL.createObjectURL(new Blob([src], { type: mediaType }));
@@ -347,7 +352,7 @@ function download(src, filename, mediaType, prefix) {
   document.body.appendChild(anchor);
   anchor.click();
   document.body.removeChild(anchor);
-  if (typeof src !== "string") {
+  if (isBase64 || typeof src !== "string") {
     URL.revokeObjectURL(anchor.href);
   }
 }
@@ -487,7 +492,7 @@ function createApp(elements, options) {
           const target = msg.new_tab ? "_blank" : "_self";
           window.open(url, target);
         },
-        download: (msg) => download(msg.src, msg.filename, msg.media_type, options.prefix),
+        download: (msg) => download(msg.src, msg.filename, msg.media_type, options.prefix, msg.is_base64),
         notify: (msg) => Quasar.Notify.create(msg),
       };
 

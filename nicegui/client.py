@@ -259,7 +259,15 @@ class Client:
 
     def download(self, src: str | bytes, filename: str | None = None, media_type: str = '') -> None:
         """Download a file from a given URL or raw bytes."""
-        self.outbox.enqueue_message('download', {'src': src, 'filename': filename, 'media_type': media_type}, self.id)
+        if isinstance(src, bytes):
+            import base64
+            src = base64.b64encode(src).decode('ascii')
+            is_base64 = True
+        else:
+            is_base64 = False
+        self.outbox.enqueue_message('download', {
+            'src': src, 'filename': filename, 'media_type': media_type, 'is_base64': is_base64,
+        }, self.id)
 
     def on_connect(self, handler: Callable[..., Any] | Awaitable) -> None:
         """Add a callback to be invoked when the client connects.
