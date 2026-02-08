@@ -34,7 +34,7 @@ T = TypeVar('T')
 
 def _has_attribute(obj: object | Mapping, name: PropertyName) -> bool:
     """Check if nested attribute/key path exists."""
-    keys = (name,) if isinstance(name, str) else name
+    keys = _normalize_name(name)
     try:
         current = obj
         for key in keys:
@@ -42,10 +42,10 @@ def _has_attribute(obj: object | Mapping, name: PropertyName) -> bool:
                 if key not in current:
                     return False
                 current = current[key]
-            elif hasattr(current, key):
-                current = getattr(current, key)
             else:
-                return False
+                if not hasattr(current, key):
+                    return False
+                current = getattr(current, key)
         return True
     except (KeyError, AttributeError, TypeError):
         return False
@@ -53,24 +53,20 @@ def _has_attribute(obj: object | Mapping, name: PropertyName) -> bool:
 
 def _get_attribute(obj: object | Mapping, name: PropertyName) -> Any:
     """Get value at nested attribute/key path."""
-    keys = (name,) if isinstance(name, str) else name
+    keys = _normalize_name(name)
     current = obj
     for key in keys:
-        current = current[key] if isinstance(current, Mapping) else getattr(current, key)
+        if isinstance(current, Mapping):
+            current = current[key]
+        else:
+            current = getattr(current, key)
     return current
 
 
 def _set_attribute(obj: object | Mapping, name: PropertyName, value: Any) -> None:
     """Set value at nested attribute/key path, auto-creating intermediate dicts."""
-    keys = (name,) if isinstance(name, str) else name
-    if len(keys) == 1:
-        if isinstance(obj, dict):
-            obj[keys[0]] = value
-        else:
-            setattr(obj, keys[0], value)
-        return
-
-    current: Any = obj
+    keys = _normalize_name(name)
+    current = obj
     for key in keys[:-1]:
         if isinstance(current, dict):
             if key not in current:
