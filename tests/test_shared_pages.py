@@ -83,6 +83,7 @@ async def test_shared_page_elements_visible_to_all(create_user: Callable[[], Use
 
     user1.find('Add Label').click()
     await user1.should_see('Dynamic Content')
+    await user2.should_see('Dynamic Content')
 
 
 async def test_shared_page_client_not_pruned(user: User) -> None:
@@ -119,6 +120,26 @@ async def test_shared_page_storage_client_raises(user: User) -> None:
         ui.label('Shared Page')
         with pytest.raises(RuntimeError, match=r'app\.storage\.client is not supported on shared pages'):
             _ = app.storage.client
+
+    await user.open('/')
+
+
+async def test_shared_page_storage_browser_raises(user: User) -> None:
+    @ui.page('/', shared=True)
+    def index():
+        ui.label('Shared Page')
+        with pytest.raises(RuntimeError, match=r'app\.storage\.browser is not supported on shared pages'):
+            _ = app.storage.browser
+
+    await user.open('/')
+
+
+async def test_shared_page_storage_user_raises(user: User) -> None:
+    @ui.page('/', shared=True)
+    def index():
+        ui.label('Shared Page')
+        with pytest.raises(RuntimeError, match=r'app\.storage\.user is not supported on shared pages'):
+            _ = app.storage.user
 
     await user.open('/')
 
@@ -225,3 +246,32 @@ def test_shared_page_screen_reuses_across_tabs(screen: Screen):
 
     # First visit creates client, second reuses it (page function not called again)
     assert len(client_ids) == 1, 'Page function should only run once for shared pages'
+
+
+async def test_shared_page_survives_disconnect(create_user: Callable[[], User]) -> None:
+    @ui.page('/', shared=True)
+    def index():
+        ui.label('Shared Page')
+        ui.button('Add Item', on_click=lambda: ui.label('New Item'))
+
+    user1 = create_user()
+    user2 = create_user()
+
+    await user1.open('/')
+    await user2.open('/')
+
+    client = user1.client
+    assert client is not None
+    assert client.id in Client.instances
+
+    # Simulate a disconnect by directly calling handle_disconnect with a fake socket ID
+    client._socket_to_document_id['fake-socket'] = 'fake-doc'  # pylint: disable=protected-access
+    client._num_connections['fake-doc'] = 1  # pylint: disable=protected-access
+    client.handle_disconnect('fake-socket')
+
+    # Shared client should still exist after disconnect
+    assert client.id in Client.instances, 'Shared client should survive disconnect'
+
+    # Second user should still be able to interact
+    await user2.open('/')
+    await user2.should_see('Shared Page')
