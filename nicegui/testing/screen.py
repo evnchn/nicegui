@@ -72,7 +72,7 @@ class Screen:
             Server.instance.should_exit = True
         if self.server_thread:
             self.server_thread.join(timeout=5)
-            if self.server_thread.is_alive():
+            if self.server_thread.is_alive() and hasattr(Server, 'instance'):
                 Server.instance.force_exit = True
                 self.server_thread.join(timeout=2)
         if core.loop:

@@ -230,7 +230,10 @@ async def _on_handshake(sid: str, data: dict[str, Any]) -> bool:
 def _on_disconnect(sid: str) -> None:
     client_id = core.sid_to_client.pop(sid, None)
     if client_id:
-        core.client_to_sid.pop(client_id, None)
+        # Only remove the client mapping if it still points to this SID
+        # (a reconnect may have already replaced it with a newer SID).
+        if core.client_to_sid.get(client_id) == sid:
+            del core.client_to_sid[client_id]
     core.sid_environ.pop(sid, None)
     if client_id:
         client = Client.instances.get(client_id)
