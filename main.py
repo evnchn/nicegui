@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+from datetime import date
 from pathlib import Path
 from xml.sax.saxutils import escape as xml_escape
 
@@ -52,6 +53,7 @@ def _robots_txt() -> PlainTextResponse:
 
 @app.get('/sitemap.xml')
 def _sitemap_xml() -> Response:
+    today = date.today().isoformat()
     urls = [
         ('/', '1.0', 'weekly'),
         ('/documentation', '0.9', 'weekly'),
@@ -64,6 +66,7 @@ def _sitemap_xml() -> Response:
     xml_urls = '\n'.join(
         f'  <url>\n'
         f'    <loc>{xml_escape(seo.SITE_URL + path)}</loc>\n'
+        f'    <lastmod>{today}</lastmod>\n'
         f'    <changefreq>{freq}</changefreq>\n'
         f'    <priority>{priority}</priority>\n'
         f'  </url>'

@@ -10,7 +10,7 @@ def create() -> None:
     _description = ('Browse in-depth NiceGUI examples including authentication, '
                     'chat apps, todo lists, and more. '
                     'See real Python GUI code with live demos.')
-    ui.page_title('Examples | NiceGUI')
+    ui.page_title(_title)
     ui.add_head_html(page_seo_html(title=_title, description=_description, path='/examples'))
     ui.add_body_html(noscript_fallback(title=_title, description=_description))
     ui.add_head_html(breadcrumb_jsonld([('Home', '/'), ('Examples', '/examples')]))
