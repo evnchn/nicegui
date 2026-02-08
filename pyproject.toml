@@ -84,6 +84,7 @@ dev = [
     "rcssmin>=1.2.1,<2",
     "tinycss2>=1.4.0,<2",
     "poetry-dynamic-versioning>=1.8.0,<2",
+    "mini-racer>=0.12.4",
 ]
 types = [
     "types-aiofiles>=23.1.0",
