@@ -2,7 +2,7 @@ from collections.abc import Callable
 from typing import Any
 from urllib.parse import urlparse
 
-from .. import background_tasks, json
+from .. import background_tasks, helpers, json
 from ..client import Client
 from ..context import context
 from ..element import Element
@@ -66,17 +66,21 @@ class Navigate:
         else:
             raise TypeError(f'Invalid target type: {type(target)}')
 
+        client = context.client
+        if client.is_shared:
+            helpers.warn_once('ui.navigate.to on a shared page will navigate ALL connected browsers')
+
         if not new_tab and isinstance(target, str):
             parsed = urlparse(path)
             if not parsed.scheme and not parsed.netloc and \
-                    any(isinstance(el, SubPages) for el in context.client.elements.values()):
-                async def navigate_sub_pages(client: Client) -> None:
-                    with client:
-                        await client.sub_pages_router._handle_navigate(path)  # pylint: disable=protected-access
-                background_tasks.create(navigate_sub_pages(context.client), name='navigate_sub_pages')
+                    any(isinstance(el, SubPages) for el in client.elements.values()):
+                async def navigate_sub_pages(c: Client) -> None:
+                    with c:
+                        await c.sub_pages_router._handle_navigate(path)  # pylint: disable=protected-access
+                background_tasks.create(navigate_sub_pages(client), name='navigate_sub_pages')
                 return
 
-        context.client.open(path, new_tab)
+        client.open(path, new_tab)
 
 
 class History:
