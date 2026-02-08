@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from . import json
@@ -57,6 +58,16 @@ def _reset_context() -> None:
     _ctx = None
 
 
+def _postprocess(html: str) -> str:
+    """Clean up SSR HTML to avoid hydration quirks."""
+    def _strip_value(match: re.Match[str]) -> str:
+        tag = match.group(0)
+        if 'type="number"' in tag:
+            return re.sub(r'\s+value="[^"]*"', '', tag)
+        return tag
+    return re.sub(r'<input\b[^>]*>', _strip_value, html)
+
+
 def render_to_string(elements: dict[int, dict]) -> str:
     """Render a NiceGUI element tree to HTML using Vue's server-side renderer."""
     ctx = _get_context()
@@ -74,7 +85,7 @@ def render_to_string(elements: dict[int, dict]) -> str:
           }});
           undefined;
         ''')
-        return ctx.eval('globalThis._ssr_result') or ''
+        return _postprocess(ctx.eval('globalThis._ssr_result') or '')
     except RuntimeError:
         # MiniRacer's event loop was closed (e.g., server restart) - recreate context
         _reset_context()
@@ -90,4 +101,4 @@ def render_to_string(elements: dict[int, dict]) -> str:
           }});
           undefined;
         ''')
-        return ctx.eval('globalThis._ssr_result') or ''
+        return _postprocess(ctx.eval('globalThis._ssr_result') or '')
