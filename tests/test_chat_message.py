@@ -1,10 +1,9 @@
+import pytest
 from html_sanitizer import Sanitizer
 from selenium.webdriver.common.by import By
 
-import pytest
 from nicegui import ui
 from nicegui.testing import Screen
-
 
 
 @pytest.fixture(autouse=True)

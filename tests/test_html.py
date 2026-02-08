@@ -1,9 +1,8 @@
+import pytest
 from html_sanitizer import Sanitizer
 
-import pytest
 from nicegui import html, ui
 from nicegui.testing import Screen
-
 
 
 @pytest.fixture(autouse=True)

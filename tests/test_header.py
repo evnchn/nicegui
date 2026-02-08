@@ -4,13 +4,13 @@ from nicegui import ui
 from nicegui.testing import Screen
 
 
-@pytest.mark.parametrize('add_scroll_padding', [True, False])
-
 @pytest.fixture(autouse=True)
 def enable_csp_for_module(enable_csp):
     """Enable CSP for all tests in this module."""
     yield
 
+
+@pytest.mark.parametrize('add_scroll_padding', [True, False])
 def test_no_scroll_padding(screen: Screen, add_scroll_padding: bool):
     @ui.page('/')
     def page():

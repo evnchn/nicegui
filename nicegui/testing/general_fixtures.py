@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from .. import core
 from . import general
 
 # pylint: disable=redefined-outer-name
@@ -49,7 +50,6 @@ def enable_csp():
             '''Enable CSP for all tests in this module.'''
             yield
     """
-    from .. import core
     original_value = core.app.config.csp_enabled
     core.app.config.csp_enabled = True
     yield

@@ -1,9 +1,9 @@
 import weakref
 
 import pytest
+
 from nicegui import binding, ui
 from nicegui.testing import Screen
-
 
 
 @pytest.fixture(autouse=True)

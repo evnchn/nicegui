@@ -2,6 +2,7 @@ import asyncio
 import copy
 
 import pytest
+
 from nicegui import ui
 from nicegui.observables import ObservableDict, ObservableList, ObservableSet
 from nicegui.testing import Screen, User

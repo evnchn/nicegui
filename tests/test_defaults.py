@@ -1,6 +1,6 @@
 import pytest
-from nicegui import ui
 
+from nicegui import ui
 
 
 @pytest.fixture(autouse=True)

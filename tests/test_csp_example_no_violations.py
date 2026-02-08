@@ -50,11 +50,11 @@ def test_csp_example_no_violations(screen: Screen) -> None:
             for i, violation in enumerate(csp_violations, 1):
                 level = violation.get('level', 'UNKNOWN')
                 message = violation.get('message', 'No message')
-                print(f"\n{i}. [{level}]")
-                print(f"   {message[:500]}")
+                print(f'\n{i}. [{level}]')
+                print(f'   {message[:500]}')
             print(f"{'='*70}\n")
 
-        assert len(csp_violations) == 0, f"Found {len(csp_violations)} CSP violations in example"
+        assert len(csp_violations) == 0, f'Found {len(csp_violations)} CSP violations in example'
 
     finally:
         app.config.csp_enabled = original_csp

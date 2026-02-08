@@ -8,7 +8,6 @@ from nicegui import binding, ui
 from nicegui.testing import Screen, User
 
 
-
 @pytest.fixture(autouse=True)
 def enable_csp_for_module(enable_csp):
     """Enable CSP for all tests in this module."""

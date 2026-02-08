@@ -1,9 +1,9 @@
 import asyncio
 
 import pytest
+
 from nicegui import Client, app, ui
 from nicegui.testing import Screen
-
 
 
 @pytest.fixture(autouse=True)

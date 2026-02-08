@@ -1,8 +1,8 @@
 from pathlib import Path
 
+import pytest
 from PIL import Image
 
-import pytest
 from nicegui import app, ui
 from nicegui.testing import Screen
 

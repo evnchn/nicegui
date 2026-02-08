@@ -1,7 +1,7 @@
 import pytest
+
 from nicegui import ui
 from nicegui.testing import Screen, User
-
 
 
 @pytest.fixture(autouse=True)

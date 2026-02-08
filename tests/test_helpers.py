@@ -5,6 +5,7 @@ import webbrowser
 from pathlib import Path
 
 import pytest
+
 from nicegui import helpers
 
 TEST_DIR = Path(__file__).parent

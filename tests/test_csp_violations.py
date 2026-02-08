@@ -15,7 +15,7 @@ def enable_csp_for_module(enable_csp):
     yield
 
 
-def check_for_csp_violations(screen: Screen, page_name: str = "unknown") -> list:
+def check_for_csp_violations(screen: Screen, page_name: str = 'unknown') -> list:
     """Check browser console logs for CSP violations and return them.
 
     Args:
@@ -45,10 +45,10 @@ def check_for_csp_violations(screen: Screen, page_name: str = "unknown") -> list
         for i, violation in enumerate(csp_violations, 1):
             level = violation.get('level', 'UNKNOWN')
             message = violation.get('message', 'No message')
-            print(f"\n{i}. [{level}]")
-            print(f"   {message[:500]}")
+            print(f'\n{i}. [{level}]')
+            print(f'   {message[:500]}')
             if len(message) > 500:
-                print("   ... (truncated)")
+                print('   ... (truncated)')
         print(f"{'='*70}\n")
 
     return csp_violations
@@ -64,8 +64,8 @@ def test_basic_page_no_violations(screen: Screen) -> None:
     screen.open('/')
     screen.should_contain('Hello CSP!')
 
-    violations = check_for_csp_violations(screen, "basic_page")
-    assert len(violations) == 0, f"Found {len(violations)} CSP violations on basic page"
+    violations = check_for_csp_violations(screen, 'basic_page')
+    assert len(violations) == 0, f'Found {len(violations)} CSP violations on basic page'
 
 
 def test_tailwind_classes_no_violations(screen: Screen) -> None:
@@ -79,8 +79,8 @@ def test_tailwind_classes_no_violations(screen: Screen) -> None:
     screen.open('/')
     screen.should_contain('Red text')
 
-    violations = check_for_csp_violations(screen, "tailwind_classes")
-    assert len(violations) == 0, f"Found {len(violations)} CSP violations with Tailwind classes"
+    violations = check_for_csp_violations(screen, 'tailwind_classes')
+    assert len(violations) == 0, f'Found {len(violations)} CSP violations with Tailwind classes'
 
 
 def test_add_head_html_no_violations(screen: Screen) -> None:
@@ -93,8 +93,8 @@ def test_add_head_html_no_violations(screen: Screen) -> None:
     screen.open('/')
     screen.should_contain('Styled text')
 
-    violations = check_for_csp_violations(screen, "add_head_html")
-    assert len(violations) == 0, f"Found {len(violations)} CSP violations with add_head_html"
+    violations = check_for_csp_violations(screen, 'add_head_html')
+    assert len(violations) == 0, f'Found {len(violations)} CSP violations with add_head_html'
 
 
 def test_button_click_no_violations(screen: Screen) -> None:
@@ -107,8 +107,8 @@ def test_button_click_no_violations(screen: Screen) -> None:
     screen.click('Click me')
     screen.should_contain('Clicked!')
 
-    violations = check_for_csp_violations(screen, "button_click")
-    assert len(violations) == 0, f"Found {len(violations)} CSP violations after button click"
+    violations = check_for_csp_violations(screen, 'button_click')
+    assert len(violations) == 0, f'Found {len(violations)} CSP violations after button click'
 
 
 def test_dynamic_content_no_violations(screen: Screen) -> None:
@@ -127,8 +127,8 @@ def test_dynamic_content_no_violations(screen: Screen) -> None:
     screen.click('Add label')
     screen.should_contain('New label')
 
-    violations = check_for_csp_violations(screen, "dynamic_content")
-    assert len(violations) == 0, f"Found {len(violations)} CSP violations with dynamic content"
+    violations = check_for_csp_violations(screen, 'dynamic_content')
+    assert len(violations) == 0, f'Found {len(violations)} CSP violations with dynamic content'
 
 
 if __name__ == '__main__':
