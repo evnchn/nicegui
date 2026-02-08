@@ -58,7 +58,7 @@ class page:
         :param favicon: optional relative filepath or absolute URL to a favicon (default: `None`, NiceGUI icon will be used)
         :param dark: whether to use Quasar's dark mode (defaults to `dark` argument of `run` command)
         :param language: language of the page (defaults to `language` argument of `run` command)
-        :param shared: whether all users share the same page instance (default: ``False``, *added in version 3.x.0*)
+        :param shared: whether all users share the same page instance (default: ``False``)
         :param response_timeout: maximum time for the decorated function to build the page (default: 3.0 seconds)
         :param reconnect_timeout: maximum time the server waits for the browser to reconnect (defaults to `reconnect_timeout` argument of `run` command))
         :param api_router: APIRouter instance to use, can be left `None` to use the default
@@ -76,6 +76,7 @@ class page:
         self.api_router = api_router or core.app.router
         self.reconnect_timeout = reconnect_timeout
         self._shared_client: weakref.ref[Client] | None = None
+        self._shared_lock: asyncio.Lock = asyncio.Lock()
 
         create_favicon_route(self.path, favicon)
 
@@ -161,11 +162,14 @@ class page:
             # NOTE cleaning up the keyword args so the signature is consistent with "func" again
             dec_kwargs = {k: v for k, v in dec_kwargs.items() if k in parameters_of_decorated_func}
 
-            # Shared page shortcut: reuse existing client if available
-            if self.shared and self._shared_client is not None and (client := self._shared_client()) is not None:
-                client._request = request  # pylint: disable=protected-access
-                binding._refresh_step()  # pylint: disable=protected-access
-                return client.build_response(request)
+            # Shared page: reuse existing client or create one under lock to prevent races
+            if self.shared:
+                async with self._shared_lock:
+                    if self._shared_client is not None and (client := self._shared_client()) is not None:
+                        client._request = request  # pylint: disable=protected-access
+                        request.scope['nicegui_page_path'] = self.path
+                        binding._refresh_step()  # pylint: disable=protected-access
+                        return client.build_response(request)
 
             with Client(self, request=request) as client:
                 if self.shared:
