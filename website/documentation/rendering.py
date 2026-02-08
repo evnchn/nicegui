@@ -1,6 +1,15 @@
+import functools
+
 from nicegui import ui
 
-from ..seo import DEFAULT_DESCRIPTION, TAGLINE, breadcrumb_jsonld, extract_description, noscript_fallback, page_seo_html
+from ..seo import (
+    DEFAULT_DESCRIPTION,
+    TAGLINE,
+    breadcrumb_jsonld,
+    extract_description,
+    noscript_fallback,
+    page_seo_html,
+)
 from ..style import section_heading, subheading
 from .content import DocumentationPage
 from .content.overview import tiles
@@ -8,34 +17,41 @@ from .custom_restructured_text import CustomRestructuredText as custom_restructu
 from .demo import demo
 from .reference import generate_class_doc
 
-_TILE_DESCRIPTIONS: dict[str, str] = {}
 
-
+@functools.cache
 def _get_tile_descriptions() -> dict[str, str]:
-    if not _TILE_DESCRIPTIONS:
-        from .content import registry
-        for module, description in tiles:
-            name = module.__name__.rsplit('.', 1)[-1]
-            if name in registry:
-                _TILE_DESCRIPTIONS[name] = extract_description(description)
-    return _TILE_DESCRIPTIONS
+    from .content import registry  # NOTE: deferred to avoid circular import
+    result: dict[str, str] = {}
+    for module, description in tiles:
+        name = module.__name__.rsplit('.', 1)[-1]
+        desc = extract_description(description)
+        if name in registry and desc is not None:
+            result[name] = desc
+    return result
 
 
 def _build_page_description(documentation: DocumentationPage) -> str:
-    """Build a meta description from the documentation page content."""
     tile_desc = _get_tile_descriptions().get(documentation.name)
     if tile_desc:
         return tile_desc
     for part in documentation.parts:
         if part.description and not part.link:
-            return extract_description(part.description)
+            desc = extract_description(part.description)
+            if desc is not None:
+                return desc
         if part.search_text and not part.link:
-            return extract_description(part.search_text)
+            desc = extract_description(part.search_text)
+            if desc is not None:
+                return desc
     if documentation.subtitle:
-        return extract_description(documentation.subtitle)
+        desc = extract_description(documentation.subtitle)
+        if desc is not None:
+            return desc
     for part in documentation.parts:
         if part.description:
-            return extract_description(part.description)
+            desc = extract_description(part.description)
+            if desc is not None:
+                return desc
     return DEFAULT_DESCRIPTION
 
 
@@ -44,14 +60,11 @@ def render_page(documentation: DocumentationPage) -> None:
     title = (documentation.title or '').replace('*', '')
     if not title:
         seo_title = f'NiceGUI Documentation - {TAGLINE}'
-        page_title = seo_title
     elif title.split()[0] == 'NiceGUI':
         seo_title = f'{title} - {TAGLINE}'
-        page_title = title
     else:
         seo_title = f'{title} - NiceGUI Documentation'
-        page_title = f'{title} | NiceGUI'
-    ui.page_title(page_title)
+    ui.page_title(seo_title)
 
     description = _build_page_description(documentation)
     path = f'/documentation/{documentation.name}' if documentation.name else '/documentation'

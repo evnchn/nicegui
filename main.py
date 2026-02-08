@@ -51,8 +51,6 @@ def _robots_txt() -> PlainTextResponse:
 
 @app.get('/sitemap.xml')
 def _sitemap_xml() -> Response:
-    from datetime import date
-    today = date.today().isoformat()
     urls = [
         ('/', '1.0', 'weekly'),
         ('/documentation', '0.9', 'weekly'),
@@ -65,7 +63,6 @@ def _sitemap_xml() -> Response:
     xml_urls = '\n'.join(
         f'  <url>\n'
         f'    <loc>{seo.SITE_URL}{path}</loc>\n'
-        f'    <lastmod>{today}</lastmod>\n'
         f'    <changefreq>{freq}</changefreq>\n'
         f'    <priority>{priority}</priority>\n'
         f'  </url>'

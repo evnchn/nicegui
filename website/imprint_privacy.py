@@ -1,6 +1,7 @@
 from nicegui import ui
-from website.documentation.rendering import section_heading, subheading
-from website.seo import noscript_fallback, page_seo_html
+
+from .documentation.rendering import section_heading, subheading
+from .seo import noscript_fallback, page_seo_html
 
 
 def create():

@@ -14,27 +14,23 @@ DEFAULT_DESCRIPTION = (
 OG_IMAGE_URL = f'{SITE_URL}/logo_square.png'
 OG_IMAGE_WIDTH = 290
 OG_IMAGE_HEIGHT = 290
-MIN_DESCRIPTION_LENGTH = 80
+MIN_DESCRIPTION_LENGTH = 50
 
 
 def meta(name: str, content: str) -> str:
-    """Generate an HTML meta tag."""
-    return f'<meta name="{name}" content="{_esc(content)}" />'
+    return f'<meta name="{name}" content="{html.escape(content, quote=True)}" />'
 
 
-def meta_property(property_: str, content: str) -> str:
-    """Generate an HTML meta tag with property attribute (for Open Graph)."""
-    return f'<meta property="{property_}" content="{_esc(content)}" />'
+def meta_property(prop: str, content: str) -> str:
+    return f'<meta property="{prop}" content="{html.escape(content, quote=True)}" />'
 
 
 def canonical_link(path: str) -> str:
-    """Generate a canonical link tag for the given path."""
     url = SITE_URL + path
-    return f'<link rel="canonical" href="{_esc(url)}" />'
+    return f'<link rel="canonical" href="{html.escape(url, quote=True)}" />'
 
 
 def open_graph_tags(*, title: str, description: str, url: str, og_type: str = 'website') -> str:
-    """Generate Open Graph meta tags."""
     return '\n'.join([
         meta_property('og:title', title),
         meta_property('og:description', description),
@@ -50,7 +46,6 @@ def open_graph_tags(*, title: str, description: str, url: str, og_type: str = 'w
 
 
 def twitter_card_tags(*, title: str, description: str) -> str:
-    """Generate Twitter Card meta tags."""
     return '\n'.join([
         meta('twitter:card', 'summary'),
         meta('twitter:title', title),
@@ -60,18 +55,17 @@ def twitter_card_tags(*, title: str, description: str) -> str:
 
 
 def noscript_fallback(*, title: str, description: str) -> str:
-    """Generate a <noscript> block for crawlers that cannot execute JavaScript."""
+    esc = html.escape
     return (
         f'<noscript>'
-        f'<h1>{_esc(title)}</h1>'
-        f'<p>{_esc(description)}</p>'
+        f'<h1>{esc(title)}</h1>'
+        f'<p>{esc(description)}</p>'
         f'<p>Visit <a href="{SITE_URL}">{SITE_URL}</a> for the full NiceGUI documentation.</p>'
         f'</noscript>'
     )
 
 
 def page_seo_html(*, title: str, description: str, path: str, og_type: str = 'website') -> str:
-    """Generate all SEO-related head HTML for a page."""
     url = SITE_URL + path
     parts = [
         meta('description', description),
@@ -103,27 +97,21 @@ def breadcrumb_jsonld(items: list[tuple[str, str]]) -> str:
     return f'<script type="application/ld+json">{json.dumps(ld, separators=(",", ":"))}</script>'
 
 
-def extract_description(text: str, max_length: int = 160) -> str:
-    """Extract a clean description from markdown/rst text, truncated to max_length."""
-    # Truncate before parameter/field documentation sections
+def extract_description(text: str, max_length: int = 160) -> str | None:
+    """Extract a clean description from markdown/rst text, or None if too short."""
     text = re.split(r'\n\s*:param\s', text, maxsplit=1)[0]
     text = re.split(r'\n\s*:type\s', text, maxsplit=1)[0]
     text = re.split(r'\n\s*:returns?\s', text, maxsplit=1)[0]
-    # Strip markdown/rst formatting
     text = re.sub(r'`([^`<]+)\s*<[^>]+>`_', r'\1', text)  # rst link: `text <url>`_ -> text
     text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)  # md link: [text](url) -> text
     text = re.sub(r'`([^`]*)`', r'\1', text)  # `code` -> code
-    text = re.sub(r'`', '', text)  # remove any remaining stray backticks
+    text = re.sub(r'`', '', text)
     text = re.sub(r'\*+([^*]+)\*+', r'\1', text)  # *bold*/**bold** -> bold
-    text = re.sub(r'(?<!\w)_([^_]+)_(?!\w)', r'\1', text)  # _italic_ -> italic (word boundary)
+    text = re.sub(r'(?<!\w)_([^_]+)_(?!\w)', r'\1', text)  # _italic_ -> italic
     text = re.sub(r'<[^>]+>', '', text)  # remove HTML tags
     text = re.sub(r'\s+', ' ', text).strip()
     if not text or len(text) < MIN_DESCRIPTION_LENGTH:
-        return DEFAULT_DESCRIPTION
+        return None
     if len(text) > max_length:
         text = text[:max_length - 3].rsplit(' ', 1)[0] + '...'
     return text
-
-
-def _esc(s: str) -> str:
-    return html.escape(s, quote=True)

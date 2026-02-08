@@ -6,7 +6,7 @@ from nicegui import app, ui
 
 from . import svg
 from .search import Search
-from .seo import SITE_URL
+from .seo import DEFAULT_DESCRIPTION, SITE_URL
 from .star import add_star
 
 HEADER_HTML = (Path(__file__).parent / 'static' / 'header.html').read_text(encoding='utf-8')
@@ -31,7 +31,7 @@ JSON_LD_SOFTWARE = json.dumps({
     'name': 'NiceGUI',
     'applicationCategory': 'DeveloperApplication',
     'operatingSystem': 'Any',
-    'description': 'An easy-to-use, Python-based UI framework, which shows up in your web browser.',
+    'description': DEFAULT_DESCRIPTION,
     'url': SITE_URL,
     'offers': {
         '@type': 'Offer',
