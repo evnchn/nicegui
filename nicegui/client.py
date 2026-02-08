@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import base64
 import inspect
 import time
 import uuid
@@ -260,7 +261,6 @@ class Client:
     def download(self, src: str | bytes, filename: str | None = None, media_type: str = '') -> None:
         """Download a file from a given URL or raw bytes."""
         if isinstance(src, bytes):
-            import base64
             src = base64.b64encode(src).decode('ascii')
             is_base64 = True
         else:
