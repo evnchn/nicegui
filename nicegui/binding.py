@@ -34,18 +34,8 @@ T = TypeVar('T')
 
 def _has_attribute(obj: object | Mapping, name: PropertyName) -> bool:
     """Check if nested attribute/key path exists."""
-    keys = _normalize_name(name)
     try:
-        current = obj
-        for key in keys:
-            if isinstance(current, Mapping):
-                if key not in current:
-                    return False
-                current = current[key]
-            else:
-                if not hasattr(current, key):
-                    return False
-                current = getattr(current, key)
+        _get_attribute(obj, name)
         return True
     except (KeyError, AttributeError, TypeError):
         return False
