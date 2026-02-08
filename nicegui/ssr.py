@@ -60,12 +60,72 @@ def _reset_context() -> None:
 
 def _postprocess(html: str) -> str:
     """Clean up SSR HTML to avoid hydration quirks."""
+    # Strip value from number inputs (causes cursor position issues during hydration)
     def _strip_value(match: re.Match[str]) -> str:
         tag = match.group(0)
         if 'type="number"' in tag:
             return re.sub(r'\s+value="[^"]*"', '', tag)
         return tag
-    return re.sub(r'<input\b[^>]*>', _strip_value, html)
+    html = re.sub(r'<input\b[^>]*>', _strip_value, html)
+
+    # Replace <a name="..."> (link targets) with <div name="..."> to avoid nested <a> tags.
+    # Nested <a> tags are invalid HTML; browsers restructure them, breaking Vue hydration.
+    html = _fix_anchor_nesting(html)
+
+    return html
+
+
+def _fix_anchor_nesting(html: str) -> str:
+    """Replace <a> link targets with <div> to prevent invalid nested <a> tags."""
+    result: list[str] = []
+    i = 0
+    length = len(html)
+    while i < length:
+        if not _is_anchor_open(html, i, length):
+            result.append(html[i])
+            i += 1
+            continue
+        tag_end = html.index('>', i) + 1
+        tag = html[i:tag_end]
+        if not re.search(r'\bname=', tag):
+            result.append(html[i])
+            i += 1
+            continue
+        # This is a link target <a name="..."> - replace with <div>
+        result.append('<div' + tag[2:])
+        i = tag_end
+        i = _copy_until_matching_close(html, i, length, result)
+    return ''.join(result)
+
+
+def _is_anchor_open(html: str, i: int, length: int) -> bool:
+    """Check if position i starts an <a> opening tag."""
+    return (html[i] == '<' and i + 2 < length and html[i + 1] == 'a' and html[i + 2] in (' ', '>'))
+
+
+def _copy_until_matching_close(html: str, i: int, length: int, result: list[str]) -> int:
+    """Copy HTML content until the matching </a> is found, replacing it with </div>."""
+    depth = 1
+    while i < length and depth > 0:
+        if html[i] != '<':
+            result.append(html[i])
+            i += 1
+            continue
+        if i + 3 < length and html[i + 1] == '/' and html[i + 2] == 'a' and html[i + 3] == '>':
+            depth -= 1
+            if depth == 0:
+                result.append('</div>')
+                return i + 4
+            result.append('</a>')
+            i += 4
+        elif _is_anchor_open(html, i, length):
+            depth += 1
+            result.append(html[i])
+            i += 1
+        else:
+            result.append(html[i])
+            i += 1
+    return i
 
 
 def render_to_string(elements: dict[int, dict]) -> str:
