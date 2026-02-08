@@ -46,15 +46,19 @@ class CSPMiddleware(BaseHTTPMiddleware):
         # Only add CSP header to HTML responses (pages, not API endpoints or static files)
         if core.app.config.csp_enabled and response.headers.get('X-NiceGUI-Content') == 'page':
             csp_directives = [
+                "default-src 'self'",
                 # Scripts: require nonce, use strict-dynamic for dynamically loaded scripts
                 # Note: 'unsafe-eval' is needed for Vue's template compiler
                 f"script-src 'nonce-{nonce}' 'strict-dynamic' 'unsafe-eval'",
                 # Styles: require nonce for inline styles (Tailwind is auto-disabled when CSP is enabled)
                 f"style-src 'self' 'nonce-{nonce}'",
                 f"style-src-elem 'self' 'nonce-{nonce}'",
+                # Allow Socket.IO/WebSocket connections
+                "connect-src 'self' ws: wss:",
                 # Other directives
                 "font-src 'self' data:",
                 "img-src 'self' data: https:",
+                "media-src 'self'",
                 "object-src 'none'",
                 "base-uri 'none'",
             ]

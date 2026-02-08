@@ -170,8 +170,13 @@ class Client:
         vue_style_tag = '<style>' + '\n'.join(vue_styles) + '</style>'
         body_html = vue_style_tag + '\n' + self.body_html + '\n' + '\n'.join(vue_html)
         if csp_nonce:
-            head_html = re.sub(r'<style(?=[\s>])', f'<style nonce="{csp_nonce}"', head_html, flags=re.IGNORECASE)
-            body_html = re.sub(r'<style(?=[\s>])', f'<style nonce="{csp_nonce}"', body_html, flags=re.IGNORECASE)
+            nonce_attr = f'nonce="{csp_nonce}"'
+            # Add nonces to <style> and <script> tags that don't already have one
+            for tag in ('style', 'script'):
+                pattern = rf'<{tag}(?!\s[^>]*nonce=)(?=[\s>])'
+                replacement = f'<{tag} {nonce_attr}'
+                head_html = re.sub(pattern, replacement, head_html, flags=re.IGNORECASE)
+                body_html = re.sub(pattern, replacement, body_html, flags=re.IGNORECASE)
         return templates.TemplateResponse(
             request=request,
             name='index.html',

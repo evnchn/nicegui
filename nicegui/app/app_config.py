@@ -19,11 +19,15 @@ class AppConfig:
 
     @csp_enabled.setter
     def csp_enabled(self, value: bool) -> None:
-        """Enable or disable CSP. When enabled, Tailwind is automatically disabled."""
+        """Enable or disable CSP. When enabled, Tailwind and UnoCSS are automatically disabled."""
         self._csp_enabled = value
-        # Auto-disable Tailwind when CSP is enabled (if run config has been set)
-        if value and hasattr(self, 'tailwind'):
+        if not hasattr(self, 'tailwind'):
+            return
+        if value:
             self.tailwind = False
+            self.unocss = None
+        else:
+            self.tailwind = self._tailwind_requested
     socket_io_js_query_params: dict = field(default_factory=dict)
     socket_io_js_extra_headers: dict = field(default_factory=dict)
     socket_io_js_transports: list[Literal['websocket', 'polling']] = \
