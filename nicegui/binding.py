@@ -97,7 +97,7 @@ def _set_attribute(obj: object | Mapping, name: PropertyName, value: Any) -> Non
             if i < len(name) - 2 and not isinstance(current, (Mapping, object)):
                 raise TypeError(
                     f"Cannot traverse nested path {'.'.join(name[:i+2])}: "
-                    f"intermediate value is {type(current).__name__}, not dict or object"
+                    f'intermediate value is {type(current).__name__}, not dict or object'
                 )
         else:
             # Object attribute access

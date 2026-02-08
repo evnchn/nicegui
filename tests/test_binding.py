@@ -449,7 +449,7 @@ def test_nested_visibility_binding(screen: Screen):
 
     @ui.page('/')
     def page():
-        with ui.column().bind_visibility_from(data, 'ui', 'sidebar', 'visible') as col:
+        with ui.column().bind_visibility_from(data, 'ui', 'sidebar', 'visible'):
             ui.label('Content')
 
     screen.open('/')
