@@ -5,7 +5,7 @@ import re
 
 SITE_URL = 'https://nicegui.io'
 SITE_NAME = 'NiceGUI'
-TAGLINE = 'Easy-to-Use Python-Based UI Framework'
+TAGLINE = 'Python-Based UI Framework'
 DEFAULT_DESCRIPTION = (
     'NiceGUI is an easy-to-use, Python-based UI framework, '
     'which shows up in your web browser. '
