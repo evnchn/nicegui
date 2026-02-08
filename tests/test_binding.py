@@ -516,7 +516,7 @@ def test_nested_enabled_binding(screen: Screen):
     button = screen.selenium.find_element('css selector', '.test-button')
     assert button.get_attribute('aria-disabled') == 'true' or button.get_attribute('disabled') is not None, \
         'Button should be disabled when enabled is False'
-    
+
     # Change to enabled and verify
     data['ui']['button']['enabled'] = True
     screen.wait(0.5)
