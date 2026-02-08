@@ -501,8 +501,8 @@ function createApp(elements, options) {
 
       function dispatchMessage(raw) {
         const msg = typeof raw === "string" ? JSON.parse(raw) : raw;
-        const type = msg.type;
-        delete msg.type;
+        const type = msg._msg_type;
+        delete msg._msg_type;
 
         if (msg._id !== undefined) {
           const message_id = msg._id;

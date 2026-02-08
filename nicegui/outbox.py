@@ -144,8 +144,7 @@ class Outbox:
 
         sid = core.client_to_sid.get(client_id)
         if sid:
-            data['type'] = message_type
-            await core.eio.send(sid, data)
+            await core.eio.send(sid, {**data, '_msg_type': message_type})
         if core.air is not None and core.air.is_air_target(client_id):
             await core.air.emit(message_type, data, room=client_id)
 
