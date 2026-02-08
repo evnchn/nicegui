@@ -18,7 +18,7 @@ class IconElement(Element):
 
     def bind_icon_to(self,
                      target_object: Any,
-                     target_name: str = 'icon',
+                     target_name: str | tuple[str, ...] = 'icon',
                      forward: Callable[[Any], Any] | None = None, *,
                      strict: bool | None = None,
                      ) -> Self:
@@ -28,7 +28,9 @@ class IconElement(Element):
         The update happens immediately and whenever a value changes.
 
         :param target_object: The object to bind to.
-        :param target_name: The name of the property to bind to.
+        :param target_name: The name of the property to bind to (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_icon_to(data, 'icon')``
+            For nested keys: ``bind_icon_to(storage, ('ui', 'icon'))``
         :param forward: A function to apply to the value before applying it to the target (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,
             performs a check if the object is not a dictionary, *added in version 3.0.0*).
@@ -38,7 +40,7 @@ class IconElement(Element):
 
     def bind_icon_from(self,
                        target_object: Any,
-                       target_name: str = 'icon',
+                       target_name: str | tuple[str, ...] = 'icon',
                        backward: Callable[[Any], Any] | None = None, *,
                        strict: bool | None = None,
                        ) -> Self:
@@ -48,7 +50,9 @@ class IconElement(Element):
         The update happens immediately and whenever a value changes.
 
         :param target_object: The object to bind from.
-        :param target_name: The name of the property to bind from.
+        :param target_name: The name of the property to bind from (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_icon_from(data, 'icon')``
+            For nested keys: ``bind_icon_from(storage, ('ui', 'icon'))``
         :param backward: A function to apply to the value before applying it to this element (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,
             performs a check if the object is not a dictionary, *added in version 3.0.0*).
@@ -58,9 +62,9 @@ class IconElement(Element):
 
     def bind_icon(self,
                   target_object: Any,
-                  target_name: str = 'icon', *,
+                  target_name: str | tuple[str, ...] = 'icon',
                   forward: Callable[[Any], Any] | None = None,
-                  backward: Callable[[Any], Any] | None = None,
+                  backward: Callable[[Any], Any] | None = None, *,
                   strict: bool | None = None,
                   ) -> Self:
         """Bind the icon of this element to the target object's target_name property.
@@ -70,7 +74,9 @@ class IconElement(Element):
         The backward binding takes precedence for the initial synchronization.
 
         :param target_object: The object to bind to.
-        :param target_name: The name of the property to bind to.
+        :param target_name: The name of the property to bind to (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_icon(data, 'icon')``
+            For nested keys: ``bind_icon(storage, ('ui', 'icon'))``
         :param forward: A function to apply to the value before applying it to the target (default: identity).
         :param backward: A function to apply to the value before applying it to this element (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,

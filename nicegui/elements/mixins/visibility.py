@@ -25,7 +25,7 @@ class Visibility:
 
     def bind_visibility_to(self,
                            target_object: Any,
-                           target_name: str = 'visible',
+                           target_name: str | tuple[str, ...] = 'visible',
                            forward: Callable[[Any], Any] | None = None, *,
                            strict: bool | None = None,
                            ) -> Self:
@@ -35,7 +35,9 @@ class Visibility:
         The update happens immediately and whenever a value changes.
 
         :param target_object: The object to bind to.
-        :param target_name: The name of the property to bind to.
+        :param target_name: The name of the property to bind to (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_visibility_to(data, 'visible')``
+            For nested keys: ``bind_visibility_to(storage, ('ui', 'visible'))``
         :param forward: A function to apply to the value before applying it to the target (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,
             performs a check if the object is not a dictionary, *added in version 3.0.0*).
@@ -45,7 +47,7 @@ class Visibility:
 
     def bind_visibility_from(self,
                              target_object: Any,
-                             target_name: str = 'visible',
+                             target_name: str | tuple[str, ...] = 'visible',
                              backward: Callable[[Any], Any] | None = None, *,
                              value: Any = None,
                              strict: bool | None = None,
@@ -56,7 +58,9 @@ class Visibility:
         The update happens immediately and whenever a value changes.
 
         :param target_object: The object to bind from.
-        :param target_name: The name of the property to bind from.
+        :param target_name: The name of the property to bind from (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_visibility_from(data, 'visible')``
+            For nested keys: ``bind_visibility_from(storage, ('ui', 'visible'))``
         :param backward: A function to apply to the value before applying it to this element (default: identity).
         :param value: If specified, the element will be visible only when the target value is equal to this value.
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,
@@ -70,9 +74,9 @@ class Visibility:
 
     def bind_visibility(self,
                         target_object: Any,
-                        target_name: str = 'visible', *,
+                        target_name: str | tuple[str, ...] = 'visible',
                         forward: Callable[[Any], Any] | None = None,
-                        backward: Callable[[Any], Any] | None = None,
+                        backward: Callable[[Any], Any] | None = None, *,
                         value: Any = None,
                         strict: bool | None = None,
                         ) -> Self:
@@ -83,7 +87,9 @@ class Visibility:
         The backward binding takes precedence for the initial synchronization.
 
         :param target_object: The object to bind to.
-        :param target_name: The name of the property to bind to.
+        :param target_name: The name of the property to bind to (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_visibility(data, 'visible')``
+            For nested keys: ``bind_visibility(storage, ('ui', 'visible'))``
         :param forward: A function to apply to the value before applying it to the target (default: identity).
         :param backward: A function to apply to the value before applying it to this element (default: identity).
         :param value: If specified, the element will be visible only when the target value is equal to this value.

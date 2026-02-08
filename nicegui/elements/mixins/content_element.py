@@ -19,7 +19,7 @@ class ContentElement(Element):
 
     def bind_content_to(self,
                         target_object: Any,
-                        target_name: str = 'content',
+                        target_name: str | tuple[str, ...] = 'content',
                         forward: Callable[[Any], Any] | None = None, *,
                         strict: bool | None = None,
                         ) -> Self:
@@ -29,7 +29,9 @@ class ContentElement(Element):
         The update happens immediately and whenever a value changes.
 
         :param target_object: The object to bind to.
-        :param target_name: The name of the property to bind to.
+        :param target_name: The name of the property to bind to (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_content_to(data, 'content')``
+            For nested keys: ``bind_content_to(storage, ('ui', 'content'))``
         :param forward: A function to apply to the value before applying it to the target (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,
             performs a check if the object is not a dictionary, *added in version 3.0.0*).
@@ -39,7 +41,7 @@ class ContentElement(Element):
 
     def bind_content_from(self,
                           target_object: Any,
-                          target_name: str = 'content',
+                          target_name: str | tuple[str, ...] = 'content',
                           backward: Callable[[Any], Any] | None = None, *,
                           strict: bool | None = None,
                           ) -> Self:
@@ -49,7 +51,9 @@ class ContentElement(Element):
         The update happens immediately and whenever a value changes.
 
         :param target_object: The object to bind from.
-        :param target_name: The name of the property to bind from.
+        :param target_name: The name of the property to bind from (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_content_from(data, 'content')``
+            For nested keys: ``bind_content_from(storage, ('ui', 'content'))``
         :param backward: A function to apply to the value before applying it to this element (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,
             performs a check if the object is not a dictionary, *added in version 3.0.0*).
@@ -59,9 +63,9 @@ class ContentElement(Element):
 
     def bind_content(self,
                      target_object: Any,
-                     target_name: str = 'content', *,
+                     target_name: str | tuple[str, ...] = 'content',
                      forward: Callable[[Any], Any] | None = None,
-                     backward: Callable[[Any], Any] | None = None,
+                     backward: Callable[[Any], Any] | None = None, *,
                      strict: bool | None = None,
                      ) -> Self:
         """Bind the content of this element to the target object's target_name property.
@@ -71,7 +75,9 @@ class ContentElement(Element):
         The backward binding takes precedence for the initial synchronization.
 
         :param target_object: The object to bind to.
-        :param target_name: The name of the property to bind to.
+        :param target_name: The name of the property to bind to (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_content(data, 'content')``
+            For nested keys: ``bind_content(storage, ('ui', 'content'))``
         :param forward: A function to apply to the value before applying it to the target (default: identity).
         :param backward: A function to apply to the value before applying it to this element (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,

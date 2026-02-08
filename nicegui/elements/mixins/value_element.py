@@ -49,7 +49,7 @@ class ValueElement(Element):
 
     def bind_value_to(self,
                       target_object: Any,
-                      target_name: str = 'value',
+                      target_name: str | tuple[str, ...] = 'value',
                       forward: Callable[[Any], Any] | None = None, *,
                       strict: bool | None = None,
                       ) -> Self:
@@ -59,7 +59,9 @@ class ValueElement(Element):
         The update happens immediately and whenever a value changes.
 
         :param target_object: The object to bind to.
-        :param target_name: The name of the property to bind to.
+        :param target_name: The name of the property to bind to (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_value_to(data, 'username')``
+            For nested keys: ``bind_value_to(storage, ('profile', 'username'))``
         :param forward: A function to apply to the value before applying it to the target (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,
             performs a check if the object is not a dictionary, *added in version 3.0.0*).
@@ -69,7 +71,7 @@ class ValueElement(Element):
 
     def bind_value_from(self,
                         target_object: Any,
-                        target_name: str = 'value',
+                        target_name: str | tuple[str, ...] = 'value',
                         backward: Callable[[Any], Any] | None = None, *,
                         strict: bool | None = None,
                         ) -> Self:
@@ -79,7 +81,9 @@ class ValueElement(Element):
         The update happens immediately and whenever a value changes.
 
         :param target_object: The object to bind from.
-        :param target_name: The name of the property to bind from.
+        :param target_name: The name of the property to bind from (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_value_from(data, 'username')``
+            For nested keys: ``bind_value_from(storage, ('profile', 'username'))``
         :param backward: A function to apply to the value before applying it to this element (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,
             performs a check if the object is not a dictionary, *added in version 3.0.0*).
@@ -89,9 +93,9 @@ class ValueElement(Element):
 
     def bind_value(self,
                    target_object: Any,
-                   target_name: str = 'value', *,
+                   target_name: str | tuple[str, ...] = 'value',
                    forward: Callable[[Any], Any] | None = None,
-                   backward: Callable[[Any], Any] | None = None,
+                   backward: Callable[[Any], Any] | None = None, *,
                    strict: bool | None = None,
                    ) -> Self:
         """Bind the value of this element to the target object's target_name property.
@@ -101,7 +105,9 @@ class ValueElement(Element):
         The backward binding takes precedence for the initial synchronization.
 
         :param target_object: The object to bind to.
-        :param target_name: The name of the property to bind to.
+        :param target_name: The name of the property to bind to (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_value(data, 'username')``
+            For nested keys: ``bind_value(storage, ('profile', 'username'))``
         :param forward: A function to apply to the value before applying it to the target (default: identity).
         :param backward: A function to apply to the value before applying it to this element (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,

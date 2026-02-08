@@ -18,7 +18,7 @@ class TextElement(Element):
 
     def bind_text_to(self,
                      target_object: Any,
-                     target_name: str = 'text',
+                     target_name: str | tuple[str, ...] = 'text',
                      forward: Callable[[Any], Any] | None = None, *,
                      strict: bool | None = None,
                      ) -> Self:
@@ -28,7 +28,9 @@ class TextElement(Element):
         The update happens immediately and whenever a value changes.
 
         :param target_object: The object to bind to.
-        :param target_name: The name of the property to bind to.
+        :param target_name: The name of the property to bind to (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_text_to(data, 'message')``
+            For nested keys: ``bind_text_to(storage, ('config', 'message'))``
         :param forward: A function to apply to the value before applying it to the target (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,
             performs a check if the object is not a dictionary, *added in version 3.0.0*).
@@ -38,7 +40,7 @@ class TextElement(Element):
 
     def bind_text_from(self,
                        target_object: Any,
-                       target_name: str = 'text',
+                       target_name: str | tuple[str, ...] = 'text',
                        backward: Callable[[Any], Any] | None = None, *,
                        strict: bool | None = None,
                        ) -> Self:
@@ -48,7 +50,9 @@ class TextElement(Element):
         The update happens immediately and whenever a value changes.
 
         :param target_object: The object to bind from.
-        :param target_name: The name of the property to bind from.
+        :param target_name: The name of the property to bind from (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_text_from(data, 'message')``
+            For nested keys: ``bind_text_from(storage, ('config', 'message'))``
         :param backward: A function to apply to the value before applying it to this element (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,
             performs a check if the object is not a dictionary, *added in version 3.0.0*).
@@ -58,9 +62,9 @@ class TextElement(Element):
 
     def bind_text(self,
                   target_object: Any,
-                  target_name: str = 'text', *,
+                  target_name: str | tuple[str, ...] = 'text',
                   forward: Callable[[Any], Any] | None = None,
-                  backward: Callable[[Any], Any] | None = None,
+                  backward: Callable[[Any], Any] | None = None, *,
                   strict: bool | None = None,
                   ) -> Self:
         """Bind the text of this element to the target object's target_name property.
@@ -70,7 +74,9 @@ class TextElement(Element):
         The backward binding takes precedence for the initial synchronization.
 
         :param target_object: The object to bind to.
-        :param target_name: The name of the property to bind to.
+        :param target_name: The name of the property to bind to (single key as string) or a tuple of nested keys.
+            For single keys: ``bind_text(data, 'message')``
+            For nested keys: ``bind_text(storage, ('config', 'message'))``
         :param forward: A function to apply to the value before applying it to the target (default: identity).
         :param backward: A function to apply to the value before applying it to this element (default: identity).
         :param strict: Whether to check (and raise) if the target object has the specified property (default: None,
