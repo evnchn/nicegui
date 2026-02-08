@@ -1,16 +1,61 @@
 from nicegui import ui
 
+from ..seo import DEFAULT_DESCRIPTION, TAGLINE, extract_description, page_seo_html
 from ..style import section_heading, subheading
 from .content import DocumentationPage
+from .content.overview import tiles
 from .custom_restructured_text import CustomRestructuredText as custom_restructured_text
 from .demo import demo
 from .reference import generate_class_doc
+
+_TILE_DESCRIPTIONS: dict[str, str] = {}
+
+
+def _get_tile_descriptions() -> dict[str, str]:
+    if not _TILE_DESCRIPTIONS:
+        from .content import registry
+        for module, description in tiles:
+            name = module.__name__.rsplit('.', 1)[-1]
+            if name in registry:
+                _TILE_DESCRIPTIONS[name] = extract_description(description)
+    return _TILE_DESCRIPTIONS
+
+
+def _build_page_description(documentation: DocumentationPage) -> str:
+    """Build a meta description from the documentation page content."""
+    tile_desc = _get_tile_descriptions().get(documentation.name)
+    if tile_desc:
+        return tile_desc
+    for part in documentation.parts:
+        if part.description and not part.link:
+            return extract_description(part.description)
+        if part.search_text and not part.link:
+            return extract_description(part.search_text)
+    if documentation.subtitle:
+        return extract_description(documentation.subtitle)
+    for part in documentation.parts:
+        if part.description:
+            return extract_description(part.description)
+    return DEFAULT_DESCRIPTION
 
 
 def render_page(documentation: DocumentationPage) -> None:
     """Render the documentation."""
     title = (documentation.title or '').replace('*', '')
-    ui.page_title('NiceGUI' if not title else title if title.split()[0] == 'NiceGUI' else f'{title} | NiceGUI')
+    if not title:
+        seo_title = f'NiceGUI Documentation - {TAGLINE}'
+        page_title = 'NiceGUI Documentation'
+    elif title.split()[0] == 'NiceGUI':
+        seo_title = f'{title} - {TAGLINE}'
+        page_title = title
+    else:
+        seo_title = f'{title} - NiceGUI Documentation'
+        page_title = f'{title} | NiceGUI'
+    ui.page_title(page_title)
+
+    description = _build_page_description(documentation)
+    path = f'/documentation/{documentation.name}' if documentation.name else '/documentation'
+    ui.add_head_html(page_seo_html(title=seo_title, description=description, path=path, og_type='article'))
 
     def render_content():
         section_heading(documentation.subtitle or '', documentation.heading)
