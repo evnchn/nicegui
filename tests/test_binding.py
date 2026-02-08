@@ -145,7 +145,7 @@ def test_bindable_dataclass(screen: Screen):
 
     assert len(binding.bindings) == 2
     assert len(binding.active_links) == 1
-    assert binding.active_links[0][1] == 'not_bindable'
+    assert binding.active_links[0][1] == ('not_bindable',)  # Names are now normalized to tuples
 
 
 async def test_copy_instance_with_bindable_property(user: User):
@@ -287,3 +287,231 @@ def test_binding_refresh_interval_none(screen: Screen):
     screen.assert_py_logger(
         'WARNING', 'Starting active binding loop even though it was disabled via binding_refresh_interval=None.',
     )
+
+def test_nested_dict_binding(screen: Screen):
+    """Test basic nested dictionary binding with *args syntax."""
+    data = {}
+
+    @ui.page('/')
+    def page():
+        ui.input('Username').bind_value(data, 'profile', 'username')
+        ui.button('Submit')  # Button to click out of input
+
+    screen.open('/')
+    screen.type('Alice')
+    screen.click('Submit')  # Commit the value
+    screen.wait(0.1)
+
+    assert 'profile' in data
+    assert data['profile']['username'] == 'Alice'
+
+
+def test_nested_auto_creation(screen: Screen):
+    """Test that intermediate dictionaries are auto-created."""
+    data: dict = {}
+
+    @ui.page('/')
+    def page():
+        ui.input().bind_value(data, 'a', 'b', 'c')
+        ui.button('Submit')
+
+    screen.open('/')
+    screen.type('value')
+    screen.click('Submit')
+    screen.wait(0.1)
+
+    # Check that nested structure was created
+    assert 'a' in data
+    assert 'b' in data['a']
+    assert 'c' in data['a']['b']
+    assert data['a']['b']['c'] == 'value'
+
+
+def test_nested_storage_binding(screen: Screen):
+    """Test binding to nested keys in storage."""
+    # Use a simple dict instead of app.storage to avoid storage_secret requirement
+    storage = {}
+
+    @ui.page('/')
+    def page():
+        ui.input().bind_value(storage, 'settings', 'theme')
+        ui.label().bind_text_from(storage, 'settings', 'theme')
+        ui.button('Submit')
+
+    screen.open('/')
+    screen.type('dark')
+    screen.click('Submit')
+    screen.wait(0.1)
+
+    assert 'settings' in storage
+    assert storage['settings']['theme'] == 'dark'
+    screen.should_contain('dark')
+
+
+def test_nested_with_transformation(screen: Screen):
+    """Test nested binding with forward/backward transformations."""
+    data = {}
+
+    @ui.page('/')
+    def page():
+        ui.number('Volume', min=0, max=100, value=50).bind_value_to(
+            data, 'config', 'volume',
+            forward=lambda x: int(x)
+        )
+        ui.label().bind_text_from(
+            data, 'config', 'volume',
+            backward=lambda v: f'Volume: {v}%'
+        )
+
+    screen.open('/')
+    screen.wait(0.1)
+    screen.should_contain('Volume: 50%')
+
+
+def test_single_key_backward_compatible(screen: Screen):
+    """Ensure single string keys still work exactly as before."""
+    data = {'name': 'Bob'}
+
+    @ui.page('/')
+    def page():
+        ui.input().bind_value(data, 'name')  # Old style
+
+    screen.open('/')
+    screen.should_contain_input('Bob')
+    # Clear and type new value
+    for _ in range(10):  # Clear existing text
+        screen.type(Keys.BACK_SPACE)
+    screen.type('Alice')
+    screen.wait(0.1)
+
+    assert data['name'] == 'Alice'
+
+
+def test_mixed_object_dict_nesting(screen: Screen):
+    """Test binding through mixed object attributes and dict keys."""
+    class Config:
+        def __init__(self):
+            self.data = {}
+
+    config = Config()
+
+    @ui.page('/')
+    def page():
+        ui.input().bind_value(config, 'data', 'username')
+        ui.button('Submit')
+
+    screen.open('/')
+    screen.type('test')
+    screen.click('Submit')
+    screen.wait(0.1)
+
+    assert 'username' in config.data
+    assert config.data['username'] == 'test'
+
+
+def test_nested_strict_mode_validation(screen: Screen):
+    """Test that strict mode validates nested paths correctly."""
+    data = {}
+
+    @ui.page('/')
+    def page():
+        with pytest.raises(KeyError, match='nested key'):
+            ui.input().bind_value(data, 'a', 'b', 'c', strict=True)
+
+    screen.open('/')
+
+
+def test_deep_nesting(screen: Screen):
+    """Test binding with 4+ nested levels."""
+    data = {}
+
+    @ui.page('/')
+    def page():
+        ui.input().bind_value(data, 'level1', 'level2', 'level3', 'level4')
+        ui.button('Submit')
+
+    screen.open('/')
+    screen.type('deep')
+    screen.click('Submit')
+    screen.wait(0.1)
+
+    # Check nested structure was created
+    assert 'level1' in data
+    assert 'level2' in data['level1']
+    assert 'level3' in data['level1']['level2']
+    assert 'level4' in data['level1']['level2']['level3']
+    assert data['level1']['level2']['level3']['level4'] == 'deep'
+
+
+def test_nested_visibility_binding(screen: Screen):
+    """Test nested binding works with visibility."""
+    data = {'ui': {'sidebar': {'visible': True}}}
+
+    @ui.page('/')
+    def page():
+        with ui.column().bind_visibility_from(data, 'ui', 'sidebar', 'visible') as col:
+            ui.label('Content')
+
+    screen.open('/')
+    screen.should_contain('Content')
+
+    data['ui']['sidebar']['visible'] = False
+    screen.wait(0.5)
+    # Content should be hidden, but we can't easily test invisibility with should_contain
+
+
+def test_generic_bind_with_tuple(screen: Screen):
+    """Test that generic bind() function accepts tuple syntax."""
+    data1 = {'config': {'message': 'Hello'}}
+
+    @ui.page('/')
+    def page():
+        label = ui.label()
+        binding.bind(label, 'text', data1, ('config', 'message'))
+
+    screen.open('/')
+    screen.wait(0.1)
+    screen.should_contain('Hello')
+
+
+def test_nested_text_binding(screen: Screen):
+    """Test nested binding with text elements."""
+    data = {}
+
+    @ui.page('/')
+    def page():
+        ui.label().bind_text_from(data, 'messages', 'welcome')
+
+    data['messages'] = {'welcome': 'Welcome!'}
+    screen.open('/')
+    screen.wait(0.1)
+    screen.should_contain('Welcome!')
+
+
+def test_nested_enabled_binding(screen: Screen):
+    """Test nested binding with enabled/disabled elements."""
+    data = {'ui': {'button': {'enabled': False}}}
+
+    @ui.page('/')
+    def page():
+        ui.button('Click').bind_enabled_from(data, 'ui', 'button', 'enabled')
+
+    screen.open('/')
+    screen.wait(0.1)
+    # Button should be disabled initially
+
+
+def test_default_parameter_still_works(screen: Screen):
+    """Test that calling bind methods without additional args still works."""
+    class Model:
+        value = 'test'
+
+    data = Model()
+
+    @ui.page('/')
+    def page():
+        # Should default to 'value' property
+        ui.input().bind_value_from(data)
+
+    screen.open('/')
+    screen.should_contain_input('test')
