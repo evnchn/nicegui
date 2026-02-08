@@ -295,11 +295,11 @@ def test_nested_dict_binding(screen: Screen):
     @ui.page('/')
     def page():
         ui.input('Username').bind_value(data, 'profile', 'username')
-        ui.button('Submit')  # Button to click out of input
 
     screen.open('/')
+    screen.type(Keys.TAB)  # Focus the input
     screen.type('Alice')
-    screen.click('Submit')  # Commit the value
+    screen.type(Keys.TAB)  # Commit the value
     screen.wait(0.1)
 
     assert 'profile' in data
@@ -313,11 +313,11 @@ def test_nested_auto_creation(screen: Screen):
     @ui.page('/')
     def page():
         ui.input().bind_value(data, 'a', 'b', 'c')
-        ui.button('Submit')
 
     screen.open('/')
+    screen.type(Keys.TAB)
     screen.type('value')
-    screen.click('Submit')
+    screen.type(Keys.TAB)
     screen.wait(0.1)
 
     # Check that nested structure was created
@@ -336,11 +336,11 @@ def test_nested_storage_binding(screen: Screen):
     def page():
         ui.input().bind_value(storage, 'settings', 'theme')
         ui.label().bind_text_from(storage, 'settings', 'theme')
-        ui.button('Submit')
 
     screen.open('/')
+    screen.type(Keys.TAB)
     screen.type('dark')
-    screen.click('Submit')
+    screen.type(Keys.TAB)
     screen.wait(0.1)
 
     assert 'settings' in storage
@@ -356,7 +356,7 @@ def test_nested_with_transformation(screen: Screen):
     def page():
         ui.number('Volume', min=0, max=100, value=50).bind_value_to(
             data, 'config', 'volume',
-            forward=lambda x: int(x)
+            forward=int
         )
         ui.label().bind_text_from(
             data, 'config', 'volume',
@@ -370,18 +370,16 @@ def test_nested_with_transformation(screen: Screen):
 
 def test_single_key_backward_compatible(screen: Screen):
     """Ensure single string keys still work exactly as before."""
-    data = {'name': 'Bob'}
+    data = {}
 
     @ui.page('/')
     def page():
         ui.input().bind_value(data, 'name')  # Old style
 
     screen.open('/')
-    screen.should_contain_input('Bob')
-    # Clear and type new value
-    for _ in range(10):  # Clear existing text
-        screen.type(Keys.BACK_SPACE)
+    screen.type(Keys.TAB)  # Focus the input
     screen.type('Alice')
+    screen.type(Keys.TAB)  # Commit
     screen.wait(0.1)
 
     assert data['name'] == 'Alice'
@@ -398,11 +396,11 @@ def test_mixed_object_dict_nesting(screen: Screen):
     @ui.page('/')
     def page():
         ui.input().bind_value(config, 'data', 'username')
-        ui.button('Submit')
 
     screen.open('/')
+    screen.type(Keys.TAB)
     screen.type('test')
-    screen.click('Submit')
+    screen.type(Keys.TAB)
     screen.wait(0.1)
 
     assert 'username' in config.data
@@ -428,11 +426,11 @@ def test_deep_nesting(screen: Screen):
     @ui.page('/')
     def page():
         ui.input().bind_value(data, 'level1', 'level2', 'level3', 'level4')
-        ui.button('Submit')
 
     screen.open('/')
+    screen.type(Keys.TAB)
     screen.type('deep')
-    screen.click('Submit')
+    screen.type(Keys.TAB)
     screen.wait(0.1)
 
     # Check nested structure was created

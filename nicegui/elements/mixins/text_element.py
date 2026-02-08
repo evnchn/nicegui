@@ -37,7 +37,7 @@ class TextElement(Element):
         """
         # Handle backward compatibility: if last positional arg is callable, treat it as forward function
         if target_name and callable(target_name[-1]):
-            *target_name, forward = target_name
+            target_name, forward = target_name[:-1], target_name[-1]
 
         if not target_name:
             target_name = ('text',)
@@ -66,7 +66,7 @@ class TextElement(Element):
         """
         # Handle backward compatibility: if last positional arg is callable, treat it as backward function
         if target_name and callable(target_name[-1]):
-            *target_name, backward = target_name
+            target_name, backward = target_name[:-1], target_name[-1]
 
         if not target_name:
             target_name = ('text',)

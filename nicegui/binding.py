@@ -20,11 +20,11 @@ if TYPE_CHECKING:
 
 MAX_PROPAGATION_TIME = 0.01
 
-propagation_visited: ContextVar[set[tuple[int, str]] | None] = ContextVar('propagation_visited', default=None)
+propagation_visited: ContextVar[set[tuple[int, tuple[str, ...]]] | None] = ContextVar('propagation_visited', default=None)
 
-bindings: defaultdict[tuple[int, str], list[tuple[Any, Any, str, Callable[[Any], Any] | None]]] = defaultdict(list)
-bindable_properties: weakref.WeakValueDictionary[tuple[int, str], Any] = weakref.WeakValueDictionary()
-active_links: list[tuple[Any, str, Any, str, Callable[[Any], Any] | None]] = []
+bindings: defaultdict[tuple[int, tuple[str, ...]], list[tuple[Any, Any, tuple[str, ...], Callable[[Any], Any] | None]]] = defaultdict(list)
+bindable_properties: weakref.WeakValueDictionary[tuple[int, tuple[str, ...]], Any] = weakref.WeakValueDictionary()
+active_links: list[tuple[Any, tuple[str, ...], Any, tuple[str, ...], Callable[[Any], Any] | None]] = []
 _active_links_added = asyncio.Event()
 
 TC = TypeVar('TC', bound=type)
@@ -83,7 +83,7 @@ def _set_attribute(obj: object | Mapping, name: PropertyName, value: Any) -> Non
 
     # Nested case: navigate to parent, creating missing dicts
     current = obj
-    for i, key in enumerate(name[:-1]):
+    for key in name[:-1]:
         if isinstance(current, Mapping):
             if key not in current:
                 # Auto-create intermediate dict, preserving type if possible
@@ -92,13 +92,6 @@ def _set_attribute(obj: object | Mapping, name: PropertyName, value: Any) -> Non
                 except (TypeError, ValueError):
                     current[key] = {}
             current = current[key]
-
-            # Validate intermediate value is traversable
-            if i < len(name) - 2 and not isinstance(current, (Mapping, object)):
-                raise TypeError(
-                    f"Cannot traverse nested path {'.'.join(name[:i+2])}: "
-                    f'intermediate value is {type(current).__name__}, not dict or object'
-                )
         else:
             # Object attribute access
             if not hasattr(current, key):
@@ -193,11 +186,34 @@ def _check_attribute_exists(other_obj: Any, other_name: PropertyName, *, role: L
         )
 
 
+def _path_contains_dict(obj: Any, name: PropertyName) -> bool:
+    """Check if the nested path traverses through any dict/Mapping."""
+    if isinstance(obj, Mapping):
+        return True
+    name = _normalize_name(name)
+    if len(name) == 1:
+        return isinstance(obj, Mapping)
+    # Check if we traverse through a dict at any level
+    try:
+        current = obj
+        for key in name[:-1]:  # Check all but the last key
+            if isinstance(current, Mapping):
+                return True
+            if hasattr(current, key):
+                current = getattr(current, key)
+                if isinstance(current, Mapping):
+                    return True
+        return isinstance(current, Mapping)
+    except (KeyError, AttributeError, TypeError):
+        # If we can't traverse, check if obj itself is a Mapping
+        return isinstance(obj, Mapping)
+
+
 def _check_self_and_other_attribute(self_obj: Any, self_name: PropertyName, other_obj: Any, other_name: PropertyName,
                                     self_strict: bool | None, other_strict: bool | None) -> None:
-    if self_strict or (self_strict is None and not isinstance(self_obj, dict)):
+    if self_strict or (self_strict is None and not _path_contains_dict(self_obj, self_name)):
         _check_attribute_exists(self_obj, self_name, role='self')
-    if other_strict or (other_strict is None and not isinstance(other_obj, dict)):
+    if other_strict or (other_strict is None and not _path_contains_dict(other_obj, other_name)):
         _check_attribute_exists(other_obj, other_name, role='other')
 
 
