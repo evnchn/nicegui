@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import re
 import time
 import uuid
 from collections import defaultdict
@@ -165,6 +166,12 @@ class Client:
             generate_resources(prefix, self.elements.values())
         # Get CSP nonce from request state (set by CSPMiddleware)
         csp_nonce = getattr(request.state, 'csp_nonce', '')
+        head_html = self.head_html
+        vue_style_tag = '<style>' + '\n'.join(vue_styles) + '</style>'
+        body_html = vue_style_tag + '\n' + self.body_html + '\n' + '\n'.join(vue_html)
+        if csp_nonce:
+            head_html = re.sub(r'<style(?=[\s>])', f'<style nonce="{csp_nonce}"', head_html, flags=re.IGNORECASE)
+            body_html = re.sub(r'<style(?=[\s>])', f'<style nonce="{csp_nonce}"', body_html, flags=re.IGNORECASE)
         return templates.TemplateResponse(
             request=request,
             name='index.html',
@@ -172,8 +179,8 @@ class Client:
                 'request': request,
                 'version': __version__,
                 'elements': elements.translate(HTML_ESCAPE_TABLE),
-                'head_html': self.head_html,
-                'body_html': '<style>' + '\n'.join(vue_styles) + '</style>\n' + self.body_html + '\n' + '\n'.join(vue_html),
+                'head_html': head_html,
+                'body_html': body_html,
                 'vue_scripts': '\n'.join(vue_scripts),
                 'imports': json.dumps(imports),
                 'js_imports': '\n'.join(js_imports),
