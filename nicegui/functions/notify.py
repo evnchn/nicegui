@@ -1,5 +1,6 @@
 from typing import Any, Literal
 
+from .. import helpers
 from ..context import context
 
 ARG_MAP = {
@@ -50,4 +51,6 @@ def notify(message: Any, *,
     options['message'] = str(message)
     options.update(kwargs)
     client = context.client
+    if client.is_shared:
+        helpers.warn_once('ui.notify on a shared page will show the notification on ALL connected browsers')
     client.outbox.enqueue_message('notify', options, client.id)

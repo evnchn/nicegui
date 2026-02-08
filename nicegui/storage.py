@@ -107,6 +107,11 @@ class Storage:
         """
         if core.is_script_mode_preflight():
             return {}
+        from .context import context as ctx  # pylint: disable=import-outside-toplevel
+        if ctx.slot_stack and ctx.client.is_shared:
+            raise RuntimeError('app.storage.browser is not supported on shared pages because the request identity '
+                               'is ambiguous when multiple browsers share the same page; '
+                               'use app.storage.general instead')
         request: Request | None = request_contextvar.get()
         if request is None:
             if Storage.secret is None:
@@ -128,6 +133,11 @@ class Storage:
         """
         if core.is_script_mode_preflight():
             return PseudoPersistentDict()
+        from .context import context as ctx  # pylint: disable=import-outside-toplevel
+        if ctx.slot_stack and ctx.client.is_shared:
+            raise RuntimeError('app.storage.user is not supported on shared pages because the request identity '
+                               'is ambiguous when multiple browsers share the same page; '
+                               'use app.storage.general instead')
         request: Request | None = request_contextvar.get()
         if request is None:
             if Storage.secret is None:
@@ -153,12 +163,19 @@ class Storage:
         Like `app.storage.tab` data is unique per browser tab but is even more volatile as it is already discarded
         when the connection to the client is lost through a page reload or a navigation.
         """
-        return context.client.storage
+        client = context.client
+        if client.is_shared:
+            raise RuntimeError('app.storage.client is not supported on shared pages because all browsers share '
+                               'the same client instance; use app.storage.general instead')
+        return client.storage
 
     @property
     def tab(self) -> observables.ObservableDict:
         """A volatile storage that is only kept during the current tab session."""
         client = context.client
+        if client.is_shared:
+            raise RuntimeError('app.storage.tab is not supported on shared pages because the tab identity is ambiguous '
+                               'when multiple browsers share the same page; use app.storage.general instead')
         if not client.has_socket_connection:
             raise RuntimeError('app.storage.tab can only be used with a client connection; '
                                'see https://nicegui.io/documentation/page#wait_for_client_connection to await it')

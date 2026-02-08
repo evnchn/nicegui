@@ -124,7 +124,12 @@ class Client:
 
         *Updated in version 2.0.0: The IP address is available even before the client connects.*
         *Updated in version 3.0.0: The IP address is always defined (never ``None``).*
+
+        Note: On shared pages, this returns the IP of the most recent visitor, not any specific user.
         """
+        if self.is_shared:
+            helpers.warn_once('client.ip on a shared page returns the IP of the most recent visitor, '
+                              'not any specific user')
         return self.request.client.host if self.request.client is not None else ''
 
     @property
@@ -235,11 +240,16 @@ class Client:
         Internally, ``await client.connected()`` is called before the JavaScript code is executed (*since version 3.0.0*).
         This might delay the execution of the JavaScript code and is not covered by the ``timeout`` parameter.
 
+        Note: On shared pages, JavaScript is executed on **all** connected browsers.
+        Awaiting the result is not supported on shared pages because multiple browsers would respond.
+
         :param code: JavaScript code to run
         :param timeout: timeout in seconds (default: 1.0)
 
         :return: AwaitableResponse that can be awaited to get the result of the JavaScript code
         """
+        if self.is_shared:
+            helpers.warn_once('run_javascript on a shared page will execute on ALL connected browsers')
         request_id = str(uuid.uuid4())
         target_id = self._temporary_socket_id or self.id
 
@@ -247,6 +257,11 @@ class Client:
             self.outbox.enqueue_message('run_javascript', {'code': code}, target_id)
 
         async def send_and_wait():
+            if self.is_shared:
+                raise RuntimeError(
+                    'Cannot await run_javascript on a shared page because multiple browsers would respond. '
+                    'Use run_javascript without await instead (fire-and-forget).'
+                )
             self.outbox.enqueue_message('run_javascript', {'code': code, 'request_id': request_id}, target_id)
             await self.connected()
             return await JavaScriptRequest(request_id, timeout=timeout)
@@ -255,11 +270,15 @@ class Client:
 
     def open(self, target: Callable | str, new_tab: bool = False) -> None:
         """Open a new page in the client."""
+        if self.is_shared:
+            helpers.warn_once('client.open on a shared page will navigate ALL connected browsers')
         path = target if isinstance(target, str) else self.page_routes[target]
         self.outbox.enqueue_message('open', {'path': path, 'new_tab': new_tab}, self.id)
 
     def download(self, src: str | bytes, filename: str | None = None, media_type: str = '') -> None:
         """Download a file from a given URL or raw bytes."""
+        if self.is_shared:
+            helpers.warn_once('client.download on a shared page will trigger download on ALL connected browsers')
         self.outbox.enqueue_message('download', {'src': src, 'filename': filename, 'media_type': media_type}, self.id)
 
     def on_connect(self, handler: Callable) -> None:
@@ -331,7 +350,8 @@ class Client:
                 self._num_connections.pop(document_id)
                 self._delete_tasks.pop(document_id)
                 await core.app.storage.close_tab(tab_id_to_close)
-                self.delete()
+                if not self.is_shared:
+                    self.delete()
         self._delete_tasks[document_id] = \
             background_tasks.create(delete_content(), name=f'delete content {document_id}')
 
@@ -426,6 +446,11 @@ class Client:
                               'See https://github.com/zauberzeug/nicegui/issues/3028 for more information.',
                               stack_info=True)
 
+    @property
+    def is_shared(self) -> bool:
+        """Whether this client belongs to a shared page."""
+        return self.page.shared
+
     @classmethod
     def prune_instances(cls, *, client_age_threshold: float = 60.0) -> None:
         """Prune stale clients."""
@@ -434,6 +459,7 @@ class Client:
                 client
                 for client in cls.instances.values()
                 if (
+                    not client.is_shared and
                     not client.has_socket_connection and
                     not client._delete_tasks and  # pylint: disable=protected-access
                     client.created <= time.time() - client_age_threshold
