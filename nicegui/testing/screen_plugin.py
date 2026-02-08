@@ -28,6 +28,7 @@ def _find_free_port() -> int:
 
 
 Screen.PORT = _find_free_port()
+Screen.SCREENSHOT_DIR = Path('screenshots') / str(os.getpid())
 DOWNLOAD_DIR = Path(tempfile.mkdtemp(prefix='nicegui-test-download-'))
 
 

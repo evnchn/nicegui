@@ -21,8 +21,13 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 
 def pytest_configure(config: pytest.Config) -> None:
-    """Register the "nicegui_main_file" marker."""
+    """Register the "nicegui_main_file" marker and set up session-unique storage path."""
     config.addinivalue_line('markers', 'nicegui_main_file: specify the main file for the test')
+
+    # Also update Storage.path directly in case the class was already imported
+    # before the env var was set (nicegui/__init__.py imports storage early).
+    from ..storage import Storage  # pylint: disable=import-outside-toplevel
+    Storage.path = Path(_nicegui_storage_dir).resolve()
 
 
 def pytest_unconfigure(config: pytest.Config) -> None:
