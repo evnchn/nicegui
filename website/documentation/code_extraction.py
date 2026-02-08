@@ -119,16 +119,28 @@ def remove_fake_init(code: str) -> str:
 
 
 def remove_fake_imports(code: str) -> str:
-    """Remove imports of ``FakeSubPages`` and ``FakeArguments``."""
+    """Remove imports of ``FakeSubPages`` and ``FakeArguments``.
+
+    Preserves other names on the same import line (e.g.
+    ``from x import FakeSubPages, RealThing`` becomes ``from x import RealThing``).
+    """
+    fake_names = {'FakeSubPages', 'FakeArguments'}
     lines = _lines(code)
     result = []
     for line in lines:
-        if 'FakeSubPages' in line and ('import' in line or '=' in line):
-            if 'import' in line:
-                continue
-        if 'FakeArguments' in line and 'import' in line:
+        stripped = line.strip()
+        if not any(name in stripped for name in fake_names) or 'import' not in stripped:
+            result.append(line)
             continue
-        result.append(line)
+        # Parse "from ... import a, b, c" style
+        m = re.match(r'(\s*from\s+\S+\s+import\s+)(.*)', line)
+        if m:
+            prefix, names_str = m.group(1), m.group(2)
+            kept = [n.strip() for n in names_str.split(',') if n.strip() not in fake_names]
+            if kept:
+                result.append(prefix + ', '.join(kept))
+            continue
+        # Plain "import FakeSubPages" - just drop the line
     return _join(result)
 
 

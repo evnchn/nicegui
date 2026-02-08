@@ -17,10 +17,10 @@ from . import doc
 
 class FakeSubPages(ui.column):
 
-    def __init__(self, routes: dict[str, Callable] | None = None, *, data: dict[str, Any] = {}) -> None:
+    def __init__(self, routes: dict[str, Callable] | None = None, *, data: dict[str, Any] | None = None) -> None:
         super().__init__()
         self.routes = routes or {}
-        self.data = data
+        self.data = data or {}
         self.task: asyncio.Task | None = None
         self.path_changed_handlers: list[Callable[[str], None]] = []
         self.route: str | None = None

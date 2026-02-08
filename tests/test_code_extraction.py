@@ -51,6 +51,13 @@ def test_remove_fake_imports():
     assert 'from nicegui import ui' in result
 
 
+def test_remove_fake_imports_preserves_colocated():
+    code = 'from foo import FakeSubPages, RealThing'
+    result = remove_fake_imports(code)
+    assert 'FakeSubPages' not in result
+    assert 'from foo import RealThing' in result
+
+
 def test_replace_fake_arguments():
     code = "lambda: main(FakeArguments(msg='hello'))"
     result = replace_fake_arguments(code)
@@ -123,7 +130,7 @@ def test_get_display_code_without_transformers():
 
 def test_get_display_code_with_transformers():
     def sample_demo():
-        sub_pages = 'FakeSubPages'  # noqa: F841
+        print('FakeSubPages')
 
     code = get_display_code(sample_demo, [make_replacer('FakeSubPages', 'ui.sub_pages')])
     assert 'ui.sub_pages' in code
