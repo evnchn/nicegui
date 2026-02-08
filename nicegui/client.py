@@ -223,6 +223,9 @@ class Client:
 
     async def disconnected(self) -> None:
         """Block execution until the client disconnects."""
+        if self.is_shared:
+            raise RuntimeError('client.disconnected() is not supported on shared pages because the shared client '
+                               'is never deleted; use client.on_disconnect() to handle individual browser disconnects')
         if not self.has_socket_connection:
             await self.connected()
         if self.id in self.instances:

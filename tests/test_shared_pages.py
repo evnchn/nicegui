@@ -181,6 +181,26 @@ async def test_shared_and_non_shared_pages_coexist(create_user: Callable[[], Use
     assert private_client1.id != private_client2.id
 
 
+async def test_shared_page_disconnected_raises(user: User) -> None:
+    @ui.page('/', shared=True)
+    async def index():
+        ui.label('Shared Page')
+        await ui.context.client.connected()
+        with pytest.raises(RuntimeError, match='not supported on shared pages'):
+            await ui.context.client.disconnected()
+
+    await user.open('/')
+
+
+async def test_shared_page_sub_pages_raises(user: User) -> None:
+    @ui.page('/', shared=True)
+    def index():
+        with pytest.raises(RuntimeError, match=r'ui\.sub_pages is not supported on shared pages'):
+            ui.sub_pages({'/': lambda: ui.label('Home')})
+
+    await user.open('/')
+
+
 def test_shared_page_screen_basic(screen: Screen):
     @ui.page('/', shared=True)
     def index():

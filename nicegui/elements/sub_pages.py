@@ -39,6 +39,9 @@ class SubPages(Element, component='sub_pages.js', default_classes='nicegui-sub-p
         :param show_404: whether to show a 404 error message if the full path could not be consumed
             (can be useful for dynamically created nested sub pages) (default: ``True``)
         """
+        if context.client.is_shared:
+            raise RuntimeError('ui.sub_pages is not supported on shared pages because navigation would affect '
+                               'all connected browsers simultaneously')
         super().__init__()
         self._router = context.client.sub_pages_router
         self._routes = routes or {}
