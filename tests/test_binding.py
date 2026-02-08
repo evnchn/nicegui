@@ -459,9 +459,11 @@ def test_nested_visibility_binding(screen: Screen):
 
     @ui.page('/')
     def page():
-        ui.column().bind_visibility_from(data, ('ui', 'sidebar', 'visible')).classes('test-column')
+        with ui.column().bind_visibility_from(data, ('ui', 'sidebar', 'visible')).classes('test-column'):
+            ui.label('Content')
 
     screen.open('/')
+    screen.should_contain('Content')
     # Verify the column is initially visible (no 'hidden' class)
     columns = screen.selenium.find_elements('css selector', '.test-column.hidden')
     assert len(columns) == 0, 'Column should be visible when visibility is True'
@@ -469,6 +471,8 @@ def test_nested_visibility_binding(screen: Screen):
     # Change visibility to False and verify
     data['ui']['sidebar']['visible'] = False
     screen.wait(0.5)
+    # Content should still exist in DOM but be hidden
+    screen.should_contain('Content')
     # Verify the 'hidden' class is applied when visibility is False
     columns = screen.selenium.find_elements('css selector', '.test-column.hidden')
     assert len(columns) > 0, 'Column should be hidden when visibility is False'
