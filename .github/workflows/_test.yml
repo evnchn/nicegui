@@ -20,7 +20,7 @@ jobs:
         python: ${{ fromJson(inputs.python-versions) }}
         scope: ${{ fromJson(inputs.scope) }}
       fail-fast: false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v6
