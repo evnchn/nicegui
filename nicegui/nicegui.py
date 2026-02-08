@@ -202,7 +202,7 @@ async def _on_connect(sid: str, environ: dict[str, Any]) -> None:
     query = {k: v[0] for k, v in urllib.parse.parse_qs(environ.get('QUERY_STRING', '')).items()}
     if query.get('implicit_handshake', '') == 'true':
         if not await _on_handshake(sid, query):
-            await eio.send(sid, {'_msg_type': 'error', 'message': 'Implicit handshake failed'})
+            await eio.send(sid, {'type': 'error', 'data': {'message': 'Implicit handshake failed'}})
             await eio.disconnect(sid)
 
 
@@ -244,7 +244,7 @@ async def _on_message(sid: str, data: Any) -> None:
     msg_type = msg.pop('type', None)
     if msg_type == 'handshake':
         ok = await _on_handshake(sid, msg)
-        await eio.send(sid, {'_msg_type': 'handshake_response', 'ok': ok})
+        await eio.send(sid, {'type': 'handshake_response', 'data': {'ok': ok}})
     elif msg_type == 'event':
         client = Client.instances.get(msg['client_id'])
         if client and client.has_socket_connection:

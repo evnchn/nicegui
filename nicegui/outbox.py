@@ -140,11 +140,10 @@ class Outbox:
 
     async def _emit(self, message: Message) -> None:
         client_id, message_type, data = message
-        data['_id'] = self.next_message_id
 
         sid = core.client_to_sid.get(client_id)
         if sid:
-            await core.eio.send(sid, {**data, '_msg_type': message_type})
+            await core.eio.send(sid, {'type': message_type, 'id': self.next_message_id, 'data': data})
         if core.air is not None and core.air.is_air_target(client_id):
             await core.air.emit(message_type, data, room=client_id)
 

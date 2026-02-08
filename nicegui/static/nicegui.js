@@ -500,15 +500,12 @@ function createApp(elements, options) {
       let isProcessingSocketMessage = false;
 
       function dispatchMessage(raw) {
-        const msg = typeof raw === "string" ? JSON.parse(raw) : raw;
-        const type = msg._msg_type;
-        delete msg._msg_type;
+        const envelope = typeof raw === "string" ? JSON.parse(raw) : raw;
+        const { type, id, data: msg } = envelope;
 
-        if (msg._id !== undefined) {
-          const message_id = msg._id;
-          if (message_id < window.nextMessageId) return;
-          window.nextMessageId = message_id + 1;
-          delete msg._id;
+        if (id !== undefined) {
+          if (id < window.nextMessageId) return;
+          window.nextMessageId = id + 1;
         }
 
         const handler = messageHandlers[type];
