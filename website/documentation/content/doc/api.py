@@ -75,6 +75,7 @@ def demo(title_: str,
          description: str, /, *,
          tab: str | Callable | None = None,
          lazy: bool = True,
+         code_transformers: list[Callable[[str], str]] | None = None,
          ) -> Callable[[Callable], Callable]:
     ...
 
@@ -83,6 +84,7 @@ def demo(title_: str,
 def demo(element: type, /,
          tab: str | Callable | None = None,
          lazy: bool = True,
+         code_transformers: list[Callable[[str], str]] | None = None,
          ) -> Callable[[Callable], Callable]:
     ...
 
@@ -91,6 +93,7 @@ def demo(element: type, /,
 def demo(function: Callable | Navigate, /,
          tab: str | Callable | None = None,
          lazy: bool = True,
+         code_transformers: list[Callable[[str], str]] | None = None,
          ) -> Callable[[Callable], Callable]:
     ...
 
@@ -126,7 +129,12 @@ def demo(*args, **kwargs) -> Callable[[Callable], Callable]:
             title=title_,
             description=description,
             description_format='md' if is_markdown else 'rst',
-            demo=Demo(function=function, lazy=kwargs.get('lazy', True), tab=kwargs.get('tab')),
+            demo=Demo(
+                function=function,
+                lazy=kwargs.get('lazy', True),
+                tab=kwargs.get('tab'),
+                code_transformers=kwargs.get('code_transformers'),
+            ),
         ))
         return function
     return decorator

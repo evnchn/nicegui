@@ -32,7 +32,8 @@ def render_page(documentation: DocumentationPage) -> None:
             if part.ui:
                 part.ui()
             if part.demo:
-                demo(part.demo.function, lazy=part.demo.lazy, tab=part.demo.tab)
+                demo(part.demo.function, lazy=part.demo.lazy, tab=part.demo.tab,
+                     code_transformers=part.demo.code_transformers)
             if part.reference:
                 generate_class_doc(part.reference, part.title)
             if part.link:

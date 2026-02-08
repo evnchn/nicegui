@@ -12,6 +12,7 @@ class Demo:
     function: Callable
     lazy: bool = True
     tab: str | Callable | None = None
+    code_transformers: list[Callable[[str], str]] | None = None
 
 
 @dataclass(**KWONLY_SLOTS)
