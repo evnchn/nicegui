@@ -1,6 +1,6 @@
 from nicegui import ui
 
-from ..seo import DEFAULT_DESCRIPTION, TAGLINE, extract_description, page_seo_html
+from ..seo import DEFAULT_DESCRIPTION, TAGLINE, breadcrumb_jsonld, extract_description, noscript_fallback, page_seo_html
 from ..style import section_heading, subheading
 from .content import DocumentationPage
 from .content.overview import tiles
@@ -44,7 +44,7 @@ def render_page(documentation: DocumentationPage) -> None:
     title = (documentation.title or '').replace('*', '')
     if not title:
         seo_title = f'NiceGUI Documentation - {TAGLINE}'
-        page_title = 'NiceGUI Documentation'
+        page_title = seo_title
     elif title.split()[0] == 'NiceGUI':
         seo_title = f'{title} - {TAGLINE}'
         page_title = title
@@ -56,6 +56,18 @@ def render_page(documentation: DocumentationPage) -> None:
     description = _build_page_description(documentation)
     path = f'/documentation/{documentation.name}' if documentation.name else '/documentation'
     ui.add_head_html(page_seo_html(title=seo_title, description=description, path=path, og_type='article'))
+    ui.add_body_html(noscript_fallback(title=seo_title, description=description))
+
+    breadcrumbs = [('Home', '/'), ('Documentation', '/documentation')]
+    if documentation.name:
+        if documentation.back_link is not None:
+            from .content import registry
+            parent = registry.get(documentation.back_link)
+            if parent and parent.title:
+                parent_title = parent.title.replace('*', '')
+                breadcrumbs.append((parent_title, f'/documentation/{documentation.back_link}'))
+        breadcrumbs.append((title, path))
+    ui.add_head_html(breadcrumb_jsonld(breadcrumbs))
 
     def render_content():
         section_heading(documentation.subtitle or '', documentation.heading)

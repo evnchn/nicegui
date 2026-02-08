@@ -1,5 +1,6 @@
 """SEO utilities for the NiceGUI documentation website."""
 import html
+import json
 import re
 
 SITE_URL = 'https://nicegui.io'
@@ -11,6 +12,9 @@ DEFAULT_DESCRIPTION = (
     'Create buttons, dialogs, Markdown, 3D scenes, plots and much more.'
 )
 OG_IMAGE_URL = f'{SITE_URL}/logo_square.png'
+OG_IMAGE_WIDTH = 290
+OG_IMAGE_HEIGHT = 290
+MIN_DESCRIPTION_LENGTH = 80
 
 
 def meta(name: str, content: str) -> str:
@@ -37,8 +41,11 @@ def open_graph_tags(*, title: str, description: str, url: str, og_type: str = 'w
         meta_property('og:url', url),
         meta_property('og:type', og_type),
         meta_property('og:site_name', SITE_NAME),
+        meta_property('og:locale', 'en_US'),
         meta_property('og:image', OG_IMAGE_URL),
         meta_property('og:image:alt', f'{SITE_NAME} logo'),
+        meta_property('og:image:width', str(OG_IMAGE_WIDTH)),
+        meta_property('og:image:height', str(OG_IMAGE_HEIGHT)),
     ])
 
 
@@ -50,6 +57,17 @@ def twitter_card_tags(*, title: str, description: str) -> str:
         meta('twitter:description', description),
         meta('twitter:image', OG_IMAGE_URL),
     ])
+
+
+def noscript_fallback(*, title: str, description: str) -> str:
+    """Generate a <noscript> block for crawlers that cannot execute JavaScript."""
+    return (
+        f'<noscript>'
+        f'<h1>{_esc(title)}</h1>'
+        f'<p>{_esc(description)}</p>'
+        f'<p>Visit <a href="{SITE_URL}">{SITE_URL}</a> for the full NiceGUI documentation.</p>'
+        f'</noscript>'
+    )
 
 
 def page_seo_html(*, title: str, description: str, path: str, og_type: str = 'website') -> str:
@@ -64,15 +82,44 @@ def page_seo_html(*, title: str, description: str, path: str, og_type: str = 'we
     return '\n'.join(parts)
 
 
+def breadcrumb_jsonld(items: list[tuple[str, str]]) -> str:
+    """Generate BreadcrumbList JSON-LD structured data.
+
+    :param items: list of (name, path) tuples for each breadcrumb level
+    """
+    ld = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+            {
+                '@type': 'ListItem',
+                'position': i + 1,
+                'name': name,
+                'item': SITE_URL + path,
+            }
+            for i, (name, path) in enumerate(items)
+        ],
+    }
+    return f'<script type="application/ld+json">{json.dumps(ld, separators=(",", ":"))}</script>'
+
+
 def extract_description(text: str, max_length: int = 160) -> str:
     """Extract a clean description from markdown/rst text, truncated to max_length."""
-    text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)  # [text](url) -> text
-    text = re.sub(r'`([^`]+)`', r'\1', text)  # `code` -> code
+    # Truncate before parameter/field documentation sections
+    text = re.split(r'\n\s*:param\s', text, maxsplit=1)[0]
+    text = re.split(r'\n\s*:type\s', text, maxsplit=1)[0]
+    text = re.split(r'\n\s*:returns?\s', text, maxsplit=1)[0]
+    # Strip markdown/rst formatting
+    text = re.sub(r'`([^`<]+)\s*<[^>]+>`_', r'\1', text)  # rst link: `text <url>`_ -> text
+    text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)  # md link: [text](url) -> text
+    text = re.sub(r'`([^`]*)`', r'\1', text)  # `code` -> code
+    text = re.sub(r'`', '', text)  # remove any remaining stray backticks
     text = re.sub(r'\*+([^*]+)\*+', r'\1', text)  # *bold*/**bold** -> bold
-    text = re.sub(r'_([^_]+)_', r'\1', text)  # _italic_ -> italic
-    text = re.sub(r':param\s+\w+:', '', text)  # remove :param x:
+    text = re.sub(r'(?<!\w)_([^_]+)_(?!\w)', r'\1', text)  # _italic_ -> italic (word boundary)
     text = re.sub(r'<[^>]+>', '', text)  # remove HTML tags
     text = re.sub(r'\s+', ' ', text).strip()
+    if not text or len(text) < MIN_DESCRIPTION_LENGTH:
+        return DEFAULT_DESCRIPTION
     if len(text) > max_length:
         text = text[:max_length - 3].rsplit(' ', 1)[0] + '...'
     return text

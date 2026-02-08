@@ -51,20 +51,25 @@ def _robots_txt() -> PlainTextResponse:
 
 @app.get('/sitemap.xml')
 def _sitemap_xml() -> Response:
+    from datetime import date
+    today = date.today().isoformat()
     urls = [
-        ('/', '1.0'),
-        ('/documentation', '0.9'),
-        ('/examples', '0.8'),
+        ('/', '1.0', 'weekly'),
+        ('/documentation', '0.9', 'weekly'),
+        ('/examples', '0.8', 'monthly'),
+        ('/imprint_privacy', '0.3', 'yearly'),
     ]
     for name in documentation.registry:
         if name:  # skip the overview page (already added as /documentation)
-            urls.append((f'/documentation/{name}', '0.7'))
+            urls.append((f'/documentation/{name}', '0.7', 'monthly'))
     xml_urls = '\n'.join(
         f'  <url>\n'
         f'    <loc>{seo.SITE_URL}{path}</loc>\n'
+        f'    <lastmod>{today}</lastmod>\n'
+        f'    <changefreq>{freq}</changefreq>\n'
         f'    <priority>{priority}</priority>\n'
         f'  </url>'
-        for path, priority in urls
+        for path, priority, freq in urls
     )
     xml = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
