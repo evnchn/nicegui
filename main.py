@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 from pathlib import Path
+from xml.sax.saxutils import escape as xml_escape
 
 from fastapi import Request
 from fastapi.responses import PlainTextResponse
@@ -62,7 +63,7 @@ def _sitemap_xml() -> Response:
             urls.append((f'/documentation/{name}', '0.7', 'monthly'))
     xml_urls = '\n'.join(
         f'  <url>\n'
-        f'    <loc>{seo.SITE_URL}{path}</loc>\n'
+        f'    <loc>{xml_escape(seo.SITE_URL + path)}</loc>\n'
         f'    <changefreq>{freq}</changefreq>\n'
         f'    <priority>{priority}</priority>\n'
         f'  </url>'

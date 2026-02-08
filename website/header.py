@@ -23,7 +23,7 @@ JSON_LD_ORGANIZATION = json.dumps({
         'https://discord.gg/TEpFeAaF4f',
         'https://www.reddit.com/r/nicegui/',
     ],
-}, separators=(',', ':'))
+}, separators=(',', ':')).replace('</', '<\\/')
 
 JSON_LD_SOFTWARE = json.dumps({
     '@context': 'https://schema.org',
@@ -42,7 +42,7 @@ JSON_LD_SOFTWARE = json.dumps({
         '@type': 'Organization',
         'name': 'Zauberzeug GmbH',
     },
-}, separators=(',', ':'))
+}, separators=(',', ':')).replace('</', '<\\/')
 
 
 def add_head_html() -> None:

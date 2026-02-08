@@ -1,7 +1,7 @@
 from nicegui import ui
 
 from .documentation.rendering import section_heading, subheading
-from .seo import noscript_fallback, page_seo_html
+from .seo import breadcrumb_jsonld, noscript_fallback, page_seo_html
 
 
 def create():
@@ -10,6 +10,7 @@ def create():
     ui.page_title('Imprint & Privacy | NiceGUI')
     ui.add_head_html(page_seo_html(title=_title, description=_description, path='/imprint_privacy'))
     ui.add_body_html(noscript_fallback(title=_title, description=_description))
+    ui.add_head_html(breadcrumb_jsonld([('Home', '/'), ('Imprint & Privacy', '/imprint_privacy')]))
 
     with ui.column().classes('w-full p-8 lg:p-16 max-w-[1250px] mx-auto'):
         section_heading('', 'Imprint')

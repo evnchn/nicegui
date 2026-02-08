@@ -94,7 +94,8 @@ def breadcrumb_jsonld(items: list[tuple[str, str]]) -> str:
             for i, (name, path) in enumerate(items)
         ],
     }
-    return f'<script type="application/ld+json">{json.dumps(ld, separators=(",", ":"))}</script>'
+    payload = json.dumps(ld, separators=(',', ':')).replace('</', '<\\/')
+    return f'<script type="application/ld+json">{payload}</script>'
 
 
 def extract_description(text: str, max_length: int = 160) -> str | None:
