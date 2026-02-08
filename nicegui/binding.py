@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any, Literal, TypeVar
 from typing_extensions import dataclass_transform
 
 from . import core
+from .binding_nested import PropertyName, _normalize_name, _path_contains_dict
 from .logging import log
 
 if TYPE_CHECKING:
@@ -29,8 +30,6 @@ _active_links_added = asyncio.Event()
 
 TC = TypeVar('TC', bound=type)
 T = TypeVar('T')
-
-PropertyName = str | tuple[str, ...]
 
 
 def _has_attribute(obj: object | Mapping, name: PropertyName) -> bool:
@@ -90,19 +89,6 @@ def _set_attribute(obj: object | Mapping, name: PropertyName, value: Any) -> Non
         current[final_key] = value
     else:
         setattr(current, final_key, value)
-
-
-def _normalize_name(name: PropertyName) -> tuple[str, ...]:
-    """Convert property name to normalized tuple format."""
-    if isinstance(name, str):
-        if not name:
-            raise ValueError('Property name cannot be an empty string')
-        return (name,)
-    if not name:
-        raise ValueError('Property name tuple cannot be empty')
-    if not all(isinstance(key, str) for key in name):
-        raise ValueError('Property name tuple must contain only strings')
-    return name
 
 
 async def refresh_loop() -> None:
@@ -167,24 +153,6 @@ def _propagate_recursively(source_obj: Any, source_name: PropertyName) -> None:
         if not _has_attribute(target_obj, target_name) or _get_attribute(target_obj, target_name) != target_value:
             _set_attribute(target_obj, target_name, target_value)
             _propagate_recursively(target_obj, target_name)
-
-
-def _path_contains_dict(obj: Any, name: PropertyName) -> bool:
-    """Check if the nested path traverses through any dict/Mapping."""
-    if isinstance(obj, Mapping):
-        return True
-    name = _normalize_name(name)
-    if len(name) == 1:
-        return False
-    try:
-        current = obj
-        for key in name[:-1]:
-            if isinstance(current, Mapping):
-                return True
-            current = getattr(current, key)
-        return isinstance(current, Mapping)
-    except (KeyError, AttributeError, TypeError):
-        return False
 
 
 def _check_attribute_exists(other_obj: Any, other_name: PropertyName, *, role: Literal['self', 'other']) -> None:
