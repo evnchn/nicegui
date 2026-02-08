@@ -12,6 +12,7 @@ _STATIC_DIR = Path(__file__).parent / 'static'
 _SSR_POLYFILLS_PATH = _STATIC_DIR / 'ssr-polyfills.js'
 _SSR_BUNDLE_PATH = _STATIC_DIR / 'ssr-bundle.js'
 _QUASAR_UMD_PATH = _STATIC_DIR / 'quasar.umd.prod.js'
+# NOTE: NiceGUI is single-threaded (asyncio), so no locking is needed for the global context.
 _ctx = None
 _import_failed = False
 _init_text: str | None = None
@@ -134,6 +135,8 @@ def render_to_string(elements: dict[int, dict]) -> str:
     if ctx is None:
         return ''
 
+    # MiniRacer's eval() drains the microtask queue (Promise .then/.catch) synchronously
+    # before returning, so reading _ssr_result immediately after the Promise resolves is safe.
     elements_json = json.dumps(elements)
     try:
         ctx.eval(f'''

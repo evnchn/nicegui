@@ -41,6 +41,9 @@ class Screen:
         self.connected = threading.Event()
         app.on_connect(self.connected.set)
         self.url = f'http://localhost:{self.PORT}'
+        # SSR hydration produces minor mismatches for components whose server-side rendering
+        # can't perfectly replicate client behavior (charts, editors, etc.). Vue handles these
+        # gracefully by patching the DOM. Allowed globally since 40+ tests trigger this warning.
         self.allowed_js_errors: list[str] = ['Hydration completed but contains mismatches.']
 
     def start_server(self) -> None:

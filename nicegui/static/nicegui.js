@@ -387,7 +387,7 @@ function createApp(elements, options) {
   setInterval(() => ack(), 3000);
   initUnoCss();
   const appDiv = document.getElementById("app");
-  const useSSR = appDiv && appDiv.children.length > 0;
+  const useSSR = appDiv && appDiv.innerHTML.trim() !== "";
   const vueCreateApp = useSSR ? Vue.createSSRApp : Vue.createApp;
   return (app = vueCreateApp({
     data() {

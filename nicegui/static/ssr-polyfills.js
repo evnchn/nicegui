@@ -57,6 +57,12 @@ globalThis.getComputedStyle = function() {
   }});
 };
 globalThis.matchMedia = function() { return { matches: false, addListener: noop, removeListener: noop, addEventListener: noop, removeEventListener: noop, media: '' }; };
+// MiniRacer provides setTimeout/clearTimeout natively via V8's event loop,
+// but define fallback stubs in case this runs in a bare V8 context.
+if (typeof globalThis.setTimeout === 'undefined') { globalThis.setTimeout = function(cb) { cb(); return 0; }; }
+if (typeof globalThis.clearTimeout === 'undefined') { globalThis.clearTimeout = noop; }
+if (typeof globalThis.setInterval === 'undefined') { globalThis.setInterval = function() { return 0; }; }
+if (typeof globalThis.clearInterval === 'undefined') { globalThis.clearInterval = noop; }
 globalThis.requestAnimationFrame = function(cb) { return setTimeout(cb, 0); };
 globalThis.cancelAnimationFrame = function(id) { clearTimeout(id); };
 globalThis.requestIdleCallback = function(cb) { return setTimeout(cb, 0); };

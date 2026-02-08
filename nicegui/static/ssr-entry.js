@@ -48,7 +48,9 @@ globalThis.renderNiceGUIToString = async function(elementsJson) {
       ...element.props,
     };
 
-    // Evaluate ':'-prefixed dynamic bindings (same as nicegui.js)
+    // Evaluate ':'-prefixed dynamic bindings (same as nicegui.js).
+    // These expressions originate from server-side Python element definitions,
+    // not from user input, so executing them here is safe.
     Object.entries(props).forEach(([key, value]) => {
       if (key.startsWith(':')) {
         try {
@@ -303,6 +305,7 @@ globalThis.renderNiceGUIToString = async function(elementsJson) {
     const html = await renderToString(app);
     return html;
   } catch (e) {
-    return `<!-- SSR Error: ${e.message} -->`;
+    console.error('SSR Error during render:', e);
+    return '<!-- SSR Error -->';
   }
 };
