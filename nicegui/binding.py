@@ -68,7 +68,7 @@ def _set_attribute(obj: object | Mapping, name: PropertyName, value: Any) -> Non
     keys = _normalize_name(name)
     current = obj
     for key in keys[:-1]:
-        if isinstance(current, Mapping):
+        if isinstance(current, dict):
             if key not in current:
                 try:
                     current[key] = type(current)()
@@ -81,7 +81,7 @@ def _set_attribute(obj: object | Mapping, name: PropertyName, value: Any) -> Non
             current = getattr(current, key)
 
     final_key = keys[-1]
-    if isinstance(current, Mapping):
+    if isinstance(current, dict):
         current[final_key] = value
     else:
         setattr(current, final_key, value)
