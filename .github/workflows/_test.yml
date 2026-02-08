@@ -32,7 +32,10 @@ jobs:
         run: uv python install ${{ matrix.python }}
       - name: Install dependencies
         run: uv sync
-      - uses: nanasess/setup-chromedriver@v2.3.0
+      - uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: 144.0.7559.96
+          install-chromedriver: true
       - name: ${{ matrix.python }} / ${{ matrix.scope }}
         if: matrix.scope == 'pytest'
         run: uv run pytest
