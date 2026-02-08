@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from nicegui import app
 
 from ..examples import examples
-from .code_extraction import get_full_code
+from .code_extraction import get_display_code
 from .content import registry
 
 PATH = Path(__file__).parent.parent / 'static' / 'search_index.json'
@@ -44,7 +44,7 @@ def _collect_documentation_parts(*, include_code: bool = False) -> list[dict[str
             'title': f'{documentation.heading.replace("*", "")}: {part.title}',
             'content': part.description or part.search_text or '',
             'format': part.description_format,
-            **({'demo': get_full_code(part.demo.function) if part.demo is not None else ''} if include_code else {}),
+            **({'demo': get_display_code(part.demo.function, part.demo.code_transformers) if part.demo is not None else ''} if include_code else {}),
             'url': f'/documentation/{documentation.name}#{part.link_target}',
         }
         for documentation in registry.values()

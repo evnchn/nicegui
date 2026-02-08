@@ -1,18 +1,25 @@
 import asyncio
-from typing import Any
 from collections.abc import Awaitable, Callable
+from typing import Any
 
 from nicegui import PageArguments, background_tasks, ui
 from nicegui.sub_pages_router import SubPagesRouter
 
+from ..code_extraction import (
+    make_replacer,
+    remove_fake_init,
+    replace_fake_links,
+    replace_fake_sub_pages,
+    wrap_in_root,
+)
 from . import doc
 
 
 class FakeSubPages(ui.column):
 
-    def __init__(self, routes: dict[str, Callable], *, data: dict[str, Any] = {}) -> None:
+    def __init__(self, routes: dict[str, Callable] | None = None, *, data: dict[str, Any] = {}) -> None:
         super().__init__()
-        self.routes = routes
+        self.routes = routes or {}
         self.data = data
         self.task: asyncio.Task | None = None
         self.path_changed_handlers: list[Callable[[str], None]] = []
@@ -52,33 +59,38 @@ class FakeArguments:
         self.remaining_path = remaining_path
 
 
+# ---------------------------------------------------------------------------
+# Standard transformer pipeline for sub_pages demos.
+#
+# Converts execution code (using FakeSubPages) into display code
+# (using ui.sub_pages / ui.link / def root()).
+# ---------------------------------------------------------------------------
+_SUB_PAGES_TRANSFORMS: list[Callable[[str], str]] = [
+    replace_fake_links,
+    replace_fake_sub_pages,
+    remove_fake_init,
+    wrap_in_root,
+]
+
+
 @doc.demo('Sub Pages', '''
     Sub pages provide URL-based navigation between different views.
     This allows you to easily build a single page application (SPA).
     The `ui.sub_pages` element itself functions as the container for the currently active sub page.
     You only need to provide the routes for each view builder function.
     NiceGUI takes care of replacing the content without triggering a full page reload when the URL changes.
-''')
+''', code_transformers=_SUB_PAGES_TRANSFORMS)
 def main_demo() -> None:
     from uuid import uuid4
 
-    # def root():
-    #     ui.label(f'This ID {str(uuid4())[:6]} changes only on reload.')
-    #     ui.separator()
-    #     ui.sub_pages({'/': main, '/other': other})
-
     def main():
         ui.label('Main page content')
-        # ui.link('Go to other page', '/other')
-        sub_pages.link('Go to other page', '/other')  # HIDE
+        sub_pages.link('Go to other page', '/other')
 
     def other():
         ui.label('Another page content')
-        # ui.link('Go to main page', '/')
-        sub_pages.link('Go to main page', '/')  # HIDE
+        sub_pages.link('Go to main page', '/')
 
-    # ui.run(root)
-    # END OF DEMO
     ui.label(f'This ID {str(uuid4())[:6]} changes only on reload.')
     ui.separator()
     sub_pages = FakeSubPages({'/': main, '/other': other})
@@ -88,30 +100,16 @@ def main_demo() -> None:
 @doc.demo('Passing Data to Sub Page', '''
     If a sub page needs data from its parent, a `data` dictionary can be passed to the `ui.sub_pages` element.
     The data will be available as keyword arguments in the sub page function or as `PageArguments.data` object.
-''')
+''', code_transformers=_SUB_PAGES_TRANSFORMS)
 def parameters_demo():
-    # def root():
-    #     with ui.row():
-    #         ui.label('Title:')
-    #         title = ui.label()
-    #     ui.separator()
-    #     ui.sub_pages({
-    #        '/': main,
-    #        '/other': other,
-    #     }, data={'title': title})
-
     def main(title: ui.label):
         title.text = 'Main page content'
-        # ui.button('Go to other page', on_click=lambda: ui.navigate.to('/other'))
-        sub_pages.link('Go to other page', '/other')  # HIDE
+        sub_pages.link('Go to other page', '/other')
 
     def other(title: ui.label):
         title.text = 'Other page content'
-        # ui.button('Go to main page', on_click=lambda: ui.navigate.to('/'))
-        sub_pages.link('Go to main page', '/')  # HIDE
+        sub_pages.link('Go to main page', '/')
 
-    # ui.run(root)
-    # END OF DEMO
     with ui.row():
         ui.label('Title:')
         title = ui.label()
@@ -122,26 +120,25 @@ def parameters_demo():
 
 @doc.demo('Path changed event', '''
     You can use the current client's `sub_pages_router` to register a callback function to be called when the path changes.
-''')
+''', code_transformers=[
+    replace_fake_links,
+    replace_fake_sub_pages,
+    remove_fake_init,
+    make_replacer(
+        'sub_pages.on_path_changed(',
+        'ui.context.client.sub_pages_router.on_path_changed(',
+    ),
+    wrap_in_root,
+])
 def path_changed_event_demo() -> None:
-    # def root():
-    #     ui.sub_pages({'/': main, '/other': other})
-    #     ui.context.client.sub_pages_router.on_path_changed(
-    #         lambda path: ui.notify(f'Navigated to {path}')
-    #     )
-
     def main():
         ui.label('Main page content')
-        # ui.link('Go to other page', '/other')
-        sub_pages.link('Go to other page', '/other')  # HIDE
+        sub_pages.link('Go to other page', '/other')
 
     def other():
         ui.label('Another page content')
-        # ui.link('Go to main page', '/')
-        sub_pages.link('Go to main page', '/')  # HIDE
+        sub_pages.link('Go to main page', '/')
 
-    # ui.run(root)
-    # END OF DEMO
     sub_pages = FakeSubPages({'/': main, '/other': other})
     sub_pages.on_path_changed(lambda path: ui.notify(f'Navigated to {path}'))
     sub_pages.init()
@@ -149,15 +146,9 @@ def path_changed_event_demo() -> None:
 
 @doc.demo('Async Sub Pages', '''
     Sub pages also work with async builder functions.
-''')
+''', code_transformers=_SUB_PAGES_TRANSFORMS)
 def async_demo():
     import asyncio
-
-    # def root():
-    #     with ui.row():
-    #         ui.link('main', '/')
-    #         ui.link('other', '/other')
-    #     ui.sub_pages({'/': main, '/other': lambda: other('other page')})
 
     async def main():
         ui.label('main page').classes('font-bold')
@@ -169,8 +160,6 @@ def async_demo():
         await asyncio.sleep(1)
         ui.label('after 1 sec')
 
-    # ui.run(root)
-    # END OF DEMO
     sub_pages = FakeSubPages({'/': main, '/other': lambda: other('other page')})
     with ui.row():
         sub_pages.link('main', '/')

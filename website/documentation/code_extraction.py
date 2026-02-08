@@ -57,6 +57,22 @@ def get_full_code(f: Callable, *, uncomment: bool = True) -> str:
 # composed via the ``code_transformers`` parameter on ``doc.demo()``.
 # ---------------------------------------------------------------------------
 
+def get_display_code(f: Callable, code_transformers: list[Callable[[str], str]] | None = None) -> str:
+    """Get the display code for a demo function, applying any transformers."""
+    code = get_full_code(f, uncomment=not code_transformers)
+    if code_transformers:
+        for transformer in code_transformers:
+            code = transformer(code)
+    return code
+
+
+def make_replacer(old: str, new: str) -> Callable[[str], str]:
+    """Create a transformer that performs a simple string replacement."""
+    def transform(code: str) -> str:
+        return code.replace(old, new)
+    return transform
+
+
 def _lines(code: str) -> list[str]:
     """Split code into lines."""
     return code.split('\n')
