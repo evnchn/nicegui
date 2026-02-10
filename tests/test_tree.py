@@ -125,6 +125,7 @@ def test_filter(shared_screen: SharedScreen):
             {'id': 'fruits', 'children': [{'id': 'Apple'}, {'id': 'Banana'}, {'id': 'Cherry'}]},
         ], label_key='id', tick_strategy='leaf-filtered').expand()
         ui.button('Filter', on_click=lambda: t.set_filter('a'))
+        ui.label().bind_text_from(t.props, 'filter', lambda x: f'Filter: {x}')
 
     shared_screen.open('/')
     shared_screen.should_contain('Apple')
@@ -132,6 +133,7 @@ def test_filter(shared_screen: SharedScreen):
     shared_screen.should_contain('Cherry')
 
     shared_screen.click('Filter')
+    shared_screen.should_contain('Filter: a')
     shared_screen.should_contain('Apple')
     shared_screen.should_contain('Banana')
     shared_screen.should_not_contain('Cherry')

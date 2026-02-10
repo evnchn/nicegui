@@ -66,6 +66,7 @@ def test_filter(shared_screen: SharedScreen):
     def page():
         table = ui.table(columns=columns(), rows=rows())
         ui.input('Search by name').bind_value(table, 'filter')
+        ui.label().bind_text_from(table, 'filter', lambda value: f'Filter: {value}')
 
     shared_screen.open('/')
     shared_screen.should_contain('Alice')
@@ -74,6 +75,7 @@ def test_filter(shared_screen: SharedScreen):
 
     element = shared_screen.selenium.find_element(By.XPATH, '//*[@aria-label="Search by name"]')
     element.send_keys('e')
+    shared_screen.should_contain('Filter: e')
     shared_screen.should_contain('Alice')
     shared_screen.should_not_contain('Bob')
     shared_screen.should_contain('Lionel')
