@@ -32,6 +32,15 @@ jobs:
         run: uv python install ${{ matrix.python }}
       - name: Install dependencies
         run: uv sync
+      - name: Install chrome-headless-shell
+        if: matrix.scope == 'pytest'
+        run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
+          echo "Detected Chrome version: $CHROME_VERSION"
+          wget -q "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-headless-shell-linux64.zip"
+          unzip -q chrome-headless-shell-linux64.zip
+          chmod +x chrome-headless-shell-linux64/chrome-headless-shell
+          echo "CHROME_BINARY_LOCATION=$PWD/chrome-headless-shell-linux64/chrome-headless-shell" >> $GITHUB_ENV
       - name: ${{ matrix.python }} / ${{ matrix.scope }}
         if: matrix.scope == 'pytest'
         run: uv run pytest
