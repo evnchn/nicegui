@@ -1,5 +1,9 @@
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
 export default {
-  template: "<div></div>",
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div"))
+},
   async mounted() {
     const { Plotly } = await import("nicegui-plotly");
     this.Plotly = Plotly;

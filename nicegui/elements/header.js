@@ -1,5 +1,16 @@
+import { renderSlot as _renderSlot, resolveComponent as _resolveComponent, withCtx as _withCtx, openBlock as _openBlock, createBlock as _createBlock } from "vue"
+
 export default {
-  template: `<q-header ref="qRef"><slot></slot></q-header>`,
+  render(_ctx, _cache) {
+  const _component_q_header = _resolveComponent("q-header")
+
+  return (_openBlock(), _createBlock(_component_q_header, { ref: "qRef" }, {
+    default: _withCtx(() => [
+      _renderSlot(_ctx.$slots, "default")
+    ]),
+    _: 3 /* FORWARDED */
+  }, 512 /* NEED_PATCH */))
+},
   mounted() {
     if (this.addScrollPadding) {
       this.resizeObserver = new ResizeObserver(() => {

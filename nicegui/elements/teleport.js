@@ -1,5 +1,16 @@
+import { renderSlot as _renderSlot, Teleport as _Teleport, openBlock as _openBlock, createBlock as _createBlock, createCommentVNode as _createCommentVNode } from "vue"
+
 export default {
-  template: `<Teleport v-if="isLoaded" :to="to" :key="key"><slot></slot></Teleport>`,
+  render(_ctx, _cache) {
+  return (_ctx.isLoaded)
+    ? (_openBlock(), _createBlock(_Teleport, {
+        to: _ctx.to,
+        key: _ctx.key
+      }, [
+        _renderSlot(_ctx.$slots, "default")
+      ], 8 /* PROPS */, ["to"]))
+    : _createCommentVNode("v-if", true)
+},
   props: {
     to: String,
   },

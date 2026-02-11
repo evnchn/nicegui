@@ -1,8 +1,11 @@
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 import { Terminal, FitAddon, WebLinksAddon } from "nicegui-xterm";
 import { loadResource } from "../../static/utils/resources.js";
 
 export default {
-  template: "<div></div>",
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div"))
+},
   mounted() {
     // Create terminal with addons
     this.terminal = new Terminal(this.options);
@@ -42,7 +45,7 @@ export default {
     run_terminal_method(name, ...args) {
       if (name.startsWith(":")) {
         name = name.slice(1);
-        args = args.map((arg) => new Function(`return (${arg});`).call(this.terminal));
+        args = args.map((arg) => cspSafeEval("(" + arg + ")", this.terminal));
       }
       return runMethod(this.terminal, name, args);
     },

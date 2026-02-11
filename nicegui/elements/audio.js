@@ -1,5 +1,16 @@
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+const _hoisted_1 = ["controls", "autoplay", "muted", "src"]
+
 export default {
-  template: `<audio :controls="controls" :autoplay="autoplay" :muted="muted" :src="computed_src" />`,
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("audio", {
+    controls: _ctx.controls,
+    autoplay: _ctx.autoplay,
+    muted: _ctx.muted,
+    src: _ctx.computed_src
+  }, null, 8 /* PROPS */, _hoisted_1))
+},
   props: {
     controls: Boolean,
     autoplay: Boolean,

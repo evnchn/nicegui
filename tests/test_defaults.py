@@ -1,5 +1,12 @@
+import pytest
+
 from nicegui import ui
 
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
 
 def test_default_props():
     @ui.page('/')

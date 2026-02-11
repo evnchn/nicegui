@@ -1,7 +1,10 @@
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 import { loadResource } from "../../static/utils/resources.js";
 
 export default {
-  template: `<div></div>`,
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div"))
+},
   async mounted() {
     await this.$nextTick(); // NOTE: wait for window.path_prefix to be set
     await loadResource(window.path_prefix + `${this.dynamicResourcePath}/${this.resourceName}`);

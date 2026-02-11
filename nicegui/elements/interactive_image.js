@@ -1,26 +1,61 @@
+import { toHandlers as _toHandlers, mergeProps as _mergeProps, createElementVNode as _createElementVNode, openBlock as _openBlock, createElementBlock as _createElementBlock, createCommentVNode as _createCommentVNode, renderSlot as _renderSlot, normalizeStyle as _normalizeStyle } from "vue"
+
+const _hoisted_1 = ["src"]
+const _hoisted_2 = ["viewBox"]
+const _hoisted_3 = ["x1", "x2", "stroke"]
+const _hoisted_4 = ["y1", "y2", "stroke"]
+const _hoisted_5 = { ref: "contentGroup" }
+
 export default {
-  template: `
-    <div :style="{ position: 'relative', aspectRatio: size ? size[0] / size[1] : undefined }">
-      <img
-        ref="img"
-        :src="computed_src"
-        :style="{ width: '100%', height: '100%', opacity: src ? 1 : 0 }"
-        @load="onImageLoaded"
-        v-on="onCrossEvents"
-        v-on="onUserEvents"
-        draggable="false"
-      />
-      <svg ref="svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none" :viewBox="viewBox" preserveAspectRatio="none">
-        <g :style="{ display: showCross ? 'block' : 'none' }">
-          <line v-if="cross" :x1="x" y1="0" :x2="x" y2="100%" :stroke="cross === true ? 'black' : cross" />
-          <line v-if="cross" x1="0" :y1="y" x2="100%" :y2="y" :stroke="cross === true ? 'black' : cross" />
-          <slot name="cross" :x="x" :y="y"></slot>
-        </g>
-        <g ref="contentGroup"></g>
-      </svg>
-      <slot></slot>
-    </div>
-  `,
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div", {
+    style: _normalizeStyle({ position: 'relative', aspectRatio: _ctx.size ? _ctx.size[0] / _ctx.size[1] : undefined })
+  }, [
+    _createElementVNode("img", _mergeProps({
+      ref: "img",
+      src: _ctx.computed_src,
+      style: { width: '100%', height: '100%', opacity: _ctx.src ? 1 : 0 },
+      onLoad: _cache[0] || (_cache[0] = (...args) => (_ctx.onImageLoaded && _ctx.onImageLoaded(...args)))
+    }, _toHandlers({..._ctx.onCrossEvents, ..._ctx.onUserEvents}, true), { draggable: "false" }), null, 16 /* FULL_PROPS */, _hoisted_1),
+    (_openBlock(), _createElementBlock("svg", {
+      ref: "svg",
+      style: {"position":"absolute","top":"0","left":"0","width":"100%","height":"100%","pointer-events":"none"},
+      viewBox: _ctx.viewBox,
+      preserveAspectRatio: "none"
+    }, [
+      _createElementVNode("g", {
+        style: _normalizeStyle({ display: _ctx.showCross ? 'block' : 'none' })
+      }, [
+        (_ctx.cross)
+          ? (_openBlock(), _createElementBlock("line", {
+              key: 0,
+              x1: _ctx.x,
+              y1: "0",
+              x2: _ctx.x,
+              y2: "100%",
+              stroke: _ctx.cross === true ? 'black' : _ctx.cross
+            }, null, 8 /* PROPS */, _hoisted_3))
+          : _createCommentVNode("v-if", true),
+        (_ctx.cross)
+          ? (_openBlock(), _createElementBlock("line", {
+              key: 1,
+              x1: "0",
+              y1: _ctx.y,
+              x2: "100%",
+              y2: _ctx.y,
+              stroke: _ctx.cross === true ? 'black' : _ctx.cross
+            }, null, 8 /* PROPS */, _hoisted_4))
+          : _createCommentVNode("v-if", true),
+        _renderSlot(_ctx.$slots, "cross", {
+          x: _ctx.x,
+          y: _ctx.y
+        })
+      ], 4 /* STYLE */),
+      _createElementVNode("g", _hoisted_5, null, 512 /* NEED_PATCH */)
+    ], 8 /* PROPS */, _hoisted_2)),
+    _renderSlot(_ctx.$slots, "default")
+  ], 4 /* STYLE */))
+},
   data() {
     return {
       viewBox: "0 0 0 0",

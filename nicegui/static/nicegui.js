@@ -5,6 +5,56 @@ const None = undefined;
 let app = undefined;
 let mounted_app = undefined;
 
+// CSP-safe code execution via dynamic <script> element injection.
+// With 'strict-dynamic' CSP, scripts created by trusted (nonced) scripts are allowed to execute.
+// This replaces eval() and new Function() which require 'unsafe-eval'.
+// NOTE: These dynamically created <script> elements do NOT need nonce attributes because
+// CSP 'strict-dynamic' allows scripts created by trusted (nonce'd) scripts to execute.
+// See https://w3c.github.io/webappsec-csp/#strict-dynamic-usage
+let _cspEvalCounter = 0;
+function cspSafeEval(code, thisArg) {
+  const key = "__csp_eval_" + _cspEvalCounter++;
+  const script = document.createElement("script");
+  if (thisArg !== undefined) {
+    // Bind `this` context: wrap code in a function and .call() with the provided thisArg.
+    // This preserves the `this` binding that eval() had when called inside component methods.
+    const ctxKey = key + "_c";
+    window[ctxKey] = thisArg;
+    script.textContent = "window['" + key + "']=(function(){return " + code + "}).call(window['" + ctxKey + "']);";
+    document.head.appendChild(script);
+    script.remove();
+    const result = window[key];
+    delete window[key];
+    delete window[ctxKey];
+    return result;
+  }
+  script.textContent = "window." + key + " = " + code + ";";
+  document.head.appendChild(script);
+  script.remove();
+  const result = window[key];
+  delete window[key];
+  return result;
+}
+
+// Cache for compiled Vue templates (slot templates, .vue component templates)
+const _templateCache = new Map();
+
+// Compile a Vue template string to a render function without using eval().
+// Uses @vue/compiler-dom to generate code, then dynamic <script> injection to create the function.
+function compileVueTemplate(templateStr) {
+  if (_templateCache.has(templateStr)) return _templateCache.get(templateStr);
+  if (!globalThis.VueCompilerDOM) {
+    console.error("Vue compiler not available for template compilation");
+    return null;
+  }
+  // mode: "function" generates code using `with(this)` for property access (works in non-strict scripts).
+  // prefixIdentifiers is not supported in the browser build of the compiler.
+  const { code } = globalThis.VueCompilerDOM.compile(templateStr, { mode: "function" });
+  const renderFn = cspSafeEval("(function() { " + code + " })()");
+  _templateCache.set(templateStr, renderFn);
+  return renderFn;
+}
+
 function initUnoCss() {
   if (window.__unocss_runtime === undefined) return;
 
@@ -124,7 +174,7 @@ function runMethod(target, method_name, args) {
     if (method_name in target) {
       return target[method_name](...args);
     } else {
-      return eval(method_name)(target, ...args);
+      return cspSafeEval(method_name)(target, ...args);
     }
   }
   const element = getElement(target);
@@ -134,7 +184,7 @@ function runMethod(target, method_name, args) {
   } else if (method_name in (element.$refs.qRef || [])) {
     return element.$refs.qRef[method_name](...args);
   } else {
-    return eval(method_name)(element, ...args);
+    return cspSafeEval(method_name)(element, ...args);
   }
 }
 
@@ -242,9 +292,9 @@ function renderRecursively(elements, id, propsContext) {
     if (key.startsWith(":")) {
       try {
         try {
-          props[key.substring(1)] = new Function("props", `return (${value})`)(propsContext);
+          props[key.substring(1)] = cspSafeEval("(function(props) { return (" + value + "); })")(propsContext);
         } catch (e) {
-          props[key.substring(1)] = eval(value);
+          props[key.substring(1)] = cspSafeEval(value);
         }
         delete props[key];
       } catch (e) {
@@ -276,8 +326,7 @@ function renderRecursively(elements, id, propsContext) {
 
     let handler;
     if (event.js_handler) {
-      const props = propsContext; // make `props` accessible from inside the event handler
-      handler = eval(event.js_handler);
+      handler = cspSafeEval("(function(emit, props) { return (" + event.js_handler + "); })")(emit, propsContext);
     } else {
       handler = emit;
     }
@@ -299,17 +348,20 @@ function renderRecursively(elements, id, propsContext) {
     slots[name] = (props) => {
       const rendered = [];
       if (data.template) {
-        rendered.push(
-          Vue.h(
-            {
-              props: { props: { type: Object, default: {} } },
-              template: data.template,
-            },
-            {
-              props: props,
-            },
-          ),
-        );
+        const renderFn = compileVueTemplate(data.template);
+        if (renderFn) {
+          rendered.push(
+            Vue.h(
+              {
+                props: { props: { type: Object, default: {} } },
+                render: renderFn,
+              },
+              {
+                props: props,
+              },
+            ),
+          );
+        }
       }
       const children = data.ids.map((id) => renderRecursively(elements, id, props || propsContext));
       if (name === "default" && element.text !== null) {
@@ -321,17 +373,56 @@ function renderRecursively(elements, id, propsContext) {
   return Vue.h(app.config.isNativeTag(element.tag) ? element.tag : Vue.resolveComponent(element.tag), props, slots);
 }
 
+// Check if code has a semicolon at the top level (not inside strings or nested brackets).
+// Top-level semicolons indicate multi-statement code that can't be wrapped as a single expression.
+function _hasTopLevelSemicolon(code) {
+  let depth = 0;
+  let quote = 0;
+  for (let i = 0; i < code.length; i++) {
+    const c = code.charCodeAt(i);
+    if (quote) {
+      if (c === 92 /* \ */) { i++; continue; }
+      if (c === quote) quote = 0;
+      continue;
+    }
+    if (c === 39 || c === 34 || c === 96 /* ' " ` */) { quote = c; continue; }
+    if (c === 40 || c === 123 || c === 91 /* ( { [ */) { depth++; continue; }
+    if (c === 41 || c === 125 || c === 93 /* ) } ] */) { depth--; continue; }
+    if (c === 59 /* ; */ && depth === 0) return true;
+  }
+  return false;
+}
+
 function runJavascript(code, request_id) {
-  new Promise((resolve) => resolve(eval(code)))
-    .catch((reason) => {
-      if (reason instanceof SyntaxError) return eval(`(async() => {${code}})()`);
-      else throw reason;
-    })
-    .then((result) => {
-      if (request_id) {
-        window.socket.emit("javascript_response", { request_id, client_id: window.clientId, result });
-      }
-    });
+  // Use dynamic <script> element for CSP-safe code execution (no nonce needed due to strict-dynamic).
+  // Detects whether code is a statement block or a pure expression, then wraps accordingly.
+  const callbackKey = "__rjs_" + _cspEvalCounter++;
+  window[callbackKey] = (err, result) => {
+    delete window[callbackKey];
+    if (err) {
+      console.error(err);
+    }
+    if (request_id) {
+      window.socket.emit("javascript_response", { request_id, client_id: window.clientId, result });
+    }
+  };
+
+  // Detect statement blocks: code starting with statement keywords or having multiple top-level statements
+  const trimmed = code.trimStart();
+  const startsWithKeyword = /^(return\b|if\s*\(|for\s*\(|while\s*\(|do\s*\{|switch\s*\(|try\s*\{|throw\s|let\s|const\s|var\s|class\s|function\s)/.test(trimmed);
+  const isStatement = startsWithKeyword || _hasTopLevelSemicolon(code);
+  const body = isStatement ? code : "return (" + code + ")";
+
+  const script = document.createElement("script");
+  script.textContent =
+    "(async()=>{try{" +
+    "let __r=await(async()=>{" + body + "})();" +
+    "if(window['" + callbackKey + "'])window['" + callbackKey + "'](null,__r)" +
+    "}catch(e){" +
+    "if(window['" + callbackKey + "'])window['" + callbackKey + "'](e)" +
+    "}})()";
+  document.head.appendChild(script);
+  script.remove();
 }
 
 function download(src, filename, mediaType, prefix) {
@@ -474,7 +565,15 @@ function createApp(elements, options) {
         load_js_components: async (msg) => {
           const urls = msg.components.map((c) => `${options.prefix}/_nicegui/${options.version}/components/${c.key}`);
           const imports = await Promise.all(urls.map((url) => import(url)));
-          msg.components.forEach((c, i) => app.component(c.tag, imports[i].default));
+          msg.components.forEach((c, i) => {
+            const comp = imports[i].default;
+            // Runtime-only Vue build: compile template strings to render functions
+            if (comp.template && !comp.render) {
+              comp.render = compileVueTemplate(comp.template);
+              delete comp.template;
+            }
+            app.component(c.tag, comp);
+          });
         },
         update: async (msg) => {
           let eventListenersChanged = false;

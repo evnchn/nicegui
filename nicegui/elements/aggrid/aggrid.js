@@ -1,8 +1,11 @@
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 import * as AgGrid from "nicegui-aggrid";
 import { convertDynamicProperties } from "../../static/utils/dynamic_properties.js";
 
 export default {
-  template: "<div></div>",
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div"))
+},
   mounted() {
     AgGrid.ModuleRegistry.registerModules(this.modules.map((moduleName) => AgGrid[moduleName]));
     this.update_grid();

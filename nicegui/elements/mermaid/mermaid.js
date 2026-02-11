@@ -1,10 +1,13 @@
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 import { mermaid } from "nicegui-mermaid";
 
 let is_running = false;
 const queue = [];
 
 export default {
-  template: `<div></div>`,
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div"))
+},
   data: () => ({
     last_content: "",
   }),

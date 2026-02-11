@@ -1,11 +1,18 @@
+import { createElementVNode as _createElementVNode, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 import SceneLib from "nicegui-scene";
 const { THREE, TWEEN, Stats } = SceneLib;
 
+const _hoisted_1 = {
+  style: {"position":"relative"},
+  "data-initializing": ""
+}
+
 export default {
-  template: `
-    <div style="position:relative" data-initializing>
-      <canvas style="position:relative"></canvas>
-    </div>`,
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div", _hoisted_1, [...(_cache[0] || (_cache[0] = [
+    _createElementVNode("canvas", { style: {"position":"relative"} }, null, -1 /* CACHED */)
+  ]))]))
+},
 
   async mounted() {
     await this.$nextTick();

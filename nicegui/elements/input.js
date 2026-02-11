@@ -1,21 +1,41 @@
+import { normalizeProps as _normalizeProps, guardReactiveProps as _guardReactiveProps, renderSlot as _renderSlot, resolveComponent as _resolveComponent, withKeys as _withKeys, mergeProps as _mergeProps, withCtx as _withCtx, renderList as _renderList, createSlots as _createSlots, createVNode as _createVNode, Fragment as _Fragment, openBlock as _openBlock, createElementBlock as _createElementBlock, createCommentVNode as _createCommentVNode } from "vue"
+
+const _hoisted_1 = ["id"]
+const _hoisted_2 = ["value"]
+
 export default {
-  template: `
-    <q-input
-      ref="qRef"
-      v-bind="$attrs"
-      v-model="inputValue"
-      :shadow-text="shadowText"
-      @keydown.tab="perform_autocomplete"
-      :list="id + '-datalist'"
-    >
-      <template v-for="(_, slot) in $slots" v-slot:[slot]="slotProps">
-        <slot :name="slot" v-bind="slotProps || {}" />
-      </template>
-    </q-input>
-    <datalist v-if="withDatalist" :id="id + '-datalist'">
-      <option v-for="option in this._autocomplete" :value="option"></option>
-    </datalist>
-  `,
+  render(_ctx, _cache) {
+  const _component_q_input = _resolveComponent("q-input")
+
+  return (_openBlock(), _createElementBlock(_Fragment, null, [
+    _createVNode(_component_q_input, _mergeProps({ ref: "qRef" }, _ctx.$attrs, {
+      modelValue: _ctx.inputValue,
+      "onUpdate:modelValue": _cache[0] || (_cache[0] = $event => ((_ctx.inputValue) = $event)),
+      "shadow-text": _ctx.shadowText,
+      onKeydown: _withKeys(_ctx.perform_autocomplete, ["tab"]),
+      list: _ctx.id + '-datalist'
+    }), _createSlots({ _: 2 /* DYNAMIC */ }, [
+      _renderList(_ctx.$slots, (_, slot) => {
+        return {
+          name: slot,
+          fn: _withCtx((slotProps) => [
+            _renderSlot(_ctx.$slots, slot, _normalizeProps(_guardReactiveProps(slotProps || {})))
+          ])
+        }
+      })
+    ]), 1040 /* FULL_PROPS, DYNAMIC_SLOTS */, ["modelValue", "shadow-text", "onKeydown", "list"]),
+    (_ctx.withDatalist)
+      ? (_openBlock(), _createElementBlock("datalist", {
+          key: 0,
+          id: _ctx.id + '-datalist'
+        }, [
+          (_openBlock(true), _createElementBlock(_Fragment, null, _renderList(this._autocomplete, (option) => {
+            return (_openBlock(), _createElementBlock("option", { value: option }, null, 8 /* PROPS */, _hoisted_2))
+          }), 256 /* UNKEYED_FRAGMENT */))
+        ], 8 /* PROPS */, _hoisted_1))
+      : _createCommentVNode("v-if", true)
+  ], 64 /* STABLE_FRAGMENT */))
+},
   props: {
     _autocomplete: Array,
     value: String,

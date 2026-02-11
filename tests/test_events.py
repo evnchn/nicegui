@@ -32,6 +32,12 @@ async def click_lambda_with_async_and_parameters(msg: str):
     ui.label(f'click_lambda_with_async_and_parameters: {msg}')
 
 
+
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
+
 def test_click_events(screen: Screen):
     @ui.page('/')
     def page():

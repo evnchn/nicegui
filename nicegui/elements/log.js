@@ -1,5 +1,19 @@
+import { renderSlot as _renderSlot, resolveComponent as _resolveComponent, withCtx as _withCtx, openBlock as _openBlock, createBlock as _createBlock } from "vue"
+
 export default {
-  template: `<q-scroll-area ref="qRef" @scroll="onScroll"><slot></slot></q-scroll-area>`,
+  render(_ctx, _cache) {
+  const _component_q_scroll_area = _resolveComponent("q-scroll-area")
+
+  return (_openBlock(), _createBlock(_component_q_scroll_area, {
+    ref: "qRef",
+    onScroll: _ctx.onScroll
+  }, {
+    default: _withCtx(() => [
+      _renderSlot(_ctx.$slots, "default")
+    ]),
+    _: 3 /* FORWARDED */
+  }, 8 /* PROPS */, ["onScroll"]))
+},
   data() {
     return {
       shouldScroll: true,

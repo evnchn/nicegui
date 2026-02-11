@@ -1,14 +1,23 @@
+import { normalizeProps as _normalizeProps, guardReactiveProps as _guardReactiveProps, renderSlot as _renderSlot, resolveComponent as _resolveComponent, withCtx as _withCtx, renderList as _renderList, createSlots as _createSlots, openBlock as _openBlock, createBlock as _createBlock } from "vue"
+
 export default {
-  template: `
-    <q-uploader
-      ref="qRef"
-      :url="computed_url"
-    >
-      <template v-for="(_, slot) in $slots" v-slot:[slot]="slotProps">
-        <slot :name="slot" v-bind="slotProps || {}" />
-      </template>
-    </q-uploader>
-  `,
+  render(_ctx, _cache) {
+  const _component_q_uploader = _resolveComponent("q-uploader")
+
+  return (_openBlock(), _createBlock(_component_q_uploader, {
+    ref: "qRef",
+    url: _ctx.computed_url
+  }, _createSlots({ _: 2 /* DYNAMIC */ }, [
+    _renderList(_ctx.$slots, (_, slot) => {
+      return {
+        name: slot,
+        fn: _withCtx((slotProps) => [
+          _renderSlot(_ctx.$slots, slot, _normalizeProps(_guardReactiveProps(slotProps || {})))
+        ])
+      }
+    })
+  ]), 1032 /* PROPS, DYNAMIC_SLOTS */, ["url"]))
+},
   mounted() {
     setTimeout(() => this.compute_url(), 0); // NOTE: wait for window.path_prefix to be set in app.mounted()
   },

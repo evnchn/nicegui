@@ -1,8 +1,11 @@
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 import { echarts, loadEchartsGL } from "nicegui-echart";
 import { convertDynamicProperties } from "../../static/utils/dynamic_properties.js";
 
 export default {
-  template: "<div></div>",
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div"))
+},
   async mounted() {
     await new Promise((resolve) => setTimeout(resolve, 0)); // wait for Tailwind classes to be applied
     if (this.enable3d) {
@@ -101,7 +104,7 @@ export default {
     run_chart_method(name, ...args) {
       if (name.startsWith(":")) {
         name = name.slice(1);
-        args = args.map((arg) => new Function(`return (${arg})`)());
+        args = args.map((arg) => cspSafeEval("(" + arg + ")"));
       }
       return runMethod(this.chart, name, args);
     },

@@ -1,3 +1,4 @@
+import { createElementVNode as _createElementVNode, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 import SceneLib from "nicegui-scene";
 const {
   CSS2DObject,
@@ -65,14 +66,20 @@ function set_point_cloud_data(position, color, geometry) {
   }
 }
 
+const _hoisted_1 = {
+  style: {"position":"relative"},
+  "data-initializing": ""
+}
+
 export default {
-  template: `
-    <div style="position:relative" data-initializing>
-      <canvas style="position:relative"></canvas>
-      <div style="position:absolute;pointer-events:none;top:0"></div>
-      <div style="position:absolute;pointer-events:none;top:0"></div>
-      <div style="position:absolute;display:none;inset:0;cursor:pointer">WebGL context lost. Click to re-initialize.</div>
-    </div>`,
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div", _hoisted_1, [...(_cache[0] || (_cache[0] = [
+    _createElementVNode("canvas", { style: {"position":"relative"} }, null, -1 /* CACHED */),
+    _createElementVNode("div", { style: {"position":"absolute","pointer-events":"none","top":"0"} }, null, -1 /* CACHED */),
+    _createElementVNode("div", { style: {"position":"absolute","pointer-events":"none","top":"0"} }, null, -1 /* CACHED */),
+    _createElementVNode("div", { style: {"position":"absolute","display":"none","inset":"0","cursor":"pointer"} }, "WebGL context lost. Click to re-initialize.", -1 /* CACHED */)
+  ]))]))
+},
 
   mounted() {
     this.scene = new THREE.Scene();
@@ -190,7 +197,7 @@ export default {
     const applyConstraint = (constraint, position) => {
       if (!constraint) return;
       const [variable, expression] = constraint.split("=").map((s) => s.trim());
-      position[variable] = eval(expression.replace(/x|y|z/g, (match) => `(${position[match]})`));
+      position[variable] = cspSafeEval(expression.replace(/x|y|z/g, (match) => `(${position[match]})`));
     };
     const handleDrag = (event) => {
       this.dragConstraints.split(",").forEach((constraint) => applyConstraint(constraint, event.object.position));

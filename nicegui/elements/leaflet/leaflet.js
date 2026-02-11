@@ -1,9 +1,12 @@
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 import { leaflet as L } from "nicegui-leaflet";
 import { loadResource } from "../../static/utils/resources.js";
 import { cleanObject } from "../../static/utils/json.js";
 
 export default {
-  template: "<div></div>",
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div"))
+},
   props: {
     center: Array,
     zoom: Number,
@@ -165,7 +168,7 @@ export default {
     run_map_method(name, ...args) {
       if (name.startsWith(":")) {
         name = name.slice(1);
-        args = args.map((arg) => new Function(`return (${arg})`)());
+        args = args.map((arg) => cspSafeEval("(" + arg + ")"));
       }
       return runMethod(this.map, name, args);
     },
@@ -175,7 +178,7 @@ export default {
         if (layer.id !== id) return;
         if (name.startsWith(":")) {
           name = name.slice(1);
-          args = args.map((arg) => new Function(`return (${arg})`)());
+          args = args.map((arg) => cspSafeEval("(" + arg + ")"));
         }
         result = runMethod(layer, name, args);
       });

@@ -1,9 +1,10 @@
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 import * as CM from "nicegui-codemirror";
 
 export default {
-  template: `
-    <div></div>
-  `,
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div"))
+},
   props: {
     value: String,
     language: String,

@@ -1,7 +1,10 @@
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 import { createJSONEditor, createAjvValidator, formatsPlugin } from "nicegui-json-editor";
 
 export default {
-  template: "<div></div>",
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div"))
+},
   mounted() {
     this.properties.onChange = (updatedContent, previousContent, { contentErrors, patchResult }) => {
       this.$emit("content_change", { content: updatedContent, errors: contentErrors });
@@ -45,7 +48,7 @@ export default {
       if (this.editor) {
         if (name.startsWith(":")) {
           name = name.slice(1);
-          args = args.map((arg) => new Function(`return (${arg})`)());
+          args = args.map((arg) => cspSafeEval("(" + arg + ")"));
         }
         return runMethod(this.editor, name, args);
       }

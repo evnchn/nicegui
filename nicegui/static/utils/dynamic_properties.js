@@ -10,16 +10,17 @@ export function convertDynamicProperties(obj, recursive) {
   }
   for (const [attr, value] of Object.entries(obj)) {
     if (attr.startsWith(":")) {
-      try {
-        try {
-          obj[attr.slice(1)] = new Function(`return (${value})`)();
-        } catch (e) {
-          obj[attr.slice(1)] = eval(value);
-        }
-        delete obj[attr];
-      } catch (e) {
-        console.error(`Error while converting ${attr} attribute to function:`, e);
+      // cspSafeEval returns undefined on parse errors (it uses script injection, not eval,
+      // so errors don't throw). Try expression form first, then statement form as fallback.
+      let result = cspSafeEval("(" + value + ")");
+      if (result === undefined) {
+        result = cspSafeEval(value);
       }
+      if (result === undefined) {
+        console.error(`Error while converting ${attr} attribute to dynamic property`);
+      }
+      obj[attr.slice(1)] = result;
+      delete obj[attr];
     } else {
       if (recursive) {
         convertDynamicProperties(value, true);

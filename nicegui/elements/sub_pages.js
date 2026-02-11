@@ -1,3 +1,5 @@
+import { renderSlot as _renderSlot, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
 function getPathPrefix() {
   return window.path_prefix || "";
 }
@@ -63,5 +65,9 @@ document.addEventListener("click", (e) => {
 });
 
 export default {
-  template: `<div><slot></slot></div>`,
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div", null, [
+    _renderSlot(_ctx.$slots, "default")
+  ]))
+},
 };

@@ -1,8 +1,11 @@
+import { openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
 import { load_widget, load_css } from "widget";
 import { cleanObject } from "../../static/utils/json.js";
 
 export default {
-  template: "<div></div>",
+  render(_ctx, _cache) {
+  return (_openBlock(), _createElementBlock("div"))
+},
   async mounted() {
     const emit_to_py = this.$emit;
 

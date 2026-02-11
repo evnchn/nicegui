@@ -1,5 +1,9 @@
+import { resolveDynamicComponent as _resolveDynamicComponent, openBlock as _openBlock, createBlock as _createBlock } from "vue"
+
 export default {
-  template: `<component :is="tag"></component>`,
+  render(_ctx, _cache) {
+  return (_openBlock(), _createBlock(_resolveDynamicComponent(_ctx.tag)))
+},
   mounted() {
     this.renderContent();
   },
