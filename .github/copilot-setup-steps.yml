@@ -1,0 +1,122 @@
+# GitHub Copilot Setup Steps for NiceGUI
+# This file provides structured setup instructions for GitHub Copilot coding agents.
+
+setup:
+  description: Setup instructions for NiceGUI development environment
+  
+  # Option 1: Dev Container (Recommended for fastest setup)
+  dev_container:
+    description: Use VS Code Dev Container for a fully configured environment
+    steps:
+      - Ensure VS Code, Docker, and the Dev Containers extension are installed
+      - Open the project root directory in VS Code
+      - Press F1, type "Dev Containers:Open Folder in Container", and hit enter
+      - Wait until the image has been built
+      - The environment is now ready for development
+  
+  # Option 2: Local Development
+  local:
+    description: Set up a local development environment
+    prerequisites:
+      - Python 3.10 or higher
+      - uv package manager
+    steps:
+      - name: Install uv
+        command: curl -LsSf https://astral.sh/uv/install.sh | sh
+        description: Install the uv package manager
+      
+      - name: Install dependencies
+        command: uv sync
+        description: Install NiceGUI in editable mode with all dependencies
+        note: This links the local code to the Python environment
+      
+      - name: Install pre-commit hooks
+        command: uv run pre-commit install
+        description: Set up git hooks for automatic code quality checks
+        note: Hooks run automatically before each commit
+  
+  # Option 3: Docker Development
+  docker:
+    description: Use Docker for development
+    steps:
+      - name: Start development container
+        command: ./docker.sh up app
+        description: Start the development server
+        note: Server runs on http://localhost:80/
+      
+      - name: View logs
+        command: ./docker.sh log
+        description: View container log output
+
+build:
+  description: Build steps for NiceGUI
+  steps:
+    - name: Run the documentation website locally
+      command: uv run python main.py
+      description: Start the nicegui.io website locally
+      note: The main.py file contains the complete nicegui.io website implementation
+
+test:
+  description: Testing instructions
+  prerequisites:
+    - Python selenium with ChromeDriver (see tests/README.md for details)
+  steps:
+    - name: Run all tests
+      command: uv run pytest
+      description: Run the complete test suite
+      note: Tests use pytest with Screen (browser-based) and User (fast, no browser) fixtures
+    
+    - name: Run specific test file
+      command: uv run pytest tests/test_file.py
+      description: Run tests from a specific file
+    
+    - name: Run tests with specific marker
+      command: uv run pytest -m "not slow"
+      description: Run tests excluding slow tests
+
+lint:
+  description: Code quality and formatting checks
+  steps:
+    - name: Run pre-commit on all files
+      command: uv run pre-commit run --all-files
+      description: Run all pre-commit hooks (formatting, linting, etc.)
+      note: This includes ruff, trailing whitespace, EOF fixes, and single quote enforcement
+    
+    - name: Format code with autopep8
+      command: uv run autopep8 --max-line-length=120 --in-place --recursive .
+      description: Auto-format Python code to match project style
+    
+    - name: Type checking
+      command: uv run mypy ./nicegui
+      description: Run type checking on the core library
+    
+    - name: Linting
+      command: uv run pylint ./nicegui
+      description: Run pylint on the core library
+    
+    - name: Check and fix imports
+      command: uv run ruff check . --fix
+      description: Check code style and sort imports
+
+validate:
+  description: Validation steps before submitting changes
+  checklist:
+    - Run tests with "uv run pytest" to ensure all tests pass
+    - Run linters with "uv run pre-commit run --all-files"
+    - Ensure no blocking operations in async code
+    - Verify public API backward compatibility
+    - Remove any debug code
+    - Format code using autopep8
+    - Review changes against CONTRIBUTING.md guidelines
+
+notes:
+  - The project uses Python 3.10+ with uv for dependency management
+  - Core library is in nicegui/ directory (public API with high stability requirements)
+  - Examples are in examples/ directory (must be minimal and runnable)
+  - Documentation site is in website/ directory
+  - Tests use pytest with User (fast) and Screen (browser-based) fixtures
+  - Line length is 120 characters, single quotes for strings
+  - Use "uv run" prefix for all Python commands to ensure correct environment
+  - Never use asyncio.create_task(), always use background_tasks.create()
+  - See .github/copilot-instructions.md, AGENTS.md, and CONTRIBUTING.md for detailed guidelines
+  - Pre-commit hooks enforce code style automatically
