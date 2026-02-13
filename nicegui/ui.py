@@ -147,6 +147,15 @@ _LAZY_IMPORTS = {
     'run_with': ('.ui_run_with', 'run_with'),
 }
 
+from .pyodide_compat import IS_PYODIDE  # noqa: E402
+
+if IS_PYODIDE:
+    # In Pyodide there is no server; route `page` to the browser-side implementation
+    # and make `run`/`run_with` unavailable.
+    _LAZY_IMPORTS['page'] = ('.page_pyodide', 'page')
+    del _LAZY_IMPORTS['run']
+    del _LAZY_IMPORTS['run_with']
+
 __all__ = [
     'add_body_html',
     'add_css',

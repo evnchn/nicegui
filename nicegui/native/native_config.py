@@ -1,9 +1,17 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from ..events import Handler, NativeEventArguments
-from .event_manager import event_manager
-from .native import WindowProxy
+
+try:
+    from .event_manager import event_manager
+except ImportError:
+    event_manager = None  # type: ignore
+
+if TYPE_CHECKING:
+    from .native import WindowProxy
 
 
 @dataclass(kw_only=True, slots=True)

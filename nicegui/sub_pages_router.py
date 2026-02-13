@@ -4,8 +4,13 @@ import asyncio
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
-from fastapi import Request
-from starlette.routing import Match, Route
+try:
+    from fastapi import Request
+    from starlette.routing import Match, Route
+except ImportError:
+    Request = None  # type: ignore
+    Match = None  # type: ignore
+    Route = None  # type: ignore
 
 from . import core, json
 from .context import context
@@ -93,6 +98,8 @@ class SubPagesRouter:
 
     def _other_page_builder_matches_path(self, path: str, client: Client) -> bool:
         """Check if there is any other matching page builder than the one for this client."""
+        if client._request is None:  # pylint: disable=protected-access
+            return False  # NOTE: no server routes in Pyodide mode
         client_route = client.request.scope.get('route')
         client_func = \
             getattr(client_route.endpoint, '__func__', client_route.endpoint) if client_route is not None else None

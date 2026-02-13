@@ -7,8 +7,15 @@ from collections.abc import Callable, Iterator
 from enum import Enum
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Request, Response
-from fastapi.responses import FileResponse
+try:
+    from fastapi import FastAPI, HTTPException, Request, Response
+    from fastapi.responses import FileResponse
+except ImportError:
+    FastAPI = object  # type: ignore
+    HTTPException = None  # type: ignore
+    Request = None  # type: ignore
+    Response = None  # type: ignore
+    FileResponse = None  # type: ignore
 
 from .. import background_tasks, core, helpers
 from ..client import Client
@@ -17,8 +24,15 @@ from ..elements.mixins.color_elements import QUASAR_COLORS
 from ..logging import log
 from ..native import NativeConfig
 from ..observables import ObservableSet
-from ..server import Server
-from ..staticfiles import CacheControlledStaticFiles
+from ..pyodide_compat import IS_PYODIDE
+
+if not IS_PYODIDE:
+    from ..server import Server
+    from ..staticfiles import CacheControlledStaticFiles
+else:
+    Server = None  # type: ignore
+    CacheControlledStaticFiles = None  # type: ignore
+
 from ..storage import Storage
 from .app_config import AppConfig
 from .range_response import get_range_response
@@ -35,7 +49,8 @@ class App(FastAPI):
     from ..timer import Timer as timer  # pylint: disable=import-outside-toplevel
 
     def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs, docs_url=None, redoc_url=None, openapi_url=None)
+        if FastAPI is not object:
+            super().__init__(**kwargs, docs_url=None, redoc_url=None, openapi_url=None)
         self.native = NativeConfig()
         self.storage = Storage()
         self.urls = ObservableSet()
@@ -49,6 +64,15 @@ class App(FastAPI):
         self._delete_handlers: list[Callable] = []
         self._exception_handlers: list[Callable] = [log.exception]
         self._page_exception_handler: Callable | None = None
+
+        if IS_PYODIDE:
+            # NOTE: stub methods for Pyodide — no real HTTP server
+            self.mount = lambda *a, **kw: None  # type: ignore
+            self.get = lambda *a, **kw: (lambda f: f)  # type: ignore
+            self.post = lambda *a, **kw: (lambda f: f)  # type: ignore
+            self.exception_handler = lambda *a, **kw: (lambda f: f)  # type: ignore
+            self.router = type('StubRouter', (), {'prefix': ''})()  # type: ignore
+            self.exception_handlers = {}  # type: ignore
 
         self.colors()  # populate Quasar config with default colors
 

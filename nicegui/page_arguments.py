@@ -6,7 +6,10 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Union, get_args, get_origin
 
-from starlette.datastructures import QueryParams
+try:
+    from starlette.datastructures import QueryParams
+except ImportError:
+    QueryParams = dict  # type: ignore
 
 if TYPE_CHECKING:
     from .elements.sub_pages import SubPages
