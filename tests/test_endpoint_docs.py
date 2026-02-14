@@ -31,6 +31,7 @@ def test_endpoint_documentation(screen: Screen, endpoint_documentation: str):
             f'/_nicegui/{__version__}/dynamic_resources/{{name}}',
             f'/_nicegui/{__version__}/esm/{{key}}/{{path}}',
             f'/_nicegui/client/{upload.client.id}/upload/{upload.id}',
+            '/_nicegui/heartbeat',
         }
     elif endpoint_documentation == 'all':
         expected_paths = {
@@ -41,6 +42,7 @@ def test_endpoint_documentation(screen: Screen, endpoint_documentation: str):
             f'/_nicegui/{__version__}/dynamic_resources/{{name}}',
             f'/_nicegui/{__version__}/esm/{{key}}/{{path}}',
             f'/_nicegui/client/{upload.client.id}/upload/{upload.id}',
+            '/_nicegui/heartbeat',
         }
     else:
         raise ValueError(f'Unknown endpoint documentation setting: {endpoint_documentation}')
