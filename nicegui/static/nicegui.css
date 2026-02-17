@@ -334,3 +334,380 @@ h6.q-timeline__title {
     scroll-behavior: auto !important;
   }
 }
+
+/* ===== forced-colors (Windows High Contrast, etc.) ===== */
+@media (forced-colors: active) {
+
+  /* --- header / footer: restore visible boundary --- */
+  .q-header,
+  .q-footer {
+    border-bottom: 1px solid ButtonText;
+  }
+  .q-footer {
+    border-bottom: none;
+    border-top: 1px solid ButtonText;
+  }
+
+  /* --- buttons: add a visible border so they don't look like plain text --- */
+  .q-btn {
+    border: 1px solid ButtonText;
+  }
+
+  /* --- button toggle: mark selected item --- */
+  .q-btn-toggle .q-btn[aria-pressed="true"],
+  .q-btn-group .q-btn--active {
+    forced-color-adjust: none;
+    background: Highlight !important;
+    color: HighlightText !important;
+    border-color: Highlight;
+  }
+
+  /* --- input fields: ensure every variant has a visible border --- */
+  .q-field__control {
+    border: 1px solid ButtonText;
+  }
+  /* outlined inputs already have a visible border from Quasar — avoid a double border */
+  .q-field--outlined .q-field__control {
+    border: none;
+  }
+  .q-field--outlined .q-field__control:before {
+    border: 1px solid ButtonText;
+  }
+  .q-field--disabled .q-field__control {
+    border-color: GrayText;
+  }
+
+  /* --- select dropdown arrow: keep visible --- */
+  .q-field__append .q-icon {
+    color: ButtonText;
+  }
+
+  /* --- checkbox: make the checked fill visible --- */
+  .q-checkbox__inner--truthy .q-checkbox__bg,
+  .q-checkbox__inner--indet .q-checkbox__bg {
+    forced-color-adjust: none;
+    background: Highlight !important;
+    border-color: Highlight;
+  }
+  .q-checkbox__svg {
+    color: HighlightText;
+  }
+  .q-checkbox__truthy {
+    stroke: HighlightText;
+  }
+
+  /* --- switch / toggle: make track & thumb visible --- */
+  .q-toggle__track {
+    forced-color-adjust: none;
+    border: 1px solid ButtonText;
+    opacity: 1;
+    background: Canvas !important;
+  }
+  .q-toggle__thumb:after {
+    forced-color-adjust: none;
+    border: 2px solid ButtonText;
+    background: Canvas !important;
+  }
+  .q-toggle__inner--truthy .q-toggle__track {
+    background: Highlight !important;
+    border-color: Highlight;
+    opacity: 1;
+  }
+  .q-toggle__inner--truthy .q-toggle__thumb:after {
+    background: Highlight !important;
+    border-color: Highlight;
+  }
+
+  /* --- slider: make the track visible --- */
+  .q-slider__track {
+    forced-color-adjust: none;
+    border: 1px solid ButtonText;
+  }
+  .q-slider__selection {
+    forced-color-adjust: none;
+    background: Highlight !important;
+  }
+  .q-slider__thumb-shape {
+    forced-color-adjust: none;
+    border: 2px solid ButtonText;
+    background: Canvas !important;
+  }
+
+  /* --- linear progress: visible track and bar --- */
+  .q-linear-progress {
+    forced-color-adjust: none;
+    border: 1px solid ButtonText;
+  }
+  .q-linear-progress__model--determinate {
+    background: Highlight !important;
+  }
+  .q-linear-progress__track--light {
+    background: Canvas !important;
+  }
+  .q-linear-progress__track--dark {
+    background: Canvas !important;
+  }
+
+  /* --- circular progress: use system strokes --- */
+  .q-circular-progress circle {
+    forced-color-adjust: none;
+  }
+  .q-circular-progress .q-circular-progress__svg circle:first-child {
+    stroke: GrayText !important;
+  }
+  .q-circular-progress .q-circular-progress__svg circle:last-child {
+    stroke: Highlight !important;
+  }
+
+  /* --- spinner: keep animated color visible --- */
+  .q-spinner {
+    color: Highlight;
+  }
+
+  /* --- chips: add border --- */
+  .q-chip {
+    border: 1px solid ButtonText;
+  }
+
+  /* --- badges: add border --- */
+  .q-badge {
+    forced-color-adjust: none;
+    border: 1px solid ButtonText;
+    background: Highlight !important;
+    color: HighlightText !important;
+  }
+
+  /* --- avatar: add border --- */
+  .q-avatar {
+    border: 1px solid ButtonText;
+  }
+
+  /* --- card: add a visible border to replace shadow --- */
+  .q-card {
+    border: 1px solid ButtonText;
+  }
+
+  /* --- tabs: make the active indicator visible --- */
+  .q-tab__indicator {
+    forced-color-adjust: none;
+    background: Highlight !important;
+  }
+  .q-tab--active {
+    forced-color-adjust: none;
+    color: Highlight !important;
+  }
+
+  /* --- expansion item: add border for the panel --- */
+  .q-expansion-item {
+    border: 1px solid ButtonText;
+  }
+
+  /* --- table: ensure borders are visible --- */
+  .q-table {
+    border: 1px solid ButtonText;
+  }
+  .q-table th,
+  .q-table td {
+    border-color: ButtonText;
+  }
+
+  /* --- chat message bubble: visible boundary --- */
+  .q-message-text {
+    border: 1px solid ButtonText !important;
+  }
+  /* hide the CSS-border triangle — it renders as a block in forced-color mode */
+  .q-message-text:last-child:before {
+    display: none;
+  }
+
+  /* --- pagination: active page visible --- */
+  .q-pagination .q-btn--standard {
+    forced-color-adjust: none;
+    background: Highlight !important;
+    color: HighlightText !important;
+    border-color: Highlight;
+  }
+
+  /* --- stepper: make step dots and connectors visible --- */
+  .q-stepper {
+    border: 1px solid ButtonText;
+  }
+  .q-stepper__dot {
+    forced-color-adjust: none;
+    border: 2px solid ButtonText;
+  }
+  .q-stepper__tab--active .q-stepper__dot {
+    background: Highlight !important;
+    border-color: Highlight;
+  }
+  .q-stepper__tab--active .q-stepper__dot span {
+    color: HighlightText;
+  }
+  .q-stepper__line:before,
+  .q-stepper__line:after {
+    forced-color-adjust: none;
+    background: ButtonText !important;
+  }
+
+  /* --- timeline: make the connecting line visible --- */
+  .q-timeline__heading-title {
+    border-bottom: 1px solid ButtonText;
+  }
+  .q-timeline__dot:after {
+    forced-color-adjust: none;
+    background: ButtonText !important;
+  }
+  .q-timeline__dot .q-icon,
+  .q-timeline__dot:before {
+    forced-color-adjust: none;
+    border: 2px solid Highlight;
+  }
+
+  /* --- skeleton: visible placeholder outline --- */
+  .q-skeleton {
+    forced-color-adjust: none;
+    border: 1px solid GrayText !important;
+    background: Canvas !important;
+  }
+  .q-skeleton:before {
+    background: none !important;
+  }
+
+  /* --- notification / banner: add border --- */
+  .q-banner {
+    border: 1px solid ButtonText;
+  }
+
+  /* --- dialog: visible border --- */
+  .q-dialog__inner > div {
+    border: 1px solid ButtonText;
+  }
+
+  /* --- menu: visible border --- */
+  .q-menu {
+    border: 1px solid ButtonText;
+  }
+
+  /* --- list with border: ensure border is visible --- */
+  .q-list--bordered {
+    border-color: ButtonText;
+  }
+  .q-separator {
+    background: ButtonText !important;
+  }
+
+  /* --- rating stars: distinguish active from inactive --- */
+  .q-rating__icon {
+    forced-color-adjust: none;
+    color: GrayText !important;
+    opacity: 1;
+  }
+  .q-rating__icon--active {
+    color: Highlight !important;
+  }
+
+  /* --- knob: visible border --- */
+  .q-knob {
+    forced-color-adjust: none;
+  }
+  .q-knob .q-circular-progress__svg circle:first-child {
+    stroke: GrayText !important;
+  }
+  .q-knob .q-circular-progress__svg circle:last-child {
+    stroke: Highlight !important;
+  }
+
+  /* --- disabled elements: use system GrayText --- */
+  .disabled,
+  [disabled] {
+    color: GrayText !important;
+    border-color: GrayText !important;
+  }
+
+  /* --- tooltip: visible boundary --- */
+  .q-tooltip {
+    border: 1px solid ButtonText;
+  }
+
+  /* --- drawer: side border --- */
+  .q-drawer {
+    border-right: 1px solid ButtonText;
+  }
+  .q-drawer--right {
+    border-right: none;
+    border-left: 1px solid ButtonText;
+  }
+
+  /* --- date picker: highlight selected date --- */
+  .q-date {
+    border: 1px solid ButtonText;
+  }
+  .q-date__calendar-item .q-btn--unelevated {
+    forced-color-adjust: none;
+    background: Highlight !important;
+    color: HighlightText !important;
+    border-color: Highlight;
+  }
+
+  /* --- time picker: make clock pointer and active position visible --- */
+  .q-time {
+    border: 1px solid ButtonText;
+  }
+  .q-time__clock-pointer {
+    forced-color-adjust: none;
+    background: Highlight !important;
+  }
+  .q-time__clock-pointer:before,
+  .q-time__clock-pointer:after {
+    forced-color-adjust: none;
+    background: Highlight !important;
+  }
+  .q-time__clock-center {
+    forced-color-adjust: none;
+    background: Highlight !important;
+  }
+  .q-time__clock-position--active {
+    forced-color-adjust: none;
+    background: Highlight !important;
+    color: HighlightText !important;
+  }
+  .q-time__link--active {
+    forced-color-adjust: none;
+    color: Highlight !important;
+  }
+
+  /* --- carousel: distinguish active navigation dot --- */
+  .q-carousel {
+    border: 1px solid ButtonText;
+  }
+  .q-carousel__navigation-icon--inactive {
+    opacity: 0.5;
+    border-color: GrayText;
+  }
+  .q-carousel__navigation-icon:not(.q-carousel__navigation-icon--inactive) {
+    forced-color-adjust: none;
+    background: Highlight !important;
+    color: HighlightText !important;
+    border: 2px solid Highlight;
+    opacity: 1;
+  }
+
+  /* --- splitter: make separator visible --- */
+  .q-splitter__separator {
+    forced-color-adjust: none;
+    background: ButtonText !important;
+  }
+
+  /* --- upload: visible container border --- */
+  .q-uploader {
+    border: 1px solid ButtonText;
+  }
+
+  /* --- editor: visible toolbar and content area --- */
+  .q-editor {
+    border: 1px solid ButtonText;
+  }
+  .q-editor__toolbar {
+    border-bottom: 1px solid ButtonText;
+  }
+}
