@@ -183,10 +183,7 @@ class Client:
                 'favicon_url': get_favicon_url(self.page, prefix),
                 'dark': str(self.page.resolve_dark()),
                 'language': self.page.resolve_language(),
-                'has_explicit_language': (
-                    (self.page.language != '' and bool(self.page.language))
-                    or (core.app.config.language != '' and bool(core.app.config.language))
-                ),
+                'has_explicit_language': bool(self.page.language or core.app.config.language),
                 'translations': translations.get(self.page.resolve_language(), translations['en-US']),
                 'prefix': prefix,
                 'tailwind': core.app.config.tailwind,
