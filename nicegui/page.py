@@ -175,15 +175,21 @@ class page:
                 task_wait_for_connection = background_tasks.create(
                     client._waiting_for_connection.wait(),  # pylint: disable=protected-access
                 )
+                # Create a timeout task to reliably detect when the response timeout expires
+                timeout_task = asyncio.create_task(asyncio.sleep(self.response_timeout))
                 await asyncio.wait([
                     task,
                     task_wait_for_connection,
-                ], timeout=self.response_timeout, return_when=asyncio.FIRST_COMPLETED)
-                if not task_wait_for_connection.done() and not task.done():
+                    timeout_task,
+                ], return_when=asyncio.FIRST_COMPLETED)
+                # Warn if timeout expired and page build task is not done
+                if timeout_task.done() and not task.done():
                     task_wait_for_connection.cancel()
                     task.cancel()
                     log.warning(f'Response for {client.page.path} not ready after {self.response_timeout} seconds')
                     client.delete()
+                else:
+                    timeout_task.cancel()
                 if task.done():
                     result = task.result()
                 else:
