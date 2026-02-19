@@ -92,9 +92,9 @@ class page:
 
     def resolve_language(self) -> Language:
         """Return the language of the page, falling back to 'en-US' if not explicitly set."""
-        if self.language is not None and self.language != '':
+        if self.language:
             return self.language
-        if core.app.config.language is not None and core.app.config.language != '':
+        if core.app.config.language:
             return core.app.config.language
         return 'en-US'
 
@@ -103,7 +103,7 @@ class page:
         # Empty string means "explicitly no language attribute"
         if self.language == '' or core.app.config.language == '':
             return False
-        return self.language is not None or core.app.config.language is not None
+        return bool(self.language or core.app.config.language)
 
     def resolve_reconnect_timeout(self) -> float:
         """Return the reconnect_timeout of the page."""
