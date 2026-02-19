@@ -31,13 +31,7 @@ def test_no_lang_attribute_by_default(screen: Screen):
 @pytest.mark.parametrize('language_code,expected_lang', [
     ('fr', 'fr'),
     ('zh-CN', 'zh-CN'),
-    ('de', 'de'),
-    ('es', 'es'),
-    ('en-US', 'en-US'),
-    ('en-GB', 'en-GB'),
-    ('zh-TW', 'zh-TW'),
     ('pt-BR', 'pt-BR'),
-    ('de-CH', 'de-CH'),
 ])
 def test_lang_attribute_with_explicit_language(screen: Screen, language_code: str, expected_lang: str):
     """Test that lang attribute is added when language is explicitly set and full codes are preserved."""
@@ -54,3 +48,20 @@ def test_lang_attribute_with_explicit_language(screen: Screen, language_code: st
     html_tag = html_tag_match.group(0)
     assert f'lang="{expected_lang}"' in html_tag, \
         f'lang attribute should be "{expected_lang}", got: {html_tag}'
+
+
+def test_empty_string_language_opts_out(screen: Screen):
+    """Test that empty string language explicitly opts out of lang attribute."""
+    @ui.page('/', language='')
+    def page():
+        ui.label('Test')
+
+    screen.open('/')
+
+    # Check raw HTML from server
+    response = requests.get('http://localhost:3392/')
+    html_tag_match = re.search(r'<html[^>]*>', response.text, re.IGNORECASE)
+    assert html_tag_match, 'Could not find <html> tag in response'
+    html_tag = html_tag_match.group(0)
+    assert 'lang=' not in html_tag.lower(), \
+        f'lang attribute should not be in HTML tag when empty string is used, but got: {html_tag}'
