@@ -34,7 +34,7 @@ class AppConfig:
     viewport: str = field(init=False)
     favicon: str | Path | None = field(init=False)
     dark: bool | None = field(init=False)
-    language: Language = field(init=False)
+    language: Language = field(init=False)  # type: ignore
     binding_refresh_interval: float | None = field(init=False)
     reconnect_timeout: float = field(init=False)
     message_history_length: int = field(init=False)
