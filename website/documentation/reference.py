@@ -21,12 +21,15 @@ class Attribute:
 
 def generate_class_doc(class_obj: type, part_title: str, *,
                        side_panel: Element | None = None) -> None:
-    """Generate documentation for a class including all its methods and properties.
-
-    :param side_panel: If provided, render Initializer and Properties into this container
-                       while Methods and Inheritance render in the current context.
-    """
+    """Generate documentation for a class including all its methods and properties."""
     doc = class_obj.__doc__ or class_obj.__init__.__doc__
+    _side = side_panel if side_panel is not None else contextlib.nullcontext()
+    with _side:
+        if doc and ':param' in doc:
+            subheading('Initializer', anchor_name=create_anchor_name(part_title.replace('Reference', 'Initializer')))
+            description = remove_indentation(doc.split('\n', 1)[-1])
+            lines = [line.replace(':param ', ':') for line in description.splitlines() if ':param' in line]
+            custom_restructured_text('\n'.join(lines)).classes('bold-links arrow-links rst-param-tables')
 
     mro = [base for base in class_obj.__mro__ if base.__module__.startswith('nicegui.')]
     ancestors = mro[1:]
@@ -39,13 +42,7 @@ def generate_class_doc(class_obj: type, part_title: str, *,
     properties = [attribute for attribute in attributes if not callable(attribute.obj)]
     methods = [attribute for attribute in attributes if callable(attribute.obj)]
 
-    with side_panel if side_panel is not None else contextlib.nullcontext():
-        if doc and ':param' in doc:
-            subheading('Initializer', anchor_name=create_anchor_name(part_title.replace('Reference', 'Initializer')))
-            description = remove_indentation(doc.split('\n', 1)[-1])
-            lines = [line.replace(':param ', ':') for line in description.splitlines() if ':param' in line]
-            custom_restructured_text('\n'.join(lines)).classes('bold-links arrow-links rst-param-tables')
-
+    with _side:
         if properties:
             subheading('Properties', anchor_name=create_anchor_name(part_title.replace('Reference', 'Properties')))
             _render_section(class_obj, properties, method_section=False)

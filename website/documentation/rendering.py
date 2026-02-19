@@ -14,7 +14,7 @@ def render_page(documentation: DocumentationPage) -> None:
     title = (documentation.title or '').replace('*', '')
     ui.page_title('NiceGUI' if not title else title if title.split()[0] == 'NiceGUI' else f'{title} | NiceGUI')
 
-    reference_parts = [(p.reference, p.title) for p in documentation.parts if p.reference]
+    has_reference = any(p.reference for p in documentation.parts)
     side_panels: list[ui.column] = []
 
     def render_content():
@@ -39,24 +39,21 @@ def render_page(documentation: DocumentationPage) -> None:
             if part.demo:
                 demo(part.demo.function, lazy=part.demo.lazy, tab=part.demo.tab)
             if part.reference:
-                if reference_parts:
-                    panel = ui.column().classes('w-full')
-                    side_panels.append(panel)
-                    generate_class_doc(part.reference, part.title, side_panel=panel)
-                else:
-                    generate_class_doc(part.reference, part.title)
+                panel = ui.column().classes('w-full')
+                side_panels.append(panel)
+                generate_class_doc(part.reference, part.title, side_panel=panel)
             if part.link:
                 ui.markdown(f'See [more...](/documentation/{part.link})').classes('bold-links arrow-links')
 
     row = ui.row().classes(f'w-full justify-center items-start {WIDE}:!gap-0')
-    if reference_parts:
+    if has_reference:
         row.classes(f'{WIDE}:h-[calc(100vh-70px)] {WIDE}:overflow-hidden')
     with row:
-        main_col = ui.column().classes(f'w-full p-8 lg:p-16 max-w-[1250px] mx-auto {WIDE}:!mx-0')
-        if reference_parts:
-            main_col.classes(f'{WIDE}:h-full {WIDE}:!p-0 {WIDE}:!gap-0')
+        main_col = ui.column().classes('w-full p-8 lg:p-16 max-w-[1250px] mx-auto')
+        if has_reference:
+            main_col.classes(f'{WIDE}:!mx-0 {WIDE}:h-full {WIDE}:!p-0 {WIDE}:!gap-0')
         with main_col:
-            if reference_parts:
+            if has_reference:
                 scroll = ui.element('div').classes(
                     f'w-full {WIDE}:overflow-y-auto {WIDE}:h-full {WIDE}:p-8 lg:{WIDE}:p-16'
                 )
@@ -74,7 +71,7 @@ def render_page(documentation: DocumentationPage) -> None:
                         render_content()
                     with ui.column().classes('w-full p-4 items-end'):
                         ui.link('Imprint & Privacy', '/imprint_privacy').classes('text-sm')
-        if reference_parts:
+        if has_reference:
             side = ui.element('div').classes(
                 f'!hidden {WIDE}:!block max-w-[500px] shrink-0'
                 f' {WIDE}:overflow-y-auto {WIDE}:h-full'
