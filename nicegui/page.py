@@ -28,7 +28,7 @@ class page:
                  viewport: str | None = None,
                  favicon: str | Path | None = None,
                  dark: bool | None = ...,  # type: ignore
-                 language: Language = ...,  # type: ignore
+                 language: Language | None = ...,  # type: ignore
                  response_timeout: float = 3.0,
                  reconnect_timeout: float | None = None,
                  api_router: APIRouter | None = None,
@@ -54,7 +54,7 @@ class page:
         :param viewport: optional viewport meta tag content
         :param favicon: optional relative filepath or absolute URL to a favicon (default: `None`, NiceGUI icon will be used)
         :param dark: whether to use Quasar's dark mode (defaults to `dark` argument of `run` command)
-        :param language: language of the page (defaults to `language` argument of `run` command)
+        :param language: language of the page (defaults to `language` argument of `run` command; set explicitly to add `lang` attribute to `<html>` tag; use `None` to explicitly opt-out)
         :param response_timeout: maximum time for the decorated function to build the page (default: 3.0 seconds)
         :param reconnect_timeout: maximum time the server waits for the browser to reconnect (defaults to `reconnect_timeout` argument of `run` command))
         :param api_router: APIRouter instance to use, can be left `None` to use the default
@@ -90,9 +90,13 @@ class page:
         """Return whether the page should use dark mode."""
         return self.dark if self.dark is not ... else core.app.config.dark
 
-    def resolve_language(self) -> Language:
-        """Return the language of the page."""
+    def configured_language(self) -> Language | None:
+        """Return the explicitly configured language, or None if not set."""
         return self.language if self.language is not ... else core.app.config.language
+
+    def resolve_language(self) -> Language:
+        """Return the language of the page, falling back to 'en-US' if not explicitly set."""
+        return self.configured_language() or 'en-US'
 
     def resolve_reconnect_timeout(self) -> float:
         """Return the reconnect_timeout of the page."""
