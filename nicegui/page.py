@@ -98,13 +98,6 @@ class page:
             return core.app.config.language
         return 'en-US'
 
-    def has_explicit_language(self) -> bool:
-        """Return whether the language was explicitly configured (and not empty string to opt-out)."""
-        # Empty string means "explicitly no language attribute"
-        if self.language == '' or core.app.config.language == '':
-            return False
-        return bool(self.language or core.app.config.language)
-
     def resolve_reconnect_timeout(self) -> float:
         """Return the reconnect_timeout of the page."""
         return self.reconnect_timeout if self.reconnect_timeout is not None else core.app.config.reconnect_timeout
