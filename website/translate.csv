@@ -252,21 +252,25 @@ en,zh-CN
     ```python
     label.style['color'] = user_color.value  # Allows CSS injection and data exfiltration
     ```
-","**永远不要这样做：**
-```python
-label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
-```"
+","
+    **永远不要这样做：**
+    ```python
+    label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
+    ```
+"
 "
     **Never do this:**
     ```python
     ui.add_body_html(f""<div>Welcome {username}</div>"")  # XSS: ""<img src=x onerror=alert(1)>""
     ui.add_head_html(f""<script>alert('{username}')</script>"")  # XSS: ""');alert(1);//""
     ```
-","**永远不要这样做：**
+","
+    **永远不要这样做：**
     ```python
     ui.add_body_html(f""<div>Welcome {username}</div>"")  # XSS: ""<img src=x onerror=alert(1)>""
     ui.add_head_html(f""<script>alert('{username}')</script>"")  # XSS: ""');alert(1);//""
-    ```"
+    ```
+"
 "
     **Never do this:**
     ```python
@@ -283,10 +287,12 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     ```python
     value = eval(user_input.value)  # Can execute arbitrary Python code!
     ```
-","**永远不要这样做：**
+","
+    **永远不要这样做：**
     ```python
     value = eval(user_input.value)  # 可以执行任意 Python 代码！
-    ```"
+    ```
+"
 "
     **Packaging Tips:**
 
@@ -418,7 +424,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     if __name__ == '__main__':
         freeze_support()  # 主守卫内的第一句
         ui.run(native=True, reload=False)
-    ```"
+    ```
+"
 "
     **Security Advisories:**
 
@@ -456,7 +463,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     3. 验证 CSS 值（框架不对此进行转义）
     4. 仅对受信任的、你控制的内容禁用清理
     5. 采用纵深防御（如阻止 iframe 的头部、输入验证）
-    6. 保持 NiceGUI 保持最新版本"
+    6. 保持 NiceGUI 保持最新版本
+"
 "
     `user.find(...)` returns a `UserInteraction` object which provides methods to type text,
     clear inputs, click buttons and trigger events on the found elements.
@@ -467,25 +475,30 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     `user.find(...)` 返回一个 `UserInteraction` 对象，该对象提供方法用于输入文本、清空输入框、点击按钮以及在找到的元素上触发事件。
     本示例展示了如何触发 ""keydown.tab"" 事件，在输入第一个字母后自动完成输入框。
 
-    *2.7.0 版本新增：触发事件*"
+    *2.7.0 版本新增：触发事件*
+"
 "
     By cutting out the browser, test execution becomes much faster than the [`screen` fixture](/documentation/screen).
     See our [pytests example](https://github.com/zauberzeug/nicegui/tree/main/examples/pytests)
     which implements the same tests with both fixtures.
     Of course, some features like screenshots or browser-specific behavior are not available,
     but in most cases the speed of the `user` fixture makes it the first choice.
-","通过省略浏览器，测试执行速度比 [`screen` 固件](/documentation/screen) 快得多。
+","
+    通过省略浏览器，测试执行速度比 [`screen` 固件](/documentation/screen) 快得多。
     请参见我们的 [pytest 示例](https://github.com/zauberzeug/nicegui/tree/main/examples/pytests)
     该示例同时使用两种固件实现了相同的测试。
     当然，一些功能如截图或浏览器特定行为不可用，
-    但在大多数情况下，`user` 固件的速度使其成为首选。"
+    但在大多数情况下，`user` 固件的速度使其成为首选。
+"
 "
     By default, the general and user storage data is stored in JSON format without indentation.
     You can change this to an indentation of 2 spaces by setting
     `app.storage.general.indent = True` or `app.storage.user.indent = True`.
-","默认情况下，通用和用户存储数据以无缩进的 JSON 格式存储。
+","
+    默认情况下，通用和用户存储数据以无缩进的 JSON 格式存储。
     你可以通过设置 `app.storage.general.indent = True` 或 `app.storage.user.indent = True`
-    将其改为缩进 2 个空格的格式。"
+    将其改为缩进 2 个空格的格式。
+"
 "
     By using `ui.run(on_air=True)` you can share your local app with others over the internet 🧞.
 
@@ -548,7 +561,9 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     You can also extend the available components by subclassing existing NiceGUI components or importing new ones from Quasar.
     All of this is optional.
     Out of the box, NiceGUI provides everything you need to make modern, stylish, responsive user interfaces.
-",如需更多定制，可以使用底层的 Tailwind 类和 Quasar 组件来控制元素的样式或行为。您也可以通过继承现有 NiceGUI 组件或导入新的 Quasar 组件来扩展可用组件。所有这些功能都是可选的。开箱即用的 NiceGUI 已提供创建现代、时尚、响应式用户界面所需的一切。
+","
+    如需更多定制，可以使用底层的 Tailwind 类和 Quasar 组件来控制元素的样式或行为。您也可以通过继承现有 NiceGUI 组件或导入新的 Quasar 组件来扩展可用组件。所有这些功能都是可选的。开箱即用的 NiceGUI 已提供创建现代、时尚、响应式用户界面所需的一切。
+"
 "
     In production we also like using reverse proxies like [Traefik](https://doc.traefik.io/traefik/) or [NGINX](https://www.nginx.com/) to handle these details for us.
     See our development [docker-compose.yml](https://github.com/zauberzeug/nicegui/blob/main/docker-compose.yml) as an example based on traefik or
@@ -558,7 +573,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     You may also have a look at [our demo for using a custom FastAPI app](https://github.com/zauberzeug/nicegui/tree/main/examples/fastapi).
     This will allow you to do very flexible deployments as described in the [FastAPI documentation](https://fastapi.tiangolo.com/deployment/).
     Note that there are additional steps required to allow multiple workers.
-","在生产环境中，我们还喜欢使用反向代理，例如 [Traefik](https://doc.traefik.io/traefik/) 或 [NGINX](https://www.nginx.com/) 来为我们处理这些细节。
+","
+    在生产环境中，我们还喜欢使用反向代理，例如 [Traefik](https://doc.traefik.io/traefik/) 或 [NGINX](https://www.nginx.com/) 来为我们处理这些细节。
     请参见我们的开发 [docker-compose.yml](https://github.com/zauberzeug/nicegui/blob/main/docker-compose.yml) 作为基于 Traefik 的示例，或
     [此 nginx.conf 文件](https://github.com/zauberzeug/nicegui/blob/main/examples/nginx_https/nginx.conf)，展示如何使用 NGINX 来处理 SSL 证书和
     反向代理您的 NiceGUI 应用。
@@ -610,13 +626,17 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     You can focus on writing Python code.
     This makes it ideal for a wide range of projects including short
     scripts, dashboards, robotics projects, IoT solutions, smart home automation, and machine learning.
-",NiceGUI 是一个开源的 Python 库，用于编写在浏览器中运行的图形用户界面。它的学习曲线非常平缓，同时仍提供高级定制选项。NiceGUI 遵循后端优先理念：它处理所有 Web 开发细节。您可以专注于编写 Python 代码。这使其非常适合各种项目，包括简短脚本、仪表盘、机器人项目、物联网解决方案、智能家居自动化和机器学习。
+","
+    NiceGUI 是一个开源的 Python 库，用于编写在浏览器中运行的图形用户界面。它的学习曲线非常平缓，同时仍提供高级定制选项。NiceGUI 遵循后端优先理念：它处理所有 Web 开发细节。您可以专注于编写 Python 代码。这使其非常适合各种项目，包括简短脚本、仪表盘、机器人项目、物联网解决方案、智能家居自动化和机器学习。
+"
 "
     NiceGUI is implemented with HTML components served by an HTTP server (FastAPI), even for native windows.
     If you already know HTML, everything will feel very familiar.
     If you don't know HTML, that's fine too!
     NiceGUI abstracts away the details, so you can focus on creating beautiful interfaces without worrying about how they are implemented.
-",NiceGUI 基于 HTTP 服务器 [FastAPI](https://fastapi.tiangolo.com/) 的 HTML 组件实现，即使是原生窗口也是如此。如果您熟悉 HTML，所有内容都会非常亲切。如果不了解 HTML 也没关系！NiceGUI 抽象了底层细节，让您可以专注于创建美观界面而无需操心实现方式。
+","
+    NiceGUI 基于 HTTP 服务器 [FastAPI](https://fastapi.tiangolo.com/) 的 HTML 组件实现，即使是原生窗口也是如此。如果您熟悉 HTML，所有内容都会非常亲切。如果不了解 HTML 也没关系！NiceGUI 抽象了底层细节，让您可以专注于创建美观界面而无需操心实现方式。
+"
 "
     NiceGUI provides a comprehensive testing framework based on [pytest](https://docs.pytest.org/)
     which allows you to automate the testing of your user interface.
@@ -631,7 +651,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
 ","
     NiceGUI 提供基于 [pytest](https://docs.pytest.org/) 的完整测试框架，支持自动化测试用户界面。您可以使用 `screen` 夹具启动真实（无头）浏览器与应用交互，这对测试浏览器特定行为非常有用。
 
-    但大多数情况下，新引入的 `user` 夹具更适用：它仅在 Python 层面模拟用户交互，因此速度极快。这使得传统的测试金字塔模型（认为 UI 测试缓慢且昂贵）不再适用。这对开发速度、质量和信心都有重大提升。"
+    但大多数情况下，新引入的 `user` 夹具更适用：它仅在 Python 层面模拟用户交互，因此速度极快。这使得传统的测试金字塔模型（认为 UI 测试缓慢且昂贵）不再适用。这对开发速度、质量和信心都有重大提升。
+"
 "
     NiceGUI provides secure defaults and built-in protections, but **developers must write secure code**.
     Not all UI components can safely handle untrusted input,
@@ -665,7 +686,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     - 审查应用程序逻辑以查找不安全模式
     - 保持对不受信任内容的清理功能启用
     - 在必要时验证用户输入
-    - 保持 NiceGUI 保持最新版本"
+    - 保持 NiceGUI 保持最新版本
+"
 "
     NiceGUI provides UI _elements_ such as buttons, sliders, text, images, charts, and more.
     Your app assembles these components into _pages_.
@@ -689,13 +711,16 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
 
     元素使用""声明式 UI""（或者说""基于代码的 UI""）排列在页面上。这意味着您可以直接用代码编写网格、卡片、标签页、轮播图、折叠面板、菜单和其他布局元素。这种理念因 Flutter 和 SwiftUI 而流行。为了可读性，NiceGUI 使用 Python 的 `with ...` 语句。该上下文管理器通过代码缩进来直观反映 UI 布局结构。
 
-    样式和外观可以通过多种方式控制。大多数元素接受常见样式和行为变更的可选参数，例如按钮图标或文本颜色。由于 NiceGUI 是 Web 框架，您可以用 CSS 修改元素的几乎任何外观。元素还提供 `.classes` 和 `.props` 方法来应用 Tailwind CSS 和 Quasar 属性，这些高级特性在熟悉后日常使用更加简单高效。"
+    样式和外观可以通过多种方式控制。大多数元素接受常见样式和行为变更的可选参数，例如按钮图标或文本颜色。由于 NiceGUI 是 Web 框架，您可以用 CSS 修改元素的几乎任何外观。元素还提供 `.classes` 和 `.props` 方法来应用 Tailwind CSS 和 Quasar 属性，这些高级特性在熟悉后日常使用更加简单高效。
+"
 "
     NiceGUI uses an async/await event loop for concurrency which is resource-efficient and has the great benefit of not having to worry about thread safety.
     This section shows how to handle user input and other events like timers and keyboard bindings.
     It also describes helper functions to wrap long-running tasks in asynchronous functions to keep the UI responsive.
     Keep in mind that all UI updates must happen on the main thread with its event loop.
-",NiceGUI 使用异步/等待事件循环来实现并发，这种方式资源利用率高且无需担心线程安全。本节展示如何处理用户输入和定时器、键盘绑定等其他事件。同时描述如何用异步函数封装长时间运行的任务以保持 UI 响应性。请注意所有 UI 更新都必须在主线程的事件循环中进行。
+","
+    NiceGUI 使用异步/等待事件循环来实现并发，这种方式资源利用率高且无需担心线程安全。本节展示如何处理用户输入和定时器、键盘绑定等其他事件。同时描述如何用异步函数封装长时间运行的任务以保持 UI 响应性。请注意所有 UI 更新都必须在主线程的事件循环中进行。
+"
 "
     Note that the native app is run in a separate
     [process](https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Process).
@@ -728,7 +753,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     import sys
     sys.stdout = open('logs.txt', 'w')
     ```
-    有关更多信息，请参见 <https://github.com/zauberzeug/nicegui/issues/681>。"
+    有关更多信息，请参见 <https://github.com/zauberzeug/nicegui/issues/681>。
+"
 "
     Please also have a look at the examples
     [Chat App](https://github.com/zauberzeug/nicegui/tree/main/examples/chat_app),
@@ -738,11 +764,12 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     for demonstration.
 ","
     请也查看以下示例
-[聊天应用](https://github.com/zauberzeug/nicegui/tree/main/examples/chat_app),
-[待办事项列表](https://github.com/zauberzeug/nicegui/tree/main/examples/todo_list/),
-[认证](https://github.com/zauberzeug/nicegui/tree/main/examples/authentication)
-以及我们的[更复杂的 pytest 示例](https://github.com/zauberzeug/nicegui/tree/main/examples/pytests)
-以供演示。"
+    [聊天应用](https://github.com/zauberzeug/nicegui/tree/main/examples/chat_app),
+    [待办事项列表](https://github.com/zauberzeug/nicegui/tree/main/examples/todo_list/),
+    [认证](https://github.com/zauberzeug/nicegui/tree/main/examples/authentication)
+    以及我们的[更复杂的 pytest 示例](https://github.com/zauberzeug/nicegui/tree/main/examples/pytests)
+    以供演示。
+"
 "
     Sometimes it is not enough to just interact with the UI as a single user.
     Besides the `user` fixture, we also provide the `create_user` fixture which is a factory function to create users.
@@ -751,10 +778,11 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     for a full demonstration.
 ","
     有时仅与 UI 作为单个用户交互并不足够。
-除了 `user` 固定装置外，我们还提供 `create_user` 固定装置，这是一个用于创建用户的工厂函数。
-`User` 实例彼此独立，可以并行与 UI 交互。
-请参见我们的[聊天应用示例](https://github.com/zauberzeug/nicegui/blob/main/examples/chat_app/test_chat_app.py)
-以获取完整演示。"
+    除了 `user` 固定装置外，我们还提供 `create_user` 固定装置，这是一个用于创建用户的工厂函数。
+    `User` 实例彼此独立，可以并行与 UI 交互。
+    请参见我们的[聊天应用示例](https://github.com/zauberzeug/nicegui/blob/main/examples/chat_app/test_chat_app.py)
+    以获取完整演示。
+"
 "
     The [`user_simulation`](https://github.com/zauberzeug/nicegui/blob/main/nicegui/testing/user_simulation.py) context
     is the low-level building block behind the `user` fixture.
@@ -770,20 +798,22 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
 
     More usage examples can be found in
     [`tests/test_user_simulation_context.py`](https://github.com/zauberzeug/nicegui/blob/main/tests/test_user_simulation_context.py).
-","[`user_simulation`](https://github.com/zauberzeug/nicegui/blob/main/nicegui/testing/user_simulation.py) 上下文
-是 `user` 固定装置背后的底层构建块。
-它在相同事件循环内启动一个 NiceGUI 应用，提供无 Selenium 的确定性测试控制。
-与 `user` 固定装置不同，它不依赖 pytest 特定的基础设施，
-可与 `unittest` 或纯异步代码一起使用。
+","
+    [`user_simulation`](https://github.com/zauberzeug/nicegui/blob/main/nicegui/testing/user_simulation.py) 上下文
+    是 `user` 固定装置背后的底层构建块。
+    它在相同事件循环内启动一个 NiceGUI 应用，提供无 Selenium 的确定性测试控制。
+    与 `user` 固定装置不同，它不依赖 pytest 特定的基础设施，
+    可与 `unittest` 或纯异步代码一起使用。
 
-该上下文支持三种测试方法：
+    该上下文支持三种测试方法：
 
-- 直接测试 `root` 可调用函数。
-- 通过传递路径测试特定的主文件。
-- 在上下文中内联定义 `ui.page`。
+    - 直接测试 `root` 可调用函数。
+    - 通过传递路径测试特定的主文件。
+    - 在上下文中内联定义 `ui.page`。
 
-更多使用示例请参见
-[`tests/test_user_simulation_context.py`](https://github.com/zauberzeug/nicegui/blob/main/tests/test_user_simulation_context.py)。"
+    更多使用示例请参见
+    [`tests/test_user_simulation_context.py`](https://github.com/zauberzeug/nicegui/blob/main/tests/test_user_simulation_context.py)。
+"
 "
     The `screen` fixture can be configured by setting the following static attributes:
 
@@ -791,12 +821,14 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     - `IMPLICIT_WAIT`: The implicit wait time in seconds (default: 4).
     - `SCREENSHOT_DIR`: The directory to store the screenshots (default: ""screenshots"").
     - `CATCH_JS_ERRORS`: Whether to catch JavaScript errors (default: `True`, *added in version 3.2.0*).
-","`screen` 固定 fixture 可通过设置以下静态属性进行配置：
+","
+    `screen` 固定 fixture 可通过设置以下静态属性进行配置：
 
     - `PORT`：用于服务器的端口（默认：3392）。
     - `IMPLICIT_WAIT`：隐式等待时间（单位：秒）（默认：4）。
     - `SCREENSHOT_DIR`：存储截图的目录（默认：""screenshots""）。
-    - `CATCH_JS_ERRORS`：是否捕获 JavaScript 错误（默认：`True`，自版本 3.2.0 开始添加）。"
+    - `CATCH_JS_ERRORS`：是否捕获 JavaScript 错误（默认：`True`，自版本 3.2.0 开始添加）。
+"
 "
     The `ui.open` function has been removed.
     Use [`ui.navigate.to`](navigate#ui_navigate_to_(formerly_ui_open)) instead.
@@ -945,7 +977,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     For instance, you can directly provide your certificates to [Uvicorn](https://www.uvicorn.org/), which NiceGUI is based on, by passing the
     relevant [options](https://www.uvicorn.org/#command-line-options) to `ui.run()`.
     If both a certificate and key file are provided, the application will automatically be served over HTTPS:
-","Docker 镜像中还有其他便捷功能，例如非 root 用户执行和信号传递。
+","
+    Docker 镜像中还有其他便捷功能，例如非 root 用户执行和信号传递。
     有关更多详情，我们建议您查看我们的 [Docker 示例](https://github.com/zauberzeug/nicegui/tree/main/examples/docker_image)。
 
     若要使用 [HTTPS](https://fastapi.tiangolo.com/deployment/https/) 加密服务您的应用程序，您可以以多种方式提供 SSL 证书。
@@ -986,7 +1019,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     - use `click()` a second time to select the desired option.
 
     For a multi-select element, repeat the click-and-choose steps for each item.
-","选择 `ui.select` 中的项目只需
+","
+    选择 `ui.select` 中的项目只需
 
     - 使用 `user.find()` 定位 `ui.select` 元素，
     - 使用 `click()` 打开下拉菜单，
@@ -998,7 +1032,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     To create a Floating Action Button (FAB) with multiple actions that are revealed when the FAB is clicked,
     you can use [`ui.fab` and `ui.fab_action`](fab) elements,
     which are based on [Quasar's QFab component](https://quasar.dev/vue-components/floating-action-button).
-","要创建一个点击时会展开多个操作的浮动操作按钮（FAB），您可以使用 [`ui.fab` 和 `ui.fab_action`](fab) 元素，
+","
+    要创建一个点击时会展开多个操作的浮动操作按钮（FAB），您可以使用 [`ui.fab` 和 `ui.fab_action`](fab) 元素，
     它们基于 [Quasar 的 QFab 组件](https://quasar.dev/vue-components/floating-action-button)。"
 "
     To deploy your NiceGUI app on a server, you will need to execute your `main.py` (or whichever file contains your `ui.run(...)`) on your cloud infrastructure.
@@ -1007,9 +1042,10 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
 
     A convenient alternative is the use of our [pre-built multi-arch Docker image](https://hub.docker.com/r/zauberzeug/nicegui) which contains all necessary dependencies.
     With this command you can launch the script `main.py` in the current directory on the public port 80:
-","要在服务器上部署您的 NiceGUI 应用程序，您需要在云端基础设施上执行您的 `main.py`（或包含 `ui.run(...)` 的任何文件）。
+","
+    要在服务器上部署您的 NiceGUI 应用程序，您需要在云端基础设施上执行您的 `main.py`（或包含 `ui.run(...)` 的任何文件）。
     例如，您可以仅通过 pip 安装 [NiceGUI Python 包](https://pypi.org/project/nicegui/)，并使用 systemd 或类似服务启动主脚本。
-    在大多数情况下，您将使用 `ui.run` 命令将端口设置为 �80（或 443，如果您希望使用 HTTPS），以便从外部轻松访问。
+    在大多数情况下，您将使用 `ui.run` 命令将端口设置为 80（或 443，如果您希望使用 HTTPS），以便从外部轻松访问。
 
     一个方便的替代方案是使用我们预构建的多架构 Docker 镜像 [https://hub.docker.com/r/zauberzeug/nicegui](https://hub.docker.com/r/zauberzeug/nicegui)，其中包含所有必需的依赖项。
     使用此命令，您可以在当前目录的公共端口 80 上启动脚本 `main.py`："
@@ -1033,12 +1069,13 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     In Python we can use the `esm` parameter when subclassing `ui.element`
     to specify the ESM module name and the path to the bundled component.
     This adds the ESM module to the import map of the page and makes it available in the Vue component.
-","你可以通过继承 `ui.element` 并实现相应的 Vue 组件来创建自定义组件。
-    “自定义 Vue 组件”示例（https://github.com/zauberzeug/nicegui/tree/main/examples/custom_vue_component）
+","
+    你可以通过继承 `ui.element` 并实现相应的 Vue 组件来创建自定义组件。
+    [“自定义 Vue 组件”示例](https://github.com/zauberzeug/nicegui/tree/main/examples/custom_vue_component)
     展示了如何创建一个自定义计数器组件，该组件会发出事件并从服务器接收更新。
 
-    “签名笔迹”示例（https://github.com/zauberzeug/nicegui/blob/main/examples/signature_pad）和
-    “Node 模块集成”示例（https://github.com/zauberzeug/nicegui/blob/main/examples/node_module_integration）
+    [“手写签名”示例](https://github.com/zauberzeug/nicegui/blob/main/examples/signature_pad) 和
+    [“NodeJS模块集成”示例](https://github.com/zauberzeug/nicegui/blob/main/examples/node_module_integration)
     展示了如何将自定义 Vue 组件与其依赖项（通过 `package.json` 文件定义）打包在一起。
     在 Python 中，我们可以在继承 `ui.element` 时使用 `esm` 参数，以指定 ESM 模块名称和打包组件的路径。
     这会将 ESM 模块添加到页面的 import map 中，并使其在 Vue 组件中可用。"
@@ -1064,7 +1101,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     But of course to sync between multiple instances you should replace SQLite with PostgreSQL or similar.
 
     *Added in version 2.10.0*
-","你可以使用 [Redis](https://redis.io/) 作为存储替代默认文件存储。
+","
+    你可以使用 [Redis](https://redis.io/) 作为存储替代默认文件存储。
     如果你有多个 NiceGUI 实例并且希望在它们之间共享数据，这非常有用。
 
     要启用此功能，请安装 `redis` 包（`pip install nicegui[redis]`），并提供 `NICEGUI_REDIS_URL` 环境变量指向你的 Redis 服务器。
@@ -1087,7 +1125,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     By awaiting `user.download.next()` you can get the next download response.
 
     *Added in version 2.1.0*
-","你可以通过检查 `user.download.http_responses` 来验证下载是否已触发。
+","
+    你可以通过检查 `user.download.http_responses` 来验证下载是否已触发。
     通过等待 `user.download.next()`，你可以获取下一个下载响应。
 
     *在版本 2.1.0 中新增*"
@@ -1961,7 +2000,8 @@ when any component registered with `triggerEvent=True` is clicked.
 Hint: Check if that component is a point by checking `e.component_type == 'series'`
 to avoid double-processing with `on_point_click`.
 
-*Added in version 3.5.0*","除了系列点外，你还可以为任何触发事件的组件（`triggerEvent=True`）的点击注册回调。
+*Added in version 3.5.0*","
+除了系列点外，你还可以为任何触发事件的组件（`triggerEvent=True`）的点击注册回调。
 
 提示：通过检查 `e.component_type == 'series'` 来确认该组件是否为点，以避免与 `on_point_click` 重复处理。
 
@@ -1980,8 +2020,8 @@ The note is also shared between all tabs of the same user.","绑定也支持 [`a
 这里我们保存了文本区域在不同访问之间的值。
 该笔记也会在同一位用户的所有标签页间共享。"
 Blank canvas,空白画布
-Browse through plenty of examples.,浏览大量示例
-Browse through plenty of live demos.,浏览大量在线演示
+Browse through plenty of examples.,浏览海量示例
+Browse through plenty of live demos.,浏览海量在线演示
 Build a custom element based on the third-party NPM module [signature_pad](https://www.npmjs.com/package/signature_pad),基于第三方 NPM 模块 [signature_pad](https://www.npmjs.com/package/signature_pad) 构建自定义元素
 Build a login form and user profile using [Descope](https://descope.com),使用 [Descope](https://descope.com) 构建登录表单和用户资料
 Build a simple chat app,构建一个简单的聊天应用
@@ -2679,7 +2719,7 @@ Foundation,技术栈
 Frame Rate and Statistics,帧率与统计信息
 FullCalendar,FullCalendar
 Fullscreen control element,全屏控制元素
-Fun-Fact: This whole website is also coded with NiceGUI.,"冷知识：整个官网也是用 NiceGUI 编写的。"
+Fun-Fact: This whole website is also coded with NiceGUI.,"有趣的事实：整个官网也是用 NiceGUI 编写的。"
 "Function to trigger the download from a relative URL.
 
 Note:
@@ -2842,8 +2882,8 @@ Image Overlays,图片叠加层
 Images can link to another page by wrapping them in a [ui.link](https://nicegui.io/documentation/link).,图片可以通过包裹在 [ui.link](https://nicegui.io/documentation/link) 中链接到另一页面。
 Implement a keyboard-controlled image slideshow,实现键盘控制的图片幻灯片
 Implementation,实现原理
-Imprint,印记
-Imprint & Privacy,印记与隐私
+Imprint,联系方式
+Imprint & Privacy,联系方式与隐私政策
 "In order to allow writing intuitive UI descriptions, NiceGUI automatically tracks the context in which elements are created.
 This means that there is no explicit `parent` parameter.
 Instead the parent context is defined using a `with` statement.
@@ -4104,10 +4144,11 @@ Like with any other element, you can add classes, style, props, tooltips and eve
 One convenience is that the keyword arguments are automatically added to the element's `props` dictionary.
 
 *Added in version 2.5.0*",此外，还有一个 `html` 模块，允许您插入其他 HTML 元素，如 `<span>`、`<div>`、`<p>` 等。它等同于使用带有 `tag` 参数的 `ui.element` 方法。
-"These functions allow you to download files, URLs or raw data.
+"    These functions allow you to navigate within the browser history and to external URLs.
 
-*Added in version 2.14.0*
-","这些函数允许你下载文件、URL 或原始数据。
+    *Added in version 2.0.0*
+    ","
+这些函数允许你下载文件、URL 或原始数据。
 
 *2.14.0 版本新增*"
 "These functions allow you to navigate within the browser history and to external URLs.
@@ -4122,7 +4163,8 @@ You can register callbacks for the following events:
 - `on_point_click`: called when a point is clicked
 - `on_point_drag_start`: called when a point drag starts
 - `on_point_drag`: called when a point is dragged
-- `on_point_drop`: called when a point is dropped","此图表允许拖动系列点。
+- `on_point_drop`: called when a point is dropped","
+此图表允许拖动系列点。
 您可以为以下事件注册回调函数：
 
 - `on_point_click`：点击点时调用
