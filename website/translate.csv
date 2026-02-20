@@ -166,28 +166,44 @@ en,zh-CN
     "
 "
         Elements like `ui.label`, `ui.markdown`, `ui.restructured_text` and `ui.html` can be used to display text and other content.
-    ",`ui.label`、`ui.markdown`、`ui.restructured_text` 和 `ui.html` 等元素可用于显示文本及其他内容。
+    ","
+        `ui.label`、`ui.markdown`、`ui.restructured_text` 和 `ui.html` 等元素可用于显示文本及其他内容。
+    "
 "
         Learn about security best practices, common vulnerabilities, and how to write secure NiceGUI applications.
-    ",了解安全最佳实践、常见漏洞以及如何编写安全的 NiceGUI 应用。
+    ","
+        了解安全最佳实践、常见漏洞以及如何编写安全的 NiceGUI 应用。
+    "
 "
         NiceGUI allows to customize the appearance of UI elements in various ways, including CSS, Tailwind CSS and Quasar properties.
-    ",NiceGUI 允许通过多种方式自定义 UI 元素的外观，包括 CSS、Tailwind CSS 和 Quasar 属性。
+    ","
+        NiceGUI 允许通过多种方式自定义 UI 元素的外观，包括 CSS、Tailwind CSS 和 Quasar 属性。
+    "
 "
         NiceGUI provides a variety of elements for user interaction, e.g. `ui.button`, `ui.slider`, `ui.inputs`, etc.
-    ",NiceGUI 提供了多种用户交互元素，例如 `ui.button`、`ui.slider`、`ui.inputs` 等。
+    ","
+        NiceGUI 提供了多种用户交互元素，例如 `ui.button`、`ui.slider`、`ui.inputs` 等。
+    "
 "
         There are several elements for displaying data, e.g. `ui.table`, `ui.aggrid`, `ui.highchart`, `ui.echart`, etc.
-    ",有多种用于显示数据的元素，例如 `ui.table`、`ui.aggrid`、`ui.highchart`、`ui.echart` 等。
+    ","
+        有多种用于显示数据的元素，例如 `ui.table`、`ui.aggrid`、`ui.highchart`、`ui.echart` 等。
+    "
 "
         This section covers fundamental techniques as well as several elements to structure your UI.
-    ",本节涵盖基础技巧以及用于组织 UI 结构的多种元素。
+    ","
+        本节涵盖基础技巧以及用于组织 UI 结构的多种元素。
+    "
 "
         This section covers timers, UI events, and the lifecycle of NiceGUI apps.
-    ",本节涵盖定时器、UI 事件以及 NiceGUI 应用的生命周期。
+    ","
+        本节涵盖定时器、UI 事件以及 NiceGUI 应用的生命周期。
+    "
 "
         To update UI elements automatically, you can bind them to each other or to your data model.
-    ",为实现 UI 元素的自动更新，您可以将它们相互绑定或绑定到数据模型。
+    ","
+        为实现 UI 元素的自动更新，您可以将它们相互绑定或绑定到数据模型。
+    "
 "
         Use an [Event](/documentation/event) to trigger actions and pass data.
         Here we have an IoT temperature sensor submitting its readings
@@ -200,13 +216,19 @@ en,zh-CN
     "
 "
         Whether you want to run your app locally or on a server, native or in a browser, we got you covered.
-    ",无论您想在本地还是服务器上运行应用，窗口模式还是浏览器模式，我们都已为您准备就绪。
+    ","
+        无论您想在本地还是服务器上运行应用，窗口模式还是浏览器模式，我们都已为您准备就绪。
+    "
 "
         Write automated UI tests which run in a headless browser (slow) or fully simulated in Python (fast).
-     ",编写自动化 UI 测试，支持在无头浏览器中运行（较慢）或在 Python 中完全模拟（极快）。
+     ","
+         编写自动化 UI 测试，支持在无头浏览器中运行（较慢）或在 Python 中完全模拟（极快）。
+     "
 "
         You can use elements like `ui.image`, `ui.audio`, `ui.video`, etc. to display audiovisual content.
-    ",您可以使用 `ui.image`、`ui.audio`、`ui.video` 等元素来显示视听内容。
+    ","
+        您可以使用 `ui.image`、`ui.audio`、`ui.video` 等元素来显示视听内容。
+    "
 "
     **How to overrule Quasar with Tailwind classes or plain CSS**
 
@@ -216,13 +238,14 @@ en,zh-CN
 
     Try out class `!bg-red-500` on a `ui.button` to see important Tailwind classes overruling Quasar.
     Similarly, you can set the style `background-color:red !important` to achieve the same effect.
-","**如何用 Tailwind 类或纯 CSS 覆盖 Quasar**
+","
+    **如何用 Tailwind 类或纯 CSS 覆盖 Quasar**
 
-某些 Quasar 类（例如 `bg-primary`）被标记为 `!important`，因此即使覆盖了 `!important` 的 Tailwind 类。
-在 NiceGUI 中，我们偏离了 Quasar 的设计，将 Quasar 的 `!important` 样式移动到一个较弱的 CSS 层。
-虽然仍足够重要以确保 Quasar 正常工作，但您现在可以更灵活地覆盖 Quasar 以实现更多自定义。
+    某些 Quasar 类（例如 `bg-primary`）被标记为 `!important`，因此即使覆盖了 `!important` 的 Tailwind 类。
+    在 NiceGUI 中，我们偏离了 Quasar 的设计，将 Quasar 的 `!important` 样式移动到一个较弱的 CSS 层。
+    虽然仍足够重要以确保 Quasar 正常工作，但您现在可以更灵活地覆盖 Quasar 以实现更多自定义。
 
-尝试在 `ui.button` 上使用类 `!bg-red-500`，即可看到重要 Tailwind 类覆盖 Quasar。
+    尝试在 `ui.button` 上使用类 `!bg-red-500`，即可看到重要 Tailwind 类覆盖 Quasar。
 同样，您也可以设置样式 `background-color:red !important` 实现相同效果。"
 "
     **Never do this:**
@@ -311,7 +334,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     - If you are using a Python virtual environment, ensure you `pip install pyinstaller` within your virtual environment
     so that the correct PyInstaller is used, or you may get broken apps due to the wrong version of PyInstaller being picked up.
     That is why the `nicegui-pack` invokes PyInstaller using `python -m PyInstaller` rather than just `pyinstaller`.
-","**打包提示：**
+","
+    **打包提示：**
 
     - 在构建 PyInstaller 应用时，您的主脚本可以通过使用 `ui.run(reload=False, native=True)` 来使用原生窗口（而非浏览器窗口）。
     `native` 参数可根据您是否希望使用原生窗口或在用户浏览器中打开页面而设置为 `True` 或 `False` —— 无论哪种方式，在 PyInstaller 生成的应用中均可正常工作。
@@ -373,7 +397,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
         ui.run(native=True, reload=False)
     ```
 
-","**原生模式打包**
+","
+    **原生模式打包**
 
     在打包你的应用（使用 nicegui-pack、PyInstaller、py2exe 等工具）时，
     你需要调用 `freeze_support()` 以防止新进程在无限循环中被创建。
@@ -413,7 +438,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     4. Only disable sanitization for trusted content you control
     5. Apply defense in depth (iframe-blocking headers, input validation)
     6. Keep NiceGUI up to date
-","**安全公告：**
+","
+    **安全公告：**
 
     - [NiceGUI 安全公告](https://github.com/zauberzeug/nicegui/security/advisories)
 
@@ -437,7 +463,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     This demo shows how to trigger a ""keydown.tab"" event to autocomplete an input field after typing the first letter.
 
     *Added in version 2.7.0: triggering events*
-","`user.find(...)` 返回一个 `UserInteraction` 对象，该对象提供方法用于输入文本、清空输入框、点击按钮以及在找到的元素上触发事件。
+","
+    `user.find(...)` 返回一个 `UserInteraction` 对象，该对象提供方法用于输入文本、清空输入框、点击按钮以及在找到的元素上触发事件。
     本示例展示了如何触发 ""keydown.tab"" 事件，在输入第一个字母后自动完成输入框。
 
     *2.7.0 版本新增：触发事件*"
@@ -481,7 +508,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     **Data Privacy:**
     We take your privacy very serious.
     NiceGUI On Air does not log or store any content of the relayed data.
-","通过使用 `ui.run(on_air=True)`，你可以将你的本地应用与他人通过互联网共享 🧞。
+","
+    通过使用 `ui.run(on_air=True)`，你可以将你的本地应用与他人通过互联网共享 🧞。
 
     当访问 on-air URL 时，所有库（如 Vue、Quasar 等）均从我们的 CDN 加载。
     因此，只有原始内容和事件需要由你的本地应用传输。
@@ -508,7 +536,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
 
     * from `.venv/Lib/site-packages/webview/lib/x64/WebView2Loader.dll`
     * to `.venv/Lib/site-packages/webview/lib/WebView2Loader.dll`
-","如果 webview 无法找到所需的库，你可能会遇到与 ""WebView2Loader.dll"" 相关的错误。
+","
+    如果 webview 无法找到所需的库，你可能会遇到与 ""WebView2Loader.dll"" 相关的错误。
     为解决此问题，可以尝试将 DLL 文件移动到上一级目录，例如：
 
     * 从 `.venv/Lib/site-packages/webview/lib/x64/WebView2Loader.dll`
@@ -545,7 +574,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
 
     By entering the `user` context and iterating over `ElementFilter`,
     you can preserve the natural document order of matching elements:
-","可能希望使用 [`ElementFilter`](/documentation/element_filter) 来
+","
+    可能希望使用 [`ElementFilter`](/documentation/element_filter) 来
 
     - 保持元素顺序以在页面上检查其顺序，以及
     - 更细粒度的筛选选项，例如 `ElementFilter(...).within(...)`。
@@ -562,7 +592,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     - to pass a `root` page function to `ui.run` or define at least one decorated `@page` function.
 
     Running the `nicegui-pack` command below will create an executable `myapp` in the `dist` folder:
-","NiceGUI 应用也可以使用 `nicegui-pack` 打包为可执行文件，该工具基于 [PyInstaller](https://www.pyinstaller.org/)。
+","
+    NiceGUI 应用也可以使用 `nicegui-pack` 打包为可执行文件，该工具基于 [PyInstaller](https://www.pyinstaller.org/)。
     这允许您将应用分发为单个文件，可在任何计算机上执行。
 
     请确保
@@ -597,9 +628,10 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     That way the classical [test pyramid](https://martinfowler.com/bliki/TestPyramid.html),
     where UI tests are considered slow and expensive, does not apply anymore.
     This can have a huge impact on your development speed, quality and confidence.
-","NiceGUI 提供基于 [pytest](https://docs.pytest.org/) 的完整测试框架，支持自动化测试用户界面。您可以使用 `screen` 夹具启动真实（无头）浏览器与应用交互，这对测试浏览器特定行为非常有用。
+","
+    NiceGUI 提供基于 [pytest](https://docs.pytest.org/) 的完整测试框架，支持自动化测试用户界面。您可以使用 `screen` 夹具启动真实（无头）浏览器与应用交互，这对测试浏览器特定行为非常有用。
 
-但大多数情况下，新引入的 `user` 夹具更适用：它仅在 Python 层面模拟用户交互，因此速度极快。这使得传统的测试金字塔模型（认为 UI 测试缓慢且昂贵）不再适用。这对开发速度、质量和信心都有重大提升。"
+    但大多数情况下，新引入的 `user` 夹具更适用：它仅在 Python 层面模拟用户交互，因此速度极快。这使得传统的测试金字塔模型（认为 UI 测试缓慢且昂贵）不再适用。这对开发速度、质量和信心都有重大提升。"
 "
     NiceGUI provides secure defaults and built-in protections, but **developers must write secure code**.
     Not all UI components can safely handle untrusted input,
@@ -652,11 +684,12 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     Because NiceGUI is a web framework, you can change almost any appearance of an element with CSS.
     But elements also provide `.classes` and `.props` methods to apply Tailwind CSS and Quasar properties
     which are more high-level and simpler to use day-to-day after you get the hang of it.
-","NiceGUI 提供 UI 元素，如按钮、滑块、文本、图像、图表等。您的应用将这些组件组装成页面。当用户与页面元素交互时，NiceGUI 会触发事件（或动作）。您需要定义处理每个事件的代码，例如用户点击按钮、修改值或操作滑块时的响应逻辑。元素也可以绑定到模型（数据对象），当模型值变化时会自动更新用户界面。
+","
+    NiceGUI 提供 UI 元素，如按钮、滑块、文本、图像、图表等。您的应用将这些组件组装成页面。当用户与页面元素交互时，NiceGUI 会触发事件（或动作）。您需要定义处理每个事件的代码，例如用户点击按钮、修改值或操作滑块时的响应逻辑。元素也可以绑定到模型（数据对象），当模型值变化时会自动更新用户界面。
 
-元素使用""声明式 UI""（或者说""基于代码的 UI""）排列在页面上。这意味着您可以直接用代码编写网格、卡片、标签页、轮播图、折叠面板、菜单和其他布局元素。这种理念因 Flutter 和 SwiftUI 而流行。为了可读性，NiceGUI 使用 Python 的 `with ...` 语句。该上下文管理器通过代码缩进来直观反映 UI 布局结构。
+    元素使用""声明式 UI""（或者说""基于代码的 UI""）排列在页面上。这意味着您可以直接用代码编写网格、卡片、标签页、轮播图、折叠面板、菜单和其他布局元素。这种理念因 Flutter 和 SwiftUI 而流行。为了可读性，NiceGUI 使用 Python 的 `with ...` 语句。该上下文管理器通过代码缩进来直观反映 UI 布局结构。
 
-样式和外观可以通过多种方式控制。大多数元素接受常见样式和行为变更的可选参数，例如按钮图标或文本颜色。由于 NiceGUI 是 Web 框架，您可以用 CSS 修改元素的几乎任何外观。元素还提供 `.classes` 和 `.props` 方法来应用 Tailwind CSS 和 Quasar 属性，这些高级特性在熟悉后日常使用更加简单高效。"
+    样式和外观可以通过多种方式控制。大多数元素接受常见样式和行为变更的可选参数，例如按钮图标或文本颜色。由于 NiceGUI 是 Web 框架，您可以用 CSS 修改元素的几乎任何外观。元素还提供 `.classes` 和 `.props` 方法来应用 Tailwind CSS 和 Quasar 属性，这些高级特性在熟悉后日常使用更加简单高效。"
 "
     NiceGUI uses an async/await event loop for concurrency which is resource-efficient and has the great benefit of not having to worry about thread safety.
     This section shows how to handle user input and other events like timers and keyboard bindings.
@@ -672,7 +705,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
 
     For packaged apps (nicegui-pack, PyInstaller, etc.), also see the ""Packaging with Native Mode"" section below
     regarding the correct placement of `freeze_support()`.
-","请注意，原生应用是在一个独立的
+","
+    请注意，原生应用是在一个独立的
     [进程](https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Process) 中运行的。
     因此，任何在主守护程序（[main guard](https://docs.python.org/3/library/__main__.html#idiomatic-usage)）下运行的代码所做的配置更改都将被原生应用忽略。
     以下示例展示了有效配置与无效配置之间的区别。
@@ -687,7 +721,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     sys.stdout = open('logs.txt', 'w')
     ```
     See <https://github.com/zauberzeug/nicegui/issues/681> for more information.
-","注意：
+","
+    注意：
     如果你遇到错误 “TypeError: a bytes-like object is required, not 'str'”，请尝试在你的 `main.py` 文件顶部添加以下几行：
     ```py
     import sys
@@ -701,7 +736,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     [Authentication](https://github.com/zauberzeug/nicegui/tree/main/examples/authentication)
     and our [more complex pytest example](https://github.com/zauberzeug/nicegui/tree/main/examples/pytests)
     for demonstration.
-","请也查看以下示例
+","
+    请也查看以下示例
 [聊天应用](https://github.com/zauberzeug/nicegui/tree/main/examples/chat_app),
 [待办事项列表](https://github.com/zauberzeug/nicegui/tree/main/examples/todo_list/),
 [认证](https://github.com/zauberzeug/nicegui/tree/main/examples/authentication)
@@ -713,7 +749,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     The `User` instances are independent from each other and can interact with the UI in parallel.
     See our [Chat App example](https://github.com/zauberzeug/nicegui/blob/main/examples/chat_app/test_chat_app.py)
     for a full demonstration.
-","有时仅与 UI 作为单个用户交互并不足够。
+","
+    有时仅与 UI 作为单个用户交互并不足够。
 除了 `user` 固定装置外，我们还提供 `create_user` 固定装置，这是一个用于创建用户的工厂函数。
 `User` 实例彼此独立，可以并行与 UI 交互。
 请参见我们的[聊天应用示例](https://github.com/zauberzeug/nicegui/blob/main/examples/chat_app/test_chat_app.py)
@@ -875,7 +912,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
     - UI-context exceptions go to _either_, but never both:
         - `@app.on_page_exception` (2) if raised before client connection
         - `ui.on_exception` (3) if raised after client connection
-","NiceGUI 中有三种错误处理方式：
+","
+    NiceGUI 中有三种错误处理方式：
 
     1. [`app.on_exception`](#lifecycle_events)：
         NiceGUI 应用中所有异常的全局异常处理器。
@@ -1068,7 +1106,8 @@ label.style['color'] = user_color.value  # 允许 CSS 注入和数据外泄
 
     *Added in version 3.0.0*
     *Updated in version 3.1.0: Added the ""nicegui_main_file"" marker.*
-","你需要告诉 pytest 插件，你的哪些文件是 NiceGUI 应用程序的主要入口点（包含 `ui.run` 调用）。
+","
+    你需要告诉 pytest 插件，你的哪些文件是 NiceGUI 应用程序的主要入口点（包含 `ui.run` 调用）。
     这可以通过以下三种方式完成：
 
     1. 将你的主文件命名为 `main.py` —— 如果你什么都不做，测试插件会查找该文件并加载它。
@@ -1941,8 +1980,8 @@ The note is also shared between all tabs of the same user.","绑定也支持 [`a
 这里我们保存了文本区域在不同访问之间的值。
 该笔记也会在同一位用户的所有标签页间共享。"
 Blank canvas,空白画布
-Browse through plenty of examples.,浏览大量示例。
-Browse through plenty of live demos.,浏览大量在线演示。
+Browse through plenty of examples.,浏览大量示例
+Browse through plenty of live demos.,浏览大量在线演示
 Build a custom element based on the third-party NPM module [signature_pad](https://www.npmjs.com/package/signature_pad),基于第三方 NPM 模块 [signature_pad](https://www.npmjs.com/package/signature_pad) 构建自定义元素
 Build a login form and user profile using [Descope](https://descope.com),使用 [Descope](https://descope.com) 构建登录表单和用户资料
 Build a simple chat app,构建一个简单的聊天应用
@@ -2640,7 +2679,7 @@ Foundation,技术栈
 Frame Rate and Statistics,帧率与统计信息
 FullCalendar,FullCalendar
 Fullscreen control element,全屏控制元素
-Fun-Fact: This whole website is also coded with NiceGUI.,趣闻：这整个网站也是用 NiceGUI 编写的。
+Fun-Fact: This whole website is also coded with NiceGUI.,"冷知识：整个官网也是用 NiceGUI 编写的。"
 "Function to trigger the download from a relative URL.
 
 Note:
@@ -2659,7 +2698,8 @@ Either replace the absolute URL with a relative one, or use ``ui.navigate.to(url
 :param url: URL
 :param filename: name of the file to download (default: name of the file on the server)
 :param media_type: media type of the file to download (default: """")
-","用于从相对 URL 触发下载的功能。
+","
+用于从相对 URL 触发下载的功能。
 
 注意：
 此功能仅适用于相对 URL。
@@ -2887,7 +2927,7 @@ The `js_handler` is used to forward the current value of the cell to the Python 
 `js_handler` 用于将当前单元格的值传递给 Python 的 `handler`。
 
 *3.5.0 版本新增*"
-"Interact with Python through buttons, dialogs, 3D&nbsp;scenes, plots and much more.",通过按钮、对话框、3D 场景、可视化图表等丰富组件，与 Python 代码实时交互。
+"Interact with Python through buttons, dialogs, 3D&nbsp;scenes, plots and much more.","通过按钮、对话框、3D 场景、可视化图表等丰富组件与 Python 代码实时交互"
 Interaction,交互
 Interactive charts,交互式图表
 Interactive Image,交互式图片
@@ -2972,7 +3012,7 @@ Material icons and symbols,材料图标和符号
 Matplotlib,Matplotlib
 Maximum age of tab storage,选项卡存储的最大年龄
 Maximum rating,最大评分
-Meet the *NiceGUI*.,遇见 *NiceGUI*。
+"Meet the *NiceGUI*.","遇见 *NiceGUI*"
 Menu,菜单
 Menu and Tabs,菜单和标签页
 Menu with sub-menus,带子菜单的菜单
