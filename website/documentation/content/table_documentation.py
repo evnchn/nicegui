@@ -2,7 +2,6 @@ from nicegui import ui
 
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/table.py')
 
 
 @doc.demo(ui.table)

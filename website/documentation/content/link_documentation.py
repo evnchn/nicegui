@@ -3,7 +3,6 @@ from nicegui import ui
 from ...style import link_target
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/link.py')
 
 
 @doc.demo(ui.link)

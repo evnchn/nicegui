@@ -75,7 +75,7 @@ def metadata(*, difficulty: 'str | None' = None, source_url: str | None = None) 
     if difficulty is not None:
         page.difficulty = difficulty  # type: ignore[assignment]
     if source_url is not None:
-        page.source_url = source_url
+        page._source_url = source_url
 
 
 def text(title_: str, description: str) -> None:

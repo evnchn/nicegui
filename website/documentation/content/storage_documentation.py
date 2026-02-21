@@ -12,7 +12,6 @@ start = datetime.now().strftime(r'%H:%M, %d %B %Y')
 doc.title('Storage')
 
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/storage.py')
 
 @doc.demo('Storage', '''
     NiceGUI offers a straightforward mechanism for data persistence within your application.

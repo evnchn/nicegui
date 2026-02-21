@@ -2,7 +2,6 @@ from nicegui import events, ui
 
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/line_plot.py')
 
 
 @doc.demo(ui.line_plot)

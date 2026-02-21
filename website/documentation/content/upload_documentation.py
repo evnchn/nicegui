@@ -2,7 +2,6 @@ from nicegui import ui
 
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/upload.py')
 
 
 @doc.demo(ui.upload)
