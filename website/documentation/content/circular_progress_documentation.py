@@ -2,14 +2,10 @@ from nicegui import ui
 
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/progress.py')
-
-
 @doc.demo(ui.circular_progress)
 def main_demo() -> None:
     slider = ui.slider(min=0, max=1, step=0.01, value=0.5)
     ui.circular_progress().bind_value_from(slider, 'value')
-
 
 @doc.demo('Nested Elements', '''
     You can put any element like icon, button etc inside a circular progress using the `with` statement.
@@ -23,6 +19,5 @@ def icon() -> None:
                 on_click=lambda: progress.set_value(progress.value + 0.1)
             ).props('flat round')
         ui.label('click to increase progress')
-
 
 doc.reference(ui.circular_progress)

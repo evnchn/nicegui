@@ -2,20 +2,15 @@ from nicegui import ui
 
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/html.py')
-
-
 @doc.demo(ui.html)
 def main_demo() -> None:
     ui.html('This is <strong>HTML</strong>.', sanitize=False)
-
 
 @doc.demo('Producing in-line elements', '''
     Use the `tag` parameter to produce something other than a div.
 ''')
 def demo_inline() -> None:
     ui.html('This is <u>emphasized</u>.', tag='em', sanitize=False)
-
 
 @doc.demo(other_html_elements_title := 'Other HTML Elements', other_html_elements_description := '''
     There is also an `html` module that allows you to insert other HTML elements like `<span>`, `<div>`, `<p>`, etc.
@@ -38,6 +33,5 @@ def other_html_elements():
         with ui.row():
             html.img().props('src=https://placehold.co/60')
             html.img(src='https://placehold.co/60')
-
 
 doc.reference(ui.html)

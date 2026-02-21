@@ -2,9 +2,6 @@ from nicegui import ui
 
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/drawer.py')
-
-
 @doc.auto_execute
 @doc.demo('Page Layout', '''
     With [`ui.header`](page_layout#reference_for_ui_header),
@@ -50,7 +47,6 @@ def page_layout_demo():
     def page():
         ui.link('show page with fancy layout', page_layout)
     page()  # HIDE
-
 
 doc.reference(ui.header, title='Reference for ui.header')
 doc.reference(ui.left_drawer, title='Reference for ui.left_drawer')

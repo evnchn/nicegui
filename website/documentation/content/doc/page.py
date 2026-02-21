@@ -30,7 +30,8 @@ class DocumentationPage:
     parts: list[DocumentationPart] = field(default_factory=list)
     extra_column: Callable | None = None
     difficulty: DifficultyLevel | None = None  # NOTE: used for developer-experience metadata (Task 4)
-    _source_url: str | None = None  # NOTE: explicit override; auto-computed from page name when not set
+    _source_url: str | None = None  # NOTE: explicit override via doc.metadata(source_url=...)
+    _reference_source_url: str | None = None  # NOTE: derived from the element passed to doc.reference()
 
     @property
     def heading(self) -> str:
@@ -39,5 +40,5 @@ class DocumentationPage:
 
     @property
     def source_url(self) -> str | None:
-        """Return the source URL, either explicit or auto-computed from the page name."""
-        return self._source_url if self._source_url is not None else _auto_source_url(self.name)
+        """Return the source URL: explicit override > reference-derived > filename-probed."""
+        return self._source_url or self._reference_source_url or _auto_source_url(self.name)

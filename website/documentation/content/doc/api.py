@@ -15,7 +15,7 @@ from nicegui import ui as nicegui_ui
 from nicegui.elements.markdown import remove_indentation
 from nicegui.functions.navigate import Navigate
 
-from .page import DocumentationPage
+from .page import DocumentationPage, _REPO_ROOT
 from .part import Demo, DocumentationPart
 
 registry: dict[str, DocumentationPage] = {}
@@ -183,7 +183,15 @@ def reference(element: type, *,
               title: str = 'Reference',  # pylint: disable=redefined-outer-name
               ) -> None:
     """Add a reference section to the current documentation page."""
-    _get_current_page().parts.append(DocumentationPart(title=title, reference=element))
+    page = _get_current_page()
+    page.parts.append(DocumentationPart(title=title, reference=element))
+    if page._reference_source_url is None:
+        try:
+            source_file = Path(inspect.getfile(element))
+            rel = source_file.relative_to(_REPO_ROOT)
+            page._reference_source_url = f'https://github.com/zauberzeug/nicegui/blob/main/{rel.as_posix()}'
+        except (TypeError, ValueError):
+            pass
 
 
 def extra_column(function: Callable) -> Callable:

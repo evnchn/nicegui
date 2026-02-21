@@ -2,9 +2,6 @@ from nicegui import ui, Event
 
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/events.py')
-
-
 @doc.demo(Event)
 def events_demo():
     from nicegui import Event
@@ -19,7 +16,6 @@ def events_demo():
 
         tweet.subscribe(lambda m: ui.notify(f'Someone tweeted: "{m}"'))
     page()  # HIDE
-
 
 @doc.demo('Emitting vs. calling events', '''
     The `emit` method fires the event without waiting for the subscribed callbacks to complete.
@@ -57,6 +53,5 @@ def emitting_vs_calling_events():
             data = ui.input('Data')
             button = ui.button('Submit', on_click=submit).props('flat')
     page()  # HIDE
-
 
 doc.reference(Event)
