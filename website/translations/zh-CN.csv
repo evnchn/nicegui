@@ -99,15 +99,15 @@ dae936edb09bf169ec5e6066199792f5e22d1b1e68e992da99ca44077d606209,"
         NiceGUI 提供了多种用户交互元素，例如 `ui.button`、`ui.slider`、`ui.inputs` 等。
     "
 700ca20ca06232edc226961a04915fd10118682f6d5e2d0499d7ed15643b7616,"
-        `screen` 固定装置启动一个真实的（无头）浏览器以与你的应用程序进行交互。
-        这仅在你需要测试浏览器特定行为时是必需的。
+        `screen` 固定装置启动一个真实的（无头）浏览器以与您的应用程序进行交互。
+        这仅在您需要测试浏览器特定行为时是必需的。
         NiceGUI 本身已使用此固定装置进行充分测试，以确保每个组件按预期工作。
         因此，我们仅推荐在绝对必要时使用它。
     "
 6b50ecabe9f8699b3fd3d3a1ae3336c491273d88aaddf5575750f73784b50765,"
         `screen` 固定装置底层使用 Selenium。
         目前仅测试了与 Chrome 驱动程序的兼容性。
-        为自动在测试中使用它，建议在你的 `pytest.ini` 中添加选项 `--driver Chrome`：
+        为自动在测试中使用它，建议在您的 `pytest.ini` 中添加选项 `--driver Chrome`：
     "
 b5fa65240882827986b4e5c5301db5e3db4dc3f61cb421336c6c64ec684b30aa,"
         用户模拟将在与您的应用程序相同的异步上下文中运行，以便查询和交互尽可能简单。但这也意味着您的测试必须是 `async` 类型。我们建议通过在项目根目录创建 `pytest.ini` 文件，或直接在 `pyproject.toml` 中激活 [pytest-asyncio 自动模式](https://pytest-asyncio.readthedocs.io/en/latest/concepts.html#auto-mode) 来启用该功能。
@@ -225,11 +225,11 @@ f277c09f60c7ea143b8108b5c611090fb73346ee3dbdf788b7c66343c3633bf3,"
 fa90845987f4d51dbc03e7c71e27a1737256e2d95b879064dc62e40a3079121c,"
     **原生模式打包**
 
-        在打包你的应用（使用 nicegui-pack、PyInstaller、py2exe 等工具）时，
-        你需要调用 `freeze_support()` 以防止新进程在无限循环中被创建。
+        在打包您的应用（使用 nicegui-pack、PyInstaller、py2exe 等工具）时，
+        您需要调用 `freeze_support()` 以防止新进程在无限循环中被创建。
         它应作为主守卫内的第一句代码调用。
 
-        如果你使用 `app.native` 设置，这些设置必须**在主守卫之外**定义，
+        如果您使用 `app.native` 设置，这些设置必须**在主守卫之外**定义，
         以便在 `freeze_support()` 截断子进程之前被应用：
 
         ```python
@@ -261,7 +261,7 @@ a661a0c8ffbef93c4c51531aace37976dcf02d1a2b62c80f78abc251b7c38b0a,"
     1. 保持净化功能开启（默认状态）
     2. 验证 URL 方案（框架不对此进行限制）
     3. 验证 CSS 值（框架不对此进行转义）
-    4. 仅对受信任的、你控制的内容禁用净化
+    4. 仅对受信任的、您控制的内容禁用净化
     5. 采用纵深防御（如阻止 iframe 的头部、输入验证）
     6. 保持 NiceGUI 保持最新版本
 "
@@ -280,34 +280,34 @@ d5e434b46f00907944cc1dc428efefae1ac2bff97e929afad8cf953447afe7cf,"
 "
 5fc3d54841500d8645385a84befe2baddba2833684bc6270312897a81f5e66ce,"
     默认情况下，通用和用户存储数据以无缩进的 JSON 格式存储。
-    你可以通过设置 `app.storage.general.indent = True` 或 `app.storage.user.indent = True`
+    您可以通过设置 `app.storage.general.indent = True` 或 `app.storage.user.indent = True`
     将其改为缩进 2 个空格的格式。
 "
 a6b77f9e3694d905549b717ee91315ea47d807ff04b472a2e3760fa1302af6f0,"
-    通过使用 `ui.run(on_air=True)`，你可以将你的本地应用与他人通过互联网共享 🧞。
+    通过使用 `ui.run(on_air=True)`，您可以将您的本地应用与他人通过互联网共享 🧞。
 
     当访问 on-air URL 时，所有库（如 Vue、Quasar 等）均从我们的 CDN 加载。
-    因此，只有原始内容和事件需要由你的本地应用传输。
-    这使得即使你的应用仅拥有较差的网络连接（例如，野外的移动机器人），速度依然极快。
+    因此，只有原始内容和事件需要由您的本地应用传输。
+    这使得即使您的应用仅拥有较差的网络连接（例如，野外的移动机器人），速度依然极快。
 
-    通过设置 `on_air=True`，你将获得一个有效期为一小时的随机 URL。
-    如果你注册于 <https://on-air.nicegui.io>，你可以设置组织和设备名称以获取固定 URL：
+    通过设置 `on_air=True`，您将获得一个有效期为一小时的随机 URL。
+    如果您注册于 <https://on-air.nicegui.io>，您可以设置组织和设备名称以获取固定 URL：
     `https://on-air.nicegui.io/<my-org>/<my_device_name>`。
-    设备将通过唯一私有令牌进行识别，你可以使用该令牌替代布尔标志：`ui.run(on_air='<your token>')`。
-    如果你 [赞助我们](https://github.com/sponsors/zauberzeug)，
+    设备将通过唯一私有令牌进行识别，您可以使用该令牌替代布尔标志：`ui.run(on_air='<your token>')`。
+    如果您 [赞助我们](https://github.com/sponsors/zauberzeug)，
     我们将启用多设备管理，并为每个设备提供内置的密码保护。
 
     目前 On Air 作为技术预览版提供，可免费使用。
     我们将逐步提升稳定性，并扩展服务功能，包括使用统计、远程终端访问等更多功能。
     请在 [GitHub](https://github.com/zauberzeug/nicegui/discussions)、
-    [Reddit](https://www.reddit.com/r/nicegui/) 或 [Discord](https://discord.gg/TEpFeAaF4f) 上告诉我们你的反馈。
+    [Reddit](https://www.reddit.com/r/nicegui/) 或 [Discord](https://discord.gg/TEpFeAaF4f) 上告诉我们您的反馈。
 
     **数据隐私：**
-    我们非常重视你的隐私。
+    我们非常重视您的隐私。
     NiceGUI On Air 不会记录或存储任何中转数据内容。
 "
 b419730e29aafe1606b6e70646439c3822d6d98fea5c8e36fb28b4e0e58a1254,"
-    如果 webview 无法找到所需的库，你可能会遇到与 ""WebView2Loader.dll"" 相关的错误。
+    如果 webview 无法找到所需的库，您可能会遇到与 ""WebView2Loader.dll"" 相关的错误。
     为解决此问题，可以尝试将 DLL 文件移动到上一级目录，例如：
 
     * 从 `.venv/Lib/site-packages/webview/lib/x64/WebView2Loader.dll`
@@ -396,7 +396,7 @@ d43e42425de973be28cc730f2d0f6efe56eb59a526ea2a6ecc666a3ea5c85e61,"
 "
 b879822086ff1fd36b143d21159bdcda02ab7103b8728aee004098e12818d52a,"
     注意：
-    如果你遇到错误 “TypeError: a bytes-like object is required, not 'str'”，请尝试在你的 `main.py` 文件顶部添加以下几行：
+    如果您遇到错误 “TypeError: a bytes-like object is required, not 'str'”，请尝试在您的 `main.py` 文件顶部添加以下几行：
     ```py
     import sys
     sys.stdout = open('logs.txt', 'w')
@@ -479,12 +479,12 @@ a5a03832df951e1be19fe9626f1d0bff342d6ba29857232a3aa2b0b1a73573b3,"
 7186edb63c51daea9464f1e075d179f6dbba2bffd5e5baf6f300f3d9b8494468,"
     NiceGUI 包提供了一个 [pytest 插件](https://docs.pytest.org/en/stable/how-to/writing_plugins.html)
     可通过 `-p nicegui.testing.plugin` 参数激活。
-    这使得你可以使用专门的 [fixture](https://docs.pytest.org/en/stable/explanation/fixtures.html)
+    这使得您可以使用专门的 [fixture](https://docs.pytest.org/en/stable/explanation/fixtures.html)
     来编写针对 NiceGUI 用户界面的集成测试。
-    通过 [`screen` fixture](/documentation/screen) 你可以在无头浏览器中运行集成测试（速度较慢）。
+    通过 [`screen` fixture](/documentation/screen) 您可以在无头浏览器中运行集成测试（速度较慢）。
     另一方面，通过 [`user` fixture](/documentation/user) 可以在 Python 中完全模拟集成测试（速度快）。
-    如果你只想要一种类型的测试 fixture，
-    你也可以使用插件 `nicegui.testing.user_plugin` 或 `nicegui.testing.screen_plugin`。
+    如果您只想要一种类型的测试 fixture，
+    您也可以使用插件 `nicegui.testing.user_plugin` 或 `nicegui.testing.screen_plugin`。
 
     项目和测试的结构方式有很多。
     这里我们仅展示我们推荐的小型和大型项目结构，它一方面非常简单，但功能极其强大。
@@ -494,7 +494,7 @@ a5a03832df951e1be19fe9626f1d0bff342d6ba29857232a3aa2b0b1a73573b3,"
     `User` 的查询功能建立在 [ElementFilter](/documentation/element_filter) 之上。
     `user.should_see(...)` 方法和 `user.find(...)` 方法
     提供了用于过滤内容、[标记](/documentation/element_filter#markers)、类型等的参数。
-    如果你未提供命名属性，字符串将与文本内容和标记进行匹配。
+    如果您未提供命名属性，字符串将与文本内容和标记进行匹配。
 "
 0306489773d4cb74c86de2ac761c4bdf4a9a09d8612fe572a9cb3b9013b631a2,"
     NiceGUI 中有三种错误处理方式：
@@ -572,7 +572,7 @@ f80775796380e171ae9df28410bec84fb4608686c4fc10b2d2d70c75a6424e48,"
     和 CSS 样式如何影响 NiceGUI 元素。
 "
 8fd49ce09316ead3fa1cb71fbc11ca623cac28b785aa1e533151e44a2ff9a935,"
-    你可以通过继承 `ui.element` 并实现相应的 Vue 组件来创建自定义组件。
+    您可以通过继承 `ui.element` 并实现相应的 Vue 组件来创建自定义组件。
     [“自定义 Vue 组件”示例](https://github.com/zauberzeug/nicegui/tree/main/examples/custom_vue_component)
     展示了如何创建一个自定义计数器组件，该组件会发出事件并从服务器接收更新。
 
@@ -583,12 +583,12 @@ f80775796380e171ae9df28410bec84fb4608686c4fc10b2d2d70c75a6424e48,"
     这会将 ESM 模块添加到页面的 import map 中，并使其在 Vue 组件中可用。
 "
 05c64fa8dd018d616207a240e8000b7340a745589bffc737864629390242905f,"
-    你可以使用 [Redis](https://redis.io/) 作为存储替代默认文件存储。
-    如果你有多个 NiceGUI 实例并且希望在它们之间共享数据，这非常有用。
+    您可以使用 [Redis](https://redis.io/) 作为存储替代默认文件存储。
+    如果您有多个 NiceGUI 实例并且希望在它们之间共享数据，这非常有用。
 
-    要启用此功能，请安装 `redis` 包（`pip install nicegui[redis]`），并提供 `NICEGUI_REDIS_URL` 环境变量指向你的 Redis 服务器。
+    要启用此功能，请安装 `redis` 包（`pip install nicegui[redis]`），并提供 `NICEGUI_REDIS_URL` 环境变量指向您的 Redis 服务器。
     我们的 [Redis 存储示例](https://github.com/zauberzeug/nicegui/tree/main/examples/redis_storage) 展示了如何通过反向代理或负载均衡器设置它。
-    为确保连接保持在最小化，你应该以 `--timeout <seconds>` CLI 选项启动 Redis 服务器，或设置环境变量 `REDIS_TIMEOUT`。
+    为确保连接保持在最小化，您应该以 `--timeout <seconds>` CLI 选项启动 Redis 服务器，或设置环境变量 `REDIS_TIMEOUT`。
 
     请注意，Redis 同步始终包含所有数据，而不仅仅是更改的值。
 
@@ -596,28 +596,28 @@ f80775796380e171ae9df28410bec84fb4608686c4fc10b2d2d70c75a6424e48,"
     - 对于 `app.storage.user`，是该用户的全部数据。
     - 对于 `app.storage.tab`，是该特定标签存储的所有数据。
 
-    如果你拥有大量数据集，我们建议使用数据库。
+    如果您拥有大量数据集，我们建议使用数据库。
     请参见我们的 [数据库示例](https://github.com/zauberzeug/nicegui/blob/main/examples/sqlite_database/main.py) 中的 SQLite 示例。
-    当然，为了在多个实例之间同步数据，你应该将 SQLite 替换为 PostgreSQL 或类似数据库。
+    当然，为了在多个实例之间同步数据，您应该将 SQLite 替换为 PostgreSQL 或类似数据库。
 
     *在版本 2.10.0 中新增*
 "
 0a94126f8c4caca05e0aa0cdec1e3ce9ddad66870f0cf537eb72eb6e757515ec,"
-    你可以通过检查 `user.download.http_responses` 来验证下载是否已触发。
-    通过等待 `user.download.next()`，你可以获取下一个下载响应。
+    您可以通过检查 `user.download.http_responses` 来验证下载是否已触发。
+    通过等待 `user.download.next()`，您可以获取下一个下载响应。
 
     *在版本 2.1.0 中新增*
 "
 5e469570e5a60664e112fc155351e2e98d8dcc2c055faf16a6d08e7107698da7,"
-    你需要告诉 pytest 插件，你的哪些文件是 NiceGUI 应用程序的主要入口点（包含 `ui.run` 调用）。
+    您需要告诉 pytest 插件，您的哪些文件是 NiceGUI 应用程序的主要入口点（包含 `ui.run` 调用）。
     这可以通过以下三种方式完成：
 
-    1. 将你的主文件命名为 `main.py` —— 如果你什么都不做，测试插件会查找该文件并加载它。
+    1. 将您的主文件命名为 `main.py` —— 如果您什么都不做，测试插件会查找该文件并加载它。
     2. 在项目根目录的 `pytest.ini` 配置文件中设置 `main_file` 选项。
-    3. 如果你在同一代码库中维护多个应用，请使用 `@pytest.mark.nicegui_main_file` 装饰器标记你的测试函数。
+    3. 如果您在同一代码库中维护多个应用，请使用 `@pytest.mark.nicegui_main_file` 装饰器标记您的测试函数。
 
     主文件将自动被用作每个集成测试（`user` 固定 fixture 或 `screen` 固定 fixture）的入口点。
-    你还需要在 `pytest.ini` 文件中设置 [`asyncio_mode = auto`](/documentation/user#async_execution) 选项
+    您还需要在 `pytest.ini` 文件中设置 [`asyncio_mode = auto`](/documentation/user#async_execution) 选项
     以及使用的插件（`nicegui.testing.plugin`、`nicegui.testing.user_plugin` 或 `nicegui.testing.screen_plugin`）。
 
     *从版本 3.0.0 添加*
@@ -639,7 +639,7 @@ ui.button().on('click', handle_click, None)
 ```
 
 **如果事件调用多个参数**，例如 QTable 的 ""行点击"" 事件 `(evt, row, index) => void`，
-你可以定义一个参数定义列表：
+您可以定义一个参数定义列表：
 ```py
 ui.table(...).on('rowClick', handle_click, [[], ['name'], None])
 ```
@@ -647,7 +647,7 @@ ui.table(...).on('rowClick', handle_click, [[], ['name'], None])
 仅发送 `row` 参数的 ""name"" 属性，并发送完整的 `index`。
 
 如果获取到的事件参数列表长度为 1，该参数将自动解包。
-因此你可以写成
+因此您可以写成
 ```py
 ui.button().on('click', lambda e: print(e.args['clientX'], flush=True))
 ```
@@ -673,9 +673,9 @@ b1340137ad2db1214a177fb66e9b8b135bae5fea2eba92b5a2c695d2439638bd,"**注意：** 
 **许多 NiceGUI 元素可能会失效，且 API 可能会变更。**
 
 NiceGUI 默认使用 [Quasar 框架](https://quasar.dev/)。
-但你也可以尝试使用其他 Vue UI 框架，
+但您也可以尝试使用其他 Vue UI 框架，
 例如 [Element Plus](https://element-plus.org/en-US/) 或 [Vuetify](https://vuetifyjs.com/en/)。
-为此，你需要将框架的 JavaScript 和 CSS 文件添加到你的 HTML 文档头部，
+为此，您需要将框架的 JavaScript 和 CSS 文件添加到您的 HTML 文档头部，
 并通过扩展或替换 `app.config.vue_config_script` 来配置 NiceGUI。
 
 *在 NiceGUI 2.21.0 中新增*"
@@ -712,16 +712,16 @@ c3848caccbd74578372202cd4e9b00bb769a3f7edce261b5a63b2e856bf222a5,通过 SVG 叠�
 07dd18833299589695d879f35da46beee13446ed75f8c7c2208258688f3a7cf3,"`add_static_files()` 使指定端点（例如 `'/static'`）上的本地目录可供访问，这在向前端提供本地数据（如图片）时非常有用。否则，浏览器将无法访问这些文件。仅将非安全关键文件放入其中，因为这些文件对所有人都是可访问的。
 
 要使单个文件可访问，可以使用 `add_static_file()`。对于需要流式传输的媒体文件，可以使用 `add_media_files()` 或 `add_media_file()`。"
-da70c0792a20b777d6b307cb0bba242d2416f80d0322a5127be04bfe494862e5,"`anywidget <https://anywidget.dev/en/getting-started/>`_ 是一个库，允许你以跨前端友好的方式嵌入任意 JavaScript 小部件。
+da70c0792a20b777d6b307cb0bba242d2416f80d0322a5127be04bfe494862e5,"`anywidget <https://anywidget.dev/en/getting-started/>`_ 是一个库，允许您以跨前端友好的方式嵌入任意 JavaScript 小部件。
 
 在 `anywidget gallery <https://try.anywidget.dev/>`_ 中有许多公开可用的 anywidget 小部件示例，包括 `altair.JupyterChart <https://altair-viz.github.io/user_guide/interactions/jupyter_chart.html>`_ 和 `quak <https://github.com/manzt/quak>`_。
 
 实现方式：``nicegui.anywidget`` 元素会接收一个 ``AnyWidget``，并观察该小部件中所有 ``sync=True`` 的特性，当特性发生变化时触发 JS 更新。相反，前端的更改也会同步回小部件，通过 ``ValueElement`` 的处理方式监听 ``traits`` 的变化。
 
 *自版本 3.5.0 添加*"
-f90bb343536da938fcc7d10d3b254406cfaca6b96f95a834038290c32938b8f2,"`background_tasks.create()` 允许你异步执行一个函数并在后台运行，返回一个任务对象。
+f90bb343536da938fcc7d10d3b254406cfaca6b96f95a834038290c32938b8f2,"`background_tasks.create()` 允许您异步执行一个函数并在后台运行，返回一个任务对象。
 默认情况下，任务将在关闭时自动取消。
-你可以通过使用 `@background_tasks.await_on_shutdown` 装饰器（从版本 2.16.0 开始）阻止此行为。
+您可以通过使用 `@background_tasks.await_on_shutdown` 装饰器（从版本 2.16.0 开始）阻止此行为。
 这对于需要在应用关闭时仍完成的任务非常有用。"
 b5264c658591851f75fbaf119512195eb03891f59d4e2b53ca4eda2576d2a5ba,`ui.carousel_slide` 或初始选中的幻灯片名称（默认：`None` 表示第一张幻灯片）
 0e82f4c06a4cf5fbf9cbe7362ba30bf8c46826f698b6c53056df5c7fdb1cedf7,`ui.step` 或初始选中的步骤名称（默认：`None` 表示第一个步骤）
@@ -833,8 +833,8 @@ NiceGUI 使用 Vue 中的插槽概念：
 元素可以拥有多个插槽，每个插槽可能包含多个子元素。
 大多数元素只有一个插槽，例如 `ui.card`（QCard）仅有一个默认插槽。
 但更复杂的元素如 `ui.table`（QTable）可以拥有多个插得多插槽，如 ""header""、""body"" 等。
-如果你通过 `ui.row(): ...` 将 NiceGUI 元素嵌套进去，你将新元素放置在行的默认插槽中。
-但如果你使用 `table.add_slot(...): ...`，你将进入不同的插槽。
+如果您通过 `ui.row(): ...` 将 NiceGUI 元素嵌套进去，您将新元素放置在行的默认插槽中。
+但如果您使用 `table.add_slot(...): ...`，您将进入不同的插槽。
 
 插槽堆栈帮助 NiceGUI 跟踪当前用于新元素的插槽。
 `parent` 字段持有对其元素的引用。
@@ -902,7 +902,7 @@ d368409c2a747ca27a8fb773bcaac3cfd6ddf3ae62b7606009ab96f33ae2b9ef,传递给 FastA
       ``f1``、``f2``、``f3``、``f4``、``f5``、``f6``、``f7``、``f8``、``f9``、``f10``、``f11``、``f12``：是否为指定键"
 227ffb7e8800bdce06a23bb6ca9d2bd823030b4fb2b0e4ed47301f1156af9738,高级用法
 060434545e65b391b231ed9a9665a7332cb1a5dc077dbbd0cc5f20bb482ecc73,滑动操作完成后，可以使用 ``reset`` 方法将滑动项重置为其初始状态。
-2c80af14ddeb490d320f5473449888dbef7953951777d8336149d9c1f2f24821,设置了 `tick_strategy` 后，可以使用 `tick()` 和 `untick()` 方法对节点进行选中或取消选中。你可以指定节点键的列表，或传入 `None` 来选中或取消选中所有节点。
+2c80af14ddeb490d320f5473449888dbef7953951777d8336149d9c1f2f24821,设置了 `tick_strategy` 后，可以使用 `tick()` 和 `untick()` 方法对节点进行选中或取消选中。您可以指定节点键的列表，或传入 `None` 来选中或取消选中所有节点。
 79739c2cb4f1c9a00fd6100d68c0e1e62fc7a348a3e3c5b37942c26df14e78cb,AG Grid
 3fc204cdb6b1a7fde84b3b54c757eb38786c453af63a9237b337a1c2529268c0,AG Grid 企业版
 637ecbadfcee9a91ad86613082ed43c6d8bcf40d4cb39b9f2ef22c70933a283d,"AG Grid 主题 ""quartz"", ""balham"", ""material"" 或 ""alpine""（默认：``options['theme']`` 或 ""quartz""）"
@@ -920,7 +920,7 @@ a815be52afbdd4b4994aea8406bdcb2f4d634e3e0e40549d3a39904115339b21,允许一次性
 9046c57d961fea450142d23fbe4e7fefe53f5892531a2fb54f6249b029889336,"Altair 图表可以通过添加参数使其交互式。
 本演示展示了如何添加滑块来控制点的颜色。"
 16f19c6b0f0dd45f0f814daf08f976eba9cd9656ef15ff445a49b9e1fcee45a5,带 AnyWidget 的 Altair 图表
-612a2767729f1e947542b181f70cc0f3fb3199affdda7f68948e797be24ef28a,"或者，你可以通过在节点上添加 `click` 指令并运行自定义 JavaScript 来注册点击事件。
+612a2767729f1e947542b181f70cc0f3fb3199affdda7f68948e797be24ef28a,"或者，您可以通过在节点上添加 `click` 指令并运行自定义 JavaScript 来注册点击事件。
 请确保在 `config` 参数中将 `securityLevel` 设置为 `loose` 以允许 JavaScript 执行，
 并且不要让不可信用户传递任意 Mermaid 图表作为输入。"
 1b14a56a7d9cb18041e530caf807d9e2221e80233bff5e1677e9efc06fef0f39,"可添加到浮动操作按钮（FAB）中的操作。
@@ -962,9 +962,9 @@ a1fb583d55a7a8f1f0d5d288acb65a83643427c6d5261da5ebada663596f876a,可以定义一
 此元素基于 Quasar 的 `QSelect <https://quasar.dev/vue-components/select>`_ 组件。
 与传统的下拉选择不同，此变体专注于自由形式的文本输入与芯片，适合用于标签、关键词或任何用户自定义值的列表。
 
-你可以使用 ``validation`` 参数来定义一个包含验证规则的字典，例如 ``{'Too long!': lambda value: len(value) < 3}``。
+您可以使用 ``validation`` 参数来定义一个包含验证规则的字典，例如 ``{'Too long!': lambda value: len(value) < 3}``。
 第一个失败的规则的键将作为错误消息显示。
-或者，你可以传递一个返回可选错误消息的可调用对象。
+或者，您可以传递一个返回可选错误消息的可调用对象。
 为了禁用每次值更改时的自动验证，可以使用 `without_auto_validation` 方法。
 
 *在版本 2.22.0 中添加*"
@@ -1111,7 +1111,7 @@ b9f0b68a503117a7f65f9bdf504a7eeb1bc90819e7239e268b7f5907f97dda10,"在创建绑�
 绑定到可能为空的存储字典不会触发任何警告，除非 `strict` 设置为 `True`。
 
 *在版本 3.0.0 中新增*"
-cf93bec143f8e9d7d763fe7969d57da58042f20e4fec0c9928a4a65b67b011ac,"除了系列点外，你还可以为任何触发事件的组件（`triggerEvent=True`）的点击注册回调。
+cf93bec143f8e9d7d763fe7969d57da58042f20e4fec0c9928a4a65b67b011ac,"除了系列点外，您还可以为任何触发事件的组件（`triggerEvent=True`）的点击注册回调。
 
 提示：通过检查 `e.component_type == 'series'` 来确认该组件是否为点，以避免与 `on_point_click` 重复处理。
 
@@ -1400,7 +1400,7 @@ ca60460ac6b39b58451c5dce65635765296cbcd06da6492fbbcd04f1fabc424b,内置[定时�
 eb96e5bc7a7cc9b24bd16498b29da0932de312c6117931cfa7d799444d475ac5,"激活 ""latex"" 扩展后，您便可以使用 LaTeX 公式。这需要安装 markdown2 (版本 >=2.5) 以及 `latex2mathml`。"
 be1938af35a0b5ee70c637d42e66c85cea9b3b3f0de98d66a223be7a942eecc5,"在激活 ""tables"" 扩展后，您可以使用 Markdown 表格。请参考 [Markdown2 文档](https://github.com/trentm/python-markdown2/wiki/Extras#implemented-extras) 来查阅所有受支持的扩展。"
 84e10566090bd6cfb2730233fca645315e61d48aabcb290c4b3b53b23ccda163,"默认情况下，滑块的值更改事件被限制在0.05秒内。
-这意味着，如果你快速移动滑块，值将每0.0emsp;秒更新一次。
+这意味着，如果您快速移动滑块，值将每0.0emsp;秒更新一次。
 
 默认情况下，同时激活了“起始”和“尾部”事件。
 这意味着，第一个事件会立即触发，最后一个事件会在延迟时间后触发。
@@ -1409,27 +1409,27 @@ be1938af35a0b5ee70c637d42e66c85cea9b3b3f0de98d66a223be7a942eecc5,"在激活 ""ta
 为了更清晰地看到效果，延迟时间被设置为1秒。
 第一个滑块显示默认行为，第二个仅发送起始事件，第三个仅发送尾部事件。"
 08e29a5d9022255409e73c952912a2929c314050ba1610dc863c905bb36a4c18,"默认情况下，可拖拽对象仅在拖拽结束时更新，以避免性能问题。
-但你可以显式订阅“拖拽”事件以获得即时更新。
+但您可以显式订阅“拖拽”事件以获得即时更新。
 在本演示中，我们根据两个可拖拽球体的位置来更新方框的位置和大小。"
 ae944e93c67238441b4628a4c1f1ab4edf6d00272252b1a1b6f0048d3293e8b8,"默认情况下，卡片具有内边距。
-你可以使用 `tight` 方法移除嵌套元素的边距和间隙。
+您可以使用 `tight` 方法移除嵌套元素的边距和间隙。
 这也会隐藏嵌套元素的外边框和阴影，如同原生 QCard 一样。"
 badd5c745523b3a6fc47f98604ea5282720993f1f51c3c03c93347db47786a4e,"默认情况下，NiceGUI 会在页面内容周围提供内置的内边距。
-你可以使用类选择器 `.nicegui-content` 修改它。"
+您可以使用类选择器 `.nicegui-content` 修改它。"
 4b0242ce42ac7ef3eb522ad61b66316f90fdc5acefbd3b8eb6aa92cc2cc1565c,"默认情况下，标签存储会保留30天。
-你可以通过设置 `app.storage.max_tab_storage_age` 来更改此设置。
+您可以通过设置 `app.storage.max_tab_storage_age` 来更改此设置。
 
 *在2.10.0版本中新增*"
 f4249da05642ff3c7aaaeaca5034a5ec1e2fdfead0c433ffb683da8565620ec1,"默认情况下，计时器会立即开始。
-你可以通过将 `immediate` 参数设置为 `False` 来更改此行为。
+您可以通过将 `immediate` 参数设置为 `False` 来更改此行为。
 这将延迟回调的首次执行，延迟时间为指定的间隔。
 
 *在2.9.0版本中新增*"
-8ce0225a0afbf3f6e43e041ba12b1c103ac76cf3dd25cf8479e7516a713bfac0,"通过将元素嵌套在 `ui.image` 中，你可以创建图像增强效果。
+8ce0225a0afbf3f6e43e041ba12b1c103ac76cf3dd25cf8479e7516a713bfac0,"通过将元素嵌套在 `ui.image` 中，您可以创建图像增强效果。
 
 使用 [Quasar 类](https://quasar.dev/vue-components/img) 对标题进行定位和样式设置。
 要叠加 SVG，需使 `viewBox` 的大小与图像完全一致，并提供 `100%` 宽度/高度以匹配实际渲染尺寸。"
-aa458113e6dffec75523eac881106b691f172aae95a1c40303497c1b13a2a48d,"通过将元素嵌套在链接中，你可以使整个元素可点击。
+aa458113e6dffec75523eac881106b691f172aae95a1c40303497c1b13a2a48d,"通过将元素嵌套在链接中，您可以使整个元素可点击。
 此功能适用于所有元素，但对非交互式元素（如 [ui.image](/documentation/image)、[ui.avatar](/documentation/image) 等）尤为有用。"
 3ee2a00e380489a3dabfc75f24fa09d4add5c45502fd415fa4b5b183acaa9e10,通过将参数类型提示为 `PageArguments`，子页面构建函数即可统一访问查询参数、路径参数等。
 d5bf5008343a31d5ed9b3ced6cb9899f3bea9e8786bb41a0972a0b87bcd8fe59,"内部静态文件的缓存控制指令（默认：`'public, max-age=31536000, immutable, stale-while-revalidate=31536000'`）"
@@ -1504,7 +1504,7 @@ d54e8b4337998008f223ece6451b46d361b083063b2682b1141a49dd4f2af674,"可用于程�
 
 当使用 `new_tab` 参数时，浏览器可能会阻止新标签页。
 这是浏览器设置，应用程序无法更改。
-你可能希望使用 `ui.link` 及其 `new_tab` 参数代替。"
+您可能希望使用 `ui.link` 及其 `new_tab` 参数代替。"
 d99282ee46aafe09e2b25b851e61c489a4ad0a52b63019d98a213750c15e3f6c,取消当前调用
 9ff139cb325c7dcb603fcdec9ca00da1c9ec6a32adf10552f78c239d16486aa4,取消定时器。
 afba82e61545eba7c14e21866e224a61e95a462058e9b26ac371b3127343bb07,标题和叠加层
@@ -1596,7 +1596,7 @@ ba42602c056e504e2655550d9339fdd61bba8936380d4806d047a213c5bfdb50,颜色选择器
 9ba6a4c923610e3b0b0abae75f99bc6907b546c912fbd4dd1f331715c834e371,"图标颜色（Quasar、Tailwind 或 CSS 颜色，或 ``None``，默认：""primary""）"
 f24e87b3020c59a87366c017aa9737471bee2ece5775e7fe8d54e728e617eb27,列元素
 2b47cb02368d18421402050ec28d5a76b51524aa45d5b1463d049d8a3236cec4,"逗号分隔的 JavaScript 表达式，用于限制被拖动对象的位置（例如：``'x = 0, z = y / 2'``）"
-d107373ff6cdbb485a7375f78b972d3adee28bb2e0794e36a058486e3178ad15,每行开头的常见缩进将自动移除。因此你可以对 Markdown 元素进行缩进，它们仍会被正确渲染。
+d107373ff6cdbb485a7375f78b972d3adee28bb2e0794e36a058486e3178ad15,每行开头的常见缩进将自动移除。因此您可以对 Markdown 元素进行缩进，它们仍会被正确渲染。
 5d142c8c0f233da10c0fc501f5127c1facd54b6c69c9fd3d897236a6387b5cae,与串口设备通信
 6b39de5d4a833846fe4e0f80b48adaaeee816d1f9e9a1ed695ae9cb06b5e7a1c,使用 WebSerial API 与串口设备通信
 56bb529fc77a116f29edb40d9d779cc72fdcc1c6d72ced75cd5d200e00636283,与屏幕 fixture 的比较
@@ -1690,7 +1690,7 @@ c9a766d59f14471fc8a3c55f0a2dff6cfc38301417c5c848bd823565be5dd6b7,"从 pyecharts 
 - `button` 和 `buttons` （JavaScript 事件中的鼠标按钮编号），以及
 - `alt`、`ctrl`、`meta` 和 `shift` （JavaScript 事件中的修饰键）。
 
-你也可以传递一个包含宽度和高度的元组而非图像源。
+您也可以传递一个包含宽度和高度的元组而非图像源。
 这将创建指定大小的空图像。
 
     ``True`` （默认）使用客户端侧清理（通过 DOMPurify），
@@ -1807,7 +1807,7 @@ c96d485a096b550b45312df262ed7d7ba9d530633ca1082de190632cbcfe9d76,"使用 `three.
 8d1f28af59124757f076e43b76372305afe35e456bed7a6ef16d59270004e37b,在通知中显示加载动画（默认值：`False`）
 9fe96610cdbed6ffdda1e3973c024435bda2d9dc4a1712e13c60f6cbeecdbfb7,"使用 `three.js <https://threejs.org/>`_ 显示 3D 场景的附加视图。
 此组件只能显示场景，不能修改它。
-然而，你可以独立移动摄像机。
+然而，您可以独立移动摄像机。
 
 当前限制：不支持 2D 和 3D 文本对象，这些对象不会在场景视图中显示。"
 611f36762ea4efa52819799789319b7f40d6fa3a0951d3cea8f4ac21c38e96c2,通过 `ui.timer` 更新 SVG 来显示模拟时钟
@@ -1827,12 +1827,12 @@ e63d2b5daeeca1c8413804a132dd0443ba393fca24ca401c4b12fdf55ab45fa8,文本输入框
 2d99ce5fc81ca4594940f13a6518f6310e979e842c6c208129d1a80e5c9cf1bc,文本域的显示名称
 dd5390d2912ea8c7c4a4d57a3a121cb1ed0386dfadf204d761dd34145668b2c5,"在屏幕上显示一条通知。
 
-注意：你可以根据 `Quasar 的通知 API <https://quasar.dev/quasar-plugins/notify#notify-api>`_ 传递额外的关键词参数。"
+注意：您可以根据 `Quasar 的通知 API <https://quasar.dev/quasar-plugins/notify#notify-api>`_ 传递额外的关键词参数。"
 15d7217c048001bd4e7d358f7023c78b34117754bff958a7293792f1a8d63ea7,"在屏幕上显示一条通知。
 与 `ui.notify` 不同，此元素允许在通知显示后更新通知消息和其他属性。
 可通过调用 `dismiss()` 移除通知。
 
-注意：你可以根据 `Quasar 的通知 API <https://quasar.dev/quasar-plugins/notify#notify-api>`_ 传递额外的关键词参数。"
+注意：您可以根据 `Quasar 的通知 API <https://quasar.dev/quasar-plugins/notify#notify-api>`_ 传递额外的关键词参数。"
 a4343bfd77939d25700b7d61200c9c6c6b805e160586a331a903bcb9e04a7077,"播放视频。
 
 参见 `此处 <https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video#events>`_，了解可通过通用事件订阅 `on()` 订阅的事件列表。"
@@ -1889,7 +1889,7 @@ f56dcd7aaca9b6609c0ce38f1083cd7f0c2c0b50afe24dfd5b2e39dce427bac0,错误处理
 1969f3b65eae9249e90023076b1ea23aeb5ffe8c507b2eff552de16061615e7b,事件订阅
 f4b0c22ba734e9396b10fb9392e45e5e0f0d091416eea511de70e1b4aae9a74f,事件系统
 8d14f6e72de8f18ab1ee5c5330f00653c0c3ce099e63024454f80af97e72d333,事件
-6418acf2a3cf5f38feff943e2091d3769d35f7e267d3bbadd6a06073fe5bb39c,"事件是传递信息于你的代码不同部分的强大工具，特别是从长期存活的对象（如数据模型）传递至短期存活的 UI。
+6418acf2a3cf5f38feff943e2091d3769d35f7e267d3bbadd6a06073fe5bb39c,"事件是传递信息于您的代码不同部分的强大工具，特别是从长期存活的对象（如数据模型）传递至短期存活的 UI。
 处理器可以是同步或异步的。
 如果事件包含参数，它们也可以接收参数。
 
@@ -1921,7 +1921,7 @@ c8e087c1935651a5b5d0c811ba8363da732d47915211fc0898347d6d7edbd848,按元素类型
 42947a084a8344958987f66e3df51e04acba9ca67f9acefba5c2e0812d79218b,筛选包含 ``content`` 的元素，该内容存在于元素的属性中，如 ``.text``、``.value``、``.source`` 等；可以是单个字符串或字符串列表，所有内容必须匹配
 6a093be9ff36179b50881101cd7516a582b2ee7c8c0c0557025b618ff42e469c,过滤节点
 a1529f49691e9c8491aee28dd8033f78475865722a0d077c18801f3f5a9aa307,过滤返回值
-3f52c6f957a9d68ac4b92ad6b3ca5daa8058cf864e3997c7b567b3440447d1f9,使用迷你过滤器过滤行
+3f52c6f957a9d68ac4b92ad6b3ca5daa8058cf864e3997c7b567b3440447d1f9,使用迷您过滤器过滤行
 b91052a61f81bb2ab8b759fcd725837f99dad3888046ed2f68cc6377a44d8bc0,查找包含指定文本的所有元素。
 e86866f97ddadb420f00c99b9b360257c947176f3bfdedd0da58f5919718de5c,查找所有具有文本属性的元素
 d248839667dbf588bdfc8476619bf3c5d51be8dd5fc83fd848d1c9d7132ab77b,查找所有具有指定 CSS 类的元素。
@@ -2085,8 +2085,8 @@ b25149dffaf35dbde5a9776c1b63b35517c0a7dd83f1d37e768159fa24ccf37a,"如果为 True
 然而，“取消当前调用”按钮也会取消当前正在运行的周期。
 
 *从版本 2.23.0 开始添加*"
-3a9399de3f51fb378450ca5fe1c91ff8adc5cc1392b662cd3eb7c3daa58abbfb,如果你喜欢 NiceGUI，欢迎成为
-c8aa91774d3358c4b5c90a507b2b1f11bddfa993b567f4e76d7f1940bd514dbf,"如果你省略 `columns` 参数，表格将自动从第一行生成列。
+3a9399de3f51fb378450ca5fe1c91ff8adc5cc1392b662cd3eb7c3daa58abbfb,如果您喜欢 NiceGUI，欢迎成为
+c8aa91774d3358c4b5c90a507b2b1f11bddfa993b567f4e76d7f1940bd514dbf,"如果您省略 `columns` 参数，表格将自动从第一行生成列。
 标签会转为大写，且支持排序。
 
 *在版本 2.0.0 中更新：`columns` 参数变为可选。*"
@@ -2112,14 +2112,14 @@ d198ed30d09ba8c6b43f736a65dd4e3b7649cd120e0fe1d83f52c60ea6d02ad5,印记
 在一秒后添加的标签 ""Tick!"" 也会被添加到卡片中。
 
 此设计决策允许轻松创建模块化组件，即使在 UI 中移动这些组件后仍能正常工作。
-例如，你可以将标签和按钮移动到其他地方，或者将其包裹在另一个容器中，代码仍能正常工作。"
-13006b3e8e16d41f8acd3a3502f5ccf6a425d405cb0b6ffca5c8bd3ca2de4b49,"为了避免与服务器的往返，你也可以直接使用客户端剪贴板 API。
+例如，您可以将标签和按钮移动到其他地方，或者将其包裹在另一个容器中，代码仍能正常工作。"
+13006b3e8e16d41f8acd3a3502f5ccf6a425d405cb0b6ffca5c8bd3ca2de4b49,"为了避免与服务器的往返，您也可以直接使用客户端剪贴板 API。
 这可能被更多浏览器支持，因为剪贴板访问是通过用户操作直接触发的。"
 e0f6c27c06785155ce632a8cfc1cb456cd12b6d2b1b4e977615c3f4f7c588617,"为了在页面函数之外定义可刷新的 UI 并带有本地状态，
-你可以，例如，定义一个带有可刷新方法的类。
-这样，你可以创建多个具有独立状态的类实例，
+您可以，例如，定义一个带有可刷新方法的类。
+这样，您可以创建多个具有独立状态的类实例，
 因为 `ui.refreshable` 装饰器作用于类实例而非类本身。"
-994f5790982127bc521cd64355840328eb745554b2f09bc22c8361abdf4fc972,"在某些情况下，你可能希望将不同组的 SVG 元素添加到图像中。
+994f5790982127bc521cd64355840328eb745554b2f09bc22c8361abdf4fc972,"在某些情况下，您可能希望将不同组的 SVG 元素添加到图像中。
 也许有一个元素需要频繁更新，而其他元素很少更改。
 将所有元素放在同一个 SVG 中可能导致性能问题，
 因为每当其中一个元素更改时，整个 SVG 都需要发送到客户端。
@@ -2169,12 +2169,12 @@ a3e40cb8df0d6cce907274117fb0257d4d7cb134bffa6c2f1d3539321cc9de4c,将图表注入
 c5160825cc0ef8c3f227bbfc394f08fb9b1bc99360926c8e81ce392ef3866bf7,输入验证
 a1b707877fa71b75f9fd2da6533c1e83118c2aaa401ed5a38d92ba9423c34c22,安装与启动
 c3fc54aa5390dc2c333d4bb596a339d552ad787337c1fdaac3957ca5a7facf50,安装
-5ad200e1d04bbe72061e89f41f59a6eb1ef09af45a858aa435d965938a8f75d0,"代替将 tooltip 元素嵌套在另一个元素内，你也可以使用 `tooltip` 方法。
+5ad200e1d04bbe72061e89f41f59a6eb1ef09af45a858aa435d965938a8f75d0,"代替将 tooltip 元素嵌套在另一个元素内，您也可以使用 `tooltip` 方法。
 
 请注意，使用此方法时，无法直接向 tooltip 应用额外属性（props）或样式。
-如果你需要自定义样式或属性，请使用 `ui.tooltip` 元素进行嵌套。"
-bb22db2cde4435da308acac4a91ea70712763b4255795b4b0d40abd8efbd247b,代替设置纯文本标题，你可以通过将 UI 元素添加到“header”插槽中，来填充展开标题。
-0f71170763a2a103a8aa436ff27ba80461fb69a03df8ade9c0c4579175e21b52,"除了使用 Vue 模板外，你还可以在插槽模板中使用 NiceGUI 元素。
+如果您需要自定义样式或属性，请使用 `ui.tooltip` 元素进行嵌套。"
+bb22db2cde4435da308acac4a91ea70712763b4255795b4b0d40abd8efbd247b,代替设置纯文本标题，您可以通过将 UI 元素添加到“header”插槽中，来填充展开标题。
+0f71170763a2a103a8aa436ff27ba80461fb69a03df8ade9c0c4579175e21b52,"除了使用 Vue 模板外，您还可以在插槽模板中使用 NiceGUI 元素。
 以下演示展示了如何使用 JavaScript 中的 `props` 对象自定义按钮和徽章。
 `js_handler` 用于将当前单元格的值传递给 Python 的 `handler`。
 
@@ -2184,7 +2184,7 @@ b7d2863247e0230fc402347740098d2e3f799aae27be97da0936e97aca77e16c,交互
 f3c3a885b85dd1a872db5e0d0da218dd5432dd818175b1e151573e3970306bfb,交互式图表
 ac40e37190322484383845155b5f7d83345cf1a7b188b804401eb4589d9fd459,交互式图片
 7a6010096a477cf45c778acc268fe5889947e0fc673ed56bedd1a9cfc3a87488,更新活动链接的间隔（默认：0.1 秒，数值越大越省 CPU，自版本 3.4.0 开始：可设为 ``None`` 禁用更新循环）
-cd8366c17110823e837e6549bb65a8e253b9d84ec2da485bdb44efc7dd9a2331,使用 `emitEvent(...)` 从 JavaScript 发送自定义事件相当容易，可以通过 `ui.on(...)` 监听。这在你希望在 JavaScript 中发生某事时调用 Python 代码时非常有用。在此示例中，我们正在监听浏览器标签页的 `visibilitychange` 事件。
+cd8366c17110823e837e6549bb65a8e253b9d84ec2da485bdb44efc7dd9a2331,使用 `emitEvent(...)` 从 JavaScript 发送自定义事件相当容易，可以通过 `ui.on(...)` 监听。这在您希望在 JavaScript 中发生某事时调用 Python 代码时非常有用。在此示例中，我们正在监听浏览器标签页的 `visibilitychange` 事件。
 88fb6c4198354183fe6743122c9aca3b3bc4f12cd4246432767e839cf33bd475,设置背景渐变、图片或其他样式非常简单。有关使用 CSS 设置背景的更多信息，请参见 [w3schools.com](https://www.w3schools.com/cssref/pr_background-image.php)。
 2a055e46ef918e066e10591f51b91c6a2669fce2ace367f9ee30bc4810292a22,通过更新 `options` 属性添加新行非常简单。若要滚动到新行，请使用 AG Grid API 方法 `ensureIndexVisible`。
 a0dd130b0903f019f1579bc4b79508dc56c5a88555a7b47fd4b7059e5ba90f1a,"通过更新 `rows` 属性添加新行非常简单。当设置 ""virtual-scroll"" 属性时，可通过 JavaScript 函数 `scrollTo` 程序化滚动表格。"
@@ -2220,11 +2220,11 @@ a52d69204bfa1a53c718ed75ac6e5d1211d50fba73a261c568c7a551d0c5603b,"布局（""den
 43f203b0560e935180f44b1d0b82349c6988891791514485fcbc84a7dfbd4665,Leaflet 地图
 bfc0bf9c49c79cd32d1aa4858480ff19b2a677fd8620b146d19a08a4c81749cc,Leaflet 插件
 b66ddfd4bafeac37498e1621774ca8187ed6550c6d2388b6153c95945e80de0d,"Leaflet 支持 [图像覆盖层](https://leafletjs.com/reference.html#imageoverlay)。
-你可以使用 `image_overlay` 方法添加图像覆盖层。
+您可以使用 `image_overlay` 方法添加图像覆盖层。
 
 *在 2.17.0 版本中新增*"
 5e212ed73c172a2ebbcc5545b0b628927e51622e796ad18ade8edd7ff2b96991,"Leaflet 支持 [视频覆盖层](https://leafletjs.com/reference.html#videooverlay)。
-你可以使用 `video_overlay` 方法添加视频覆盖层。
+您可以使用 `video_overlay` 方法添加视频覆盖层。
 
 *在 2.17.0 版本中新增*"
 c4bb9bbd8f9468a1a00c9a2fa954b48d6e4016d34d21528186f080d8be7f241d,"Leaflet 支持一组 [矢量图层](https://leafletjs.com/reference.html#:~:text=VideoOverlay-,Vector%20Layers,-Path)，例如圆形、多边形等。
@@ -2327,24 +2327,24 @@ a088a9304480f2e379a222ede3c9a783a8f072168b4837c0b95d16df291158b4,从最后一次
 c8f1293d8e88a3f8ca15b12b7143995c40f5c23d677313e39f292e3df750ec89,修改默认页面内边距
 b8999832e3d52208081ff113b1a666042e77a37d848a02932be305a0d8172646,模块化
 ed1ab8be519ab9ae7c850ca7fbce5eaf3246e00f88eb2f051c7dd24a0bbd1940,使用 APIRouter 模块化
-aa972fa5aefbecded37d24c8f156b292b85269cf81c80988d902d7a287b8c44f,将你的应用模块化为多个文件并复用代码
+aa972fa5aefbecded37d24c8f156b292b85269cf81c80988d902d7a287b8c44f,将您的应用模块化为多个文件并复用代码
 1a83ee26ca7b6593ffe16b128cbf00d6353ac1f249a96305fc22fe8f617b0979,更复杂的布局
 4d302022e6a406ce1e191dc9e95ca3c5c192b2123753aefc1ccf55e9daef00ce,"大多数元素也支持异步事件处理器。
-注意：你也可以将 `functools.partial` 传递给 `on_click` 属性，以将带参数的异步函数包装起来。"
+注意：您也可以将 `functools.partial` 传递给 `on_click` 属性，以将带参数的异步函数包装起来。"
 87cf8848696f028efc79d7323dc5f57b5433de14a88a22db647d3a6fafe8079f,"大多数 UI 元素都预定义了事件。
 例如，演示中的 `ui.button`（如 ""A""）具有 `on_click` 参数，它期望一个协程或函数。
-但你也可以使用 `on` 方法注册通用事件处理器（如 ""B""）。
-这允许你为 JavaScript 和 Quasar 支持的任何事件注册处理器。
+但您也可以使用 `on` 方法注册通用事件处理器（如 ""B""）。
+这允许您为 JavaScript 和 Quasar 支持的任何事件注册处理器。
 
-例如，你可以为 `mousemove` 事件（如 ""C""）注册处理器，即使 `ui.button` 没有 `on_mousemove` 参数。
+例如，您可以为 `mousemove` 事件（如 ""C""）注册处理器，即使 `ui.button` 没有 `on_mousemove` 参数。
 某些事件（如 `mousemove`）触发频率很高。
-为了避免性能问题，你可以使用 `throttle` 参数，仅每 `throttle` 秒调用一次处理器（""D""）。
+为了避免性能问题，您可以使用 `throttle` 参数，仅每 `throttle` 秒调用一次处理器（""D""）。
 
 通用事件处理器可以是同步或异步的，并且可选地接受 `GenericEventArguments` 作为参数（""E""）。
-你还可以指定哪些 JavaScript 或 Quasar 事件的属性应传递给处理器（""F""）。
+您还可以指定哪些 JavaScript 或 Quasar 事件的属性应传递给处理器（""F""）。
 这可以减少服务器与客户端之间需要传输的数据量。
 
-这里你可以找到更多关于支持事件的信息：
+这里您可以找到更多关于支持事件的信息：
 
 - <https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement#events> 用于 HTML 元素
 - <https://quasar.dev/vue-components> 用于基于 Quasar 的元素（请参见单个组件页面的“事件”标签页）"
@@ -2389,16 +2389,16 @@ c4ba3cee4b101571addc49722130db45caef1bb84dd027e596428c6238c91cb8,换行
 0b36e082158c5ae34e1f2a3a8862ed9ba0b8e03ac714b988f7e0e17184eb7184,NGINX HTTPS
 a4bf20796deaf583700b3e4f55cd12672ae3cda4f7e587dee088a6fa5b99810f,NGINX 子路径
 3e06bec8ad388840b74efdc36c15b18f8e7969ad06499c5863043961759729cc,"NiceGUI 应用程序是 Python 代码，许多安全问题源于不安全的 Python 模式。
-审查你的应用程序逻辑可以揭示不应进入生产环境的漏洞。
+审查您的应用程序逻辑可以揭示不应进入生产环境的漏洞。
 
 例如，使用 `ast.literal_eval()` 安全地将用户输入解析为 Python 数据结构："
 a0ba448356b923e95d90b1834c442d41e3f63ff2749b14bd1edb2f648ff64fd8,"NiceGUI 定义了以下 CSS 层（按优先级递增顺序排列）：
 ""theme"", ""base"", ""quasar"", ""nicegui"", ""components"", ""utilities"", ""overrides"", 和 ""quasar_importants""。
-你无需将自定义 CSS 放入基本样式层。
-然而，若要覆盖 Quasar 的 `!important` 规则，你应将 CSS 定义在合适的层中：
+您无需将自定义 CSS 放入基本样式层。
+然而，若要覆盖 Quasar 的 `!important` 规则，您应将 CSS 定义在合适的层中：
 使用 ""components"" 用于组件特定样式，或使用 ""utilities"" 用于工具类，
-取决于你自定义样式的用途。
-请注意，你的自定义样式中需要使用 `!important`，
+取决于您自定义样式的用途。
+请注意，您的自定义样式中需要使用 `!important`，
 因为 Quasar 的大部分 CSS 都使用 `!important` 定义，
 否则会优先级更高。
 
@@ -2416,13 +2416,13 @@ e560622efbcaad7304961cdec93819f85dc59ff70ab424f7aa1ca4cc6d0da873,"NiceGUI 可以
 只需将模型的属性作为参数传递给这些方法即可创建绑定。
 值将立即更新，每当其中任何一个值发生变化时都会更新。"
 a3198bb2678632b924d75bb44ffdabc01fc17be94894205bd7e28f008d62be9e,"NiceGUI 基于 [FastAPI](https://fastapi.tiangolo.com/)。
-这意味着你可以使用 FastAPI 的所有功能。
-例如，你可以在图形用户界面之外实现一个 RESTful API。
-你只需从 `nicegui` 导入 `app` 对象。
-或者，你可以通过使用 `ui.run_with(app)` 在自己的 FastAPI 应用之上运行 NiceGUI，而不是自动启动服务器（使用 `ui.run()`）。
+这意味着您可以使用 FastAPI 的所有功能。
+例如，您可以在图形用户界面之外实现一个 RESTful API。
+您只需从 `nicegui` 导入 `app` 对象。
+或者，您可以通过使用 `ui.run_with(app)` 在自己的 FastAPI 应用之上运行 NiceGUI，而不是自动启动服务器（使用 `ui.run()`）。
 
-你还可以在页面函数中返回任何其他 FastAPI 响应对象。
-例如，你可以返回一个 `RedirectResponse`，在满足特定条件时将用户重定向到另一个页面。
+您还可以在页面函数中返回任何其他 FastAPI 响应对象。
+例如，您可以返回一个 `RedirectResponse`，在满足特定条件时将用户重定向到另一个页面。
 这在我们的 [认证演示](https://github.com/zauberzeug/nicegui/tree/main/examples/authentication/main.py) 中使用。"
 73febef4fcc02ce6bcc42210043853c9cb69729c3cc2904b1f10c60fd74de8f0,NiceGUI 由以下赞助者支持
 8f8f9cb6e6e890d5fbec7cc1f2f1a7170e25da79de9f5fec970c953142a2bd8b,"NiceGUI 提供了一种简单机制，用于在您的应用程序中实现数据持久化。
@@ -2482,15 +2482,15 @@ f715891150c508a9c56dc352e3ac08dbd6cd441e550692dc9785f3327a36de9a,"NiceGUI 提供
 
 注意：如果用户更喜欢 Dark Reader 的主题，他们仍可在扩展设置中手动启用它。"
 aca5dc1e78f9e44c8b4400354007bd59ff83ae1294a03e1e92bdd1bd1adf5fc6,"NiceGUI 试图自动同步 UI 元素的状态与客户端，例如当标签文本、输入值或元素的样式/类/属性发生改变时。
-在其他情况下，你可以显式调用 `element.update()` 或 `ui.update(*elements)` 来更新。
+在其他情况下，您可以显式调用 `element.update()` 或 `ui.update(*elements)` 来更新。
 演示代码展示了如何在添加新选项后更新 `ui.radio`。"
 f9e5f2d4b1406a61ed509c505a125582bd5f07a982f24526850181cdf3789e84,"NiceGUI 使用 [Quasar 框架](https://quasar.dev/)，因此拥有完整的样式设计能力。
 每个 NiceGUI 元素都提供一个 `props` 方法，其内容将被传递给 [Quasar 组件](https://justpy.io/quasar_tutorial/introduction/#props-of-quasar-components)：
 请参阅 [Quasar 文档](https://quasar.dev/vue-components/button#design) 了解所有样式属性。
 以冒号 `:` 开头的属性可以包含在客户端求值的 JavaScript 表达式。
-你还可以使用 `classes` 方法应用 [Tailwind CSS](https://tailwindcss.com/) 工具类。
+您还可以使用 `classes` 方法应用 [Tailwind CSS](https://tailwindcss.com/) 工具类。
 
-如果你真的需要应用 CSS，可以使用 `style` 方法。此处分隔符为 `;` 而非空格。
+如果您真的需要应用 CSS，可以使用 `style` 方法。此处分隔符为 `;` 而非空格。
 
 这三个方法也提供 `remove` 和 `replace` 参数，以在特定样式中不希望使用预定义样式时使用。"
 7d96b6dabb52232ad9c32b1fa7df4512d49531ec27f1b78b504beb910871e8e9,选择的节点键
@@ -2600,7 +2600,7 @@ f6711f57361cd5ecb7f331f762a0b8da2cb5eae8269eb96b93cc705c02b7b501,暂停音频。
 d8972a4d494e14d3044950be368fd849a53105e603b6ed7b2d5b52472214dac2,使用 Tortoise ORM 异步支持在 SQLite 数据库上执行 CRUD 操作
 38c2a8a6471242252aa9f383ba98ff96a0ac326a29d5e6c8c4eadc52515e6625,持久化的[用户会话](/documentation/storage)
 5e3147ab51e0084c3c817707f1aed1510260c13f45697bfe380dc51f6c179151,照片
-6288e9fa38681de9806727143db0edab7410b7e1330849f2f32d4dc99c401aad,挑选你的*方案*
+6288e9fa38681de9806727143db0edab7410b7e1330849f2f32d4dc99c401aad,挑选您的*方案*
 9f2ce2266565116ed7a0b170e6ea76ebac38af312dbe67124d77d8f4dba3ce1e,PIL 图像
 72ea128150143ed01b1d843ac898feef9c4a8f014b6f6b19820e835385018dc9,播放音频。
 d868c84350a2031d6d532d15b5162f9ad7cf14d87d55c8bfc68f4541eec98422,播放视频。
@@ -2742,7 +2742,7 @@ be37a18758c3284536f84b9636bfb09f3e3e55562d3b23ba4e11cd429e440d56,"渲染 Plotly 
                一个包含键 `data`、`layout`、`config`（可选）的 `dict` 对象。"
 13eb3b85da3719a16f43b28c77c41d48cb5c49d6deb52660f4a8d53d8992a861,"在页面上渲染任意 HTML，并包裹在指定标签内。
 可以使用 `Tailwind <https://tailwindcss.com/>`_ 进行样式化。
-你也可以使用 `ui.add_head_html` 将 HTML 代码添加到文档头部，或使用 `ui.add_body_html` 添加到文档主体。
+您也可以使用 `ui.add_head_html` 将 HTML 代码添加到文档头部，或使用 `ui.add_body_html` 添加到文档主体。
 
     ``True`` （默认）使用客户端 HTML 清洗（通过 setHTML 或 DOMPurify），
     ``False`` 禁用清洗（仅用于可信内容），
@@ -2854,7 +2854,7 @@ a3de98492da772d05937d0d84d96b9a3f625ca1fbd5f742c6784a689d735096f,运行 CPU 密�
 17a083af18ca83543ec51169f17dfaa5ef3c47c2fe22f2cc33abf415ab6cbc46,运行 I/O 密集型任务
 25d3d1a6662099afcb41d9dbcaf3677f66df486601fcf846489fb5d93d85542a,运行集成测试
 1135cb6140450d0362f450fd536c6376b58ae1f032fede4a5de4aee9052752df,运行 NiceGUI 应用
-daee3e57651304220f976a6ae6efdf0f58b3b9af13ffe7f27636c26b14ac000d,"为性能牺牲安全性和灵活性，你也可以使用 Quasar 的客户端验证，通过传递 `rules` 属性并传入与 Quasar 兼容的规则。
+daee3e57651304220f976a6ae6efdf0f58b3b9af13ffe7f27636c26b14ac000d,"为性能牺牲安全性和灵活性，您也可以使用 Quasar 的客户端验证，通过传递 `rules` 属性并传入与 Quasar 兼容的规则。
 
 这样，Quasar 的属性（如 `lazy-rules`）和方法（如 `resetValidation`）也可以被使用。
 
@@ -3052,7 +3052,7 @@ cd078f06b7e4b5b81f9b2eeb48be72d27498ccb37853deb8e27589462c4f74bd,"子页面元�
 2. 移除由父元素处理的前缀部分，
 3. 匹配最具体的路径，
 4. 将剩余路径留给下一个元素（如果没有下一个元素，则显示 404 错误）。"
-5b0cf7c5f66f14be0cd27d3a5ee2809a238bcd216ccb11ffa77a7f8ed218fd0c,子页面提供基于 URL 的不同视图间导航。这使得你可以轻松构建单页面应用（SPA）。`ui.sub_pages` 元素本身作为当前激活子页面的容器。你只需为每个视图构建函数提供路由即可。当 URL 变化时，NiceGUI 会负责替换内容，而无需触发完整页面刷新。
+5b0cf7c5f66f14be0cd27d3a5ee2809a238bcd216ccb11ffa77a7f8ed218fd0c,子页面提供基于 URL 的不同视图间导航。这使得您可以轻松构建单页面应用（SPA）。`ui.sub_pages` 元素本身作为当前激活子页面的容器。您只需为每个视图构建函数提供路由即可。当 URL 变化时，NiceGUI 会负责替换内容，而无需触发完整页面刷新。
 c66452bbe38aacdcb940095ea8d32140adc10a1d4eaeda4d28f53575b907c4bf,提交带有指定结果的对话框。
 25a2da80776d80355df7a21aa5a9708bac6aa6474391ba4f650f0d08cb0d2f32,"订阅一个事件。
 
@@ -3129,14 +3129,14 @@ da7bb8852d8863a08adf2eb44cf76f9bec1f8b909bde5017284258f6709c0efd,"感谢 FastAPI
 [请求](https://fastapi.tiangolo.com/advanced/using-request-directly/) 以访问
 请求体、头信息、Cookie 等内容。"
 827e64c7bffccb9b7437a9c11b4f47a77d1b9447be285fa18971771c2a498c6f,借助 [`ui.teleport` 元素](teleport)，您可以为单选按钮选项使用任意内容。
-8821c66978ee8ab644d0853f94cf03cbacacd4804e6640c38d0a0b1a103cb9a1,"``@ui.refreshable`` 装饰器允许你创建具有 ``refresh`` 方法的函数。
+8821c66978ee8ab644d0853f94cf03cbacacd4804e6640c38d0a0b1a103cb9a1,"``@ui.refreshable`` 装饰器允许您创建具有 ``refresh`` 方法的函数。
 该方法将自动删除函数创建的所有元素，并重新创建它们。
 
 对于在类中装饰可刷新方法，有一个 ``@ui.refreshable_method`` 装饰器，
 其功能等效但可防止静态类型检查错误。
 "
 8998d5312d6062cd8081cffe9e5f2222888dd09b42e1f7623a5cc4220d5faa5b,要包装的 ``anywidget.AnyWidget``
-1602031ec7335addda644d4962bcb3b017e2ddbb8c8558a8e2a6379424830db9,"`autocomplete` 功能在你输入时提供提示，使输入更简单、更快。
+1602031ec7335addda644d4962bcb3b017e2ddbb8c8558a8e2a6379424830db9,"`autocomplete` 功能在您输入时提供提示，使输入更简单、更快。
 参数 `options` 是一个包含可用选项的字符串列表，这些选项将显示出来。"
 b066a82d99a6eaf1ea7cd33d1e38c65b77fd9a8a0fbaa9ca27acdfdf7b11b907,"`bindable_dataclass` 装饰器提供了一种便捷方式来创建具有可绑定属性的类。
 它扩展了 Python 标准 `dataclasses.dataclass` 装饰器的功能，
@@ -3147,13 +3147,13 @@ b066a82d99a6eaf1ea7cd33d1e38c65b77fd9a8a0fbaa9ca27acdfdf7b11b907,"`bindable_data
 *在版本 2.11.0 中新增*"
 a0c68137cb8f9d1f877082570dc29a013ab63910e651f325b7f46e6031099828,来自 [Quasar](https://quasar.dev/) 的 `clearable` 属性会在输入框中添加一个用于清除文本的按钮。
 8d63ff042189cf798966b511de604a69e6d9248f33a64e6d065aa1a44f88ba0d,"`emit` 方法会立即触发事件，而不会等待已订阅的回调完成。
-如果你希望等待已订阅的回调完成后再继续，请使用 `call` 方法。
+如果您希望等待已订阅的回调完成后再继续，请使用 `call` 方法。
 
 以下演示展示了如何使用 `call` 方法，在事件触发后重置按钮状态。
 
 请注意，在此特定情况下，`submit` 也可以直接调用 `backup`。
 但在某些情况下，事件有助于解耦代码。"
-d0855977104e5ab506db71d17ea4f84aa66ee4783ebf20cefac954afbcaf162b,"`history` API 允许你向浏览器历史记录中推送和替换 URL。
+d0855977104e5ab506db71d17ea4f84aa66ee4783ebf20cefac954afbcaf162b,"`history` API 允许您向浏览器历史记录中推送和替换 URL。
 
 `history.push` 方法会向历史记录中推送新 URL，
 而 `history.replace` 方法会替换当前 URL。
@@ -3349,7 +3349,7 @@ d95e97c0f34e4c401e19345c17cd6017ddb324d96c6f11ffb341b7d7a0aafe55,可以使用不
     大多数 NiceGUI 元素都使用这些可绑定属性，例如 `ui.input` 中的 `value` 或 `ui.label` 中的 `text`。
     基本上所有带有 `bind()` 方法的属性都支持这种绑定。
 2. 其他所有绑定有时被称为“活动链接”。
-    如果你将标签文本绑定到某个字典条目或自定义数据模型的属性上，
+    如果您将标签文本绑定到某个字典条目或自定义数据模型的属性上，
     NiceGUI 的绑定模块必须主动检查值是否已更改。
     这是在一个每 0.1 秒运行一次的 `refresh_loop()` 中完成的。
     该间隔可通过 `ui.run()` 中的 `binding_refresh_interval` 进行配置。
@@ -3360,9 +3360,9 @@ d95e97c0f34e4c401e19345c17cd6017ddb324d96c6f11ffb341b7d7a0aafe55,可以使用不
 
 由于必须避免长时间阻塞主线程，
 如果 `refresh_loop()` 的某一步耗时过长，我们会显示警告。
-你可以通过 `binding.MAX_PROPAGATION_TIME` 配置阈值（默认为 0.01 秒）。
+您可以通过 `binding.MAX_PROPAGATION_TIME` 配置阈值（默认为 0.01 秒）。
 但通常该警告是性能或内存问题的重要指示。
-如果你的 CPU 需要长时间更新绑定，
+如果您的 CPU 需要长时间更新绑定，
 主线程将无法执行其他操作，UI 会“卡住”。
 
 以下演示展示了如何为 `Demo` 类定义和使用可绑定属性（如第一个演示所示）。
@@ -3374,11 +3374,11 @@ d95e97c0f34e4c401e19345c17cd6017ddb324d96c6f11ffb341b7d7a0aafe55,可以使用不
 一个便利之处在于，关键字参数会自动添加到元素的 `props` 字典中。
 
 *自版本 2.5.0 起添加*"
-2533d900798661822609d65555205c76b108038a62bda03536b5d7cbbe699932,"这些函数允许你下载文件、URL 或原始数据。
+2533d900798661822609d65555205c76b108038a62bda03536b5d7cbbe699932,"这些函数允许您下载文件、URL 或原始数据。
 
 *2.14.0 版本新增*
 "
-cec53405c8a7cebed80428291fcf7cb80ae127aecb574419bea61c0afb6dc4ae,"这些函数允许你导航浏览器历史记录或外部 URL。
+cec53405c8a7cebed80428291fcf7cb80ae127aecb574419bea61c0afb6dc4ae,"这些函数允许您导航浏览器历史记录或外部 URL。
 
 *2.0.0 版本新增*
 "
@@ -3450,7 +3450,7 @@ e0b26880ea4c6bba29d647efef1b5948500ec3fb0e8bba1b7a107562db4a4e48,此示例展示
 708fc6c035f80c19c3dc6ede0a506b26cc8f50c6fa6ad2f454a147a12de70e26,"此示例展示了如何跨多列布局单元格。
 
 请注意，Tailwind CSS 中 [没有用于跨 15 列的类名](https://tailwindcss.com/docs/grid-column#arbitrary-values)，但我们可以使用方括号设置 [任意值](https://tailwindcss.com/docs/grid-column#arbitrary-values)。
-或者，你可以使用对应的 CSS 定义：`.style('grid-column: span 15 / span 15')`。"
+或者，您可以使用对应的 CSS 定义：`.style('grid-column: span 15 / span 15')`。"
 1ab7300154f2aefce9e1d14f6993a29153bb7966a31cf6a5c8785466198ed046,此示例展示了如何订阅一些可用的 [事件](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio#events)。
 6984db61fc7f645e7996eee686d18f3a3c2d0eea345561dd7065fefa3c2ed031,"此示例展示了如何实时更新图表。
 点击按钮以向图表添加新的轨迹。
@@ -3567,33 +3567,33 @@ ceffcfe083a9196f0842aa17f6ac7216362747cda1c4f0ce417e27e2631a48fd,"此元素基�
 03d9693c4bb42d97bbc814ce5e3efd2d5ecc592c8a374abf55538680f1086628,"此元素基于 Quasar 的 `QInput <https://quasar.dev/vue-components/input>`_ 组件。
 
 `on_change` 事件在每次按键时触发，值会相应更新。
-如果你想等待用户确认输入后再处理，可以注册一个自定义事件回调，例如：
+如果您想等待用户确认输入后再处理，可以注册一个自定义事件回调，例如：
 `ui.input(...).on('keydown.enter', ...)` 或 `ui.input(...).on('blur', ...)`。
 
-你可以使用 `validation` 参数来定义一个包含验证规则的字典，
+您可以使用 `validation` 参数来定义一个包含验证规则的字典，
 例如：``{'太长了！': lambda value: len(value) < 3}``。
 第一个失败的规则的键值将作为错误消息显示。
-或者，你可以传递一个返回可选错误消息的可调用对象。
+或者，您可以传递一个返回可选错误消息的可调用对象。
 若想禁用每次值变更时的自动验证，可以使用 `without_auto_validation` 方法。
 
 关于输入框的样式说明：
 Quasar 的 `QInput` 组件是围绕原生 `input` 元素封装的。
-这意味着你不能直接对输入框进行样式设置，
-但你可以使用 `input-class` 和 `input-style` 属性来样式化原生的 input 元素。
+这意味着您不能直接对输入框进行样式设置，
+但您可以使用 `input-class` 和 `input-style` 属性来样式化原生的 input 元素。
 有关更多详情，请参阅 `QInput <https://quasar.dev/vue-components/input>`_ 文档中的“样式”属性部分。"
 558af326dc2f78de9c53d8ad5171e6239cec3649a340afe0f57aee220494559c,"此元素基于 Quasar 的 `QInput <https://quasar.dev/vue-components/input>`_ 组件。
 
-你可以使用 `validation` 参数来定义一个验证规则字典，例如 ``{'Too small!': lambda value: value > 3}``。
+您可以使用 `validation` 参数来定义一个验证规则字典，例如 ``{'Too small!': lambda value: value > 3}``。
 第一个失败的规则的键将作为错误消息显示。
-或者，你可以传递一个返回可选错误消息的可调用对象。
+或者，您可以传递一个返回可选错误消息的可调用对象。
 为了禁用每次值更改时的自动验证，可以使用 `without_auto_validation` 方法。"
 ae795dbeea4672b37e3db86fb7f123bbac3cc6d026212df3d367874f99e2e08b,"此元素基于 Quasar 的 `QInput <https://quasar.dev/vue-components/input>`_ 组件。
 将 ``type`` 设置为 ``textarea`` 以创建多行文本输入。
 
-你可以使用 `validation` 参数来定义一个包含验证规则的字典，
+您可以使用 `validation` 参数来定义一个包含验证规则的字典，
 例如：``{'Too long!': lambda value: len(value) < 3}``。
 第一个失败的规则的键将作为错误消息显示。
-或者，你可以传递一个返回可选错误消息的可调用对象。
+或者，您可以传递一个返回可选错误消息的可调用对象。
 为了禁用每次值更改时的自动验证，可以使用 `without_auto_validation` 方法。"
 10e8f9638ebdd0741432efd7e4301be715ffe96e7048e0ed79f3049246f73171,"此元素基于 Quasar 的 `QKnob <https://quasar.dev/vue-components/knob>`_ 组件。
 该元素通过鼠标/触摸拖拽方式让用户输入数值。"
@@ -3628,10 +3628,10 @@ a5cfdbbf85b0f1e0c02214d9f1091392d527f7096ce52629fb0510e3d0398683,"此元素基�
 详情请参见 `Quasar 的文档 <https://quasar.dev/vue-components/select#the-new-value-mode-prop>`_。
 请注意，当程序化设置 `value` 属性时，此模式无效。
 
-你可以使用 `validation` 参数来定义验证规则字典，
+您可以使用 `validation` 参数来定义验证规则字典，
 例如 ``{'太长！': lambda value: len(value) < 3}``。
 第一个失败的规则的键将作为错误消息显示。
-或者，你可以传递一个返回可选错误消息的可调用对象。
+或者，您可以传递一个返回可选错误消息的可调用对象。
 为禁用每次值变更时的自动验证，可以使用 `without_auto_validation` 方法。"
 db0a8846fbc63de7859f67376867fdd47ae71cc7842f4c5932cc2a65b50ea99d,"此元素基于 Quasar 的 `QSeparator <https://quasar.dev/vue-components/separator>`_ 组件。
 
@@ -3662,7 +3662,7 @@ fd6330d8ec527bbd921d18cbba5473ff0e1e46f6806e435d96e90e7ad00f7af8,此元素基于
 0bb3d58cbb7e9249219a700831a90be671042ab5be336cfaaff553999a2c63e1,"此元素基于 Quasar 的 `QTooltip <https://quasar.dev/vue-components/tooltip>`_ 组件。
 它可以放置在其他元素上，用于鼠标悬停时显示附加信息。
 
-除了将字符串作为第一个参数传递外，你还可以在提示框内嵌套其他元素。"
+除了将字符串作为第一个参数传递外，您还可以在提示框内嵌套其他元素。"
 c8e25ea2cfda23750fc4fdde5f564c82e29db2cb2d63f0c58e22059d982d8fcc,"此元素代表 Quasar 的 `QCarousel <https://quasar.dev/vue-components/carousel#qcarousel-api>`_ 组件。
 它包含独立的幻灯片。"
 0a900cca503ec61c3aad0e6a5b5711a59ef7d6aa4db38aeb6f7609d23ac05223,"此元素代表 `Quasar 的 QStepper <https://quasar.dev/vue-components/stepper#qstepper-api>`_ 组件。
@@ -3738,7 +3738,7 @@ c420da6705b3681a91f6f3673ce7f4182d828fe374b7b7795055fb2dd268ce96,"要操作如�
 container.clear()
 ```
 
-或者，你可以通过调用以下方法移除单个元素：
+或者，您可以通过调用以下方法移除单个元素：
 
 - `container.remove(element: Element)`,
 - `container.remove(index: int)`，或
@@ -3756,10 +3756,10 @@ c0358c17c79d4543a3f6f7c71d24d1f075d71b660da397b847fce3f35802693b,"若要懒惰�
 afeda72fdbe41949068a4e802b0650620191166184ccac779ef77a6d0dec9172,"若要使用默认依赖中未包含的图表类型，可以指定额外依赖。
 本演示展示了一个实心仪表盘图表。"
 63fbb3c671b1e00cba1e9e52522d0a413aa432d53fe80fd94aa6dd3216a82a69,要使用照片作为头像，可以使用 `ui.image` 包含在 `ui.avatar` 中。
-0098fc685b8c08d9bf7d0f917464113d1960b695c8e39e5ea738137cbcd91cc4,"要等待客户端连接，你可以等待 `ui.context.client.connected()`。
+0098fc685b8c08d9bf7d0f917464113d1960b695c8e39e5ea738137cbcd91cc4,"要等待客户端连接，您可以等待 `ui.context.client.connected()`。
 该语句之后的所有代码将在服务器与客户端之间的 WebSocket 连接建立后执行。
 
-例如，这允许你运行 JavaScript 命令；只有在客户端连接时才可能（参见 [#112](https://github.com/zauberzeug/nicegui/issues/112)）。
+例如，这允许您运行 JavaScript 命令；只有在客户端连接时才可能（参见 [#112](https://github.com/zauberzeug/nicegui/issues/112)）。
 此外，用户看到内容的同时也可以进行异步操作。"
 2432f9bbd4033676c544dcc8e2f2f87474c7914f09c73e7d7a3814540315357b,待办事项列表
 3d03a1dea561d0dbeadf0694dd44a3398e3e0bfecbb88bcf7d4a6d9e8b91e409,切换器
@@ -4054,13 +4054,13 @@ e5999b636348a9ec0fb633fbfe86536679854ee7e72be672d4a9f665c6409d02,用户交互
 8a865f557022531de4ce5feced12a5d87b6e122f9066d6541e88d74718dbd470,用户引用
 54c68e664ec876dfb57a55d83c1618aee65526b5007c34b55cd4e200fcf69463,用户模拟上下文
 c351e247e320e3fb008fef0fa2e8acdc1270c251fc94dccff17c351152aec775,用户交互引用
-5e7926c2fcc00e385c0297c8132238530e838e7f8290bdb02460a3ddc3c499ef,"使用 `run_javascript` 你还可以在浏览器中运行异步代码。
+5e7926c2fcc00e385c0297c8132238530e838e7f8290bdb02460a3ddc3c499ef,"使用 `run_javascript` 您还可以在浏览器中运行异步代码。
 以下演示展示了如何获取用户当前位置。"
 8b5b471dd9eef4d6b31b234edee2f153e922864267e2a25237feeee634712405,使用 ElementFilter
 4e879fed044cf1b00b47e2b1697a2dab68f2961d549617313129840255e1518c,使用 ANSI 转义序列
 b9e5c0f2cd913ca544ec6f9f9eefc17a079d93b3e8749e936f3ee0ecb90374df,使用其他 Vue UI 框架
 a0add43ee49ebabc330cf5539ed11390108a0c68b949dccc04a1a028ddebe5ae,使用页面参数
-9e8a0f1be931ed5ebcfa91bf454273ce7f7c5354a37849c835cc6e2d68029ef3,"使用 `get_camera` 方法，你可以获取当前摄像机参数的字典，例如位置、旋转、视野等。
+9e8a0f1be931ed5ebcfa91bf454273ce7f7c5354a37849c835cc6e2d68029ef3,"使用 `get_camera` 方法，您可以获取当前摄像机参数的字典，例如位置、旋转、视野等。
 此演示展示了如何持续将球体向摄像机移动。
 尝试移动摄像机观察球体随之移动。"
 562194408e6357a9dbff70084dbd85918e118e9bd09bd08dc70aefa2f8b7b3bc,"使用 `text_html` 参数，您可以向聊天发送 HTML 文本。
@@ -4267,7 +4267,7 @@ fd156152db356ab7aa865215e8b20b39958bb3e6c45450761d8424c309405565,画布的宽度
 - 与 [`ui.page_sticky`](page_layout#reference_for_ui_page_sticky) 共享基本参数。
 - `scroll_offset`、`duration` 和 `reverse` 参数控制其行为。
 - 有关更多信息，请参见 <https://quasar.dev/layout/page-scroller>。"
-29d134a349a24310fc66085de08cb3a0050a9bd394a4f28a65ecb53dc8431671,使用正确的 CSS 选择器，你可以在标准单选按钮元素中放置任意内容。
+29d134a349a24310fc66085de08cb3a0050a9bd394a4f28a65ecb53dc8431671,使用正确的 CSS 选择器，您可以在标准单选按钮元素中放置任意内容。
 b278f4da8f4f5731a89bd289dda9406f90a0950c280d3bce534aaa513c11005f,"通过 anywidget 将 Altair 图表封装进 NiceGUI。
 
 有关如何同步 Altair 参数与 Python 的更多信息，请参见 `altair 文档 <https://altair-viz.github.io/user_guide/interactions/jupyter_chart.html#accessing-variable-params>`_。
@@ -4305,75 +4305,75 @@ c6c0231ee4bc873eb83ce98267ed80121e5e263353b43dfc7889bb0b4f79b4c0,"Xterm 可以�
 11c1a3f342ad68a2e3c50fa066c5d6c6e1e2dc90a6ce3573d0d4a6edcdb85f5e,您可以激活 `multiple` 以允许选择多个项目。
 22c15108ec8cfc5d2a634ba9cbbffecf4fc9eb2d73f13dd810db25dfb35c781e,"您可以激活 `with_input` 以获得带自动补全的文本输入框。
 随着您输入，选项将被过滤。"
-8f7d32578a2bcaac21194c39579bf93cd25ad362b4d3f640098e8d86073b87f5,"你可以使用 `active` 属性激活和禁用计时器。
-你可以使用 `cancel` 方法取消计时器。
+8f7d32578a2bcaac21194c39579bf93cd25ad362b4d3f640098e8d86073b87f5,"您可以使用 `active` 属性激活和禁用计时器。
+您可以使用 `cancel` 方法取消计时器。
 取消计时器后，它将不能再被激活。"
-164897f846d59b9e786c72d782845a83ad53d62b098aa1a646bda9c372a6ede5,"你可以在每列的表头中添加 [迷你筛选器](https://ag-grid.com/javascript-data-grid/filter-set-mini-filter/) 来筛选行。
+164897f846d59b9e786c72d782845a83ad53d62b098aa1a646bda9c372a6ede5,"您可以在每列的表头中添加 [迷您筛选器](https://ag-grid.com/javascript-data-grid/filter-set-mini-filter/) 来筛选行。
 
 注意，“agTextColumnFilter” 匹配单个字符，如 “Alice” 和 “Carol” 中的 “a”，而 “agNumberColumnFilter” 匹配整个数字，如 “18” 和 “21”，但不匹配 “1”。"
-660794685150311987fc634ca5984d2395a51571f1cfed85c4d7b6921a360624,"你可以使用名为 “body-cell-[name]” 的插槽向表格单元格添加按钮。
+660794685150311987fc634ca5984d2395a51571f1cfed85c4d7b6921a360624,"您可以使用名为 “body-cell-[name]” 的插槽向表格单元格添加按钮。
 在此示例中，我们在 “action” 列中添加了一个按钮。
 当按钮被点击时，会显示一条包含该行名称的通知。
 
 *自版本 3.5.0 起：*
 作用域插槽中的 UI 元素可以访问 `props` 对象以获取当前行和列。
 此前，`props` 对象仅在 Vue 模板中可用。"
-c199e4001faec39b7b40b98df74bd6d0d57b2c5ed917aab0c696f866cced96a5,"你可以在网格单元格中添加复选框，以允许用户选择单个或多个行。
+c199e4001faec39b7b40b98df74bd6d0d57b2c5ed917aab0c696f866cced96a5,"您可以在网格单元格中添加复选框，以允许用户选择单个或多个行。
 
 要获取当前选中的行，使用 `get_selected_rows` 方法。
 该方法返回一个包含行字典的列表。
 
-如果 `rowSelection` 设置为 `'single'` 或者要获取第一个选中的行，你也可以使用 `get_selected_row` 方法。
+如果 `rowSelection` 设置为 `'single'` 或者要获取第一个选中的行，您也可以使用 `get_selected_row` 方法。
 该方法返回单个行作为字典，或在无行被选中时返回 `None`。
 
 更多信息，请参阅 [AG Grid 文档](https://www.ag-grid.com/javascript-data-grid/row-selection/#example-single-row-selection)。"
-645243fa5e4fd5709515531284f5912871f9e90f2730bdc4fc5f104e822fe801,你可以在聊天消息中添加子元素。
-88b06a99a84d4cccd933cd4fcc43fab81e4c3ebfef2aebd44c2fead078a804e7,"你可以为品牌添加自定义颜色定义。
+645243fa5e4fd5709515531284f5912871f9e90f2730bdc4fc5f104e822fe801,您可以在聊天消息中添加子元素。
+88b06a99a84d4cccd933cd4fcc43fab81e4c3ebfef2aebd44c2fead078a804e7,"您可以为品牌添加自定义颜色定义。
 在此情况下，必须在自定义颜色首次被使用前调用 `ui.colors`。
 
 *自版本 2.2.0 添加*"
-6dfaa27b762f7b7d3aaa84092737eb272d14e4336afd5e0eeb2b435ab4dd4975,"你可以通过调用 `ui.add_head_html` 或 `ui.add_body_html` 向页面添加 HTML。
+6dfaa27b762f7b7d3aaa84092737eb272d14e4336afd5e0eeb2b435ab4dd4975,"您可以通过调用 `ui.add_head_html` 或 `ui.add_body_html` 向页面添加 HTML。
 这在添加自定义 CSS 样式或 JavaScript 代码时非常有用。"
-922154fef441bb0a0b35c5258484bf75c0434180aa1d922cd7a1b311d1132b54,"你可以通过 `marker` 添加标记到地图上。
+922154fef441bb0a0b35c5258484bf75c0434180aa1d922cd7a1b311d1132b54,"您可以通过 `marker` 添加标记到地图上。
 `center` 参数是一个纬度和经度的元组。
 此示例通过点击地图添加标记。
 请注意，“map-click”事件指的是地图对象的点击事件，而“click”事件指的是容器 div 的点击事件。"
-70d267db442409650906b87edc3ecde376ac53711d34ecd176ae2c04b4389d0c,"你可以通过将 JS 和 CSS 文件的 URL 传递给 `additional_resources` 参数来为地图添加插件。
+70d267db442409650906b87edc3ecde376ac53711d34ecd176ae2c04b4389d0c,"您可以通过将 JS 和 CSS 文件的 URL 传递给 `additional_resources` 参数来为地图添加插件。
 此示例展示了如何添加 [Leaflet.RotatedMarker](https://github.com/bbecquet/Leaflet.RotatedMarker) 插件。
-它允许你通过指定 `rotationAngle` 来旋转标记。
+它允许您通过指定 `rotationAngle` 来旋转标记。
 
 *在版本 2.11.0 中新增*"
-88666506d941c068deacf4f0c8b06d06f95067717249902d759a06a6bfe4048f,你可以使用 `ui.html` 元素添加可缩放矢量图形。
-c2940f6d84a7d39425db83c914a488e973cf2e0c60b0f9c219925957246815bb,你也可以为按钮组添加下拉按钮。
+88666506d941c068deacf4f0c8b06d06f95067717249902d759a06a6bfe4048f,您可以使用 `ui.html` 元素添加可缩放矢量图形。
+c2940f6d84a7d39425db83c914a488e973cf2e0c60b0f9c219925957246815bb,您也可以为按钮组添加下拉按钮。
 0cc5d95f701b3150893094cdb77b20d2dda22d0e5f6b9b5f224b5ad1e143146b,您也可以给按钮添加一个图标。
-dd9af173651cb1b10cf326f733e31e26f1940705dbd075178ac4a259805673d2,"你也可以创建指定大小的空白画布。
-这在你希望在不加载背景图像的情况下绘制内容时非常有用。"
-ee69eec91f66bfa3102ec40c1a0e3c2cb0f205069a5565dfa9ddc585445670c0,"你还可以包含 [键盘修饰键](https://vuejs.org/guide/essentials/event-handling.html#key-modifiers>)（在输入框 ""A"" 中显示），
+dd9af173651cb1b10cf326f733e31e26f1940705dbd075178ac4a259805673d2,"您也可以创建指定大小的空白画布。
+这在您希望在不加载背景图像的情况下绘制内容时非常有用。"
+ee69eec91f66bfa3102ec40c1a0e3c2cb0f205069a5565dfa9ddc585445670c0,"您还可以包含 [键盘修饰键](https://vuejs.org/guide/essentials/event-handling.html#key-modifiers>)（在输入框 ""A"" 中显示），
 键盘修饰键组合（在输入框 ""B"" 中显示），
 以及 [事件修饰符](https://vuejs.org/guide/essentials/event-handling.html#mouse-button-modifiers>)（在输入框 ""C"" 中显示）。"
-5ff77db4f0629de48dd69325625f2d91ec5da7375d62b868174c61e3193ea183,你还可以使用 [Lottie 文件](https://lottiefiles.com/) 与动画。
-c8fb00d0dac678681bd99fc4169017979b48b8905d9193a13a6e4072d6286df5,你还可以使用 Base64 字符串作为图像源。
-94668ac1e2ee71ecdd7f0b5ea91b8dfda0247703384b90b08bd0876794e0d5eb,你还可以使用 PIL 图像作为图像源。
-9829ed2d53214d2624656ae6b0332181250fa4ffe15dc65f2ca8e83a6808a39a,你还可以使用 base64 编码的图像作为网站图标（favicon）。
-7957c96741efdff670a0c270ec35349dd09ddcb60ef99155f97c3be6a60f8bc5,"你还可以使用 `on` 方法注册纯 JavaScript 事件处理器。
-这在你希望调用 JavaScript 代码而不向服务器发送任何数据时非常有用。
+5ff77db4f0629de48dd69325625f2d91ec5da7375d62b868174c61e3193ea183,您还可以使用 [Lottie 文件](https://lottiefiles.com/) 与动画。
+c8fb00d0dac678681bd99fc4169017979b48b8905d9193a13a6e4072d6286df5,您还可以使用 Base64 字符串作为图像源。
+94668ac1e2ee71ecdd7f0b5ea91b8dfda0247703384b90b08bd0876794e0d5eb,您还可以使用 PIL 图像作为图像源。
+9829ed2d53214d2624656ae6b0332181250fa4ffe15dc65f2ca8e83a6808a39a,您还可以使用 base64 编码的图像作为网站图标（favicon）。
+7957c96741efdff670a0c270ec35349dd09ddcb60ef99155f97c3be6a60f8bc5,"您还可以使用 `on` 方法注册纯 JavaScript 事件处理器。
+这在您希望调用 JavaScript 代码而不向服务器发送任何数据时非常有用。
 在此示例中，我们使用 `navigator.clipboard` API 将字符串复制到剪贴板。"
-b59f929e44ba5156744a7d32c2b864b1894243218aa6510e090a130fcf751911,"你可以使用 [主题构建器](https://echarts.apache.org/en/theme-builder.html) 创建的自定义主题。
+b59f929e44ba5156744a7d32c2b864b1894243218aa6510e090a130fcf751911,"您可以使用 [主题构建器](https://echarts.apache.org/en/theme-builder.html) 创建的自定义主题。
 
-替代将主题作为字典传递，你可以传递一个指向 JSON 文件的 URL。
+替代将主题作为字典传递，您可以传递一个指向 JSON 文件的 URL。
 这允许浏览器缓存主题，当同一主题被多次使用时可更快加载。
 
 *在版本 2.15.0 中新增*"
 55df1ff6d20cc4f31c700e03639ad819174d9a472e2cc510c62998582c1cadae,"您可以像为单个按钮一样，为按钮组应用相同的样式选项，例如 ""flat""、""outline""、""push"" 等。但是，您必须始终为按钮组及其包含的按钮使用相同的设计属性。"
-7b008eab709e3fc8fd083e4da102385afb58db4803043c06d87ba94bb0778ba3,"你可以将 `ui.log` 元素附加到 Python 日志记录器对象上，使日志消息推送到日志元素中。
+7b008eab709e3fc8fd083e4da102385afb58db4803043c06d87ba94bb0778ba3,"您可以将 `ui.log` 元素附加到 Python 日志记录器对象上，使日志消息推送到日志元素中。
 当客户端断开连接时，务必移除处理器，否则处理器会持续持有日志元素的引用，导致后者无法被垃圾回收。"
-c872d3f8b9bea6a3949baa53f47e33d692225f7fb52dee3314e022c8e4a048bd,"你可以调用 `ui.run()` 并传入可选参数。
+c872d3f8b9bea6a3949baa53f47e33d692225f7fb52dee3314e022c8e4a048bd,"您可以调用 `ui.run()` 并传入可选参数。
 其中大部分参数仅在停止并完全重启应用后生效，且不适用于自动重新加载。"
-348f2211064d68644daf379fa79ce686bdc22635a1a2de69cf3343d46f8ae866,你可以使用带有 `once` 参数的定时器在延迟后调用一个函数。
+348f2211064d68644daf379fa79ce686bdc22635a1a2de69cf3343d46f8ae866,您可以使用带有 `once` 参数的定时器在延迟后调用一个函数。
 0a85a5bc168ace26352e6fbd2d3e48bd1ccb2b83dbcc1ae094304ad31891ab00,您可以通过设置其 `content` 属性或调用 `set_content` 方法来更改 Markdown 元素的内容。
-787dabb8e9fc1e58102ac526f5b286f06d15388099235370918ec97601222c49,"你可以通过 `theme` 属性更改 AG Grid 的主题。
+787dabb8e9fc1e58102ac526f5b286f06d15388099235370918ec97601222c49,"您可以通过 `theme` 属性更改 AG Grid 的主题。
 暗色模式会根据页面的暗色模式设置自动应用。"
-219e39c3f89440e9b562bb0ec7e25b9959250fdbace977a8778c7c1c68159b0a,"你可以使用 `fps` 参数配置场景的目标帧率（FPS）。
+219e39c3f89440e9b562bb0ec7e25b9959250fdbace977a8778c7c1c68159b0a,"您可以使用 `fps` 参数配置场景的目标帧率（FPS）。
 默认值为 20。
 要亲自查看更改效果，请使用 `show_stats` 参数启用统计信息显示。
 本演示展示了如何为主场景设置 40 FPS，静态视图设置为 5 FPS。
@@ -4381,30 +4381,30 @@ c872d3f8b9bea6a3949baa53f47e33d692225f7fb52dee3314e022c8e4a048bd,"你可以调�
 这同样适用于 `ui.scene_view`。
 
 *在 3.2.0 版本中新增*"
-2b7297871b4038cdec205942e84b0cd2cbd5e7278a347bd6acb251821ea5ce6a,"你可以将子进程的输出连接到终端。
+2b7297871b4038cdec205942e84b0cd2cbd5e7278a347bd6acb251821ea5ce6a,"您可以将子进程的输出连接到终端。
 请注意，`subprocess.PIPE` 会在内存中的 `StreamReader` 对象中缓冲输出。
-如果你希望子进程的行为像在终端中运行一样，可能需要使用 pty。
+如果您希望子进程的行为像在终端中运行一样，可能需要使用 pty。
 `convertEol` 参数会自动将换行符（`\n`）转换为回车换行符（`\r\n`），以确保在显示子进程输出时换行正确。"
-ba65ba57b1d0a1aa15cf2640532a4fc7a92311391d784671651aa4b0b14983bd,"你可以使用 `from_pandas` 方法从 Pandas DataFrame 创建表格。
+ba65ba57b1d0a1aa15cf2640532a4fc7a92311391d784671651aa4b0b14983bd,"您可以使用 `from_pandas` 方法从 Pandas DataFrame 创建表格。
 该方法接受一个 Pandas DataFrame 作为输入，并返回一个表格。"
-055a4c4c7042ee5ecf314289c0e279c0c6dab789a71ae350b5b3852b99fa5e4c,"你可以使用 `from_polars` 方法从 Polars DataFrame 创建表格。
+055a4c4c7042ee5ecf314289c0e279c0c6dab789a71ae350b5b3852b99fa5e4c,"您可以使用 `from_polars` 方法从 Polars DataFrame 创建表格。
 该方法接受一个 Polars DataFrame 作为输入，并返回一个表格。
 
 *在 2.7.0 版本中新增*"
-ef188d5d57011b64bc4309237f82c37b8305127b0b9ca5dfd67d5d75b8b3cd0a,"你可以使用 `from_pandas` 方法从 Pandas DataFrame 创建一个 AG Grid。
+ef188d5d57011b64bc4309237f82c37b8305127b0b9ca5dfd67d5d75b8b3cd0a,"您可以使用 `from_pandas` 方法从 Pandas DataFrame 创建一个 AG Grid。
 该方法接受一个 Pandas DataFrame 作为输入，并返回一个 AG Grid。"
-003e4f5dd8830f3215bc3ab51cccd3bf7c4fc7c918fe77b19c2482fe84c98151,"你可以使用 `from_polars` 方法从 Polars DataFrame 创建一个 AG Grid。
+003e4f5dd8830f3215bc3ab51cccd3bf7c4fc7c918fe77b19c2482fe84c98151,"您可以使用 `from_polars` 方法从 Polars DataFrame 创建一个 AG Grid。
 该方法接受一个 Polars DataFrame 作为输入，并返回一个 AG Grid。
 
 *在 2.7.0 版本中新增*"
-d3dd4424d658cb24393b6bada3ee047f224fca206e26f4d239a677e5e34e7565,"你可以使用 `from_pyecharts` 方法从 pyecharts 对象创建一个 EChart 元素。
-对于定义动态选项（如格式化函数），你可以使用 `pyecharts.commons.utils` 中的 `JsCode` 类。
-或者，你可以使用冒号 "":"" 前缀属性名以表示其值是一个 JavaScript 表达式。"
-8b5fe6429a91cc2f347bc1d3c3ab2b0be4ebdc2ccc2a0b6ac5507304ba3c9e40,"你可以使用 `ui.state` 函数创建响应式状态变量，例如本示例中的 `count` 和 `color`。
+d3dd4424d658cb24393b6bada3ee047f224fca206e26f4d239a677e5e34e7565,"您可以使用 `from_pyecharts` 方法从 pyecharts 对象创建一个 EChart 元素。
+对于定义动态选项（如格式化函数），您可以使用 `pyecharts.commons.utils` 中的 `JsCode` 类。
+或者，您可以使用冒号 "":"" 前缀属性名以表示其值是一个 JavaScript 表达式。"
+8b5fe6429a91cc2f347bc1d3c3ab2b0be4ebdc2ccc2a0b6ac5507304ba3c9e40,"您可以使用 `ui.state` 函数创建响应式状态变量，例如本示例中的 `count` 和 `color`。
 它们可以像普通变量一样用于创建 UI 元素（如 `ui.label`）。
 其对应的设置函数可用于设置新值，这将自动刷新 UI。"
 8c2f17da1aae1b1a2334f82f15f980bf4be0a4182628a33e5c8b5be29f0899a6,您可以自定义图标的名称和大小。可选地，未选中、选中或半选中的值可以使用不同的图标。
-343711d858788b51502f580803dccb4e97afbdd5033a804f51ab7d7e0aba5752,"你可以通过设置 CSS 变量自定义 NiceGUI 的外观。
+343711d858788b51502f580803dccb4e97afbdd5033a804f51ab7d7e0aba5752,"您可以通过设置 CSS 变量自定义 NiceGUI 的外观。
 目前，以下变量及其默认值可用：
 
 - `--nicegui-default-padding: 1rem`
@@ -4413,50 +4413,50 @@ d3dd4424d658cb24393b6bada3ee047f224fca206e26f4d239a677e5e34e7565,"你可以使�
 38e6ec601cc40e676ed96466de5ff80967a1ca4c325a889799b802540ef02e3f,您可以通过提供单一颜色或一系列不同颜色来自定义评分的颜色。
 e9711eb02081a3038fa171b19639ad250dd7edc4dca3669116db6ef697afc069,您可以通过 props、classes 和 style 属性自定义颜色选择器。由于 QColor 组件嵌套在菜单内部，您不能直接使用 `props` 方法，而要通过 `q_color` 属性访问。
 7f7654f150dc4c4e4002f4801e0f22d1cee7e2dc8992271cf9d8fa9d3781a73b,您可以通过单独设置或整体设置来自定义范围及其标签的颜色。
-e1fbd398dfe5dc7a7b92bb0f61bb4019e65e03fe2a7d5123de0fa30981852ed3,"你可以定义适用于所有列的默认列参数。
+e1fbd398dfe5dc7a7b92bb0f61bb4019e65e03fe2a7d5123de0fa30981852ed3,"您可以定义适用于所有列的默认列参数。
 在本示例中，所有列默认左对齐且具有蓝色大写标题。
 
 *在 2.0.0 版本中新增*"
-9c570e2aef50ededdfeaa0aa5b5760067388fa064ccbe45502dbd1bcd3a6015d,"你可以使用 `:` 前缀定义动态列属性。
+9c570e2aef50ededdfeaa0aa5b5760067388fa064ccbe45502dbd1bcd3a6015d,"您可以使用 `:` 前缀定义动态列属性。
 这样可以定义自定义排序和格式化函数。
 
 以下示例允许按长度对 `name` 列进行排序。
 `age` 列的格式化显示年龄（单位：年）。"
 96f6a2810ff382e75bdc5d5ace8034cabb4b472bd0be73b30fc751ed497a37e4,您可以使用 `disable()` 方法禁用滑块。这将阻止用户移动滑块。滑块也会变灰。
-e3768c465e6272d1ea2ac7d4ac100d75e08229563aae55d2c4a0db25e3199b19,"你可以使用自定义选项（如笔触颜色和粗细）绘制形状。
+e3768c465e6272d1ea2ac7d4ac100d75e08229563aae55d2c4a0db25e3199b19,"您可以使用自定义选项（如笔触颜色和粗细）绘制形状。
 为隐藏绘制项的默认渲染效果，将 `hide_drawn_items` 设置为 `True`。"
-50c0dd55f8b87e92045a02663b8455aabdd6b5bf6d34ffb8687b61c55202d300,"你可以启用工具栏以在地图上绘制。
+50c0dd55f8b87e92045a02663b8455aabdd6b5bf6d34ffb8687b61c55202d300,"您可以启用工具栏以在地图上绘制。
 `draw_control` 可用于配置工具栏。
 本演示通过点击地图添加标记和多边形。
-通过将 ""edit"" 和 ""remove"" 设置为 `True`（默认值），你可以启用编辑和删除已绘制形状的功能。"
-61672bb68b30dc03c0791099a6a3ffe76d27f0bff598be63f29e7139c7286c7b,"你可以通过在 `ui.run` 函数中指定 `native=True` 启用 NiceGUI 的原生模式。
+通过将 ""edit"" 和 ""remove"" 设置为 `True`（默认值），您可以启用编辑和删除已绘制形状的功能。"
+61672bb68b30dc03c0791099a6a3ffe76d27f0bff598be63f29e7139c7286c7b,"您可以通过在 `ui.run` 函数中指定 `native=True` 启用 NiceGUI 的原生模式。
 为自定义初始窗口大小和显示模式，请分别使用 `window_size` 和 `fullscreen` 参数。
-此外，你还可以通过 `app.native.window_args` 和 `app.native.start_args` 提供额外的关键词参数。
+此外，您还可以通过 `app.native.window_args` 和 `app.native.start_args` 提供额外的关键词参数。
 选择任意参数，这些参数均按内部使用的 [pywebview 模块](https://pywebview.flowrl.com/api) 为 `webview.create_window` 和 `webview.start` 函数所定义。
 请注意，这些关键词参数将优先于 `ui.run` 中定义的参数。
 
-此外，你还可以通过 `app.native.settings` 修改 `webview.settings`。
+此外，您还可以通过 `app.native.settings` 修改 `webview.settings`。
 
-在原生模式下，`app.native.main_window` 对象允许你访问底层窗口。
+在原生模式下，`app.native.main_window` 对象允许您访问底层窗口。
 它是一个异步版本的 [`Window` 从 pywebview](https://pywebview.flowrl.com/api/#webview-window)。
 
 在 Windows 上，原生模式需要安装 .NET Framework，
 因为 pywebview 使用它作为 EdgeChromium 后端。
 这通常在标准 Windows 安装中预先安装，
 但在精简版或全新安装的系统上可能缺失。"
-bb74d51c62a132f11f16b81af4cd76bd3af0b5351a2bde4bd0c9b8897e8719cf,你可以用自定义 UI 元素填充滑块项及其动作插槽。
-8f94d8a97f7d20b4dc4a0e78e2d5c531a126b235ceb9e7575020df2550417d52,你可以通过设置 `filter` 属性来过滤节点。树形结构只会显示匹配过滤器的节点。
-1934802b7b1d06cb66441e1c6ff49f5ac19246a7c3359e584a0d4ee21cc0ccf3,"你可以通过传递一个定义 JavaScript 函数的字符串来过滤方法调用的返回值。此演示运行网格方法 ""getDisplayedRowAtIndex""，并返回结果的 ""data"" 属性。"
-819f662e27c4239ff97cf89cf47bf0d216c2819acba894ff4a1b1a33a6a3f0d2,你可以通过调用 `force_reload` 方法强制图片重新加载。它会在图片 URL 后附加时间戳，使浏览器重新加载图片。
-34ed3355e5f7a7ad9814457f623eb6ec1c22df6076922f65a85e07fb1216c3dc,"你可以通过监听 `error` 事件来处理错误。
+bb74d51c62a132f11f16b81af4cd76bd3af0b5351a2bde4bd0c9b8897e8719cf,您可以用自定义 UI 元素填充滑块项及其动作插槽。
+8f94d8a97f7d20b4dc4a0e78e2d5c531a126b235ceb9e7575020df2550417d52,您可以通过设置 `filter` 属性来过滤节点。树形结构只会显示匹配过滤器的节点。
+1934802b7b1d06cb66441e1c6ff49f5ac19246a7c3359e584a0d4ee21cc0ccf3,"您可以通过传递一个定义 JavaScript 函数的字符串来过滤方法调用的返回值。此演示运行网格方法 ""getDisplayedRowAtIndex""，并返回结果的 ""data"" 属性。"
+819f662e27c4239ff97cf89cf47bf0d216c2819acba894ff4a1b1a33a6a3f0d2,您可以通过调用 `force_reload` 方法强制图片重新加载。它会在图片 URL 后附加时间戳，使浏览器重新加载图片。
+34ed3355e5f7a7ad9814457f623eb6ec1c22df6076922f65a85e07fb1216c3dc,"您可以通过监听 `error` 事件来处理错误。
 事件 `args` 包含属性 `hash`、`message`、`str`，以及一个包含附加信息的 `error` 对象。"
-dc4df5e178fe54ce45ce563baca3ef3af7d903422c497a148ff8b2824a80b410,你可以使用 `on_pagination_change` 参数来处理分页更改。
-1bb61b0926cb14e6d932e7f57f5d02a52f9a5fcffaec6e73338d03cc5eddfc41,"你可以通过缩进 reStructuredText 元素来创建层级结构。
+dc4df5e178fe54ce45ce563baca3ef3af7d903422c497a148ff8b2824a80b410,您可以使用 `on_pagination_change` 参数来处理分页更改。
+1bb61b0926cb14e6d932e7f57f5d02a52f9a5fcffaec6e73338d03cc5eddfc41,"您可以通过缩进 reStructuredText 元素来创建层级结构。
 常见的缩进会在每行开头自动移除，以保留相对缩进，
-因此你可以缩进多行字符串。"
-9a44db5a33bd72a7f3b09a899cda50232aeb302df43dfe3be385c6d66df49428,你可以通过提供链接目标作为路径或函数引用来链接到其他页面。
-c3f7fd6bf78bd95f59ff6d43769ed56964c7a7886aac39c1171635daabad1705,"你可以监听 ""loaded"" 事件，以知道图像何时已加载。"
-f36fd698c2d73347faea98102d2a1975325690528a48abba5e97b2e31b93ab77,"你可以使用 `.draggable` 方法使对象可拖动。
+因此您可以缩进多行字符串。"
+9a44db5a33bd72a7f3b09a899cda50232aeb302df43dfe3be385c6d66df49428,您可以通过提供链接目标作为路径或函数引用来链接到其他页面。
+c3f7fd6bf78bd95f59ff6d43769ed56964c7a7886aac39c1171635daabad1705,"您可以监听 ""loaded"" 事件，以知道图像何时已加载。"
+f36fd698c2d73347faea98102d2a1975325690528a48abba5e97b2e31b93ab77,"您可以使用 `.draggable` 方法使对象可拖动。
 `ui.scene` 中有可选的 `on_drag_start` 和 `on_drag_end` 参数，用于处理拖动事件。
 回调函数会接收一个 `SceneDragEventArguments` 对象，包含以下属性：
 
@@ -4465,22 +4465,22 @@ f36fd698c2d73347faea98102d2a1975325690528a48abba5e97b2e31b93ab77,"你可以使�
 - `object_name`：被拖动对象的名称。
 - `x`, `y`, `z`：被拖动对象的 x、y 和 z 坐标。
 
-你还可以使用 `drag_constraints` 参数设置逗号分隔的 JavaScript 表达式，
+您还可以使用 `drag_constraints` 参数设置逗号分隔的 JavaScript 表达式，
 以限制被拖动对象的位置。"
-72c26628fdefee7190a22f5283ea1b3aa611c0b11a24e9ef7b62978b6733d219,你可以使用 `move` 方法移动标记。
-7a89e37ffbfe8abfbeca997cc920ee3af71399540b9e78d82b6182cf26675fd1,"你可以在命令行中通过将 `show_welcome_message` 设置为 `False` 来静音默认的欢迎消息。
-或者，你可以使用自定义启动处理器打印自己的欢迎消息。"
-e8582e6b76036957e1ee328dd19f52edb3b3b79d9df42e689ce2451c280d7c04,"你可以将元素嵌套在交互式图像中。
+72c26628fdefee7190a22f5283ea1b3aa611c0b11a24e9ef7b62978b6733d219,您可以使用 `move` 方法移动标记。
+7a89e37ffbfe8abfbeca997cc920ee3af71399540b9e78d82b6182cf26675fd1,"您可以在命令行中通过将 `show_welcome_message` 设置为 `False` 来静音默认的欢迎消息。
+或者，您可以使用自定义启动处理器打印自己的欢迎消息。"
+e8582e6b76036957e1ee328dd19f52edb3b3b79d9df42e689ce2451c280d7c04,"您可以将元素嵌套在交互式图像中。
 使用 Tailwind 类如 ""absolute top-0 left-0"" 来将标签相对于图像绝对定位。
 当然，也可以使用纯 CSS 实现。"
-74402c620abe77ec00f4fd50743ec1ad747bbb8075d2ca9d635f91a16199325a,"你可以重写 `_handle_text_change` 方法，根据标签内容更新其其他属性。
+74402c620abe77ec00f4fd50743ec1ad747bbb8075d2ca9d635f91a16199325a,"您可以重写 `_handle_text_change` 方法，根据标签内容更新其其他属性。
 此技术同样适用于绑定，如下例所示。"
-6611d44a20caf867d739be7fa3582b69b7e20106b154c693bd8f95a5e6115bfc,"你可以将 URL 参数传递给构建函数。
+6611d44a20caf867d739be7fa3582b69b7e20106b154c693bd8f95a5e6115bfc,"您可以将 URL 参数传递给构建函数。
 路由中指定的路径参数会被注入到匹配该参数的函数中。
 对于查询参数，使用参数名称进行注入。
 如果提供了类型提示（int、float、str），值会自动转换。
 如果构建函数中未提供默认值，该参数将被要求与路由匹配。"
-5ba61aefc67d97a16f30e55f4e28e88578941879d831e30c68fde976106191fe,"你可以提供单个整数或字典来定义分页。
+5ba61aefc67d97a16f30e55f4e28e88578941879d831e30c68fde976106191fe,"您可以提供单个整数或字典来定义分页。
 
 字典可以包含以下键：
 
@@ -4488,19 +4488,19 @@ e8582e6b76036957e1ee328dd19f52edb3b3b79d9df42e689ce2451c280d7c04,"你可以将�
 - `sortBy`：用于排序的列名。
 - `descending`：是否按降序排序。
 - `page`：当前页码（从1开始）。"
-33211aa9359d5b0bbf5e780744879d19cc668a4fa17cc3272584f7dc7fb3faad,"你可以使用 `with` 语句将任何元素（如图标、按钮等）放入圆形进度条中。
+33211aa9359d5b0bbf5e780744879d19cc668a4fa17cc3272584f7dc7fb3faad,"您可以使用 `with` 语句将任何元素（如图标、按钮等）放入圆形进度条中。
 请确保元素大小适配，并禁用默认显示值的行为。"
-e772c2533f81e7dd3fb8cfca1bc51359851ce6d7712e74d9d4b92c8807ba74c5,"你可以在下拉按钮中放置任何元素。
+e772c2533f81e7dd3fb8cfca1bc51359851ce6d7712e74d9d4b92c8807ba74c5,"您可以在下拉按钮中放置任何元素。
 以下是几个开关的示例。"
-2d21c9d8f93a98b5a8df3e0f4f709b363d9ea3cb33b1aeed5d88148988b555ec,你可以为系列点被点击时的事件注册回调函数。
-2cc1fe6204ea58b58e7898903486c171e60691160c208b03928e162c10f80070,"你可以使用 `on` 方法和 ""chart:"" 前缀为图表注册任意事件监听器。
+2d21c9d8f93a98b5a8df3e0f4f709b363d9ea3cb33b1aeed5d88148988b555ec,您可以为系列点被点击时的事件注册回调函数。
+2cc1fe6204ea58b58e7898903486c171e60691160c208b03928e162c10f80070,"您可以使用 `on` 方法和 ""chart:"" 前缀为图表注册任意事件监听器。
 本示例展示了如何为 ""selectchanged"" 事件注册回调函数，该事件在用户选择图表点时触发。"
-a2b772fc2023d670e7ffc7632329afaf0f38a96547f498a181ea7e9084dd8f72,"你可以使用 `ui.on_exception` 注册回调函数，以处理 HTML 响应发送给客户端后发生的错误。
-这允许你显示包含错误详情的通知或对话框。
+a2b772fc2023d670e7ffc7632329afaf0f38a96547f498a181ea7e9084dd8f72,"您可以使用 `ui.on_exception` 注册回调函数，以处理 HTML 响应发送给客户端后发生的错误。
+这允许您显示包含错误详情的通知或对话框。
 以下示例展示了当发生错误时如何创建一个显示错误详情的对话框。
 
 *在版本 3.6.0 中新增*"
-e054a089f483272dabc1b97379e1ef7537ea6ed2108f79e466ca59bbd4e096e6,"你可以注册协程或函数以响应以下生命周期事件：
+e054a089f483272dabc1b97379e1ef7537ea6ed2108f79e466ca59bbd4e096e6,"您可以注册协程或函数以响应以下生命周期事件：
 
 - `app.on_startup`：NiceGUI 启动或重启时调用
 - `app.on_shutdown`：NiceGUI 关闭或重启时调用
@@ -4510,61 +4510,61 @@ e054a089f483272dabc1b97379e1ef7537ea6ed2108f79e466ca59bbd4e096e6,"你可以注�
 - `app.on_exception`：发生异常时调用（可选参数：异常）
 
 当 NiceGUI 关闭或重启时，所有仍在执行的任务将自动取消。"
-ff9261a0ef04ac0c022b5b8ccdb39d66f6ca8211f66b10aa661b25e75cd315fd,"你可以通过使用 `on_node_click` 参数注册点击事件。
+ff9261a0ef04ac0c022b5b8ccdb39d66f6ca8211f66b10aa661b25e75cd315fd,"您可以通过使用 `on_node_click` 参数注册点击事件。
 
 *在版本 3.3.0 中新增*"
-f4f6fd542c591a6e6414b24321d79f0325c3ca05abfc382ba7e116f993714e9c,"你可以通过添加 `no-shadow` 类来移除卡片的阴影。
+f4f6fd542c591a6e6414b24321d79f0325c3ca05abfc382ba7e116f993714e9c,"您可以通过添加 `no-shadow` 类来移除卡片的阴影。
 以下示例展示了 1 像素宽的边框。
 
-或者，你可以使用 Quasar 的 ""flat"" 和 ""bordered"" 属性来实现相同效果。"
-0dff758fd0c42961b1c0d29ce3f55937d98d31731497a35dba9ee0f369ba62f4,你可以通过将列索引列表传递给 `html_columns` 参数来渲染列作为 HTML。
-4dfa4e9448ea702c756b51c7936da56bf4fd8ed3fcf5d051a2b3fd9b51293ee8,"你可以使用 `point_cloud` 方法渲染点云。
+或者，您可以使用 Quasar 的 ""flat"" 和 ""bordered"" 属性来实现相同效果。"
+0dff758fd0c42961b1c0d29ce3f55937d98d31731497a35dba9ee0f369ba62f4,您可以通过将列索引列表传递给 `html_columns` 参数来渲染列作为 HTML。
+4dfa4e9448ea702c756b51c7936da56bf4fd8ed3fcf5d051a2b3fd9b51293ee8,"您可以使用 `point_cloud` 方法渲染点云。
 `points` 参数是一个点坐标的列表，`colors` 参数是一个 RGB 颜色（0..1）的列表。
-你可以使用其 `set_points()` 方法更新点云。"
-997789164a22dcaa7af479af2cdbd0e493ded662bc783c97114bc31a2d951c71,"你可以要求用户长按 Esc 键以退出全屏模式。
+您可以使用其 `set_points()` 方法更新点云。"
+997789164a22dcaa7af479af2cdbd0e493ded662bc783c97114bc31a2d951c71,"您可以要求用户长按 Esc 键以退出全屏模式。
 这在防止意外退出时非常有用，例如在填写表单或编辑数据时。
 
 注意：此功能仅在某些浏览器（如 Google Chrome 或 Microsoft Edge）中可用。"
-b66964c741962035a5ba13fbb0abbab2f75088b65c41ad67dfb6e73ee32657ef,"你可以使用 `run_chart_method` 方法调用 EChart 实例的方法。
+b66964c741962035a5ba13fbb0abbab2f75088b65c41ad67dfb6e73ee32657ef,"您可以使用 `run_chart_method` 方法调用 EChart 实例的方法。
 本示例展示了如何显示和隐藏加载动画、获取图表当前宽度，以及如何添加自定义格式器的工具提示。
 
 方法名 ""setOption"" 前面的冒号 "":"" 表示该参数是一个 JavaScript 表达式，在客户端评估后再传递给方法。"
-aac3f22904bb90d1af5733f68616a9ea2ea4d86b659bca61af9819579727b15a,"你可以使用 `run_editor_method` 方法调用 JSONEditor 实例的方法。
+aac3f22904bb90d1af5733f68616a9ea2ea4d86b659bca61af9819579727b15a,"您可以使用 `run_editor_method` 方法调用 JSONEditor 实例的方法。
 本示例展示了如何展开和折叠所有节点，以及如何获取当前数据。
 
 方法名 ""expand"" 前面的冒号 "":"" 表示该值 ""path => true"" 是一个 JavaScript 表达式，在客户端评估后再传递给方法。"
-d07cb9287bcd88c809be757698d2e2c670c8620867adc4fe832cd63f28254b1b,"你可以使用 `run_layer_method` 调用 Leaflet 层对象的方法。
+d07cb9287bcd88c809be757698d2e2c670c8620867adc4fe832cd63f28254b1b,"您可以使用 `run_layer_method` 调用 Leaflet 层对象的方法。
 本示例展示了如何更改标记的不透明度或更改其图标。"
-a4473ec6e5db00562b1928c594c783c84ea5623b2b33fedc981a70ab8add1e9c,"你可以使用 `run_map_method` 运行 Leaflet 地图对象的方法。
+a4473ec6e5db00562b1928c594c783c84ea5623b2b33fedc981a70ab8add1e9c,"您可以使用 `run_map_method` 运行 Leaflet 地图对象的方法。
 本演示展示了如何将地图缩放到整个世界。"
-28419be03becb657141c11db8fa0d99775a5c3875168c5761fffd0c5605ac680,"你可以使用 `run_row_method` 方法在单个行上运行方法。
+28419be03becb657141c11db8fa0d99775a5c3875168c5761fffd0c5605ac680,"您可以使用 `run_row_method` 方法在单个行上运行方法。
 该方法接受行 ID、方法名称和方法参数作为参数。
 行 ID 可以是行索引（作为字符串）或 `getRowId` 函数的返回值。
 
 以下演示展示了如何使用它来更新单元格值。
 请注意，当值被更新时，行选择将被保留。
 如果使用 `update` 方法更新网格，则不会保留行选择。"
-676fbcf1c4a3912bb8189c3cbd8400a140e0028c6c15956dafca9aecc1a40f7b,你可以使用 `select()` 和 `deselect()` 方法选择或取消选择节点。
-856c1d6fef2fddd224ba0d2ec8f4537e5544503c1f08ff4647902b83cef19583,你可以通过传递字符串列表发送多个消息部分。
-03e045bfad310a1b7a9f847f7da30ac70a7ddb7f1c7c89c8fe8a95fc2de4cf4b,你可以使用 `ui.scene` 的 `background_color` 参数设置自定义背景颜色。
-49789e9925a63e2852a0e264bca1385fab18b84af1d06047b856b0f12c058377,"你可以为某类所有元素设置默认样式。
+676fbcf1c4a3912bb8189c3cbd8400a140e0028c6c15956dafca9aecc1a40f7b,您可以使用 `select()` 和 `deselect()` 方法选择或取消选择节点。
+856c1d6fef2fddd224ba0d2ec8f4537e5544503c1f08ff4647902b83cef19583,您可以通过传递字符串列表发送多个消息部分。
+03e045bfad310a1b7a9f847f7da30ac70a7ddb7f1c7c89c8fe8a95fc2de4cf4b,您可以使用 `ui.scene` 的 `background_color` 参数设置自定义背景颜色。
+49789e9925a63e2852a0e264bca1385fab18b84af1d06047b856b0f12c058377,"您可以为某类所有元素设置默认样式。
 这样可以避免重复设置相同的样式。
 
 默认样式仅适用于在设置默认样式之后创建的元素。
 子类继承其父类的默认样式。"
-845ddab30f833b4b63fdca13527a8805e35689e59fc5f3c7f8861567e6b3eff6,"你可以使用 `app.colors()` 设置全局颜色。
+845ddab30f833b4b63fdca13527a8805e35689e59fc5f3c7f8861567e6b3eff6,"您可以使用 `app.colors()` 设置全局颜色。
 
 该 API 与 `ui.colors()` 的初始化器相同，但除非在特定页面被 `ui.colors()` 覆盖，否则颜色将应用于所有页面。
 
 *在版本 3.6.0 中新增*"
-0bb365ae263d2d579e47ab6304b3bf0b101d75566995cd69910a33481bf4438e,你可以使用 `ui.scene` 的 `grid` 参数设置自定义网格参数。它接受一个包含两个整数的元组，第一个用于网格大小，第二个用于划分数量。
-59aeb1771dedf0d2eb70226b8efa906af16d7ad34451a5b4b2526e6898092303,"你可以为某一类元素的所有元素设置默认类。这样可以避免重复设置相同的类。
+0bb365ae263d2d579e47ab6304b3bf0b101d75566995cd69910a33481bf4438e,您可以使用 `ui.scene` 的 `grid` 参数设置自定义网格参数。它接受一个包含两个整数的元组，第一个用于网格大小，第二个用于划分数量。
+59aeb1771dedf0d2eb70226b8efa906af16d7ad34451a5b4b2526e6898092303,"您可以为某一类元素的所有元素设置默认类。这样可以避免重复设置相同的类。
 
 默认类仅适用于在设置默认类之后创建的元素。子类继承其父类的默认类。"
-a26b3f0c043c9840bdb174722f26add66379e323cf82264466407c8db73a55ea,"你可以为某一类元素的所有元素设置默认属性。这样可以避免重复设置相同的属性。
+a26b3f0c043c9840bdb174722f26add66379e323cf82264466407c8db73a55ea,"您可以为某一类元素的所有元素设置默认属性。这样可以避免重复设置相同的属性。
 
 默认属性仅适用于在设置默认属性之后创建的元素。子类继承其父类的默认属性。"
-01647768acd964323c35340552a4249cf7261743183b320a5b2cf1a1741c38d4,"你可以设置以下环境变量来配置 NiceGUI：
+01647768acd964323c35340552a4249cf7261743183b320a5b2cf1a1741c38d4,"您可以设置以下环境变量来配置 NiceGUI：
 
 - `MATPLOTLIB`（默认：true）可设置为 `false` 以避免可能代价高昂的 Matplotlib 导入。
     这样将使 `ui.pyplot` 和 `ui.line_plot` 不可用。
@@ -4573,24 +4573,24 @@ a26b3f0c043c9840bdb174722f26add66379e323cf82264466407c8db73a55ea,"你可以为�
 - `RST_CONTENT_CACHE_SIZE`（默认：1000）：内存中缓存的最大 ReStructuredText 内容片段数量。
 - `NICEGUI_REDIS_URL`（默认：None，表示本地文件存储）：用于共享持久化存储的 Redis 服务器的 URL。
 - `NICEGUI_REDIS_KEY_PREFIX`（默认：""nicegui:""）：Redis 键的前缀。"
-937ca492fbd469ccfa6f39d0c0c08fd2a2b4fabfaf2be5afbc2d248fa2ade747,你可以通过将函数传递给 `getRowHeight` 参数来设置单个行的高度。
-822e9cb076c4fd54bc0952bba24f8d80358eef25652e63663a72bf0ba029075c,"你可以使用 `selection` 参数设置表格的选择类型。
+937ca492fbd469ccfa6f39d0c0c08fd2a2b4fabfaf2be5afbc2d248fa2ade747,您可以通过将函数传递给 `getRowHeight` 参数来设置单个行的高度。
+822e9cb076c4fd54bc0952bba24f8d80358eef25652e63663a72bf0ba029075c,"您可以使用 `selection` 参数设置表格的选择类型。
 当选择发生变化时，会调用 `on_select` 事件处理器，且 `selected` 属性包含被选中的行。
 *从版本 2.11.0 开始：*
 `selection` 属性和 `set_selection` 方法可用于更改选择类型。"
-cc5b30d1fe2aa6df0dc65ee70686e76d1d7a29830fce73905c24caae90f28b90,"你可以通过传递 `cross=True` 来显示十字线。
-你还可以通过传递颜色字符串来更改十字线的颜色。
+cc5b30d1fe2aa6df0dc65ee70686e76d1d7a29830fce73905c24caae90f28b90,"您可以通过传递 `cross=True` 来显示十字线。
+您还可以通过传递颜色字符串来更改十字线的颜色。
 
 *自版本 2.4.0 起：*
-你可以使用 `add_slot` 方法添加自定义的“十字线”插槽，并使用自己的 SVG 模板。
+您可以使用 `add_slot` 方法添加自定义的“十字线”插槽，并使用自己的 SVG 模板。
 在模板中，`props.x` 和 `props.y` 变量将可用，代表十字线的位置。"
-a224b62a118d117a0f90364da7e9f1eb6b0b4c3456562d8b16aed5ae7ed9d1d3,"你可以通过 `precision` 参数指定小数位数。
+a224b62a118d117a0f90364da7e9f1eb6b0b4c3456562d8b16aed5ae7ed9d1d3,"您可以通过 `precision` 参数指定小数位数。
 负值表示小数点前的小数位数。
 当输入失去焦点、或在清洗参数（如 min、max 或 precision）发生变化、或手动调用 `sanitize()` 时，会进行四舍五入。"
-65f3034e81a87e562f99a8f5e48ca810a35e94a93013aa4660ac13851f3a86f5,"你可以使用 `color` 参数对 FAB 及其操作进行样式设置。
+65f3034e81a87e562f99a8f5e48ca810a35e94a93013aa4660ac13851f3a86f5,"您可以使用 `color` 参数对 FAB 及其操作进行样式设置。
 `color` 参数可接受 Quasar 颜色、Tailwind 颜色或 CSS 颜色。
-你还可以通过 `direction` 参数更改 FAB 的方向。"
-4fec79d44c14d6fbe5d49927f102d0292001119d819df13ef9eb857d62656916,"你可以使用 `on` 方法（前缀为 ""svg:""）订阅 SVG 元素的事件。
+您还可以通过 `direction` 参数更改 FAB 的方向。"
+4fec79d44c14d6fbe5d49927f102d0292001119d819df13ef9eb857d62656916,"您可以使用 `on` 方法（前缀为 ""svg:""）订阅 SVG 元素的事件。
 请确保为希望接收事件的 SVG 元素设置 `pointer-events=""all""`。
 
 目前支持以下 SVG 事件：
@@ -4603,13 +4603,13 @@ a224b62a118d117a0f90364da7e9f1eb6b0b4c3456562d8b16aed5ae7ed9d1d3,"你可以通�
 - pointerenter
 - pointerleave
 - pointercancel"
-9651b4890646e8bb9f5a42a99a7916612a87a4fc585f8abbaeaf492609800c6d,你可以使用 `toggle_fullscreen()` 方法切换表格的全屏模式。
-f09a9dd0422ce10431c0af3d96df29eefdec2110467254d42d82f5d60c43baf5,"你可以追踪全屏状态更改的时间点。
+9651b4890646e8bb9f5a42a99a7916612a87a4fc585f8abbaeaf492609800c6d,您可以使用 `toggle_fullscreen()` 方法切换表格的全屏模式。
+f09a9dd0422ce10431c0af3d96df29eefdec2110467254d42d82f5d60c43baf5,"您可以追踪全屏状态更改的时间点。
 
 注意：由于安全原因，全屏模式只能从先前的用户交互（例如按钮点击）进入。"
-5ff35b42d397ebfac3ad7cae2e4ac53a6c4956b1dff7331b8ef2a25c4e8a6cc4,你可以通过更新 `properties` 属性来更新 JSONEditor 的内容。
-cc6b93018f88d4e0253fea824c1c42553e001149904473d9e04e44aa47517151,你可以在你的应用中使用 [Eva 图标](https://akveo.github.io/eva-icons/)。
-f427af8d0d52682ebe4fda631c02156000886c4d01975302fc8f7572fd06375f,"你可以使用 `@app.on_page_exception` 来定义自定义错误页面。
+5ff35b42d397ebfac3ad7cae2e4ac53a6c4956b1dff7331b8ef2a25c4e8a6cc4,您可以通过更新 `properties` 属性来更新 JSONEditor 的内容。
+cc6b93018f88d4e0253fea824c1c42553e001149904473d9e04e44aa47517151,您可以在您的应用中使用 [Eva 图标](https://akveo.github.io/eva-icons/)。
+f427af8d0d52682ebe4fda631c02156000886c4d01975302fc8f7572fd06375f,"您可以使用 `@app.on_page_exception` 来定义自定义错误页面。
 
 该处理器必须是一个同步函数，用于创建与普通页面函数相同的页面。它可以接受异常作为参数，但并非必需。它会覆盖默认的“悲伤脸”错误页面，除非异常被重新抛出。
 
@@ -4653,7 +4653,7 @@ ae4197f1df15824ca3c5ac68e78b4050cac5db6e0382aebaab74eb037edb8815,"您可以使�
 3bc5110b686e556ffff8c3d324e08a0c1647d11fb864cd38b6c7987cab3f7014,"您可以使用代码块来展示代码示例。
 如果您指定语言，代码将被语法高亮显示。
 请参阅 [此链接](https://docs.typo3.org/m/typo3/docs-how-to-document/main/en-us/WritingReST/Reference/Code/Codeblocks.html#writing-rest-codeblocks-available-lexers) 以查看支持的语言列表。"
-d5140bcd42137d09c649d5f117c85537150c7082867a45da5d093412f1cac6eb,"你可以使用不同的 Material 图标和符号集合。
+d5140bcd42137d09c649d5f117c85537150c7082867a45da5d093412f1cac6eb,"您可以使用不同的 Material 图标和符号集合。
 [Quasar 文档](https://quasar.dev/vue-components/icon#webfont-usage)
 提供了所有可用图标集合及其名称前缀的概览：
 
@@ -4664,15 +4664,15 @@ d5140bcd42137d09c649d5f117c85537150c7082867a45da5d093412f1cac6eb,"你可以使�
 * ""sym_o_"" 用于 [轮廓符号](https://fonts.google.com/icons?icon.set=Material+Symbols&icon.style=Outlined)
 * ""sym_r_"" 用于 [圆角符号](https://fonts.google.com/icons?icon.set=Material+Symbols&icon.style=Rounded)
 * ""sym_s_"" 用于 [锐利符号](https://fonts.google.com/icons?icon.set=Material+Symbols&icon.style=Sharp)"
-fdd556b14abd634604e285a93682b2f060e0d37ff31e88afabc839502c0e9836,"你可以使用函数来计算列的值。
+fdd556b14abd634604e285a93682b2f060e0d37ff31e88afabc839502c0e9836,"您可以使用函数来计算列的值。
 函数接收行作为参数。
 更多信息请参见 [Quasar 文档](https://quasar.dev/vue-components/table#defining-the-columns)。"
-5e5f53ed38a2ad4dd59e1152bee1fecd1974cbc79cde50ac796957ed4d4a9136,你可以在工具提示中使用 HTML，通过嵌套 `ui.html` 元素实现。
-ddbf3f8d89efa627006e1a9e02496bccf5ff2bdb1199ccc4faebb1e4347141d5,你也可以使用本地图片，通过传递图片文件的路径实现。
-b7546c6fb8d501c0ef163295529ae9971ef4b82c4eb02a4b9a91e76a57858209,"你可以使用 Mermaid 图表，通过 ""mermaid"" 扩展。
+5e5f53ed38a2ad4dd59e1152bee1fecd1974cbc79cde50ac796957ed4d4a9136,您可以在工具提示中使用 HTML，通过嵌套 `ui.html` 元素实现。
+ddbf3f8d89efa627006e1a9e02496bccf5ff2bdb1199ccc4faebb1e4347141d5,您也可以使用本地图片，通过传递图片文件的路径实现。
+b7546c6fb8d501c0ef163295529ae9971ef4b82c4eb02a4b9a91e76a57858209,"您可以使用 Mermaid 图表，通过 ""mermaid"" 扩展。
 请参见 [markdown2 文档](https://github.com/trentm/python-markdown2/wiki/Extras#implemented-extras)
 以获取可用扩展的列表。"
-be9594cbb8a45852bed6ea99a36de5968a83eb5a57eec9893f6b9207342704f0,"你可以在 AG Grid 中使用嵌套的复杂对象，通过点号分隔字段名。
+be9594cbb8a45852bed6ea99a36de5968a83eb5a57eec9893f6b9207342704f0,"您可以在 AG Grid 中使用嵌套的复杂对象，通过点号分隔字段名。
 （这也是为什么 `rowData` 中的键不允许包含点号的原因。）"
 f3ccc6c3ce7ce20ba1a505b8425bd5e48c6a0eb94d710cfbac92b7830c4debbd,您可以在聊天消息中使用换行符。
 e7155dcc5cecbe6431d587878587de623b2959b25199b2dfa72b1dbab76659fc,"您可以使用作用域插槽有条件地格式化单元格的内容。
@@ -4697,12 +4697,12 @@ d1f56c727531e49eecbdbd46dced55c50180d2ca3ba901e931fe7d47d8b85bf2,"您可以使�
 另外请注意，原生 `pty` 模块不支持调整大小。"
 c1518698793b39a72be0f00311991ce774a74b9bff6ac109e120fb6a4e2b4bee,"您可以使用 `grid` 属性以马赛克式网格显示表格。
 有关更多信息，请参阅 [Quasar 文档](https://quasar.dev/vue-components/table#grid-style)。"
-632e1278ef221602b20e6f3c79c5106135d9678fddc5ae9a7d6a23dce975147c,"你可以使用 `on` 方法的 `js_handler` 参数来控制客户端如何处理事件。
+632e1278ef221602b20e6f3c79c5106135d9678fddc5ae9a7d6a23dce975147c,"您可以使用 `on` 方法的 `js_handler` 参数来控制客户端如何处理事件。
 为了阻止默认行为，可以调用 `event` 对象的 `preventDefault` 方法。
 为了阻止事件传播，也可以调用 `event` 对象的 `stopPropagation` 方法。
 
 *从版本 3.1.0 开始增加*"
-e7bf8499a038be23f2925902e5131963a4d93e62d00c9390f98e65dfce05f09c,"你可以使用 `ui.scene` 的 `on_click` 参数来处理点击事件。
+e7bf8499a038be23f2925902e5131963a4d93e62d00c9390f98e65dfce05f09c,"您可以使用 `ui.scene` 的 `on_click` 参数来处理点击事件。
 回调函数接收一个 `SceneClickEventArguments` 对象，包含以下属性：
 
 - `click_type`：点击类型（“click” 或 “dblclick”）。
@@ -4715,13 +4715,13 @@ e7bf8499a038be23f2925902e5131963a4d93e62d00c9390f98e65dfce05f09c,"你可以使�
 - `object_id`：被点击的对象的 ID。
 - `object_name`：被点击的对象的名称。
 - `x`、`y`、`z`：点击的 x、y 和 z 坐标。"
-983508408fd03895d8d6e4ece41fc96b3f79bb10c6b6841c00a7075be2eb7728,"你可以使用 `ui.scroll_area` 的 `on_scroll` 参数来处理滚动事件。
+983508408fd03895d8d6e4ece41fc96b3f79bb10c6b6841c00a7075be2eb7728,"您可以使用 `ui.scroll_area` 的 `on_scroll` 参数来处理滚动事件。
 回调函数接收一个 `ScrollEventArguments` 对象，包含以下属性：
 
 - `sender`：生成事件的滚动区域
 - `client`：对应的客户端
 - 以及 [Quasar 的 ScrollArea API 文档](https://quasar.dev/vue-components/scroll-area/#qscrollarea-api) 中描述的其他参数"
-37e9ae4b5624e2196832f7ca777b91d5370db34de0b98eaad4dc4a0986603e18,"你可以使用 `schema` 参数来定义一个 [JSON Schema](https://json-schema.org/) 以验证正在编辑的数据。
+37e9ae4b5624e2196832f7ca777b91d5370db34de0b98eaad4dc4a0986603e18,"您可以使用 `schema` 参数来定义一个 [JSON Schema](https://json-schema.org/) 以验证正在编辑的数据。
 在此示例中，编辑器会在数据不符合该 Schema 时发出警告：
 
 - `id` 必须是整数
@@ -4732,15 +4732,15 @@ e7bf8499a038be23f2925902e5131963a4d93e62d00c9390f98e65dfce05f09c,"你可以使�
 *在 2.8.0 版本中新增*
 
 *在 3.5.0 版本中更新：新增对 [ajv-formats](https://ajv.js.org/packages/ajv-formats.html) 的支持*"
-5d8e156b4278527c2229ff0304e8323a92e1c48c9c54bd1a21d98975b30e784f,你可以使用当前客户端的 `sub_pages_router` 来注册一个回调函数，当路径变更时调用该函数。
-a993424e206ad6e1b8ef837da099edc332ef934911085310e0a2aa04e85fbc42,"你可以使用 NiceGUI 对 [FastAPI 的 APIRouter](https://fastapi.tiangolo.com/tutorial/bigger-applications/?h=apirouter#apirouter) 的特化版本，通过将页面和其他路由分组来模块化你的代码。
-这在你希望为多个页面使用相同前缀时尤其有用。
+5d8e156b4278527c2229ff0304e8323a92e1c48c9c54bd1a21d98975b30e784f,您可以使用当前客户端的 `sub_pages_router` 来注册一个回调函数，当路径变更时调用该函数。
+a993424e206ad6e1b8ef837da099edc332ef934911085310e0a2aa04e85fbc42,"您可以使用 NiceGUI 对 [FastAPI 的 APIRouter](https://fastapi.tiangolo.com/tutorial/bigger-applications/?h=apirouter#apirouter) 的特化版本，通过将页面和其他路由分组来模块化您的代码。
+这在您希望为多个页面使用相同前缀时尤其有用。
 路由器及其页面可以被整洁地抽离到独立模块（例如文件）中，并且路由器只需简单导入并包含在主应用中。
 参见我们的 [模块化示例](https://github.com/zauberzeug/nicegui/blob/main/examples/modularization/api_router_example.py) —— 该示例展示了使用 API 路由器的多文件应用结构。"
-fc5393246e1ca33736784ea24122cea59f607e951ca6d6d39e9a6bcaa5145185,"你也可以使用相同方法为你的应用添加其他图标集。
-作为经验法则，你需引用相应的 CSS，而 CSS 又会引用字体文件。
+fc5393246e1ca33736784ea24122cea59f607e951ca6d6d39e9a6bcaa5145185,"您也可以使用相同方法为您的应用添加其他图标集。
+作为经验法则，您需引用相应的 CSS，而 CSS 又会引用字体文件。
 本示例展示了如何包含 [Themify 图标](https://themify.me/themify-icons)。"
-78d46c0f6ce295eed31c31366d10c06b568898f8cddf33525d93f9251a2e170d,"你可以使用此元素启用、禁用或切换页面的暗色模式。
+78d46c0f6ce295eed31c31366d10c06b568898f8cddf33525d93f9251a2e170d,"您可以使用此元素启用、禁用或切换页面的暗色模式。
 值 `None` 表示自动模式，该模式会使用客户端的系统偏好设置。
 
 请注意，此元素会覆盖 `ui.run` 函数和页面装饰器中的 `dark` 参数。"
@@ -4761,9 +4761,9 @@ fc5393246e1ca33736784ea24122cea59f607e951ca6d6d39e9a6bcaa5145185,"你也可以�
 您可以使用输入元素的 `validate` 方法手动触发验证。
 该方法在输入有效时返回 `True`，否则返回错误消息。
 对于异步验证函数，必须通过设置 `return_result=False` 显式禁用返回结果。"
-ee7c44dfc1535dc7efcd63e2cc4fb5c2cd0b08ee169ced7830a697c2f998945a,"你可以使用 `initialized` 方法等待地图初始化完成。
-当你希望在地图创建后立即运行诸如适配地图边界等方法时，这是必需的。"
-9fbdb50420e586b80f667054855b1bee0677f322254a20f999f3e059274f62ac,"你可以使用 `initialized` 方法等待场景初始化完成。
+ee7c44dfc1535dc7efcd63e2cc4fb5c2cd0b08ee169ced7830a697c2f998945a,"您可以使用 `initialized` 方法等待地图初始化完成。
+当您希望在地图创建后立即运行诸如适配地图边界等方法时，这是必需的。"
+9fbdb50420e586b80f667054855b1bee0677f322254a20f999f3e059274f62ac,"您可以使用 `initialized` 方法等待场景初始化完成。
 本演示在场景完全加载后动画移动相机。"
 d6be1d52ab174eb75cb2e85052efd037a23b85c3892ed4ef8bf5b66bd6eccdf4,YouTube 框架
 19de32c72fc1b527aee28dc68a0c29de65e37a8c1fe2b98022fd25d4d00261a8,相机向上向量的 z 分量
