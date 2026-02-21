@@ -135,10 +135,10 @@ def demo(*args, **kwargs) -> Callable[[Callable], Callable]:
                 page.title = f'ui.*{ui_name}*'
             elif app_name:
                 page.title = f'app.*{app_name}*'
-            if page._reference_source is None:
+            if page._source is None:
                 source = _derive_source(element)
                 if source:
-                    page._reference_source = source
+                    page._source = source
         page.parts.append(DocumentationPart(
             title=title_,
             description=description,
@@ -198,10 +198,10 @@ def reference(element: type, *,
     """Add a reference section to the current documentation page."""
     page = _get_current_page()
     page.parts.append(DocumentationPart(title=title, reference=element))
-    if page._reference_source is None:
+    if page._source is None:
         source = _derive_source(element)
         if source:
-            page._reference_source = source
+            page._source = source
 
 
 def extra_column(function: Callable) -> Callable:

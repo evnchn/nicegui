@@ -31,7 +31,6 @@ class DocumentationPage:
     extra_column: Callable | None = None
     difficulty: DifficultyLevel | None = None
     _source: Path | None = None
-    _reference_source: Path | None = None
 
     @property
     def heading(self) -> str:
@@ -40,8 +39,8 @@ class DocumentationPage:
 
     @property
     def source(self) -> Path | None:
-        """Return the local source path: explicit override > reference-derived > filename-probed."""
-        return self._source or self._reference_source or _auto_source(self.name)
+        """Return the local source path: explicit > auto-derived from element > filename-probed."""
+        return self._source or _auto_source(self.name)
 
     @property
     def source_url(self) -> str | None:
