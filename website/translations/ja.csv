@@ -2558,7 +2558,7 @@ aca5dc1e78f9e44c8b4400354007bd59ff83ae1294a03e1e92bdd1bd1adf5fc6,"NiceGUIは、U
 f9e5f2d4b1406a61ed509c505a125582bd5f07a982f24526850181cdf3789e84,"NiceGUIは[Quasar Framework](https://quasar.dev/)を使用しており、その設計力を最大限に引き出せます。
 各NiceGUI要素は `props`メソッドを提供し、その内容は[Quasarコンポーネント](https://justpy.io/quasar_tutorial/introduction/#props-of-quasar-components)に渡されます。
 Quasarのすべてのスタイリングプロパティについては、[Quasarドキュメント](https://quasar.dev/vue-components/button#design)を参照してください。
-コロン（:）で始まるプロパティは、クライアント側で評価されるJavaScript式を含めることができます。
+コロン（`:`）で始まるプロパティは、クライアント側で評価されるJavaScript式を含めることができます。
 `classes`メソッドを使用することで、[Tailwind CSS](https://tailwindcss.com/)のユーティリティクラスを適用することもできます。
 
 もしCSSを適用する必要がある場合は、`style`メソッドを使用してください。この場合、区切り文字は空白ではなくセミコロン（ `;`）になります。
