@@ -180,21 +180,13 @@ def intro(documentation: types.ModuleType) -> None:
     current_page.parts.append(part)
 
 
-def _derive_source(obj: Any) -> Path | None:
-    """Try to derive a source file path from a class or callable via inspect.getfile."""
-    try:
-        source_file = Path(inspect.getfile(obj))
-        return source_file.relative_to(_REPO_ROOT)
-    except (TypeError, ValueError):
-        return None
-
-
 def _set_source_if_missing(page: DocumentationPage, element: Any) -> None:
     """Derive and set the source path from *element* if not already set."""
     if page._source is None:
-        source = _derive_source(element)
-        if source:
-            page._source = source
+        try:
+            page._source = Path(inspect.getfile(element)).relative_to(_REPO_ROOT)
+        except (TypeError, ValueError):
+            pass
 
 
 def reference(element: type, *,
