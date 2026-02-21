@@ -38,6 +38,7 @@ app.add_static_file(local_file=svg.PATH / 'logo_square.png', url_path='/logo_squ
 
 documentation.build_search_index()
 documentation.build_tree()
+documentation.validate_sources()
 
 
 @app.post('/dark_mode')

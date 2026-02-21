@@ -32,6 +32,8 @@ from . import (
 doc.title('Page *Layout*')
 
 
+doc.metadata(difficulty='beginner')
+
 @doc.demo('Auto-context', '''
     In order to allow writing intuitive UI descriptions, NiceGUI automatically tracks the context in which elements are created.
     This means that there is no explicit `parent` parameter.
