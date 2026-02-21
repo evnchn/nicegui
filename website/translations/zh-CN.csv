@@ -418,20 +418,22 @@ f49bc27ce79b029291826f3139bd88377f468f820b5278343631ab37a5f92084,"
     请参见我们的[聊天应用示例](https://github.com/zauberzeug/nicegui/blob/main/examples/chat_app/test_chat_app.py)
     以获取完整演示。
 "
-655b5a8ca86c3b6a38a7546fade02b60f6f07af78fea3c75e36dd749ce1188e9,"[`user_simulation`](https://github.com/zauberzeug/nicegui/blob/main/nicegui/testing/user_simulation.py) 上下文
-是 `user` 夹具的底层构建模块。
-它在同一个事件循环中启动 NiceGUI 应用，从而实现无需 Selenium 的确定性测试控制。
-与 `user` 夹具不同，它不依赖于 pytest 特定的基础设施，
-因此可以与 `unittest` 或纯异步代码一同使用。
+655b5a8ca86c3b6a38a7546fade02b60f6f07af78fea3c75e36dd749ce1188e9,"
+    [`user_simulation`](https://github.com/zauberzeug/nicegui/blob/main/nicegui/testing/user_simulation.py) 上下文
+    是 `user` 夹具的底层构建模块。
+    它在同一个事件循环中启动 NiceGUI 应用，从而实现无需 Selenium 的确定性测试控制。
+    与 `user` 夹具不同，它不依赖于 pytest 特定的基础设施，
+    因此可以与 `unittest` 或纯异步代码一同使用。
 
-该上下文支持以下三种测试方法：
+    该上下文支持以下三种测试方法：
 
-- 直接测试 `root` 可调用对象。
-- 通过传递文件路径来测试特定的主文件。
-- 在上下文中内联定义 `ui.page`。
+    - 直接测试 `root` 可调用对象。
+    - 通过传递文件路径来测试特定的主文件。
+    - 在上下文中内联定义 `ui.page`。
 
-更多使用示例，请参阅
-[`tests/test_user_simulation_context.py`](https://github.com/zauberzeug/nicegui/blob/main/tests/test_user_simulation_context.py)。"
+    更多使用示例，请参阅
+    [`tests/test_user_simulation_context.py`](https://github.com/zauberzeug/nicegui/blob/main/tests/test_user_simulation_context.py)。
+"
 c332e456495f18d576e93b06511fc4795fcc3ac8ea2a8b675a7ffdbff913ca3b,"
     `screen` 夹具可通过设置以下静态属性进行配置：
 
@@ -520,15 +522,19 @@ a5a03832df951e1be19fe9626f1d0bff342d6ba29857232a3aa2b0b1a73573b3,"
         - 若在客户端连接前抛出，则流向 `@app.on_page_exception`（2）。
         - 若在客户端连接后抛出，则流向 `ui.on_exception`（3）。
 "
-96e113967ac6d58dc036910b978079ead0149f3605fd9dd84d7136372859a5f2,"Docker 镜像还提供了其他便捷功能，例如非 root 用户执行和信号直通。
-有关更多详情，我们建议您查阅我们的 [Docker 示例](https://github.com/zauberzeug/nicegui/tree/main/examples/docker_image)。
+96e113967ac6d58dc036910b978079ead0149f3605fd9dd84d7136372859a5f2,"
+    Docker 镜像还提供了其他便捷功能，例如非 root 用户执行和信号直通。
+    有关更多详情，我们建议您查阅我们的 [Docker 示例](https://github.com/zauberzeug/nicegui/tree/main/examples/docker_image)。
 
-若要通过 [HTTPS](https://fastapi.tiangolo.com/deployment/https/) 加密来部署您的应用程序，您可以通过多种方式提供 SSL 证书。
-例如，NiceGUI 基于 [Uvicorn](https://www.uvicorn.org/)，您可以通过向 `ui.run()` 传递相关的 [选项](https://www.uvicorn.org/#command-line-options)，直接将证书提供给 Uvicorn。
-如果同时提供了证书和密钥文件，应用程序将自动通过 HTTPS 提供服务："
-80effebc107345fa1ebd2016c1d7b6669f75276b7c341482f606683b8105a8a8,"NiceGUI 提供了多种部署选项。默认情况下，NiceGUI 会在本地运行一个服务器，并将您的应用作为本地机器上的私有网页来运行。以这种方式运行时，您的应用会显示在一个网页浏览器窗口中。您也可以选择让 NiceGUI 在一个独立于网页浏览器的原生窗口中运行。此外，您还可以将 NiceGUI 部署在一个能服务多个客户端的服务器上——您现在正在阅读的这个网站就是由 NiceGUI 提供的服务。
+    若要通过 [HTTPS](https://fastapi.tiangolo.com/deployment/https/) 加密来部署您的应用程序，您可以通过多种方式提供 SSL 证书。
+    例如，NiceGUI 基于 [Uvicorn](https://www.uvicorn.org/)，您可以通过向 `ui.run()` 传递相关的 [选项](https://www.uvicorn.org/#command-line-options)，直接将证书提供给 Uvicorn。
+    如果同时提供了证书和密钥文件，应用程序将自动通过 HTTPS 提供服务：
+"
+80effebc107345fa1ebd2016c1d7b6669f75276b7c341482f606683b8105a8a8,"
+    NiceGUI 提供了多种部署选项。默认情况下，NiceGUI 会在本地运行一个服务器，并将您的应用作为本地机器上的私有网页来运行。以这种方式运行时，您的应用会显示在一个网页浏览器窗口中。您也可以选择让 NiceGUI 在一个独立于网页浏览器的原生窗口中运行。此外，您还可以将 NiceGUI 部署在一个能服务多个客户端的服务器上——您现在正在阅读的这个网站就是由 NiceGUI 提供的服务。
 
-使用组件创建您的应用页面后，您需要调用 `ui.run()` 来启动 NiceGUI 服务器。`ui.run` 的可选参数可以用来设置服务器绑定的网络地址和端口、应用是否以本机模式运行、初始窗口大小以及许多其他选项。_Configuration and Deployment_ 章节详细介绍了 `ui.run()` 函数及其所基于的 FastAPI 框架的各项选项。"
+    使用组件创建您的应用页面后，您需要调用 `ui.run()` 来启动 NiceGUI 服务器。`ui.run` 的可选参数可以用来设置服务器绑定的网络地址和端口、应用是否以本机模式运行、初始窗口大小以及许多其他选项。_Configuration and Deployment_ 章节详细介绍了 `ui.run()` 函数及其所基于的 FastAPI 框架的各项选项。
+"
 e625d7e31bf6d335c80d575ea7b1a4a3ad42e0d23bc946a7c0d858374283a567,"
     有些元素具有复杂的可视化和交互行为（`ui.upload`、`ui.table` 等）。
     并非这些元素的每个方面都能通过 `should_see` 和 `UserInteraction` 进行测试。
@@ -576,24 +582,26 @@ f80775796380e171ae9df28410bec84fb4608686c4fc10b2d2d70c75a6424e48,"
     在 Python 中，我们可以在继承 `ui.element` 时使用 `esm` 参数，以指定 ESM 模块名称和打包组件的路径。
     这会将 ESM 模块添加到页面的 import map 中，并使其在 Vue 组件中可用。
 "
-05c64fa8dd018d616207a240e8000b7340a745589bffc737864629390242905f,"您可以使用 [Redis](https://redis.io/) 作为存储方案，替代默认的文件存储方式。
-如果您有多个 NiceGUI 实例，并且希望在这些实例之间共享数据，那么这种方式会非常有用。
+05c64fa8dd018d616207a240e8000b7340a745589bffc737864629390242905f,"
+    您可以使用 [Redis](https://redis.io/) 作为存储方案，替代默认的文件存储方式。
+    如果您有多个 NiceGUI 实例，并且希望在这些实例之间共享数据，那么这种方式会非常有用。
 
-要启用此功能，请安装 `redis` 包（`pip install nicegui[redis]`），并提供 `NICEGUI_REDIS_URL` 环境变量来指定您的 Redis 服务器地址。
-我们的 [Redis 存储示例](https://github.com/zauberzeug/nicegui/tree/main/examples/redis_storage) 展示了如何通过反向代理或负载均衡器进行设置。
-为了确保连接数保持在最低限度，您应该使用 `--timeout <seconds>` CLI 选项启动 Redis 服务器，或者设置 `REDIS_TIMEOUT` 环境变量。
+    要启用此功能，请安装 `redis` 包（`pip install nicegui[redis]`），并提供 `NICEGUI_REDIS_URL` 环境变量来指定您的 Redis 服务器地址。
+    我们的 [Redis 存储示例](https://github.com/zauberzeug/nicegui/tree/main/examples/redis_storage) 展示了如何通过反向代理或负载均衡器进行设置。
+    为了确保连接数保持在最低限度，您应该使用 `--timeout <seconds>` CLI 选项启动 Redis 服务器，或者设置 `REDIS_TIMEOUT` 环境变量。
 
-请注意，Redis 同步始终包含所有数据，而不仅仅是发生更改的值。
+    请注意，Redis 同步始终包含所有数据，而不仅仅是发生更改的值。
 
-- 对于 `app.storage.general`，同步的是整个字典。
-- 对于 `app.storage.user`，同步的是该用户的所有数据。
-- 对于 `app.storage.tab`，同步的是为该特定标签页存储的所有数据。
+    - 对于 `app.storage.general`，同步的是整个字典。
+    - 对于 `app.storage.user`，同步的是该用户的所有数据。
+    - 对于 `app.storage.tab`，同步的是为该特定标签页存储的所有数据。
 
-如果您处理的数据集非常庞大，我们建议您改用数据库。
-请参阅我们的 [数据库示例](https://github.com/zauberzeug/nicegui/blob/main/examples/sqlite_database/main.py)，其中包含了使用 SQLite 的演示。
-当然，为了在多个实例之间进行数据同步，您应该将 SQLite 替换为 PostgreSQL 或其他类似的数据库。
+    如果您处理的数据集非常庞大，我们建议您改用数据库。
+    请参阅我们的 [数据库示例](https://github.com/zauberzeug/nicegui/blob/main/examples/sqlite_database/main.py)，其中包含了使用 SQLite 的演示。
+    当然，为了在多个实例之间进行数据同步，您应该将 SQLite 替换为 PostgreSQL 或其他类似的数据库。
 
-*在版本 2.10.0 中新增*"
+    *在版本 2.10.0 中新增*
+"
 0a94126f8c4caca05e0aa0cdec1e3ce9ddad66870f0cf537eb72eb6e757515ec,"
     您可以通过检查 `user.download.http_responses` 来验证下载是否已触发。
     通过等待 `user.download.next()`，您可以获取下一个下载响应。
