@@ -1,19 +1,19 @@
 import inspect
 import sys
 import types
-from collections.abc import Callable, Generator
-from contextlib import contextmanager
 from copy import deepcopy
 from pathlib import Path
 from types import ModuleType
 from typing import Any, overload
+from collections.abc import Callable, Generator
+from contextlib import contextmanager
 
 import nicegui
-from nicegui import Client
 from nicegui import app as nicegui_app
+from nicegui import Client
 from nicegui import ui as nicegui_ui
-from nicegui.elements.markdown import remove_indentation
 from nicegui.functions.navigate import Navigate
+from nicegui.elements.markdown import remove_indentation
 
 from .page import DocumentationPage, _REPO_ROOT
 from .part import Demo, DocumentationPart
