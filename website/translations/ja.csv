@@ -67,7 +67,7 @@ c6ffbe4385dca8a4a8cef9852e855378cd57271572d376a214cb12e2a736c26d,"
             <https://plausible.io/data-policy> をご覧ください。
         "
 01da6e601e557730d11853f21deba7d5cee9718cd78834a1011d556ddd8748e2,"
-        **注記:** `user` フィクチャにはまだ一部機能が欠落している可能性があります。
+        **注記:** `user` フィクスチャにはまだ一部機能が欠落している可能性があります。
         別々の機能リクエストで、ぜひお知らせください。
         [GitHub で](https://github.com/zauberzeug/nicegui/discussions/new?category=ideas-feature-requests) 提案してください。
     "
@@ -99,13 +99,13 @@ dae936edb09bf169ec5e6066199792f5e22d1b1e68e992da99ca44077d606209,"
         NiceGUIは、ユーザーインタラクションのための様々な要素を提供します。例えば、`ui.button`, `ui.slider`, `ui.inputs`などです。
             "
 700ca20ca06232edc226961a04915fd10118682f6d5e2d0499d7ed15643b7616,"
-        `screen` フィクチャは、アプリケーションと相互作用するためのリアル（ヘッドレス）ブラウザを起動します。
-        ブラウザ固有の動作をテストする必要がある場合にのみ必要です。
-        NiceGUI自体は、各コンポーネントが期待通りに動作することを保証するために、このフィクチャを使用して十分にテストされています。
+        `screen` フィクスチャは、アプリケーションと相互作用するためのリアル（ヘッドレス）ブラウザーを起動します。
+        ブラウザー固有の動作をテストする必要がある場合にのみ必要です。
+        NiceGUI自体は、各コンポーネントが期待通りに動作することを保証するために、このフィクスチャを使用して十分にテストされています。
         そのため、どうしても必要な場合にのみ使用することを推奨します。
     "
 6b50ecabe9f8699b3fd3d3a1ae3336c491273d88aaddf5575750f73784b50765,"
-        `screen` フィクチャは、裏側でSeleniumを使用しています。
+        `screen` フィクスチャは、裏側でSeleniumを使用しています。
         現在、Chromeドライバのみがテストされています。
         テストで自動的に使用するには、`pytest.ini` にオプション `--driver Chrome` を追加することを推奨します。
     "
@@ -137,18 +137,18 @@ bbf6fbde33443953182707738e0edd1df282337a8242e188bc00bd1b40659a95,"
         新しい値が到着すると、チャートを更新するためのイベントを発行します。
     "
 cc25cf08c948de5b71bbd35cbaf9dfd828b7a0eccdf6d8c261335b407ba58c8f,"
-        可能な限り、`user` フィクチャを [`screen` フィクチャ](/documentation/screen) の代わりに利用することをお勧めします。
+        可能な限り、`user` フィクスチャを [`screen` フィクスチャ](/documentation/screen) の代わりに利用することをお勧めします。
         なぜなら、実行速度はユニットテストと同等であり、Selenium の依存関係を必要としません。
-        `user` フィクチャはブラウザを切り捨て、軽量なシミュレーションに置き換えます。
+        `user` フィクスチャはブラウザーを切り捨て、軽量なシミュレーションに置き換えます。
 
         特定の要素やコンテンツを表示する、ボタンをクリックする、入力フィールドに入力する、イベントをトリガーするなど、アサーションを行うことができます。
         高速な実行速度を実現するために、UI テストは遅く、エラーが発生しやすく、コストがかかるという古典的な [テストピラミッド](https://martinfowler.com/bliki/TestPyramid.html) は適用されなくなりました 🚀。
     "
 30baf16f988a1e419e2010668b2f14dbbcffaae3ce26a28dbcecb586c399016b,"
-        アプリケーションをローカルで実行するか、サーバー上で実行するか、ネイティブモードかブラウザモードでも、すべてに対応しています。
+        アプリケーションをローカルで実行するか、サーバー上で実行するか、ネイティブモードかブラウザーモードでも、すべてに対応しています。
     "
 6044958ef89ce1ce518a909d9239810664feb4716aa04ca92485547f933790af,"
-        自動化されたUIテストを、ヘッドレスブラウザで実行（遅い）またはPythonで完全にシミュレート（高速）します。
+        自動化されたUIテストを、ヘッドレスブラウザーで実行（遅い）またはPythonで完全にシミュレート（高速）します。
      "
 72bf18b790d25e97db328d94f5215531471ad6370e1cae7bbd329f9f6a2c2770,"
         `ui.image`, `ui.audio`, `ui.video` などの要素を使って、音響映像コンテンツを表示できます。
@@ -192,8 +192,8 @@ f277c09f60c7ea143b8108b5c611090fb73346ee3dbdf788b7c66343c3633bf3,"
 432d8c2626a593a2d22b5f943cf7ac0a56ffde243fb7f819d576e6565b26e799,"
         **パッケージングのヒント:**
 
-    - PyInstaller でアプリケーションを構築する場合、`ui.run(reload=False, native=True)` を使用することで、ブラウザウィンドウではなくネイティブウィンドウを使用できます。
-    `native` パラメータは、ユーザーのブラウザにページを起動するかネイティブウィンドウを使用したいかによって `True` または `False` に設定できます。どちらも PyInstaller で生成されたアプリケーションで動作します。
+    - PyInstaller でアプリケーションを構築する場合、`ui.run(reload=False, native=True)` を使用することで、ブラウザーウィンドウではなくネイティブウィンドウを使用できます。
+    `native` パラメーターは、ユーザーのブラウザーにページを起動するかネイティブウィンドウを使用したいかによって `True` または `False` に設定できます。どちらも PyInstaller で生成されたアプリケーションで動作します。
 
     - `nicegui-pack` に `--windowed` を指定すると、ターミナルコンソールが表示されなくなります。
     ただし、このオプションを使用する場合は、`ui.run` コマンドで `native=True` も指定する必要があります。
@@ -215,7 +215,7 @@ f277c09f60c7ea143b8108b5c611090fb73346ee3dbdf788b7c66343c3633bf3,"
     これは `--onefile` よりも起動が速く、アンパックのステップをスキップします。
     配布の場合は、ディレクトリをアーカイブファイル (例: .zip または .7z) にパッケージ化します。
 
-    - `nicegui-pack` に `--clean` を指定すると、PyInstaller のキャッシュ (./build フォルダ) がクリアされ、ビルド前に一時ファイルが削除されます。
+    - `nicegui-pack` に `--clean` を指定すると、PyInstaller のキャッシュ (./build フォルダー) がクリアされ、ビルド前に一時ファイルが削除されます。
 
     - `nicegui-pack` に `--noconfirm` を指定すると、出力ディレクトリ (`./dist/SPECNAME`) を確認なしに置き換えられます。
 
@@ -223,7 +223,7 @@ f277c09f60c7ea143b8108b5c611090fb73346ee3dbdf788b7c66343c3633bf3,"
 
     | `nicegui-pack`           | `ui.run(...)`  | 説明       |
     | :---                     | :---           | :---        |
-    | `onefile`                | `native=False` | 実行可能ファイルが `dist/` に生成され、ブラウザで実行されます。 |
+    | `onefile`                | `native=False` | 実行可能ファイルが `dist/` に生成され、ブラウザーで実行されます。 |
     | `onefile`                | `native=True`  | 実行可能ファイルが `dist/` に生成され、ポップアップウィンドウで実行されます。 |
     | `onefile` と `windowed` | `native=True`  | 実行可能ファイルが `dist/` に生成されます (Mac では proper な `dist/myapp.app` ファイルがアイコン付きで生成され、ポップアップウィンドウで実行されます)。コンソールは表示されません。 |
     | `onefile` と `windowed` | `native=False` | 避ける (アプリケーションの終了方法がない)。 |
@@ -284,10 +284,10 @@ d5e434b46f00907944cc1dc428efefae1ac2bff97e929afad8cf953447afe7cf,"
     *バージョン 2.7.0 で追加: イベントのトリガー*
     "
 2827ebab32964151e3904236251781eb69751e2009f463337d94a3e3016d6038,"
-    ブラウザをカットアウトすることで、テスト実行は [`screen` fixture](/documentation/screen) よりも大幅に高速になります。
+    ブラウザーをカットアウトすることで、テスト実行は [`screen` fixture](/documentation/screen) よりも大幅に高速になります。
     弊社の [pytests example](https://github.com/zauberzeug/nicegui/tree/main/examples/pytests) をご覧ください。
     この例では、同じテストを両方の fixture で実装しています。
-    もちろん、スクリーンショットやブラウザ固有の動作など、一部機能は利用できませんが、`user` fixture の速度はほとんどの場合で最初の選択肢となります。
+    もちろん、スクリーンショットやブラウザー固有の動作など、一部機能は利用できませんが、`user` fixture の速度はほとんどの場合で最初の選択肢となります。
 "
 5fc3d54841500d8645385a84befe2baddba2833684bc6270312897a81f5e66ce,"
     デフォルトでは、汎用およびユーザーストレージデータはインデントなしでJSON形式で保存されます。
@@ -353,10 +353,10 @@ c082ba8927bbfd41c9bb4fb3fc928099505a2dc89833d4d581e673a0d2c5c84d,"
     - メインスクリプトで `ui.run` を呼び出す際に、`reload=False` を指定して、自動再読み込み機能を無効にしてください。
     - `ui.run` に `root` ページ関数を渡すか、少なくとも1つの `@page` 関数を定義してください。
 
-    以下の `nicegui-pack` コマンドを実行すると、`dist` フォルダに実行可能ファイル `myapp` が作成されます。
+    以下の `nicegui-pack` コマンドを実行すると、`dist` フォルダーに実行可能ファイル `myapp` が作成されます。
     "
 59c8d1fa844993ccb09fba647edd67d3fadd4738569e83f2d743147fa05979ae,"
-    NiceGUIは、ブラウザ上で動作するグラフィカルユーザーインターフェースを記述するためのオープンソースPythonライブラリです。
+    NiceGUIは、ブラウザー上で動作するグラフィカルユーザーインターフェースを記述するためのオープンソースPythonライブラリです。
     学習曲線は非常に穏やかでありながら、高度なカスタマイズのオプションも提供します。
     NiceGUIはバックエンド優先という哲学を採用しています:
     ウェブ開発のすべての詳細を処理します。
@@ -372,8 +372,8 @@ c082ba8927bbfd41c9bb4fb3fc928099505a2dc89833d4d581e673a0d2c5c84d,"
 d43e42425de973be28cc730f2d0f6efe56eb59a526ea2a6ecc666a3ea5c85e61,"
     NiceGUIは、[pytest](https://docs.pytest.org/)をベースにした包括的なテストフレームワークを提供します。
     これにより、あなたのユーザーインターフェースのテストを自動化できます。
-    `screen` fixtureを使用すると、ブラウザ（ヘッドレスモード）を起動してアプリケーションとインタラクションできます。
-    ブラウザ固有の動作をテストする場合に便利です。
+    `screen` fixtureを使用すると、ブラウザー（ヘッドレスモード）を起動してアプリケーションとインタラクションできます。
+    ブラウザー固有の動作をテストする場合に便利です。
 
     しかし、ほとんどの場合、NiceGUIで導入されたばかりの`user` fixtureの方が適しています。
     これはPythonレベルでのユーザーインタラクションのみをシミュレートし、そのため非常に高速です。
@@ -449,14 +449,14 @@ a235a421e32a53c4e2a0e8b1ee3dbce65c737fcaaeaa643ec13f77cc0ee20cc4,"
 "
 f49bc27ce79b029291826f3139bd88377f468f820b5278343631ab37a5f92084,"
     時々、単一のユーザーとしてUIとだけやり取りするだけでは不十分です。
-    `user` フィクチャに加えて、ユーザーを作成するためのファクトリー関数である `create_user` フィクチャも提供します。
+    `user` フィクスチャに加えて、ユーザーを作成するためのファクトリー関数である `create_user` フィクスチャも提供します。
     `User` インスタンスは互いに独立しており、UIを並行して操作できます。
     [Chat Appの例](https://github.com/zauberzeug/nicegui/blob/main/examples/chat_app/test_chat_app.py) を参照して、完全なデモンストレーションをご覧ください。
 "
 655b5a8ca86c3b6a38a7546fade02b60f6f07af78fea3c75e36dd749ce1188e9,"
-    `[user_simulation`](https://github.com/zauberzeug/nicegui/blob/main/nicegui/testing/user_simulation.py) コンテキストは、`user` フィクチャの裏付けとなる低レベルの構成要素です。
+    `[user_simulation`](https://github.com/zauberzeug/nicegui/blob/main/nicegui/testing/user_simulation.py) コンテキストは、`user` フィクスチャの裏付けとなる低レベルの構成要素です。
     同じイベントループ内でNiceGUIアプリを起動し、Seleniumを使わずに決定的なテスト制御を提供します。
-    `user` フィクチャとは異なり、pytest固有のインフラストラクチャに依存しません。
+    `user` フィクスチャとは異なり、pytest固有のインフラストラクチャに依存しません。
     `unittest` またはシンプルなasyncコード内で使用できます。
 
     このコンテキストは、以下の3つのテストアプローチをサポートしています。
@@ -469,7 +469,7 @@ f49bc27ce79b029291826f3139bd88377f468f820b5278343631ab37a5f92084,"
     [`tests/test_user_simulation_context.py`](https://github.com/zauberzeug/nicegui/blob/main/tests/test_user_simulation_context.py) にあります。
 "
 c332e456495f18d576e93b06511fc4795fcc3ac8ea2a8b675a7ffdbff913ca3b,"
-    `screen` フィクチャは、以下の静的属性を設定することで構成できます。
+    `screen` フィクスチャは、以下の静的属性を設定することで構成できます。
 
     - `PORT`: サーバーで使用するポート (デフォルト: 3392)。
     - `IMPLICIT_WAIT`: 待ち時間 (秒) (デフォルト: 4)。
@@ -481,7 +481,7 @@ a5a03832df951e1be19fe9626f1d0bff342d6ba29857232a3aa2b0b1a73573b3,"
     代わりに [`ui.navigate.to`](navigate#ui_navigate_to_(formerly_ui_open)) を使用してください。
 "
 178595c9e8dc6ba4edb137b65da5550a6337b6aa75e9418a4e895e183e9cb5e4,"
-    The `UploadEventArguments` クラスは、アップロードされたファイルをハンドラに渡すために使用されます。
+    The `UploadEventArguments` クラスは、アップロードされたファイルをハンドラーに渡すために使用されます。
     単一のフィールド `file` を含んでおり、タイプは `ui.upload.FileUpload` です。このフィールドには以下のプロパティが含まれます。
 
     - `name: str` および
@@ -507,13 +507,13 @@ a5a03832df951e1be19fe9626f1d0bff342d6ba29857232a3aa2b0b1a73573b3,"
     "
 1702ddf75dbb0d860d2617a9dfdc9906c5bbd2a1d71d8c5a3cda43787dc246af,"
     デモでは、`main.py` が `ui.run` コマンドでポート8080を使用（これがデフォルト）していることを前提としています。
-    `-d` は Docker にバックグラウンドで実行させ、`--restart always` を指定することで、アプリがクラッシュしたりサーバーが再起動したりした場合でもコンテナを自動的に再起動するようにします。
+    `-d` は Docker にバックグラウンドで実行させ、`--restart always` を指定することで、アプリがクラッシュしたりサーバーが再起動したりした場合でもコンテナーを自動的に再起動するようにします。
     もちろん、これは Docker Compose ファイルに記述することも可能です：
 "
 7186edb63c51daea9464f1e075d179f6dbba2bffd5e5baf6f300f3d9b8494468,"
-    NiceGUI パッケージには、[pytest プラグイン](https://docs.pytest.org/en/stable/how-to/writing_plugins.html) が含まれており、`-p nicegui.testing.plugin` パラメータで有効化できます。
+    NiceGUI パッケージには、[pytest プラグイン](https://docs.pytest.org/en/stable/how-to/writing_plugins.html) が含まれており、`-p nicegui.testing.plugin` パラメーターで有効化できます。
     これにより、NiceGUI ユーザーインターフェース向けの統合テストを作成するための、専門的な [fixtures](https://docs.pytest.org/en/stable/explanation/fixtures.html) が利用可能になります。
-    [`screen` fixture](/documentation/screen) を使用すると、ヘッドレスブラウザ (遅い) で統合テストを実行できます。
+    [`screen` fixture](/documentation/screen) を使用すると、ヘッドレスブラウザー (遅い) で統合テストを実行できます。
     一方、[`user` fixture](/documentation/user) を使用すると、Python で完全なシミュレーションで統合テストを実行できます (高速)。
     特定の種類のテスト fixture のみが必要な場合は、プラグイン `nicegui.testing.user_plugin` または `nicegui.testing.screen_plugin` を使用することもできます。
 
@@ -523,7 +523,7 @@ a5a03832df951e1be19fe9626f1d0bff342d6ba29857232a3aa2b0b1a73573b3,"
 "
 86d8effc2456dd6cb2155ed1d441ba847217a3102cf8cf1751c130b4b56568dc,"
     `User` のクエリ機能は、[ElementFilter](/documentation/element_filter) を基盤として構築されています。
-    `user.should_see(...)` メソッドと `user.find(...)` メソッドは、コンテンツや[マーカー](/documentation/element_filter#markers)、タイプなどをフィルタリングするためのパラメータを提供します。
+    `user.should_see(...)` メソッドと `user.find(...)` メソッドは、コンテンツや[マーカー](/documentation/element_filter#markers)、タイプなどをフィルタリングするためのパラメーターを提供します。
     名前付きプロパティを指定しない場合、文字列はテキストコンテンツとマーカーに一致します。
 "
 0306489773d4cb74c86de2ac761c4bdf4a9a09d8612fe572a9cb3b9013b631a2,"
@@ -535,12 +535,12 @@ a5a03832df951e1be19fe9626f1d0bff342d6ba29857232a3aa2b0b1a73573b3,"
         - ハンドラーにはUIコンテキスト（`ui.*`の使用不可）はありません。
         - 共通の発生元: `app.timer`, `background_tasks.create`, `run.io_bound`, `run.cpu_bound`。
         2. [`@app.on_page_exception`](#custom_error_page):
-        ページブロック例外用のカスタムエラーページ（ページがブラウザに送信される**前**）
+        ページブロック例外用のカスタムエラーページ（ページがブラウザーに送信される**前**）
         - アプリ全体に適用されます。
         - ハンドラーはUI要素を使用できますが、新しいクライアントで実行されます。
         - 共通の発生元: 同期 `@ui.page` 関数、非同期 `@ui.page` 関数の関数内で発生する例外（`await ui.context.client.connected()`の前に）。
         3. [`ui.on_exception`](#ui_on_exception):
-        ページ内例外のハンドラー（ページがブラウザに送信された**後**）
+        ページ内例外のハンドラー（ページがブラウザーに送信された**後**）
         - ページごとに適用されます。
         - ハンドラーは、`ui.context.client` で元のクライアントを使用してUI要素を使用できます。
         - 共通の発生元: `ui.button(on_click=...)`, `ui.timer`, 非同期 `@ui.page` 関数の関数内で `await ui.context.client.connected()` の後に発生する例外。
@@ -563,8 +563,8 @@ a5a03832df951e1be19fe9626f1d0bff342d6ba29857232a3aa2b0b1a73573b3,"
 80effebc107345fa1ebd2016c1d7b6669f75276b7c341482f606683b8105a8a8,"
     NiceGUIのデプロイ方法にはいくつかの選択肢があります。
     デフォルトでは、NiceGUIはlocalhostでサーバーを起動し、ローカルマシン上であなたのアプリをプライベートなウェブページとして実行します。
-    このように実行すると、あなたのアプリはブラウザウィンドウに表示されます。
-    また、ブラウザとは別のネイティブウィンドウでNiceGUIを実行することも可能です。
+    このように実行すると、あなたのアプリはブラウザーウィンドウに表示されます。
+    また、ブラウザーとは別のネイティブウィンドウでNiceGUIを実行することも可能です。
     あるいは、多数のクライアントを処理するサーバー上でNiceGUIを実行することもできます。
     現在お読みになっているこのウェブサイトは、NiceGUIによって提供されています。
 
@@ -618,7 +618,7 @@ f80775796380e171ae9df28410bec84fb4608686c4fc10b2d2d70c75a6424e48,"
     [""署名パッド"" の例](https://github.com/zauberzeug/nicegui/blob/main/examples/signature_pad) と
     [""Node モジュール統合"" の例](https://github.com/zauberzeug/nicegui/blob/main/examples/node_module_integration)
     は、`package.json` ファイルに定義された依存関係とともにカスタム Vue コンポーネントをバンドルする方法を示しています。
-    Python では、`ui.element` を継承する際に `esm` パラメータを使用することで、ESM モジュール名とバンドルされたコンポーネントへのパスを指定できます。
+    Python では、`ui.element` を継承する際に `esm` パラメーターを使用することで、ESM モジュール名とバンドルされたコンポーネントへのパスを指定できます。
     これにより、ページのインポートマップに ESM モジュールが追加され、Vue コンポーネントで利用可能になります。
 "
 05c64fa8dd018d616207a240e8000b7340a745589bffc737864629390242905f,"
@@ -655,7 +655,7 @@ f80775796380e171ae9df28410bec84fb4608686c4fc10b2d2d70c75a6424e48,"
     2. プロジェクトのルートにある `pytest.ini` 設定ファイルで、`main_file` オプションを設定する。
     3. 同じコードベースに複数のアプリを維持している場合は、テスト関数に `@pytest.mark.nicegui_main_file` デコレータを付ける。
 
-    メインファイルは、各統合テスト（ `user` フィクチャまたは `screen` フィクチャ）のエントリポイントとして自動的に使用されます。
+    メインファイルは、各統合テスト（ `user` フィクスチャまたは `screen` フィクスチャ）のエントリポイントとして自動的に使用されます。
     また、`pytest.ini` ファイルで [`asyncio_mode = auto`](/documentation/user#async_execution) オプションと、使用するプラグレット（ `nicegui.testing.plugin`、`nicegui.testing.user_plugin` または `nicegui.testing.screen_plugin`）を設定する必要があります。
 
     *バージョン 3.0.0 で追加*
@@ -725,7 +725,7 @@ NiceGUIはデフォルトで[Quasar Framework](https://quasar.dev/)を使用し�
 そうするには、HTMLドキュメントの<head>にフレームワークのJavaScriptおよびCSSファイルを加え、NiceGUIを適切に構成するために`app.config.vue_config_script`を拡張または置き換える必要があります。
 
 *NiceGUI 2.21.0で追加*"
-6f1d50bb76039e86462225da3e81cb4fab24616b054fd514c796002605c1d286,視聴元素
+6f1d50bb76039e86462225da3e81cb4fab24616b054fd514c796002605c1d286,視聴覚要素
 ef8a41fc455ffc9fff000d2b4db872fc78435f75da2e9b8d8029c4ef479ea817,*バインディング* プロパティ
 3bc132d75a498beb1789d9d872172e2380e7b6bfded4396157fd53e90a6fcdbb,*コントロール*
 f8439f59abfb4c20b6443c776b8c558f366e7b9f7736638cb31b29703f21b503,*データ* 要素
@@ -750,14 +750,14 @@ c3848caccbd74578372202cd4e9b00bb769a3f7edce261b5a63b2e856bf222a5,[インタラ�
 30c93c55a412d389d64d3cf1effe0c1770b646d92f2d7fb0d32ade77114109aa,``ui.sub_pages`` インスタンスがこのページを実行しています。
 30b15df61eccc0b3e154d14ed182140e84b60271847ee16f0db91914cefe241e,"`add_media_files()` は、指定されたエンドポイント（例：`/media`）からローカルファイルをストリーミングできるようにします。
 これは、メディアファイルのストリーミングを適切に行うために使用されます。
-そうしないと、ブラウザはファイルを段階的にアクセスして読み込むことができず、ストリーム内の異なる位置にジャンプしてしまう可能性があります。
+そうしないと、ブラウザーはファイルを段階的にアクセスして読み込むことができず、ストリーム内の異なる位置にジャンプしてしまう可能性があります。
 セキュリティに関わるファイルは避けてください。なぜなら、これらのファイルは誰でもアクセスできるからです。
 
 単一のファイルをストリーミングで利用できるようにするには、`add_media_file()` を使用できます。
 小規模な静的ファイルの場合は、`add_static_files()` または `add_static_file()` を代わりに使うことができます。"
 07dd18833299589695d879f35da46beee13446ed75f8c7c2208258688f3a7cf3,"`add_static_files()` は、指定されたエンドポイント（例：`/static`）でローカルディレクトリを公開します。
 これは、画像などのローカルデータをフロントエンドに提供するのに役立ちます。
-そうしないと、ブラウザはファイルにアクセスできません。
+そうしないと、ブラウザーはファイルにアクセスできません。
 
 セキュリティに関わるファイル以外のみをそこに配置してください。なぜなら、これらのファイルは誰でもアクセスできるからです。
 
@@ -782,7 +782,7 @@ c245c88b400b9190e3422c28a6a1178e01dc5096ee4d5e6573fa606b38bb3871,"Quasar の
 `QAvatar <https://quasar.dev/vue-components/avatar>`_ コンポーネントを包むアバター要素。"
 b6fbf74fc1fd974251b936d3faf0f532c511d20acded28216e88954bc22221fe,"Quasar の
 `QBadge <https://quasar.dev/vue-components/badge>`_ コンポーネントを包むバッジ要素。"
-18e2b0b5360aa7eb1155a3bce98fd916be4709cf4fb7e7c3e51d26c28862afbc,a callback またはイテレータで、新しい値に対して辞書のキーを生成する
+18e2b0b5360aa7eb1155a3bce98fd916be4709cf4fb7e7c3e51d26c28862afbc,a callback またはイテレーターで、新しい値に対して辞書のキーを生成する
 a524ee539854171ffe06defc45b282cb2a4eb5e20fd091b161cf1d8fb1f226d0,キャプション、またはサブラベルは、タイトルの下に追加できます。
 e7578600eca4950be0d5455e92280b82d22203f025ac5443e6784067b341c3bd,"A chip要素をQuasarの`QChip <https://quasar.dev/vue-components/chip>`_コンポーネントでラップします。
 クリック可能、選択可能、および削除可能です。"
@@ -797,7 +797,7 @@ e67d69f419c6a296cd1c44f74791dcc3cfbf1d061aaca321fa5442315ec8a38b,"アクショ�
 `QLinearProgress <https://quasar.dev/vue-components/linear-progress>`_ コンポーネント。"
 71554a7a30c84ff595f073148bbb6e9b550cee52e032e7e4ea7f5010b3de3537,"a list ['value1', ...] または dictionary `{'value1':'label1', ...}` がオプションを指定する。"
 12aaede0f14b512ba0ed49e8df8c2262952b138b7de461fdaaec31d39ecc267e,"Quasar の `QList <https://quasar.dev/vue-components/list-and-list-items#qlist-api>`_ コンポーネントに基づいたリスト要素です。
-``ui.item`` 要素のコンテナを提供します。
+``ui.item`` 要素のコンテナーを提供します。
 "
 16eb2194591d2a9898602c3f784880575f13c8e5c61e983386016837d4429c97,"メニューに追加するメニュー項目です。
 この要素は、Quasar の `QItem <https://quasar.dev/vue-components/list-and-list-items#qitem-api>`_ コンポーネントをベースにしています。"
@@ -813,7 +813,7 @@ c7569fea365144331547574327eb5830d0ccf4bf143bcf087bf13a829a574890,a suffix to app
 ``selection`` が ""single"" または ""multiple"" の場合、``selected`` プロパティに選択された行が含まれます。
 
 注意：
-``rows`` 内のセルにはリストを含めないでください。そうするとブラウザがクラッシュする可能性があります。
+``rows`` 内のセルにはリストを含めないでください。そうするとブラウザーがクラッシュする可能性があります。
 複雑なデータ構造を表示するには、まず文字列に変換してください (例: ``str()`` またはカスタムフォーマットを使用)。"
 4424dc3da8e222a9d22bed114c32f09638102dca2e362ca52b044d898e3b9749,"コンテンツをカプセル化することで、スクロールバーのカスタマイズ方法です。
 この要素は、Quasar の `ScrollArea <https://quasar.dev/vue-components/scroll-area/>`_ コンポーネントを公開します。"
@@ -922,7 +922,7 @@ aa48ed6954969dda0620bdbc66cb525fe5dc4569ef999d9333f6e151cc2f7bb0,サブページ
 af1eafa3123bf772f52dfaa8f2fbeac69a611e6d1eb87bb2f806fc0cac142644,`pyplot.legend <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html>`_ に渡すべき追加の引数
 14b3a73ae32922c384f416a5402e1daba49efeb9c4daa756d0ada646a4600483,追加キーワード引数は `uvicorn.run` に渡されます。
 d368409c2a747ca27a8fb773bcaac3cfd6ddf3ae62b7606009ab96f33ae2b9ef,additional keyword arguments passed to FastAPI’s `@app.get` method
-53d819ff0cc7f1d68a7f0aeafb9fe4d1f0b3544047df8f4b2f02c902c40fca08,SessionMiddleware への追加キーワード引数で、ブラウザベースのストレージに使用されるセッションCookieを作成します。
+53d819ff0cc7f1d68a7f0aeafb9fe4d1f0b3544047df8f4b2f02c902c40fca08,SessionMiddleware への追加キーワード引数で、ブラウザーベースのストレージに使用されるセッションCookieを作成します。
 59556114dd24a558198f67b9e7cc171677804cee279f269fbc53cbf8514ba886,追加のオプションは、Leafletマップに渡されます（デフォルト：{}）
 9459e12f91695e9b3e8402d1cdb38231e47736580a5b7aa2f9de98d41b6786ee,追加リソース
 0f18293b7fa05d39c1b7b048face5228101f6d57657d5a3568f0e66a7decdf70,"追加のリソース、例えばCSSやJSファイルなどを読み込む (デフォルト: None, *バージョン2.11.0で追加*)"
@@ -971,11 +971,11 @@ f56f7e5ccca2dbd2a47abee25c71285a011a251d4b167ca4b880c643a4c602c1,列内のアイ
 これらのイベントは、`.on()` メソッドを使って購読できます。"
 a815be52afbdd4b4994aea8406bdcb2f4d634e3e0e40549d3a39904115339b21,複数ファイルの同時アップロードを許可（デフォルト: `False`）
 2485ec3372d26421427301f9c33d89a42057df50b9f9b67352cde698629ef59f,Altair Chart
-9046c57d961fea450142d23fbe4e7fefe53f5892531a2fb54f6249b029889336,"Altair チャートは、パラメータを追加することでインタラクティブにできます。
+9046c57d961fea450142d23fbe4e7fefe53f5892531a2fb54f6249b029889336,"Altair チャートは、パラメーターを追加することでインタラクティブにできます。
 このデモでは、ポイントの色を制御するためのスライダーの追加方法を示しています。"
 16f19c6b0f0dd45f0f814daf08f976eba9cd9656ef15ff445a49b9e1fcee45a5,AnyWidget 付き Altair チャート
 612a2767729f1e947542b181f70cc0f3fb3199affdda7f68948e797be24ef28a,"代わりに、ノードに `click` ディレクティブを追加し、カスタム JavaScript を実行することで、クリックイベントを登録できます。
-JavaScript の実行を許可するために、`config` パラメータで `securityLevel` を `loose` に設定し、信頼されていないユーザーが任意の Mermaid ダイアグラムを入力として渡さないようにしてください。"
+JavaScript の実行を許可するために、`config` パラメーターで `securityLevel` を `loose` に設定し、信頼されていないユーザーが任意の Mermaid ダイアグラムを入力として渡さないようにしてください。"
 1b14a56a7d9cb18041e530caf807d9e2221e80233bff5e1677e9efc06fef0f39,"浮動アクションボタン (FAB) に追加できる操作。
 この要素は、Quasar の `QFabAction <https://quasar.dev/vue-components/floating-action-button#qfabaction-api>`_ コンポーネントに基づいています。
 
@@ -1006,7 +1006,7 @@ At runtime, the methods `supported_languages` and `supported_themes` can be used
 
 クライアント側の AG Grid インスタンスと相互作用するために、 ``run_grid_method`` と ``run_row_method`` のメソッドを使用できます。"
 59ce8300a8ba96c92c8333ed71bded4412ca46a48897fa835bbc0d0b758c99f9,`JSONEditor <https://github.com/josdejong/svelte-jsoneditor>`_ を使用して JSON エディタを作成する要素です。 `properties` プロパティを変更することで、エディタへの更新をプッシュできます。
-4c9d25dcb61d292adbe947794a3bd7c24330a13119bd34d0c84cea9e58fc29d3,イベントハンドラは、特定のサイドが選択されたときにトリガーされることができます。
+4c9d25dcb61d292adbe947794a3bd7c24330a13119bd34d0c84cea9e58fc29d3,イベントハンドラーは、特定のサイドが選択されたときにトリガーされることができます。
 5aa82f1f68ad6bc2d269a7e3de73cc7609b78e1d260014277f25bf53d62d068d,ダイアログが送信されたときに設定されるイベント。
 a1fb583d55a7a8f1f0d5d288acb65a83643427c6d5261da5ebada663596f876a,拡張グループを定義することで、連携した開き/閉じ状態（別名: 「アコーディオンモード」）を有効化できます。
 54d1f982a9a912fcc793ff5291935deef2cda0dc57fdae3530ed2d65e711d17b,"値のコレクションを視覚的な「チップ」またはタグとして管理する入力フィールド。
@@ -1015,7 +1015,7 @@ a1fb583d55a7a8f1f0d5d288acb65a83643427c6d5261da5ebada663596f876a,拡張グルー
 この要素はQuasar の `QSelect <https://quasar.dev/vue-components/select>`_ コンポーネントに基づいています。
 従来のドロップダウン選択とは異なり、このバリエーションはチップによる自由形式のテキスト入力に焦点を当てており、タグ、キーワード、またはユーザーが定義した値のリストなど、あらゆる用途に適しています。
 
-``validation`` パラメータを使用して検証ルールを辞書で定義できます。
+``validation`` パラメーターを使用して検証ルールを辞書で定義できます。
 例えば、``{'Too long!': lambda value: len(value) < 3}`` のようになります。
 最初のルールが失敗した場合、そのキーが表示されます。
 あるいは、オプションのエラーメッセージを返すコールラブルを渡すこともできます。
@@ -1025,7 +1025,7 @@ a1fb583d55a7a8f1f0d5d288acb65a83643427c6d5261da5ebada663596f876a,拡張グルー
 9c49e2479ad50e84992c4025e2ee1a315e6e7caeb00ec24b8a2946ef1ba8bc9c,[reaktiv](https://github.com/buiapp/reaktiv) ライブラリからの反応式シグナルを使用した注文計算機
 2f90e75bc6372241f94950febe4623c988835e2993158f0f8a490828f71d8116,"favicon として SVG を直接使用できます。
 Chrome、Firefox、Safari で動作します。"
-c36b85413d6ac3f66ce8d06af41b322ea23d9d28fb18f17616d563df6b396cfb,Python コードのフロントエンドを任意のブラウザにしましょう。
+c36b85413d6ac3f66ce8d06af41b322ea23d9d28fb18f17616d563df6b396cfb,Python コードのフロントエンドを任意のブラウザーにしましょう。
 62b33eb2644469f88e54604723d47beda0d4b5e1dc5ce9b10a92f0649bb06bfb,NiceGUI について他の人に知らせましょう。
 776b487fae88fdb64cc48be1bebaddaf201303d94e2c812e7faa9847f6ed7d4f,アニメーションの長さ（秒単位、デフォルト: 0.0 はアニメーションなし）
 62fafbcbbc7c1797833f94873706d164a39ae04d442fb0680424615257aae58b,骨格プレースホルダーのアニメーション効果（デフォルト：「wave」）
@@ -1065,7 +1065,7 @@ Removing or replacing classes can be helpful if predefined classes are not desir
 e74c307ee2613963fae1afa0fae1cce4341a059ef886b4f4f32ddbf12231068f,任意のグラフイベント
 63885355144223692a3e8b7335539a8e3d7ac78cb7b3911f284174c87f357b0d,ページビルダー関数に渡される任意データ
 216c09041caf03293cdeca70d0feab266a9839350c77f5cf452e789ffc9fbc1c,``ui.sub_pages`` 要素に渡される任意データ
-b6c96cc91913c1b16b7509f6574de91efd18a6ea435eff8024260b2fc4534507,イベントハンドラに送信されるイベントメッセージに含まれる引数（デフォルト： ``None`` はすべて）
+b6c96cc91913c1b16b7509f6574de91efd18a6ea435eff8024260b2fc4534507,イベントハンドラーに送信されるイベントメッセージに含まれる引数（デフォルト： ``None`` はすべて）
 aad81633e615fc70eaaeb203ddaf6a339239a9194352feaa1c75c2a99d49a82b,`color` のような、`underlying nipple.js library <https://github.com/yoannmoinet/nipplejs#options>`_ に渡される引数
 cb1bfae2eb096f77a02c1efed092223ad7bd974606ddb8bd0da36d1be5d2b1c9,`figsize` のような、`matplotlib.figure.Figure <https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure>`_ に渡すべき引数
 fdf8293897cbbe74d54c8bb7f68582e293beb28d569975b3eb3fd1810b338c17,`figsize` のような、`pyplot.figure <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.figure.html>`_ に渡すべき引数
@@ -1095,19 +1095,19 @@ df3cbbaaabda77e78c61e04b4842087efae253e7bae70e0c2442748e90ed7b9e,"Quasarドキ�
 5e7140b16a85ae8b4ec2c5d3edd45c692d2d89dd93e995e7b47d8665fa6a9984,"他のすべての要素と同様に、独自のロジックを備えたサブクラスを実装できます。
 例：内部のブール状態を持つ、オン/オフ切り替えボタン（赤/緑）。"
 1068ff3e07230ec00baaf8145515dbc7c0472af6bee198a6b1de3833d5c01b7f,指定された画像が読み込まれたことを確認する。
-27bd119508de81aafe99f052cba59e2e200e502253c946eca07bab2a98fe780d,"ページに特定のフィルタルールを満たす要素が含まれていることを確認する。
+27bd119508de81aafe99f052cba59e2e200e502253c946eca07bab2a98fe780d,"ページに特定のフィルタールールを満たす要素が含まれていることを確認する。
 
 ユーザーシミュレーションではスクロールは行われないため、ページ全体は常に*表示されている*状態である。
 非同期実行により、期待される要素は短い遅延の後に出現することがある。
 
 デフォルトでは、`should_see` は失敗する前に要素を3回検索しようとする。
-この動作は `retries` パラメータで調整可能である。"
+この動作は `retries` パラメーターで調整可能である。"
 1641578afbd23a52b4676630f1a51807a5112138151113afa256222304742a0e,ページに指定された値を持つ入力フィールドが含まれていることを確認する。
 06ab5960b54cc9b71af12f03477909c8a64b3a1f5b724ba522a268d286a99368,ページに指定されたテキストが含まれていることを確認する。
 5b7eb2df213ce7783fc718ce03c00e1f51ebb0c7ccb4bdb9c4d92180f1c354b9,ページに指定された値を持つ入力フィールドが含まれていないことを確認する。
 478b845f58e467f8e7eaffca829b7976b795dfa6f689502bc945bc70c681eac7,ページに指定されたテキストが含まれていないことを確認する。
 2f5f065ac1e2047f60fa4be37061cd0229d8276b2ccf196bb19c7007788ac07a,Python ロガーが指定されたレベルとテキストまたは正規表現パターンを持つメッセージを受信したことを確認する。
-4859412ceba4e614b81fca5b384b5fb9d51c7fecc54f7a1d6d4b4fdbf2b39e1a,非同期イベントハンドラ
+4859412ceba4e614b81fca5b384b5fb9d51c7fecc54f7a1d6d4b4fdbf2b39e1a,非同期イベントハンドラー
 90f0c57b7b6e39941d898b89ff9eca91ed1ec3118434ae82d3293de7bc1da3b8,非同期実行
 b13790c0f1026c20bc3062d2a5dc6de390ff5ff2b488fd01fc8478f92d24e22b,非同期サブページ
 273d22bc1d996cac5eda7e4d7940c2c14a4a39de50d3aafafc05dd4a0c81b854,非同期でテーブルの計算された行を返します。
@@ -1117,7 +1117,7 @@ cb9e7a7cc1fd8b7c378959b94ce25ce45467a05038e84c9c91a8246ae3c1a8b0,非同期で、
 12834ecaf9b64d2d538d928d4b38c1d1713e624dd46f17f7f060c393be75a128,オブジェクトの添付/解除の付加
 bc1b88907d3b748af99cb9d4ffc07a0118dad5dab21a9dbdcc5a17a09641364a,オーディオ
 126fbcc1e68eeb99fdc6bc44407a7b0303acba23ff10375214f66469ebbc00eb,オーディオ録音器
-71fe3c2736bf24d0a5f272bf59ab02c97121599dfee704ea658d8684855887be,視聴要素
+71fe3c2736bf24d0a5f272bf59ab02c97121599dfee704ea658d8684855887be,視聴覚要素
 e2b4f93a92cba874a59dec77a52e12967da2b0631115795112a1854c7a7944b6,Google One-Tap でユーザーを認証する
 aac303082f445b9e8e174fc856789e228cd9cca440fc0a52e71fe0a6ab1a924c,Google OAuth2 で認証する
 66880d2d8216260d201917a72eb245440ef18ba9b54c070ee39aa4c343ae126f,認証
@@ -1126,7 +1126,7 @@ fd45dc0487f1d702c52ebd99810875f028b1c93eb62b3722469c33155e704683,Auto-context
 70f812dbaa39c7a98af5fa0001f1db5388f14fd3ab8baa11abf6d9f301b37ef7,ターミナルの自動リサイズ
 625ab4f285fceced2cd7a485ccd3f7203ba230bd4a92f0a1620a3678bd766f89,自動分割値
 82ca7a6392f0433329069cd25b49a3dc0aebb7ce3c1258cbe33305347d4da9f0,自動補完
-d5d5ca1886dec5c2581b4dde893c80c1cce31df064e493441622a8f4debdc8d1,"ブラウザのタブでUIを自動的に開く (デフォルト: `True`, *バージョン3.6.0以降*: 特定のパス(/path/to/pageなど) を指定可能)。"
+d5d5ca1886dec5c2581b4dde893c80c1cce31df064e493441622a8f4debdc8d1,"ブラウザーのタブでUIを自動的に開く (デフォルト: `True`, *バージョン3.6.0以降*: 特定のパス(/path/to/pageなど) を指定可能)。"
 dca5df62813390b357b4fb62b976010f8cc8a29810b9bb4612e495c277e81111,自動的にファイル変更時にUIを再ロードします (デフォルト: `True`)
 1663aa0a1410bf724ae9a654c3b185f849334baa21c6284b75f5f96836c03f98,自動的にファイルを選択したときにアップロードする（デフォルト:`False`）
 ca8e826d9c2ec401e9ac82cd0aa710cf234d5cac4e6ee967b3588c63fce9681b,アバター
@@ -1148,13 +1148,13 @@ df37f25f58fcef2efaedb8c4160e2c3ba2bf3e66baa691eda2ac79fc9ec14ada,"Quasar の `Ch
     またはサーバー側のサニタイズを適用するために呼び出し可能を渡します"
 366844af88c5224d0d89755c29110c3bac705ec5884776e913ca60df95a99fce,"Quasar の `QUploader <https://quasar.dev/vue-components/uploader>`_ コンポーネントをベースにしています。
 
-アップロードイベントハンドラは、以下の順序で呼び出されます：
+アップロードイベントハンドラーは、以下の順序で呼び出されます：
 
 1. ``on_begin_upload``: 客户端がサーバーに1つ以上のファイルをアップロードを開始します。
 2. ``on_upload``: 個別ファイルのアップロードが完了しました。
 3. ``on_multi_upload``: 選択されたすべてのファイルのアップロードが完了しました。
 
-ファイル選択プロセス中に、以下のイベントハンドラは自動的に呼び出されます：
+ファイル選択プロセス中に、以下のイベントハンドラーは自動的に呼び出されます：
 
 - ``on_rejected``: 1つ以上のファイルが拒否されました。"
 629054a3ec0e5edac0ef2c287913edcec5cf8daf98700361e557bb823971b310,基本概念
@@ -1163,7 +1163,7 @@ b9f0b68a503117a7f65f9bdf504a7eeb1bc90819e7239e268b7f5907f97dda10,"バインデ�
 非存在する属性へのバインディングは可能ですが、通常は意図的に行われません。
 例えば、リファクタリング中にオブジェクト属性を名前変更する場合、バインディング定義内の属性名が簡単に見落とされることがあります。
 
-この動作は `strict` パラメータでカスタマイズできます。
+この動作は `strict` パラメーターでカスタマイズできます。
 デフォルトでは、オブジェクト属性の存在が確認されますが、辞書のキーは確認されません。
 属性が見つからない場合、警告が記録されますが、バインディングは作成されます。
 
@@ -1447,7 +1447,7 @@ c6ccf854fcd618099a0c252f6b9bfee62a28b839250fd89ed05923557816ab75,AI とインタ
 c0ff5a3f65f14431374d18e96c16938f45ba8ca4b387c3cfaef19b2b55f200b0,チェックボックスとテキスト入力を含むシンプルなタスクリストの作成
 acc627cc2e3ef887ddbfc64da248ae3ceea86935e89f405a249648b363fe0d4a,シンプルな ZeroMQ PUSH/PULL サーバーとクライアントの作成
 8d69bed473145c9da8df8155e2c50551f9bce6d5fd6d084dcafa8867764a2119,シンプルな SimPy 信号機デモの作成
-44b89687a3bf0e3206b1c8608fd71e1e06836de036fd768523a745e44e9da1db,縮小版ギャラリーを作成し、各画像をクリックすると拡大表示されるようにする。
+44b89687a3bf0e3206b1c8608fd71e1e06836de036fd768523a745e44e9da1db,サムネイルギャラリーを作成し、各画像をクリックすると拡大表示されるようにする。
 27678cdd592159a48b745b0237e52e4bb24e3848f2fdf9f8b0276288f59a574b,AG Grid を編集可能に構築し、行の追加、編集、削除を許可します。
 85b41dac7d4af1ff03ecc9d6d676a7005362119ad44f988029dabeec86c911b8,行を追加、編集、削除できる編集可能なテーブルを作成する。
 50e3db12bb97cbd0459827e0c2c6359ccfd3a8d39142d1ab005a089a68f5e3cf,"ルートビルダー関数用のキーワード引数を構築する。
@@ -1483,7 +1483,7 @@ badd5c745523b3a6fc47f98604ea5282720993f1f51c3c03c93347db47786a4e,"By default, Ni
 
 *バージョン2.10.0で追加*"
 f4249da05642ff3c7aaaeaca5034a5ec1e2fdfead0c433ffb683da8565620ec1,"デフォルトでは、タイマーはすぐに開始されます。
-この動作を変更するには、`immediate`パラメータを `False`に設定します。
+この動作を変更するには、`immediate`パラメーターを `False`に設定します。
 これにより、コールバックの最初の実行が指定された間隔で遅延されます。
 
 *バージョン2.9.0で追加*"
@@ -1493,7 +1493,7 @@ f4249da05642ff3c7aaaeaca5034a5ec1e2fdfead0c433ffb683da8565620ec1,"デフォル�
 SVGを重ねるには、`viewBox` のサイズを画像と同じにし、実際のレンダリングサイズに合わせた幅/高さ `100%` を提供します。"
 aa458113e6dffec75523eac881106b691f172aae95a1c40303497c1b13a2a48d,"リンクの中に要素をネストすることで、その要素全体をクリック可能にできます。
 これはすべての要素で機能しますが、特に非インタラクティブな要素（例えば、[ui.image](/documentation/image)、[ui.avatar](/documentation/image) など）で最も役立ちます。"
-3ee2a00e380489a3dabfc75f24fa09d4add5c45502fd415fa4b5b183acaa9e10,パラメータを `PageArguments` として型ヒントすることで、サブページビルダー関数はクエリパラメータ、パスパラメータなどを一元的にアクセスできるようになります。
+3ee2a00e380489a3dabfc75f24fa09d4add5c45502fd415fa4b5b183acaa9e10,パラメーターを `PageArguments` として型ヒントすることで、サブページビルダー関数はクエリパラメーター、パスパラメーターなどを一元的にアクセスできるようになります。
 d5bf5008343a31d5ed9b3ced6cb9899f3bea9e8786bb41a0972a0b87bcd8fe59,"キャッシュ制御ディレクティブは、内部の静的ファイル向け (デフォルト: `'public, max-age=31536000, immutable, stale-while-revalidate=31536000'`)"
 6c9248ed7a48dc89175a64618e82804e92b9dc4c77e7ce79885ae4a4d81adcb7,関数を遅延後に呼び出す
 53ad1312c1b62515086771edd04e250745097be0b32f1b524fc0ab7f44b7b009,鼠标イベントのコールバック (ピクセル座標 `image_x` と `image_y` を含む)
@@ -1556,15 +1556,15 @@ ff0016b2251050dbd7e9ca90c1cdc52a7deafd22257d1336754deb183bb21108,ユーザーが
 d6f4cc9ebe3741ce929907b6c506693556ae6e7a1745d967362c4932b8952145,カメラ 視点 x 座標
 be1dcd3224b74190627fe1186ac8667c490edd22f1a2d50591f0b64ab1d32b7f,カメラの視点 y 座標
 f7ef73f1fdaf7431c67e81ea6b0eb47ac28fc711bc29ef2edaa49d9bf1a870f0,カメラ 視点 Z 座標
-3a2f5700e6a25b959aa3c17c24d1ea90a1031a7fed0e72402df348eab13e8cd1,カメラパラメータ
+3a2f5700e6a25b959aa3c17c24d1ea90a1031a7fed0e72402df348eab13e8cd1,カメラパラメーター
 0a34e0700538b5dff9f694dafc42f20b4587511a505d34d6eeb255df48af3e42,カメラ x 座標
 9d9994fbae6e2673a1db7052040146817ea7926505e9914e327b42144fbdde0b,カメラ y 位置
 4d3b1c29ef4ff8c21ad4efa6426773f08addca15c25b355bdec009bc0885ed74,カメラのZ座標
 d54e8b4337998008f223ece6451b46d361b083063b2682b1141a49dd4f2af674,"別のページやURLをプログラム的に開くために使用できます。
 
-`new_tab`パラメータを使用する場合、ブラウザが新しいタブをブロックする可能性があります。
-これはブラウザの設定であり、アプリケーションでは変更できません。
-代わりに `ui.link`と `new_tab`パラメータを使用することを検討してください。"
+`new_tab`パラメーターを使用する場合、ブラウザーが新しいタブをブロックする可能性があります。
+これはブラウザーの設定であり、アプリケーションでは変更できません。
+代わりに `ui.link`と `new_tab`パラメーターを使用することを検討してください。"
 d99282ee46aafe09e2b25b851e61c489a4ad0a52b63019d98a213750c15e3f6c,現在の呼び出しをキャンセルする
 9ff139cb325c7dcb603fcdec9ca00da1c9ec6a32adf10552f78c239d16486aa4,タイマーをキャンセルする。
 afba82e61545eba7c14e21866e224a61e95a462058e9b26ac371b3127343bb07,キャプションとオーバーレイ
@@ -1587,7 +1587,7 @@ e2bfb87c5bb82d5ab1bb60a5a9aedab411e21a3959d9a176303609ec5b59b5fc,聊天消息
 fecc5201c9105ed7b58bcf85baa2084aaa99b9782ce5cc983e5cee03a17ea375,Chat メッセージと子要素
 641a840416ca6c2803ed6fec7f6c47500ead985d17c0edd94ed80de5500dd40e,AI とチャット
 c33a7f0370939fc618571024cb05785b0c4a706472500e984efc11325eadafa2,存在しないバインド属性のチェック
-17cc982a87009601d9e515d97f9b21e9055da3c52c14429823399eefe0cf6fcd,ブラウザが開いているかどうかを確認する。
+17cc982a87009601d9e515d97f9b21e9055da3c52c14429823399eefe0cf6fcd,ブラウザーが開いているかどうかを確認する。
 d103a1380b8c77c3335f5b246ef1716cfb0f303006739296030aeea7a9f88279,チェックボックス
 722389087c7a74410fcdbf8ada0ef1cd0011bd8d401d150f34c7fc22e956f37a,芯片
 5682c096b97c72338f18e368684c75192bf737caebab791b7f06e517383d2119,"適切なコンポーネントを選択することで、手動での検証の必要性を減らすことができます。
@@ -1614,7 +1614,7 @@ d103a1380b8c77c3335f5b246ef1716cfb0f303006739296030aeea7a9f88279,チェックボ
 - `ui.run_javascript()`"
 a0eb768a6bed90e9093a44edde079121c5795775b9d054391883df9dcc5e2ea2,环形进度条
 071ae9c6b79df708232cd4eb6d1076243f619a35da7fb4c67c3771bc3228aa16,適用する線のクラス（2.18.0バージョンで追加）
-9979d08afc93d3a7e575b2693ca2db9eb5f33ade88710aee640e843ee4e4a092,コンテナをクリアする
+9979d08afc93d3a7e575b2693ca2db9eb5f33ade88710aee640e843ee4e4a092,コンテナーをクリアする
 7aebb629ecd0326601664beee8a42b3f99bc513c62473d2c4c9aec486e716eeb,線のグラフをクリアする。
 722ce9f09eed959b09bd57c558f8da0a4046df5a42c58af1692b54fef87cf637,"選択した要素をクリアする。
 
@@ -1628,7 +1628,7 @@ f7d9fe6638e81bb8a6a8ef2e5eadcbf3ac89ce05458070b5a7ed6a53a1f6b38e,クライアン
 584d2f8256249086efb55dd9decd006733c7e660d9b93545941adb44bc4a97cc,クライアントサイド自動閉じる
 3a0102a8eb44413855e4ba4aae0a1ce70a2c67b7b11e17dff45e85c20eca4061,クライアントサイドクリップボード
 cbd582b5e9a38e2429373b618c874ab78daf51ffdd6fce7713128b09d32e78a2,クライアントサイド検証
-cb37b80ba56fe0b875dd04a53a7c0fe67f4f9f4e2c474a23c2fa434a59dc32b6,"ブラウザのタブを閉じてください。
+cb37b80ba56fe0b875dd04a53a7c0fe67f4f9f4e2c474a23c2fa434a59dc32b6,"ブラウザーのタブを閉じてください。
 
 ドライバーがセッションスコープの場合、最後のウィンドウを閉じることはセッションの無効化を引き起こします。
 代わりに、about:blankに移動して切断をトリガーします。"
@@ -1661,7 +1661,7 @@ d107373ff6cdbb485a7375f78b972d3adee28bb2e0794e36a058486e3178ad15,"各行の先�
 したがって、Markdown要素をインデントしても、正しくレンダリングされます。"
 5d142c8c0f233da10c0fc501f5127c1facd54b6c69c9fd3d897236a6387b5cae,シリアルデバイスとの通信
 6b39de5d4a833846fe4e0f80b48adaaeee816d1f9e9a1ed695ae9cb06b5e7a1c,WebSerial APIを使用してシリアルデバイスとの通信
-56bb529fc77a116f29edb40d9d779cc72fdcc1c6d72ced75cd5d200e00636283,画面フィクサーとの比較
+56bb529fc77a116f29edb40d9d779cc72fdcc1c6d72ced75cd5d200e00636283,画面フィクスチャとの比較
 7807740bd53795808a4944af1bda5ada33ddb4a1e1f745c3e355d02264888c86,複雑な要素
 e1c0721ede719208c4868d0d5976dd1dab6c8cfed14f73c7105bc98f5ae243d8,コンポーネント選択
 084562ebc7b30e09cede76fec57bf312405575b23529c1c83667be651d22ca71,計算フィールド
@@ -1671,7 +1671,7 @@ b332c3492d5eb10a118eb6d8b0dcd689bc2477ce2ae16b303753b942b54377bc,設定
 bd5b48996a445ad1fdd450e08e6f7e792ca370d8b5eedf0fb900f667cae22647,設定とデプロイメント
 00f19039da040b18319771d5017526c9b817449237593f145082deac3a4c0006,configuration dictionary を ``mermaid.initialize()`` に渡す。
 e90c3013dffd5f13cfa1fb21369081c967619b63c72d5c1df4b6a7f7ae0d8bce,ターミナルエミュレータ [xterm.js](https://github.com/xtermjs/xterm.js) を Bash プロセスに接続
-c245eece738bf16505323958b212152e13ea938f588472943a9e6fc658c3e95e,コンテナを要素を移動させるために（デフォルト：親コンテナ）
+c245eece738bf16505323958b212152e13ea938f588472943a9e6fc658c3e95e,コンテナーを要素を移動させるために（デフォルト：親コンテナー）
 14b547c361ec5235aa6328e60d12d8ab0605fc75fda0a921d5b0aa6bfbfe31fa,コンテンツは[FastAPI](https://fastapi.tiangolo.com/)で提供されます。
 aeeb3cbe07a8684b6b20fc114f52f91fd2d1f73c8fdcbbf92888456215f5d91b,通知の内容
 36d75142800aa6db3a46c0e98521e7758e719ee82190840b6208e2a6a3f3df08,コンテキストメニュー
@@ -1740,11 +1740,11 @@ c9a766d59f14471fc8a3c55f0a2dff6cfc38301417c5c848bd823565be5dd6b7,"pyecharts オ�
 :return: echart 要素"
 08efcddf0621ffce2265195ef012a310a82edcb64f510dc9b837e26f7237e07c,"SVG オーバーレイを持つ画像を作成し、マウスイベントを処理して画像座標を出力します。
 非ちらつきの画像更新には最適です。
-ソースURLがブラウザで画像を読み込むよりも速く変化する場合、一部の画像はスキップされます。
+ソースURLがブラウザーで画像を読み込むよりも速く変化する場合、一部の画像はスキップされます。
 画像ソースを繰り返し更新することで、利用可能な帯域幅に合わせて自動的に適応します。
 `OpenCV Webcam <https://github.com/zauberzeug/nicegui/tree/main/examples/opencv_webcam/main.py>`_ の例を参照してください。
 
-マウスイベントハンドラは、以下のパラメータを含むマウスイベント引数で呼び出されます。
+マウスイベントハンドラーは、以下のパラメーターを含むマウスイベント引数で呼び出されます。
 
 - `type` (JavaScript イベントの名前),
 - `image_x` と `image_y` (ピクセル単位の画像座標),
@@ -1763,7 +1763,7 @@ c3ec346f731eebc341b32f553ad7a1bb933048d72ea9c1ae7c32732b003df668,入力フォー
 adb1d7ca755d1307d3755296a7d4b430b8e3f4dd6c26120509c09c54076b1e78,"Quasarの
 `QItem <https://quasar.dev/vue-components/list-and-list-items#qitem-api>`_ コンポーネントに基づいて、クリック可能なリスト項目を作成します。
 アイテムは ``ui.list`` または ``ui.menu`` 要素の中に配置する必要があります。
-テキストパラメータが提供された場合、指定されたテキストでアイテムセクションが作成されます。
+テキストパラメーターが提供された場合、指定されたテキストでアイテムセクションが作成されます。
 テキストの表示方法をカスタマイズしたい場合は、独自のアイテムセクションとラベル要素を作成する必要があります。"
 6741a81c7d5a85d658923f0256f256808c982d8de6a5432b6576b838d9f34c43,"Quasar の `<QMenu <https://quasar.dev/vue-components/menu>`_ コンポーネントに基づいてコンテキストメニューを作成します。
 コンテキストメニューは、表示されるべき要素の内部に配置する必要があります。
@@ -1825,7 +1825,7 @@ b5757e31ad72fb3292a7b5203b7713a3fda665c9f3fd4cec1ce528ec3a9995ae,デート範囲
 ddd459178b2ce09cab6f940063bd75c48591a02fa8fcad35b49e3f7f19de1caa,デート範囲入力
 6f7f33838bc4146be95af786ed06f070ca8d2e8925a9c82a20a8cb7b7617b304,タイマーを停止する。
 54c3990ae723e9189671383f7a3a84ea78a699bd5d228250296718903283b4a9,デフォルトクラス
-2e91e4c6720f59c20a0e4d70c8218859c7f2f03b74cbb6d62c8b08dbbe7c65a8,デフォルトの列パラメータ
+2e91e4c6720f59c20a0e4d70c8218859c7f2f03b74cbb6d62c8b08dbbe7c65a8,デフォルトの列パラメーター
 8be4cd51a980bb0bab37bcb6a1c89326a08197883398d702828e54cf74831fc8,デフォルトの列プロパティ。
 b909cdd4ffad515fe079fa7c20d30835be13d478c0535baaf243e044f9626e55,デフォルトプロパティ
 a0740c959cfee960bd5d7b00e02f30b227dc019e9363cb902ea115af95e36479,デフォルトスタイル
@@ -1877,7 +1877,7 @@ ba5bb01b8a6dea386174b3c294d9f3a8468e7cef34daee084c26df8b3903a04a,"Quasar の `QT
 
 IDを使用する場合は、ツリー全体で一意であること確認してください。
 
-チェックボックスと ``on_tick`` を使用する場合は、``tick_strategy`` パラメータを ""leaf""、""leaf-filtered""、または ""strict"" に設定してください。"
+チェックボックスと ``on_tick`` を使用する場合は、``tick_strategy`` パラメーターを ""leaf""、""leaf-filtered""、または ""strict"" に設定してください。"
 4578c5fcccb9baa291e38bd407e49eeb29eab912eded5af8146d458b23502d21,テキストを表示します。
 46be0082ba77f6e1bf865438f78de688bedf0fe250e243928299b9cb9190b0a7,色入力の表示ラベル
 c96114b4416c0c08ae348bf029897e88c70adf23a40c03ef29d9af7511cb2003,日付入力の表示ラベル
@@ -1979,7 +1979,7 @@ ba315f57f65071b4712474115906fa13be8b0603048328a6e32ecffcd4202df2,far clipping pl
 b1f0d782a734527daee167a1221ec0628caa40126f9d7957ecb1d32c8e5595bc,[Zen Quotes API](https://zenquotes.io/) からランダムな名言を取得して表示します。
 9219aa7f770bc2f9bdbc470b541d059073ae1e75a841394d64ee72dce2cdfbde,FFmpeg 画像抽出
 2f97c64ecffa47591e30ac2fd5c3c1adbbb6f7e2a624023fb1342422921382e1,ファイルアップロード
-99059cf419836658e16a0c4c2c6053f84eb1ebf56adc904afed9ef01b3ad6156,元素マーカーによるフィルタリング; 文字列のリストまたは空白で区切られた単一文字列で構成できます。
+99059cf419836658e16a0c4c2c6053f84eb1ebf56adc904afed9ef01b3ad6156,要素マーカーによるフィルタリング; 文字列のリストまたは空白で区切られた単一文字列で構成できます。
 c8e087c1935651a5b5d0c811ba8363da732d47915211fc0898347d6d7edbd848,filter by element type; The iterator will be of type ``kind``
 5cf898a4482d1d88124241dffa103f0933babbe4d1e90278ac487d45ac85f3ec,要素を、親階層内の特定のマッチを持つ要素にフィルタリングします。
 42947a084a8344958987f66e3df51e04acba9ca67f9acefba5c2e0812d79218b,"``content`` を含む要素を、属性（例：``.text``, ``.value``, ``.source``）に存在するものに対してフィルタリングします。単一の文字列またはすべての内容が一致する文字列のリストで構成できます"
@@ -1998,7 +1998,7 @@ d08e5b0823accaee2d37b9531b4864f3816b920fc19271f678c5613ed12ac56f,要素を、指
 c07f7bd43894874e4ba293ffd61b60ff0398da31686c562ba075e16d76998e27,GivenのNiceGUI要素を見つけてください。
 cbfe5d14e055d84fb62b8aa6265e851e45ad7d47f1f0019493daeab0b7f40f47,イベントを発火し、購読されたすべてのコールバックが完了するまで非同期で待機します。
 3c7d29dc85e3a46214d9d11fd6f313db5f3701d9e1fe59b21d983b0492be6f52,イベントを購読されたコールバックが完了するのを待たずに発火させる。
-120cd1c198e4f6c0d726d81a374a30ad321b1917f2bb03be8a122786c548c42d,"ターミナルをコンテナに合わせます。
+120cd1c198e4f6c0d726d81a374a30ad321b1917f2bb03be8a122786c548c42d,"ターミナルをコンテナーに合わせます。
 このメソッドは、行数と列数をコンテナーのサイズに合わせて調整するだけでターミナルのサイズを変更します。
 ターミナルの新しいサイズに一致するようにバックエンドの pty を調整する必要がある場合もあります。
 
@@ -2006,9 +2006,9 @@ cbfe5d14e055d84fb62b8aa6265e851e45ad7d47f1f0019493daeab0b7f40f47,イベントを
 2cb195e478354f8f1559bfcfe0c720afb77cb70b7105423cacab6b84e6846ed7,デフォルトではフレキシブルレイアウト。
 c48c5cb45983ae2d3ac3b41c60cb0afbb86f5029670ad6bbf6a9cb63003c233f,フローティングアクションボタン
 0e73ff21f31b577fdd6b20d03aa4d2c62049c74005ab7d7d751b94ffd3045d07,フローティングアクションボタン (FAB)
-0df46509c6b0ed5a0432c290ac3e0337a9e6f03e652818b5890ab0bc90c982dd,"ワイルドカードルーティングでは、単一のハンドラが複数のパスに一致させる必要がある場合、
+0df46509c6b0ed5a0432c290ac3e0337a9e6f03e652818b5890ab0bc90c982dd,"ワイルドカードルーティングでは、単一のハンドラーが複数のパスに一致させる必要がある場合、
 `show_404=False` と `PageArguments.remaining_path` にアクセスします。
-これは、""/item/*"" のようなルーティングパターンに役立ちます。ここで、""/item/"" の下のすべてのものが 1 つのハンドラに渡されます。"
+これは、""/item/*"" のようなルーティングパターンに役立ちます。ここで、""/item/"" の下のすべてのものが 1 つのハンドラーに渡されます。"
 cb278fd684e4152de4b7f846b0a63432e58d1418006257daaa8c42557a5da6df,強制リロード
 436ea2dbbeb1182d209e9734758d1c9a01515622a8350d133624bff03f6b6120,ソースから画像を強制的に再読み込みする。
 df42a4d5d3537666f9ed0012c3a44999878842f8d92f2ac056e6df0ca4ac44d1,Foundation
@@ -2024,9 +2024,9 @@ bffad286700dd8592c7ca23f50ef703b6b83223d8bc3b9da9f73528e13f1f4b3,スクロール
 
 注記：
 この機能は、相対 URL のみで使用することを意図しています。
-絶対 URL の場合、ブラウザはダウンロード指示を無視し、画像や PDF などのファイルを表示しようとします。
+絶対 URL の場合、ブラウザーはダウンロード指示を無視し、画像や PDF などのファイルを表示しようとします。
 したがって、.zip、.db などの一部のファイルタイプでのみダウンロードが機能する場合があります。
-さらに、ブラウザは filename と media_type パラメータを無視し、代わりにオリジンサーバーのヘッダーに準拠します。
+さらに、ブラウザーは filename と media_type パラメーターを無視し、代わりにオリジンサーバーのヘッダーに準拠します。
 絶対 URL を相対 URL に置き換え、または ``ui.navigate.to(url, new_tab=True)`` を使用して代替してください。
 
 *バージョン 2.14.0 で追加*
@@ -2045,10 +2045,10 @@ f4f634fb0f85de6dfc994dd33670764fb3ce1f7fcda1bae160717441bcdf8552,PDFを生成す
 5cadb4e7ab3cedbac8950675e52f66a2fb9f90c2308fc5ebf841fd73f069da10,汎用イベント
 4d3470c58c02bfa1a7613e6dc8f7d509b418595bda26c147ff7e4bf6e59bd6bf,Get *started*
 9dda7a275a73218d4307f7cd058bd60633c43a1c0f8aebd9d0ed399861b05f17,現在のカメラ姿勢を取得
-2c2156544867acc9a6d89acaa15234c8d609f6fee3597f3aa713570641a02497,"現在のカメラパラメータを取得。
+2c2156544867acc9a6d89acaa15234c8d609f6fee3597f3aa713570641a02497,"現在のカメラパラメーターを取得。
 
 `camera` プロパティとは異なり、
-このメソッドの結果には、ブラウザでシーンを移動した際の現在のカメラ姿勢が含まれます。"
+このメソッドの結果には、ブラウザーでシーンを移動した際の現在のカメラ姿勢が含まれます。"
 8f627d1dfdde4ff39ed6f734a8672875623425978cbf6c37f79442091da48705,"Get the currently selected rows.
 
 このメソッドは、グリッドが ``rowSelection: 'multiple'`` と設定されている場合に特に便利です。
@@ -2103,8 +2103,8 @@ a2641b220b09b988e8f79fa0425cf5ad2595a7ecb82162e420b0e92e0e7a6e26,キャンバス
 *バージョン 3.5.0 以降：*
 スコープされたスロット内の UI 要素は、現在のセルの値を取得するために `props` オブジェクトにアクセスできます。
 以前は、`props` オブジェクトは Vue テンプレートでのみ利用可能でした。"
-a1cc22fb9d22ccbca611a2f6de089c28ff2adda951f2c0e2c1d28aa8ebdf3aa9,異なるパラメータでリフレッシュできる UI を作成するために、リフレッシュ可能なデコレーターを使用する方法を示すデモです。
-d68ecbd4ed7beec64122bf59c57b8f27714c05037220303cc85f8d21f35dbf4d,ユーザー入力の有効性に関するフィードバックを提供するリフレッシュ可能なデコレーターの使用方法を示すデモです。
+a1cc22fb9d22ccbca611a2f6de089c28ff2adda951f2c0e2c1d28aa8ebdf3aa9,異なるパラメーターでリフレッシュできる UI を作成するために、リフレッシュ可能なデコレータを使用する方法を示すデモです。
+d68ecbd4ed7beec64122bf59c57b8f27714c05037220303cc85f8d21f35dbf4d,ユーザー入力の有効性に関するフィードバックを提供するリフレッシュ可能なデコレータの使用方法を示すデモです。
 7411bcac116fd12e66917b97ac566e91825bb4622d3d860ca4fcf358d63478bf,テーブル内の列の表示と非表示の方法を示す例です。
 0bd93d67a0cf0703a145c1d8bea52300ad7abb63b495b60c5eaf2afbf6d71e7e,"テーブルでのドロップダウン選択の使用方法の例です。
 `ui.select` 要素から ""update:model-value"" イベントを送信した後、`rename` 関数はテーブル行を更新します。
@@ -2117,7 +2117,7 @@ d68ecbd4ed7beec64122bf59c57b8f27714c05037220303cc85f8d21f35dbf4d,ユーザー入
 417d2bbb51fee0686b3dd4fe8caf972e92aa151ad49b8101fbdabf227524357b,"ここでは、日付ピッカーの値を変数にバインドしています。
 そのため、グローバル変数をすべて含む辞書 `globals()` を使用します。
 このデモは、[公式の日付ピッカーの例](/documentation/date#input_element_with_date_picker) に基づいています。"
-86dda41e660061ade1af4ec0a47d08f715e684f1ca6fc19382f7b7e388d09155,ここでは、ブラウザに保存されたセッション ID を使用して、ユニークなページ訪問数をカウントしています。
+86dda41e660061ade1af4ec0a47d08f715e684f1ca6fc19382f7b7e388d09155,ここでは、ブラウザーに保存されたセッション ID を使用して、ユニークなページ訪問数をカウントしています。
 2ce6f4b89d9f4b8476de7ff0aa7cd6626eb06fb04d8d9e1a39df0d319d3b8332,ドロワーを非表示にする
 c6e77a7d3c360268bdea0c14800dc4f0aa1d09d44eb40012ad189a575bb2ff86,フッターを非表示にする
 3da0a46ca0b6c655fae19227c075ab973b7ad62a8add26f41ddf5b923a6a29dd,ページヘッダーを非表示にする
@@ -2145,7 +2145,7 @@ d7b10abd3c8d4bb710d82d349dae3ae55bc054b6414334725239e045a316a870,指定された
 d3ff237b1a78607f176f8cc702894dea9281dfd007db6d2b8de069770055adb9,ドロップダウンが開いているかどうか（デフォルト：`False`）
 b25149dffaf35dbde5a9776c1b63b35517c0a7dd83f1d37e768159fa24ccf37a,"`True` の場合、日付範囲を選択できます（値は ""from"" および ""to"" キーを含む辞書になります）。"
 5e8c82bfd2eef91d9e352938105537187bdc6165233c0df603d22fb216f12485,"if True, the scroller will work in reverse, showing when at the top of the page and scrolling to bottom when triggered (default: ``False``)"
-612b1442bca4746be165c4bdaaa5fe7cdaad0b4c0b2b01ccb9207a79d95f7e7b,"もし、コールバックの現在実行中のタスクをキャンセルしたい場合も、`cancel` メソッドに `with_current_invocation` パラメータを `True` に設定して呼び出すだけです。
+612b1442bca4746be165c4bdaaa5fe7cdaad0b4c0b2b01ccb9207a79d95f7e7b,"もし、コールバックの現在実行中のタスクをキャンセルしたい場合も、`cancel` メソッドに `with_current_invocation` パラメーターを `True` に設定して呼び出すだけです。
 
 次のデモでは、2.5秒ごとに実行されるタイマーと、2秒かけて埋まっていくプログレスバーが表示されます。
 「キャンセル」ボタンをクリックしてタイマーをキャンセルした場合、現在のサイクルは完了するまで継続されます。
@@ -2153,10 +2153,10 @@ b25149dffaf35dbde5a9776c1b63b35517c0a7dd83f1d37e768159fa24ccf37a,"`True` の場�
 
 *バージョン2.23.0で追加*"
 3a9399de3f51fb378450ca5fe1c91ff8adc5cc1392b662cd3eb7c3daa58abbfb,もしあなたが NiceGUI を気に入っているのであれば、なりてみてください。
-c8aa91774d3358c4b5c90a507b2b1f11bddfa993b567f4e76d7f1940bd514dbf,"`columns` パラメータを省略すると、テーブルは最初の行から自動的に列を作成します。
+c8aa91774d3358c4b5c90a507b2b1f11bddfa993b567f4e76d7f1940bd514dbf,"`columns` パラメーターを省略すると、テーブルは最初の行から自動的に列を作成します。
 ラベルは大文字に変換され、ソートが有効になります。
 
-* バージョン 2.0.0 で更新: `columns` パラメータがオプションになりました。"
+* バージョン 2.0.0 で更新: `columns` パラメーターがオプションになりました。"
 368f0463bb333c6f84dfc3bda6c8a1ade4de68b5703cd4f3e1023134b040332d,"これらの要素タイプのうちいずれかにフォーカスされた場合にキーを無視 (デフォルト: ``['input', 'select', 'button', 'textarea']``)"
 8dbead10064e4ec8836ade98977bd7bbc16700e84ac8cbc2b9e1a2eb530d927a,NiceGUI と既存の FastAPI アプリケーションの統合を説明してください。
 1aa4cb0bcca76e92e30677e809bb3d4b5c066715ef4d558184e319496bcc5125,画像
@@ -2170,20 +2170,20 @@ c8aa91774d3358c4b5c90a507b2b1f11bddfa993b567f4e76d7f1940bd514dbf,"`columns` パ�
 d198ed30d09ba8c6b43f736a65dd4e3b7649cd120e0fe1d83f52c60ea6d02ad5,判子
 48a7ed218321c662882221b93b92e53c8b35f001387472e27c3b308e1cdce359,判子とプライバシー
 85c5f22e8bebc4b18bad05b8ca264f4c260b4e9c2a538e256161f20e164d4db7,"直感的な UI 説明を書くことを可能にするため、NiceGUI は要素が作成されたコンテキストを自動的に追跡します。
-つまり、明示的な `parent` パラメータは必要ありません。
+つまり、明示的な `parent` パラメーターは必要ありません。
 代わりに、`with` ステートメントを使用して親コンテキストを定義します。
-イベントハンドラやタイマーにも渡されます。
+イベントハンドラーやタイマーにも渡されます。
 
 デモでは、カードにラベル「Card content」が追加されます。
 `ui.button` もカードに追加されるため、「Click!」というラベルもこのコンテキストで作成されます。
 1 秒後に追加されたラベル「Tick!」もカードに追加されます。
 
 この設計の目的は、UI 内でコンポーネントを移動しても動作し続けるように、簡単にモジュール化されたコンポーネントを作成できるようにすることです。
-例えば、ラベルやボタンを別の場所に移動したり、別のコンテナにラップしたりしてもコードは動作し続けます。"
+例えば、ラベルやボタンを別の場所に移動したり、別のコンテナーにラップしたりしてもコードは動作し続けます。"
 13006b3e8e16d41f8acd3a3502f5ccf6a425d405cb0b6ffca5c8bd3ca2de4b49,"サーバーへのラウンドトリップを避けるために、クライアントサイドのクリップボードAPIを直接利用することもできます。
-これは、ユーザー操作によってクリップボードへのアクセスが直接トリガーされるため、より多くのブラウザでサポートされている可能性があります。"
+これは、ユーザー操作によってクリップボードへのアクセスが直接トリガーされるため、より多くのブラウザーでサポートされている可能性があります。"
 e0f6c27c06785155ce632a8cfc1cb456cd12b6d2b1b4e977615c3f4f7c588617,"ページ関数外でリフレッシュ可能なUIを定義するために、例えば、リフレッシュメソッドを持つクラスを定義できます。
-この方法で、独立した状態を持つ複数のクラスインスタンスを作成できます。なぜなら、`ui.refreshable` デコレーターはクラス自体ではなく、クラスインスタンスに作用するからです。"
+この方法で、独立した状態を持つ複数のクラスインスタンスを作成できます。なぜなら、`ui.refreshable` デコレータはクラス自体ではなく、クラスインスタンスに作用するからです。"
 994f5790982127bc521cd64355840328eb745554b2f09bc22c8361abdf4fc972,"いくつかのケースでは、画像に異なるグループのSVG要素を追加したい場合があります。
 例えば、ある要素は頻繁に更新される必要がある一方、他の要素はほとんど変更されません。
 すべての要素を同じSVGにまとめることはパフォーマンスの問題を引き起こす可能性があります。
@@ -2227,7 +2227,7 @@ a3e40cb8df0d6cce907274117fb0257d4d7cb134bffa6c2f1d3539321cc9de4c,テーブルセ
 ターミナルへデータを書き込むには（例えば pty からのデータ）、``write`` メソッドを使用する。
 
                        これによって、フォーカスや選択がクリアされるなど、追加の動作がトリガーされる。
-                       送信されたデータがユーザー入力として扱われるべきでない場合、例えばアプリケーションへのエスケープシーケンスを渡す場合は、このパラメータを ``False`` に設定する。
+                       送信されたデータがユーザー入力として扱われるべきでない場合、例えばアプリケーションへのエスケープシーケンスを渡す場合は、このパラメーターを ``False`` に設定する。
 
 :return: メソッド呼び出しの完了を待つことができる AwaitableResponse"
 448efa20355ee95edc15bbf1f28ca091b8f308a0940eca152ecaf655bb28e2cd,日付ピッカー付き入力要素
@@ -2252,7 +2252,7 @@ ac40e37190322484383845155b5f7d83345cf1a7b188b804401eb4589d9fd459,交互式画像
 7a6010096a477cf45c778acc268fe5889947e0fc673ed56bedd1a9cfc3a87488,アクティブリンクの更新間隔（デフォルト：0.1秒、大きいほどCPU負荷が軽減されます。*バージョン3.4.0以降*: ``None`` を設定することで更新ループを無効化できます）
 cd8366c17110823e837e6549bb65a8e253b9d84ec2da485bdb44efc7dd9a2331,"JavaScript でカスタムイベントを `emitEvent(...)` を使って発行することは比較的簡単です。これは、`ui.on(...)` でリスンできます。
 JavaScript の何かが起こったときに Python コードを呼び出す必要がある場合に役立ちます。
-この例では、ブラウザタブの `visibilitychange` イベントをリスンしています。"
+この例では、ブラウザータブの `visibilitychange` イベントをリスンしています。"
 88fb6c4198354183fe6743122c9aca3b3bc4f12cd4246432767e839cf33bd475,"背景グラデーション、画像などを設定するのは簡単です。
 [w3schools.com](https://www.w3schools.com/cssref/pr_background-image.php) で CSS を使用して背景を設定する方法について、さらに詳しい情報を確認できます。"
 2a055e46ef918e066e10591f51b91c6a2669fce2ace367f9ee30bc4810292a22,"`options` プロパティを更新することで、新しい行を追加するのは簡単です。
@@ -2278,8 +2278,8 @@ c8ad7e9308d4aedf5f7a475dc95d1cbeeb64f9e647ffe5eca5e1b81ec7cee2eb,メニュー項
 5a8c9fdcfaf28e205a17526631e98c481e57bb191c97b9fd89d624fadf44af33,Quasar要素の言語（デフォルト：`'en-US'`）
 d7f6a5fe2aea31c3aab9df7a8b28a1c9f6c188a8233ba7baf90631a2fe6ee331,language of the code (default: “python”)
 6e789b957c758fcaa9b8835a7b874f0c66b27698db0667340f52531be90bcf31,言語はページ（`run`コマンドの引数でデフォルト設定される `language`）です。
-e27ab2193715db485dcbd97f5121e901ce8bc26bc57840a4eb8bed6e6dec13f1,"大量のファイルアップロードは、Starletteライブラリに設定されたデフォルトのファイルサイズパラメータにより問題が発生する可能性があります。
-よりスムーズな大きなファイルのアップロードを確実にするには、Starletteの`MultiPartParser`クラス内の`spool_max_size`パラメータをデフォルトの `1024 * 1024` から、想定されるファイルサイズに一致するより高い制限値に増やすことを推奨します。
+e27ab2193715db485dcbd97f5121e901ce8bc26bc57840a4eb8bed6e6dec13f1,"大量のファイルアップロードは、Starletteライブラリに設定されたデフォルトのファイルサイズパラメーターにより問題が発生する可能性があります。
+よりスムーズな大きなファイルのアップロードを確実にするには、Starletteの`MultiPartParser`クラス内の`spool_max_size`パラメーターをデフォルトの `1024 * 1024` から、想定されるファイルサイズに一致するより高い制限値に増やすことを推奨します。
 
 このデモでは、Starlette Multiparserの`max_file_size`をRAMに保持するように5MBに設定しています。
 これにより、システムは大きなファイルをRAMに保持することで、ディスクへのデータ書き込みや一時ファイルの作成を避け、アップロードの「カクカク」を防ぎながら、より効率的に大きなファイルを処理できるようになります。
@@ -2340,8 +2340,8 @@ ac68a495bbbf19258c51ffb53954925aea9be60418a19a67a002528f9a3afa5f,x の値のリ�
 6e5752c7c5b4baa136321188ab7aebab24f072dcd720583fc188b964031b7ab8,ロードイベント
 d8f057d865a47684f6158687040bec37386b92d36ab829b0096616e78e876ceb,ローカルファイルピッカー
 3eb956288f334f0c5c46f2bfbc3ccf258ca78a2b315a55292b9a5f9a25f72d7b,ローカルファイル
-7122d58d1ff0ba85ec142588d7b593a5abf9ede966ebf533470f6cf42fea3e20,ローカルフォルダに、メディアコンテンツとして提供するファイルがある。
-babbe4395eccabf4f16dbee693a0af3145f203fa816f49e35fa9ff5241ac9eca,静的コンテンツとして提供されるファイルのローカルフォルダ
+7122d58d1ff0ba85ec142588d7b593a5abf9ede966ebf533470f6cf42fea3e20,ローカルフォルダーに、メディアコンテンツとして提供するファイルがある。
+babbe4395eccabf4f16dbee693a0af3145f203fa816f49e35fa9ff5241ac9eca,静的コンテンツとして提供されるファイルのローカルフォルダー
 90335c2170ed5cc0e7674604a3928a378c164d6b659d71f9f6aedcc75d0391da,ファイルのローカルパス
 3c84bac77f14b974dfa874ecd083f02f3a18a5bdce87c8213dadb88db8040d10,ローカルスコープ（バリエーションA）
 21591b59675e98df8bcfe4655a560c2d459a71d93e87b371dec9ea115da55a11,ローカルスコープ（バリエーションB）
@@ -2360,10 +2360,10 @@ f3fbd3670cd1de5ebcef15f3da57d5a792bc653a2acf998ea075af668dc3dfba,下限（範囲
 4e8d1a7260782cb2cd2eafb4492345c19bf6a29d222ee7e8675e0f3cb25f4290,マーカー
 8369a6801e1effc1648e5dbb1a70969ab3e39a3a4474be5a1abba80cfdc8594e,マーカーは、`ElementFilter`によってクエリできる文字列で要素をタグ付けするための簡単な方法です。
 e825cfc6a8ed183da289561c08cc166706cb3649bb096ba4f7be1da53da64342,Masonry または Pinterest 形式のレイアウト
-9721f1aa49f37c5d95ae376aa1570bc13003c71a7a603d31582e5f7dda2c0d32,マッチしたルートには、パス情報とパラメータが含まれています。
+9721f1aa49f37c5d95ae376aa1570bc13003c71a7a603d31582e5f7dda2c0d32,マッチしたルートには、パス情報とパラメーターが含まれています。
 e788944ea564c4b9eba6eef57ec38b36ef9263f13ec3b7a6bfad1cf49dd34f9b,マテリアルアイコンおよびシンボル
 cdf74c872e4cd3cd00b0a4901b8228ea45c489ed6699c11596dc7888c60e7f8e,Matplotlib
-2134a3a430258ff7d518b2138b7be6f0ff1ee2d57fedc935e515993a029af0f5,タブストレージの最大年齢
+2134a3a430258ff7d518b2138b7be6f0ff1ee2d57fedc935e515993a029af0f5,タブストレージの最大有効期間
 232f6f4b6daf1c542daff9c4478cee74ca1704647480c02af76a508e32ca7702,最大ファイルサイズ（バイト単位）（デフォルト：`0`）
 fbce28b423747cef3fbe8ae4ce59662dcca87e4ecfc10a2caec99e8062b7242f,最大データポイント数（新しいデータは古いデータを上書きします）
 56fb13e894410d45047323cb0a996b50794ad8077c47c39a30acd6efa05fa842,最大ファイル数（デフォルト:`0`）
@@ -2374,8 +2374,8 @@ ebdd71e35d184b9f19ca7e43068cb7527ed2f615cbbfdb166a3bbaa90ed53695,最大で接続
 c611a2fc1b981afed3cd01933c68f2e518a049059657bf7914c58364e14b7ca1,最大評価
 3c9d7a69616cd1c8b39d40fa253526c94fe9a0efc5e9a03c4f757c09b96631a0,最大評価、アイコン数（デフォルト：5）
 3663f9f441d7b7726e9110e9c42d00a54ea3ba15774468ae39d6dccff683ee7a,最大時間：デコレートされた関数がページを構築するまでの時間（デフォルト: 3.0秒）
-05657e0722374a6598c7ae42d2d4115cf6ab5685278ab40bff7478eba9bdcea8,サーバーがブラウザの再接続を待つ最大時間（デフォルト：3.0秒）
-915a7eb2177164a62bcedcc2bd1ed056df291bf4dcb384b4332a41b4270d9ee9,最大時間、サーバーがブラウザの再接続を待つ (デフォルトは `run` コマンドの `reconnect_timeout` 引数)
+05657e0722374a6598c7ae42d2d4115cf6ab5685278ab40bff7478eba9bdcea8,サーバーがブラウザーの再接続を待つ最大時間（デフォルト：3.0秒）
+915a7eb2177164a62bcedcc2bd1ed056df291bf4dcb384b4332a41b4270d9ee9,最大時間、サーバーがブラウザーの再接続を待つ (デフォルトは `run` コマンドの `reconnect_timeout` 引数)
 036d1de9803800e3cf23e3ce287e4484d9b32171ab19e2ff9db8085bc48b6daa,最大応答待ち時間（デフォルト：1秒）
 441ca22095844aeb68db40e948eb71f6f5412aa9528f3a8267856bdc66a55f4d,最大ファイルサイズ（バイト単位）（デフォルト：`0`）
 912551ceff6670a2e48198f7ff138521bb1d251f5c9f39e12f1eb7b369919d11,"ファイルダウンロードのメディアタイプ（デフォルト：""""）"
@@ -2399,31 +2399,31 @@ b8999832e3d52208081ff113b1a666042e77a37d848a02932be305a0d8172646,モジュール
 ed1ab8be519ab9ae7c850ca7fbce5eaf3246e00f88eb2f051c7dd24a0bbd1940,APIRouter を使用してモジュール化する
 aa972fa5aefbecded37d24c8f156b292b85269cf81c80988d902d7a287b8c44f,モジュール化して、アプリケーションを複数のファイルに分割し、コードを再利用してください。
 1a83ee26ca7b6593ffe16b128cbf00d6353ac1f249a96305fc22fe8f617b0979,より複雑なレイアウト
-4d302022e6a406ce1e191dc9e95ca3c5c192b2123753aefc1ccf55e9daef00ce,"多くの要素も非同期イベントハンドラをサポートしています。
+4d302022e6a406ce1e191dc9e95ca3c5c192b2123753aefc1ccf55e9daef00ce,"多くの要素も非同期イベントハンドラーをサポートしています。
 
-注記：`functools.partial` を `on_click` プロパティに渡すことで、パラメータ付きの非同期関数をラップできます。"
+注記：`functools.partial` を `on_click` プロパティに渡すことで、パラメーター付きの非同期関数をラップできます。"
 87cf8848696f028efc79d7323dc5f57b5433de14a88a22db647d3a6fafe8079f,"UIのほとんどの要素には、あらかじめ定義されたイベントが付属しています。
-例えば、「A」というデモにある `ui.button`は、`on_click`パラメータを持ち、コルーチンまたは関数を期待します。
-しかし、「B」のような汎用的なイベントハンドラを登録するために、`on`メソッドを使用することもできます。
-これにより、JavaScriptおよびQuasarがサポートする任意のイベントに対するハンドラを登録できます。
+例えば、「A」というデモにある `ui.button`は、`on_click`パラメーターを持ち、コルーチンまたは関数を期待します。
+しかし、「B」のような汎用的なイベントハンドラーを登録するために、`on`メソッドを使用することもできます。
+これにより、JavaScriptおよびQuasarがサポートする任意のイベントに対するハンドラーを登録できます。
 
-例えば、「C」のような `mousemove`イベントのハンドラを登録できますが、`ui.button`には `on_mousemove`パラメータはありません。
+例えば、「C」のような `mousemove`イベントのハンドラーを登録できますが、`ui.button`には `on_mousemove`パラメーターはありません。
 `mousemove`のようなイベントは、非常に頻繁に発生します。
-パフォーマンスの問題を回避するために、`throttle`パラメータを使用して、ハンドラを `throttle` 秒ごとに呼び出すように設定できます(「D」)。
+パフォーマンスの問題を回避するために、`throttle`パラメーターを使用して、ハンドラーを `throttle` 秒ごとに呼び出すように設定できます(「D」)。
 
-汎用的なイベントハンドラは、同期または非同期で動作し、オプションで `GenericEventArguments`を引数として受け取ります。
-JavaScriptまたはQuasarのイベントの、どの属性がハンドラに渡されるかを指定することもできます。
+汎用的なイベントハンドラーは、同期または非同期で動作し、オプションで `GenericEventArguments`を引数として受け取ります。
+JavaScriptまたはQuasarのイベントの、どの属性がハンドラーに渡されるかを指定することもできます。
 これにより、サーバーとクライテリア間のデータ転送量を減らすことができます。
 
 サポートされているイベントに関する詳細は、ここにあります：
 
 - <https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement#events> (HTML要素)
 - <https://quasar.dev/vue-components> (Quasarベースの要素 - 個々のコンポーネントページにある「Events」タブを参照)"
-bf5a2f65ee952d3e3bfa8e567b5fbba9e716fdf6ea175b7dc742551605c8c97e,元素を移動する
-5cc376168cfc6bcd12c94f16fb17581533e643555ee62d5277eb2a56a66b1c69,元素をスロットに移動する
+bf5a2f65ee952d3e3bfa8e567b5fbba9e716fdf6ea175b7dc742551605c8c97e,要素を移動する
+5cc376168cfc6bcd12c94f16fb17581533e643555ee62d5277eb2a56a66b1c69,要素をスロットに移動する
 60ed23e2439887196c3ff8ea7a12eb0a00eea220fcaf56977a209e67311f99be,マークの移動
 e797b829a708ba8f6dcbf7c22ef58a4fc43f75b194a5edfa73e699fa517e34d1,カメラを新しい位置に移動する。
-7ae1b8838890e73e5455dcae89a210801461d830c88b790603a4ac5ef2d912bb,要素を別のコンテナに移動する。
+7ae1b8838890e73e5455dcae89a210801461d830c88b790603a4ac5ef2d912bb,要素を別のコンテナーに移動する。
 2f401464d9b1c6dfc7c8e80c53bdf0de0cf57ff494da3b4a3e380bf9c6685f7c,多重選択
 856d52617adc6bc4257f42d8196f51a19dc72508bcdca26b4e3f84387af3b396,マルチパートメッセージ
 6ea2d6882098b65ee50ffcc0a7d1bb4681c741ce7723a9774b13ecaf5be2a577,マルチキャスト
@@ -2483,7 +2483,7 @@ e560622efbcaad7304961cdec93819f85dc59ff70ab424f7aa1ca4cc6d0da873,"NiceGUIはUI�
 テキスト、値、表示といったUI要素のプロパティや、（ネストされた）クラス属性のようなモデルのプロパティに対するバインドは可能です。
 各要素には、対応するプロパティとの二方向バインドを作成するための`bind_value`や`bind_visibility`といったメソッドが提供されています。
 一方のバインドを定義するには、これらのメソッドの`_from`と`_to`のバリエーションを使用します。
-これらのメソッドにモデルのプロパティをパラメータとして渡すことでバインドを作成できます。
+これらのメソッドにモデルのプロパティをパラメーターとして渡すことでバインドを作成できます。
 値は即座に更新され、どちらかの値が変更されるたびに更新されます。"
 a3198bb2678632b924d75bb44ffdabc01fc17be94894205bd7e28f008d62be9e,"NiceGUIは[FastAPI](https://fastapi.tiangolo.com/)をベースにしています。
 つまり、FastAPIのすべての機能を活用できます。
@@ -2507,19 +2507,19 @@ a3198bb2678632b924d75bb44ffdabc01fc17be94894205bd7e28f008d62be9e,"NiceGUIは[Fas
     サーバーサイドのメモリ上に保存される辞書で、各クライアント接続ごとに一意です。任意のオブジェクトを保持できます。
     ページがリロードされたり、ユーザーが別のページに移動したりすると、データは破棄されます。
     `app.storage.tab` に保存されたデータとは異なり、サーバー上で数日も永続的に保持できますが、
-    `app.storage.client` は、動的なサイトの更新に必要なストリーミングやデータベース接続など、リソースを多く消費するオブジェクトのキャッシュに役立ちます。ただし、ユーザーがページを離れたりブラウザを閉じたりするとすぐに破棄されます。
+    `app.storage.client` は、動的なサイトの更新に必要なストリーミングやデータベース接続など、リソースを多く消費するオブジェクトのキャッシュに役立ちます。ただし、ユーザーがページを離れたりブラウザーを閉じたりするとすぐに破棄されます。
 - `app.storage.user`:
-    サーバーサイドに保存され、各辞書はブラウザセッションCookieに保持される一意の識別子に関連付けられています。
-    ユーザーごとにユニークであり、すべてのブラウザタブでアクセスできます。
+    サーバーサイドに保存され、各辞書はブラウザーセッションCookieに保持される一意の識別子に関連付けられています。
+    ユーザーごとにユニークであり、すべてのブラウザータブでアクセスできます。
     `app.storage.browser['id']` はユーザーを識別するために使用されます。
-    このストレージには、`ui.run()` で `storage_secret` パラメータを指定することで、ブラウザセッションCookieに署名する必要があります。
+    このストレージには、`ui.run()` で `storage_secret` パラメーターを指定することで、ブラウザーセッションCookieに署名する必要があります。
 - `app.storage.general`:
     サーバーサイドに保存され、すべてのユーザーがアクセスできる共有ストレージスペースを提供します。
 - `app.storage.browser`:
-    前のタイプとは異なり、この辞書はブラウザセッションCookieとして直接保存され、同じユーザーのすべてのブラウザタブで共有されます。
+    前のタイプとは異なり、この辞書はブラウザーセッションCookieとして直接保存され、同じユーザーのすべてのブラウザータブで共有されます。
     ただし、`app.storage.user` はデータペイロードの削減、セキュリティ向上、およびより大きなストレージ容量の提供などの利点があるため、一般的に推奨されます。
-    NiceGUIはデフォルトで、ブラウザセッションのユニークな識別子を `app.storage.browser['id']` に保持します。
-    このストレージには、`ui.run()` で `storage_secret` パラメータを指定することで、ブラウザセッションCookieに署名する必要があります。
+    NiceGUIはデフォルトで、ブラウザーセッションのユニークな識別子を `app.storage.browser['id']` に保持します。
+    このストレージには、`ui.run()` で `storage_secret` パラメーターを指定することで、ブラウザーセッションCookieに署名する必要があります。
 
 次の表は、ストレージの選択を支援します。
 
@@ -2541,12 +2541,12 @@ a3198bb2678632b924d75bb44ffdabc01fc17be94894205bd7e28f008d62be9e,"NiceGUIは[Fas
 
 注意：
 関数は渡された関数の全体の状態をプロセスに転送する必要があり、これはpickleによって行われます。
-クラスのプロパティやグローバル変数に記述するのではなく、データすべてを単純なパラメータとして取得し、結果のみを返すように、フリー関数または静的メソッドを作成することをお勧めします。"
+クラスのプロパティやグローバル変数に記述するのではなく、データすべてを単純なパラメーターとして取得し、結果のみを返すように、フリー関数または静的メソッドを作成することをお勧めします。"
 f715891150c508a9c56dc352e3ac08dbd6cd441e550692dc9785f3327a36de9a,"NiceGUIは、`io_bound`関数を提供し、I/Oバウンドなタスクを別のスレッドで実行できます。
 これは、イベントループをブロックし、UIに反応しなくする可能性のある、長時間のI/O操作に適しています。
 この関数は、awaitできるfutureを返します。"
-0b2d06a6e4f2e36d7086e91d836d8149d5ebf5bd6d953ac1b8959738a49a285f,"NiceGUIは、`<meta name=""color-scheme"">`タグを設定することで、ブラウザや拡張機能にアプリケーションの色構成を伝えます。
-ただし、[Dark Reader](https://darkreader.org/)のブラウザ拡張機能は、依然としてページを変換する可能性があります。
+0b2d06a6e4f2e36d7086e91d836d8149d5ebf5bd6d953ac1b8959738a49a285f,"NiceGUIは、`<meta name=""color-scheme"">`タグを設定することで、ブラウザーや拡張機能にアプリケーションの色構成を伝えます。
+ただし、[Dark Reader](https://darkreader.org/)のブラウザー拡張機能は、依然としてページを変換する可能性があります。
 これを防ぐには、`ui.add_head_html`を使用して `<meta name=""darkreader-lock"">`タグを追加できます。
 `shared=True`を使用すると、現在のページだけでなくすべてのページに適用されます。
 これは、[公式にサポートされている仕組み](https://github.com/darkreader/darkreader/blob/main/CONTRIBUTING.md#disabling-dark-reader-on-your-site)です。
@@ -2563,7 +2563,7 @@ Quasarのすべてのスタイリングプロパティについては、[Quasar�
 
 もしCSSを適用する必要がある場合は、`style`メソッドを使用してください。この場合、区切り文字は空白ではなくセミコロン（ `;`）になります。
 
-これらの関数すべてに、あらかじめ設定されたスタイルを適用したくない場合に備えて、`remove`と `replace`パラメータも提供されています。"
+これらの関数すべてに、あらかじめ設定されたスタイルを適用したくない場合に備えて、`remove`と `replace`パラメーターも提供されています。"
 7d96b6dabb52232ad9c32b1fa7df4512d49531ec27f1b78b504beb910871e8e9,選択するノードキー
 3dfd349b9a35d738fd05cb20c3f222deb11854baedaa78355d6453268d59d7f2,ノードモジュール統合
 be8c16a92549100b9c3f44836c638b8c05015ed518976db40f02b2b4d0c3189e,注記：このドキュメントに記載されているデモの多くは、簡潔にするためにスクリプトモードで記述されています。
@@ -2615,7 +2615,7 @@ a38e829fed4cf4ad4f22bcf4199fb8cf3a538170b76e325df4ff32a5c9493fd9,オプション
 80f1c4e7a9561ee4938d358472be32524e4b09130ab929ef5d8afc1f607a2aca,オプションのデフォルトカラムプロパティ
 185099ad21eddfaa68f75a3668f4e6bf2a7c9d662d9df821bdbc9ba8e995493c,オプションのデフォルトカラムプロパティ、*バージョン2.0.0で追加*
 a84485955880c6e765660a710f688ee1d366ffa8ca415b0e77e43955712dda56,オプション辞書（すべてのオプションを含む、他のすべての引数を上書きする）
-050a5684f10d5c840f0a7a6a1556363078ae434e3091ea1c46b7a1e7d6779127,オプションのイベント引数にハンドラに渡す (デフォルト: ``None``)
+050a5684f10d5c840f0a7a6a1556363078ae434e3091ea1c46b7a1e7d6779127,オプションのイベント引数にハンドラーに渡す (デフォルト: ``None``)
 fbaa50de1c55dfd497d22f34b44fdeca4781c1fef2d0c24461cdc4c23c6beb3e,オプションのグループ名で、グループ内の状態を連携して開閉させるためのもの。別名として「アコーディオンモード」と呼ばれる。
 e8d2ceb4b3250d98576420872fc0fbbca9654c280422897a0f28c43ba5da4110,オプションのアイコン（デフォルト：なし）
 cb300e60cfb3093e9fb99927a0b248235446041057113666c9d76bb4c01b95c6,アクションボタンのオプションラベル
@@ -2649,7 +2649,7 @@ f06393b16f4085f62c6dbcf18dfd21e97cf20786cbc39a3911e7124764f42241,パッケージ
 8b2d239fb045d2737be56ad0de2c2bd44e75a444f257465c6f7ddf262a038db5,"page function, NiceGUI要素が同じページまたはベースURLからの絶対URLまたは相対パスである文字列"
 5c23b9720034e3d45b5b4894ab728fc07f071d30ec2025708b7eb0a4a093ce17,ページ レイアウト
 c77a047b358e7e6db07486d7d579cb2aca5ae2177437fe4c3473602dedb2e6e4,"ページ meta viewport 内容（デフォルト：`'width=device-width, initial-scale=1'`、ページごとに上書き可能）"
-fbc82360f08f675f6f7d94a19e0c396960b0c09f4a31cfedd2132866838dcbfb,"Page routes (ページルート) には、[FastAPI](https://fastapi.tiangolo.com/tutorial/path-params/) のようなパラメータを含めることができます。
+fbc82360f08f675f6f7d94a19e0c396960b0c09f4a31cfedd2132866838dcbfb,"Page routes (ページルート) には、[FastAPI](https://fastapi.tiangolo.com/tutorial/path-params/) のようなパラメーターを含めることができます。
 型注釈が設定されている場合、それらは自動的に bool, int, float, complex 型の値に変換されます。
 ページ関数が `request` 引数を期待する場合、リクエストオブジェクトは自動的に提供されます。
 オプションの `client` 引数は、websocket接続やレイアウトなどへのアクセスを提供します。(`ui.context.client` と同じ)。"
@@ -2657,16 +2657,16 @@ fbc82360f08f675f6f7d94a19e0c396960b0c09f4a31cfedd2132866838dcbfb,"Page routes (�
 ac58193b5653956d89a89dcc9cc85912ba5599333fa1dd0c0cd6fa31b0b46851,ページタイトル
 7983e0869c29f66cd147a4b91303ea9bc176b513720475aea2c4863a3889471f,ページタイトル（デフォルト：`'NiceGUI'`、ページごとに上書き可能）
 7d6f226c22f46c8b977244fba6b8d35e91a42547d08aad70dc3c62c20ce882a1,ページとルーティング
-eb73e9df8d99817f053671170a3bbf8c4e3813861573f85a46105a23bd869780,パスパラメータ付きのページ
+eb73e9df8d99817f053671170a3bbf8c4e3813861573f85a46105a23bd869780,パスパラメーター付きのページ
 7b3f674b625e7226021fc07d6f2aaf437f44f1fd6afaf5d885ad8d63210c0b46,分割表示
 579d821983e89ba8cf805065d53ace1b57107714d780fcea219bf78dac57bbb6,Paginationオブジェクト。
 063fb2e67b98449685e3d1065d348a3fca615eba7ca75fe1767d4a7da0454775,Pandas DataFrame
-216ad393f7c82478144313f58cd215b56e803376865b3b3778340131e9ae58ad,パラメータ注入
+216ad393f7c82478144313f58cd215b56e803376865b3b3778340131e9ae58ad,パラメーター注入
 8b3a6abf5a29849fd1a26fdc83cbead53b3531f4fc2ed6eb82403c9cc3691db9,サブページへのデータの渡し
 b45cb95eae5413ea50d0a0033b96f3fb896c52cae4bd884d2a4285d3bbe6f886,経路変更イベント
-85400c269de134762fb5773c5008e39b753a60f631df8ae536cb5498c702cc49,"一致させるためのパスパターン（例：パラメータ化されたルート用の ""/user/{id}""）"
+85400c269de134762fb5773c5008e39b753a60f631df8ae536cb5498c702cc49,"一致させるためのパスパターン（例：パラメーター化されたルート用の ""/user/{id}""）"
 0eec2284be281e70ad494a5518a79f8bdc310dbd96b5fdd0f08146049d16dbbd,入力パスから削除するパスのプレフィックス（ネストされた ``ui.sub_pages`` 要素では無視されます）
-4171718a3053463a878eff7b9f095cc4a882f8f588e8555cf27f220eb3fbb1f2,リソースのパス（例：CSSとJavaScriptファイルを含むフォルダ）
+4171718a3053463a878eff7b9f095cc4a882f8f588e8555cf27f220eb3fbb1f2,リソースのパス（例：CSSとJavaScriptファイルを含むフォルダー）
 f6711f57361cd5ecb7f331f762a0b8da2cb5eae8269eb96b93cc705c02b7b501,一時停止するオーディオ。
 120dd78e4f2b2a59280b859daac7050e3e1f93a62d761d99f087a99a5d643249,一時停止します。
 d8972a4d494e14d3044950be368fd849a53105e603b6ed7b2d5b52472214dac2,Tortoise ORM を通じて、SQLite データベース上で async サポートを用いて CRUD 操作を実行する
@@ -2699,13 +2699,13 @@ a66f32b108181f18dedb393ce311fe034d2b029546a674138b7f223ffadcec37,各ノードオ
 4d7de908d3f7dcb7294b5b4dca4bb44bc02d5f1f1f3588d2934f5fd1457330df,各ノードオブジェクトが独自のIDを保持するプロパティ名（デフォルト：「id」）
 25adb7ef4550715cf845f03ac4767a1784c4f56ed4a27ef481622592a7df033c,行に適用されるプロパティ (*バージョン 2.18.0 で追加*)
 c504d5968ee99134c22615c921ee4488f59114da4e4b8ddbf32f25197f1ee71f,文字列のようなメモリ内のデータをファイルダウンロードとして提供する
-ecdec6cbf1a59ae4da01aef1532233db2c2284e4fdddfec38a896e66f8c6497e,子要素を列形式で配置するためのコンテナを提供する。
-76909eecd147a69dc31b49e2e4bb3c0430111c90d6aee7b2785ba7eb7c159a47,子要素をグリッド形式で配置するためのコンテナを提供する。
-b9cfc94cae5ebf8893e14deacb334f829bc6ae464d7619e95b2affc054b3e365,子要素を行形式で配置するためのコンテナを提供する。
-50f85894cd9ef56d012d595aa0ad820328b28cfaa1d6e0e82030035330e89f0a,Quasar の `QExpansionItem <https://quasar.dev/vue-components/expansion-item>`_ コンポーネントに基づいて、拡張可能なコンテナを提供する。
+ecdec6cbf1a59ae4da01aef1532233db2c2284e4fdddfec38a896e66f8c6497e,子要素を列形式で配置するためのコンテナーを提供する。
+76909eecd147a69dc31b49e2e4bb3c0430111c90d6aee7b2785ba7eb7c159a47,子要素をグリッド形式で配置するためのコンテナーを提供する。
+b9cfc94cae5ebf8893e14deacb334f829bc6ae464d7619e95b2affc054b3e365,子要素を行形式で配置するためのコンテナーを提供する。
+50f85894cd9ef56d012d595aa0ad820328b28cfaa1d6e0e82030035330e89f0a,Quasar の `QExpansionItem <https://quasar.dev/vue-components/expansion-item>`_ コンポーネントに基づいて、拡張可能なコンテナーを提供する。
 8b12a9e9af14694740909c27919f86b6fee3bfb7b0a56a89c0c034688de2966e,"URLに基づいた異なるビュー間のナビゲーションを提供し、シングルページアプリケーション（SPAs）を構築します。
 ルーティングは、ページビルダー関数にマッピングされるパスパターンで定義されます。
-""/user/{id}"" のようなパスパラメータは、ビルダー関数に抽出され渡されます。
+""/user/{id}"" のようなパスパラメーターは、ビルダー関数に抽出され渡されます。
 
 *バージョン 2.22.0 で追加*
 
@@ -2776,12 +2776,12 @@ a07b646415b075f465fab0fbdc72a6410b0305097994386e62ba0de6bfbe8806,"この関数�
 そうでない場合、リフレッシュ操作はバックグラウンドで「忘れ去られる」タスクとして実行されます。"
 aedcfcb6821dd5fda9d4f59ea046c52a7a5e9218d229d753b9bc7dfb5117c3e6,入力検証用のリフレッシュ可能な UI
 9ea706ca5115c02bfd4632daed34af5d56187759252d7cbaa61766f41de516a2,リフレッシュ可能な UI 関数
-bd4b670c829a2411c9f4dd206e9be09bea3b52e3d833d1bf198d8fb3e17a582e,パラメータ付きの可刷新UI
+bd4b670c829a2411c9f4dd206e9be09bea3b52e3d833d1bf198d8fb3e17a582e,パラメーター付きの可刷新UI
 f3cdf04536b46df577c924924a34fa8750bada99482ce5308a9c1686c05b6eea,反応式状態の可刷新UI
 fa4016f67d309f1933d5689beead9cbd18ae558495f067fb384c700bbb63fdb7,パスが変更されたときに呼び出されるコールバックを登録する。
-89da4d47765da4b6f8e0c7a9628050418c06d97039d8544b784c23fbe22445ed,イベントハンドラを登録する
+89da4d47765da4b6f8e0c7a9628050418c06d97039d8544b784c23fbe22445ed,イベントハンドラーを登録する
 41ac7f8afbe245a1b10d556deb588d363dedc3a813e5c2dadf349b5f933a275a,レジストリエントリ
-993744f23108e092a008d019e64cf43d39dbd010d65536456f10d9d279a673f7,相対パス、絶対URLでFaviconを指定 (デフォルト: `None`、NiceGUIアイコンを使用) または絵文字 (例: `'🚀'`、ほとんどのブラウザで動作)
+993744f23108e092a008d019e64cf43d39dbd010d65536456f10d9d279a673f7,相対パス、絶対URLでFaviconを指定 (デフォルト: `None`、NiceGUIアイコンを使用) または絵文字 (例: `'🚀'`、ほとんどのブラウザーで動作)
 3b0b202c30f61d5cb7b4784965fbbc374d2db266a9dd714f0ce9458ed0ef375d,子要素を削除します。
 ba465e199144fbed26c32ef823dd2b171bc3deb49d390e55963d400ed66e0b00,マップからレイヤーを削除します。
 d20b71a2c55a7f9d21678eb49a5df53e6df97a0f13b81b7004fd5c1ec3f68c4d,テーブルから1行を削除します。
@@ -2800,12 +2800,12 @@ f7c6a7c769c326196e101d820c001c3ae2730a4549105deadf2948cbedb0016d,角を削除し
 467b8c7e646767320a23dc548760c29fd15c266d69b9703f408239ad2848a181,現在のユーザー（デフォルト：``False``）からのメッセージとしてレンダリングします。
 276869f5a218690baaaf3d880c1265c934aa950e5e8c4759ecdd4a81097be9ad,列をHTMLでレンダリングする
 9380ed3cb5cbda31cadaeaed21ecf0a90e6145e4965d70061722a6472af2dfe9,render text as HTML (デフォルト: ``False``)
-a018fe0e2a078728ce0e7de277d9a938bd531d1b8c2921cccd06f1fa11ffc127,ブラウザコンソールログを文字列としてレンダリングする。
+a018fe0e2a078728ce0e7de277d9a938bd531d1b8c2921cccd06f1fa11ffc127,ブラウザーコンソールログを文字列としてレンダリングする。
 78b1e24ad0e841b13c58632b99b2c457bd534d6d8ac0665ec2851ec1eab87d4c,レンダラーを使用します（「canvas」または「svg」、「バージョン2.7.0で追加）。
 c80227ed02ec2140d0553b5839c8023b40b3606c545a170e23b676253befa776,點雲渲染
 584b6855288127e9e5b64b9b6ad3c00b9c16074da990100defdb8f7ac023ce92,ラベルのヘッダー/セクションのみをレンダリングする
 be37a18758c3284536f84b9636bfb09f3e3e55562d3b23ba4e11cd429e440d56,"Renders a Plotly chart.
-Plotly の図をレンダリングするには、2つの方法があります。パラメータ `figure` を参照してください：
+Plotly の図をレンダリングするには、2つの方法があります。パラメーター `figure` を参照してください：
 
 *   `go.Figure` オブジェクトを渡す。詳細は https://plotly.com/python/ を参照してください。
 
@@ -2862,7 +2862,7 @@ e86f2a3a29fad7a24879d2774aff5f31b0fd170cf429f8bea54ce05fb56532a2,要素が現在
 c225e507b9397a13d5b852a0e0048eee633584b560174f045ea83df4d474c9b4,root page function (*バージョン3.0.0で追加*)
 2ac8a4aa0361566869d25237a5368368408de7377fdcaeeded96c1a218b43a00,ROS2
 e4cc3defff170ac8c19eeffce3378816c2b6f7bde0082cf354e4ab53f9c9ea2a,ルートの新しいページ（パスは `/`で始まる必要があります）
-070040e888daedccf7cb2fdb1b6ca2f0f97cb4c02e6dd01f6b38a4ad7e20f035,行元素
+070040e888daedccf7cb2fdb1b6ca2f0f97cb4c02e6dd01f6b38a4ad7e20f035,行要素
 2a5365e49363fdfb858e7491b2d021b11623d621d288275d53d2e00023f36b9a,"Run a method of a Leaflet layer.
 
 If the function is awaited, the result of the method call is returned.
@@ -2948,7 +2948,7 @@ f52f5eaa252b2206576970d530ad2e3102a6a6a59c0277958e3232b893b75b4b,シーンビュ
 [Quasar ドキュメント](https://quasar.dev/vue-components/table#expanding-rows) を参照してください。"
 1f8d5f15d084579ce8f47997c385d28838f6be3dbf8f206de693841fcda45fe9,"Scoped slots を使用することで、ツリーノードのヘッダーと本文にカスタムコンテンツを挿入できます。
 [Quasar ドキュメント](https://quasar.dev/vue-components/tree#customize-content) を参照して、より詳しい情報を確認してください。"
-c954d080a8a07f77ca018336199f8163801c6b3ea25325ae1d891e77c612b211,画面Fixture
+c954d080a8a07f77ca018336199f8163801c6b3ea25325ae1d891e77c612b211,画面フィクスチャ
 ef4db667732e63cd4c929c7da9e33377742c6ec43eb74166396e428bf290d277,スクリプト実行器
 f2782f7e1fc7223b93f854eb0f0c59f346c8330e544172bd8606f632847f36d2,スクリプトモード
 898e15e6ef8b44ef6a2895cb80a6025445ef306d9965dd6ec9c83746616ca36b,script mode with root
@@ -2961,7 +2961,7 @@ bb69d99c1064237d7f9c9ad752bfd90f242d2582681d0ff1af21485bfe5b451f,タイピング
 ea582e69cce77d672df1926e1a0c2e99083a3964e6711512d064a7e17722fd1b,検索ドキュメント
 fbabbebe9c9f82fd04b7f6f46b51c2832ceaeca97b7c952cdab17410125303ae,検索-入力時に
 ef731ecc08dd9f3a89944d004e1b6f1bd099c42069b7a477474dadb887ebccb3,セカンダリーカラー（デフォルト：`#26a69a`）
-513a9ed1537e875b0bf92a567ebd9e4b97530f88814bb704e28c0ece2b626ae8,秘密鍵（ブラウザベースのストレージ用、デフォルト:`None`。ui.storage.individual と ui.storage.browser を有効にするには値が必要です）
+513a9ed1537e875b0bf92a567ebd9e4b97530f88814bb704e28c0ece2b626ae8,秘密鍵（ブラウザーベースのストレージ用、デフォルト:`None`。ui.storage.individual と ui.storage.browser を有効にするには値が必要です）
 fd71b2dae27dc4d26a6f14572f7cd060041cd079c66f77ef2bad198b141c6d5b,セキュリティベストプラクティス
 bad52592ecc806bf557481d60460517017e73f11ffe743f02d599b292b8b7a9c,セキュリティモデル
 5b9873d75c1a53c3ed578d5b3b4a545d9f7ac5198b98e7a456365ac5e127d9c7,詳細は[こちら...](/documentation/{link})
@@ -3005,7 +3005,7 @@ c7aefa85ed75d7ec427ab099d1576cb325e8644c06445833bf60f22786088b95,この選択要
 4beafee4fe7d55757fdc96f1f520adf9e7c9213bfe14c09ac165d35ad7fff8bf,現在のクライアントのページタイトルを設定します。
 fe990ca8dc1e559a3504ca84c536a11e3c378100278c4c6bc63e12f01920c51e,"スクロール領域の位置をパーセント（浮動小数点数）またはピクセル数（整数）で設定します。
 
-`duration_ms` パラメータを使用することで、実際のスクロールアクションに遅延を追加できます。"
+`duration_ms` パラメーターを使用することで、実際のスクロールアクションに遅延を追加できます。"
 3c31fb28450ec4ad701ea37ffe3adfc35c421c29a22315a4226d21b14f2b90db,この要素の選択状態を設定します。
 4273f8d723b388e7cd0cf92b1c5a2aca5ae89069da3ac59e6b261ba05c356a20,"選択タイプを設定します。
 
@@ -3061,14 +3061,14 @@ ea5f6bdc79b884c397d6163ed999deafd3908d8c928097911d4085a99ef1b575,骨格
 14f34284b05437cd1539814a91cab6305cfe6b78f93f5a3e59c74dcdd8e3c695,スライダー
 1d0c5be737e23ae829c988fcc1016f2a1a92475a59dd93d0e7987c3f442d1009,幻灯会
 2ee6e290f6bb476779d374d2ce7649ce5e0653d7d177262850397e99cb338219,NiceGUI要素を含むスロットテンプレート
-ee51a99e8685ec1b901efe4fbd3fb5212c654d60558674337e209154dac02cbb,ターゲットコンテナ内のスロット（デフォルト：デフォルトスロット）
+ee51a99e8685ec1b901efe4fbd3fb5212c654d60558674337e209154dac02cbb,ターゲットコンテナー内のスロット（デフォルト：デフォルトスロット）
 4fd72c06bcff79710b0a5bd292b1f6408ec8cfa357e08566b663e4f14cbfc7f0,スロット
 716558bb99614951f21939fe2313aa9d073d0cba11f43b0d9a2caf34fde46782,いくつかのUIコード
 14d3625503b9c227ef2c860a7817eba28f07d786c85de6640e4db6c61b55073d,時々、ボタンのクリックを待つ方が、実行の継続に適していることがあります。
 add8e1f1073095750c40ce0ea7cca82475dbbb81f67ea2d8ddaf7a615e33fc5e,"時々、現在のページのPython要素ツリーを検索するのは便利です。
 ``ElementFilter()`` は、種類、マーカー、コンテンツの種類の要素による強力なフィルタリングを可能にします。
-また、特定の親内にある要素を除外したり、特定の種類の要素をフィルタリングしたりするなど、より多くのフィルタを適用するための流動インターフェースも提供します。
-フィルターは、見つかった要素を反復処理するためのイテレータとして使用でき、反復処理中に常に適用され、インスタンス化されたときに適用されるわけではありません。
+また、特定の親内にある要素を除外したり、特定の種類の要素をフィルタリングしたりするなど、より多くのフィルターを適用するための流動インターフェースも提供します。
+フィルターは、見つかった要素を反復処理するためのイテレーターとして使用でき、反復処理中に常に適用され、インスタンス化されたときに適用されるわけではありません。
 
 そして、次の条件にすべて一致する場合に要素がyieldされます：
 
@@ -3090,7 +3090,7 @@ Element ""content""には、テキスト、ラベル、アイコン、プレー�
 「Hello」のような部分一致（例：「Hello World！」中の「Hello」）でもコンテンツフィルタリングには十分です。"
 a316723134ad35b2db867227c84488a3901c349f973837ac70f2744124effa0d,"`ui.sub_pages`要素を作成する際に、すべてのルートが既知でない場合があります。
 そのような場合、要素作成後に `add`メソッドを使用してルートを追加できます。
-`ui.sub_pages`コンテナの下に配置する要素を渡すのにも使用できます。"
+`ui.sub_pages`コンテナーの下に配置する要素を渡すのにも使用できます。"
 20eac5aae274985fd88629d19eddccbbec21dacd82a8c7a7dd99661f2135be02,スペース
 527d715c2816d33d3d99477c0bfc09578faa4f04c58754c1a1ce45225f0520a0,イベント属性を指定する
 fd1172cfe3d279b894b52b76cd13a3e47850a6e1b007c319bdaf46be5466d446,スピナー
@@ -3107,7 +3107,7 @@ a69c4dece144a46e40d430726395533d8f335a7d601d8ca292220b3a4a7faca4,記憶領域
 1fdee1b14a7fb3347b45bbeabf6b769a9dcff853e5d0e3f6deec6c14d3972c6f,"Storage をは、[`bindings`](/documentation/section_binding_properties) と組み合わせて使用することもできます。
 ここでは、テキストエリアの値を訪問ごとに保存しています。
 このメモは、同じユーザーのすべてのタブで共有されます。"
-e2abe40e98e89d0df9813778368c3d58d419d944345f655362f20b1b1ea00ac4,ブラウザのタブごとにデータを保存します。
+e2abe40e98e89d0df9813778368c3d58d419d944345f655362f20b1b1ea00ac4,ブラウザーのタブごとにデータを保存します。
 eb653c769acfe7a5a68b56eab27bfc4e52eb3c07a257506c5a31c2aaaa80c3fe,ユーザーインターフェース (UI) の状態を保存します。
 d9fc80760dc19e27f1d3baba4782408de8a2b17fd49874a6db38f09dd36dacea,直感的な [データバインディング](/documentation/section_binding_properties)
 f0df4220bc790aed66240398c0eedbc941f83c85c1193acca16f99f72e1b48af,"スラッシュ ""/"" で始まる文字列で、ファイルが提供されるパスを識別します。"
@@ -3133,13 +3133,13 @@ cd078f06b7e4b5b81f9b2eeb48be72d27498ccb37853deb8e27589462c4f74bd,"サブペー�
 4.  残りのパスの一部を次の要素に渡す (または、次の要素が存在しない場合は404エラーを表示する)。"
 5b0cf7c5f66f14be0cd27d3a5ee2809a238bcd216ccb11ffa77a7f8ed218fd0c,"サブページは、異なるビュー間のURLベースのナビゲーションを提供します。
 これにより、簡単にシングルページアプリケーション（SPA）を構築できます。
-`ui.sub_pages`要素自体は、現在アクティブなサブページのコンテナとして機能します。
+`ui.sub_pages`要素自体は、現在アクティブなサブページのコンテナーとして機能します。
 各ビュービルダー関数に対するルートのみを提供すれば十分です。
 NiceGUIは、URLが変更された際にコンテンツを置き換えながら、フルページの再読み込みをトリガーせずに処理します。"
 c66452bbe38aacdcb940095ea8d32140adc10a1d4eaeda4d28f53575b907c4bf,ダイアログを提示された結果で送信してください。
 25a2da80776d80355df7a21aa5a9708bac6aa6474391ba4f650f0d08cb0d2f32,"イベントにサブスクライブしてください。
 
-イベントハンドラは、Python 関数、JavaScript 関数、または両方を組み合わせたものにすることができます:
+イベントハンドラーは、Python 関数、JavaScript 関数、または両方を組み合わせたものにすることができます:
 
 - サーバーでイベントを処理し、すべての (シリアル化可能) イベント引数を渡したい場合は、Python の ``handler`` を使用します。
 - サーバーに何も送信せずにクライアント側でイベントを処理したい場合は、``js_handler`` に JavaScript 関数を渡してイベントを処理します。
@@ -3148,7 +3148,7 @@ c66452bbe38aacdcb940095ea8d32140adc10a1d4eaeda4d28f53575b907c4bf,ダイアログ
 
 引数 ``throttle``、``leading_events``、および ``trailing_events`` は、サーバーにイベントを送信する場合のみ関連します。
 
-*バージョン 2.18.0 で更新: 両方のハンドラを同時に指定できます。*"
+*バージョン 2.18.0 で更新: 両方のハンドラーを同時に指定できます。*"
 110becb1ff6851070b80b9ca192c2ef5b47dec34b34c698a0e4aad4d61c85540,ドラッグイベントにサブスクライブしてください。
 aef800370a3afc734426258c4b88c47c8487f73c9388a70faf8eb8bd055e9bb1,"イベントにサブスクライブしてください。
 
@@ -3208,9 +3208,9 @@ f302b559a761ca1e71c0f90b2826ee91eb2c7348d022e352ed51b236e5344ae4,日付が選択
 e3e1f0172235e234e83f0eaa23dae13fae251cd2ee979c36c557332c54f8afb2,時間が選択されていない場合に表示されるテキスト
 aeb30e0fe9855e04f32ac526ef507df08f9d0c6d6bad03be80a8e278fe92d363,値が入力されていない場合に表示されるテキスト
 467065a16a2e9fc802b582315334e2e47a1ce2454f070f61dd0257d25bb0a8b7,Textarea
-da7bb8852d8863a08adf2eb44cf76f9bec1f8b909bde5017284258f6709c0efd,"FastAPIのおかげで、ページ関数はオプションのパラメータを受け取り、
-[パスパラメータ](https://fastapi.tiangolo.com/tutorial/path-params/)、
-[クエリパラメータ](https://fastapi.tiangolo.com/tutorial/query-params/)、あるいは
+da7bb8852d8863a08adf2eb44cf76f9bec1f8b909bde5017284258f6709c0efd,"FastAPIのおかげで、ページ関数はオプションのパラメーターを受け取り、
+[パスパラメーター](https://fastapi.tiangolo.com/tutorial/path-params/)、
+[クエリパラメーター](https://fastapi.tiangolo.com/tutorial/query-params/)、あるいは
 [リクエスト](https://fastapi.tiangolo.com/advanced/using-request-directly/)全体を、
 ボディペイロード、ヘッダー、クッキーなどを取得するために利用できます。"
 827e64c7bffccb9b7437a9c11b4f47a77d1b9447be285fa18971771c2a498c6f,[`ui.teleport` 要素](teleport) を使用することで、ラジオオプションに任意のコンテンツを使用できます。
@@ -3222,7 +3222,7 @@ da7bb8852d8863a08adf2eb44cf76f9bec1f8b909bde5017284258f6709c0efd,"FastAPIのお�
 "
 8998d5312d6062cd8081cffe9e5f2222888dd09b42e1f7623a5cc4220d5faa5b,ラップする ``anywidget.AnyWidget``
 1602031ec7335addda644d4962bcb3b017e2ddbb8c8558a8e2a6379424830db9,"The `autocomplete`機能は、入力中に候補を表示することで、入力をより簡単かつ迅速にします。
-パラメータ `options` は、表示される利用可能なオプションを含む文字列のリストです。"
+パラメーター `options` は、表示される利用可能なオプションを含む文字列のリストです。"
 b066a82d99a6eaf1ea7cd33d1e38c65b77fd9a8a0fbaa9ca27acdfdf7b11b907,"The `bindable_dataclass` デコレータは、バインド可能なプロパティを持つクラスを作成するための便利な方法を提供します。
 これは Python の標準的な `dataclasses.dataclass` デコレータの機能を追加し、すべての dataclass フィールドを自動的にバインド可能にします。
 これにより、通常の dataclasses のメリットを保持しながら、個々のフィールドを `BindableProperty` として手動で宣言する必要がなくなります。
@@ -3236,23 +3236,23 @@ a0c68137cb8f9d1f877082570dc29a013ab63910e651f325b7f46e6031099828,The `clearable`
 
 注記として、この特定のケースでは、`submit` も直接 `backup` を呼び出すことができます。
 しかし、状況によってはイベントがコードをデカップリングするのに役立つことがあります。"
-d0855977104e5ab506db71d17ea4f84aa66ee4783ebf20cefac954afbcaf162b,"`history` API を使用すると、ブラウザの履歴に URL をプッシュしたり置き換えたりできます。
+d0855977104e5ab506db71d17ea4f84aa66ee4783ebf20cefac954afbcaf162b,"`history` API を使用すると、ブラウザーの履歴に URL をプッシュしたり置き換えたりできます。
 
 `history.push` メソッドは新しい URL を履歴にプッシュしますが、`history.replace` メソッドは現在の URL を置き換えます。
 
 [JavaScript の History API](https://developer.mozilla.org/en-US/docs/Web/API/History) でさらに詳しい情報をご確認ください。
 
 *バージョン 2.13.0 で追加*"
-adf6a5339f1e1135a1272db743799f51ed4bed5951cd8c7d6647791f6b21be30,"The `on_change` 関数は、パラメータとして渡された関数が、チェックボックスのクリック *と* `set_value` 呼び出しによる値の変更時に呼び出されます。
+adf6a5339f1e1135a1272db743799f51ed4bed5951cd8c7d6647791f6b21be30,"The `on_change` 関数は、パラメーターとして渡された関数が、チェックボックスのクリック *と* `set_value` 呼び出しによる値の変更時に呼び出されます。
 チェックボックスとユーザーがインタラクションすることでのみ関数を実行したい場合は、`on` メソッドを使用できます。"
-aced59f3ee49540715c673d546e06dd62c904407ca0a4c7d4b2406dc93268e6a,"The `on_change` 関数は、パラメータとして渡された関数が、スイッチをクリックしたとき *と* `set_value` 呼び出しによって値が変更されたときに呼び出されます。
+aced59f3ee49540715c673d546e06dd62c904407ca0a4c7d4b2406dc93268e6a,"The `on_change` 関数は、パラメーターとして渡された関数が、スイッチをクリックしたとき *と* `set_value` 呼び出しによって値が変更されたときに呼び出されます。
 スイッチとユーザーの相互作用のみで関数を実行するには、`on` メソッドを使用できます。"
-d3608c483d0d74a3df3a26cc2ad7b7d6901cdcda2e620d0f90a69620da04b7ef,"`square` および `bordered` パラメータを `True` に設定することで、骨格の角が丸められ、境界線が追加されます。
+d3608c483d0d74a3df3a26cc2ad7b7d6901cdcda2e620d0f90a69620da04b7ef,"`square` および `bordered` パラメーターを `True` に設定することで、骨格の角が丸められ、境界線が追加されます。
 
-`animation` パラメータを ""pulse""、""wave""、""pulse-x""、""pulse-y""、""fade""、""blink""、または ""none"" に設定することで、アニメーション効果を変更できます。
+`animation` パラメーターを ""pulse""、""wave""、""pulse-x""、""pulse-y""、""fade""、""blink""、または ""none"" に設定することで、アニメーション効果を変更できます。
 デフォルト値は ""wave"" です。"
 9d2792a3a1077905652d80effe597461af3f35bc145f30fc6045a859724fca97,"The `text` プロパティは、`TextElement` というミキシンによって提供されます。
-もしそのようなミキシンでフィルタリングした場合、ElementFilter 自体がタイプ付きイテレータを提供します。"
+もしそのようなミキシンでフィルタリングした場合、ElementFilter 自体がタイプ付きイテレーターを提供します。"
 f2cd1f5976c9ed6cfbcef672ef2443525bed69c5b1125c631e12c0651b111e75,"The `ui.splitter` 要素は画面領域をリサイズ可能なセクションに分割し、アプリケーションでの柔軟かつレスポンシブなレイアウトを可能にします。
 
 Quasar の Splitter コンポーネントに基づいており:
@@ -3277,8 +3277,8 @@ f73add22bc5f7bcb4c5827fac55fe6bfa36008955f525227596bd0f6b45c4c2d,コンポーネ
 afb43e82a083c2bda66e5d8d2287247ec817ef69da6e868640dc141644f282f7,ダイアログの内容は変更可能です。
 4c28c5e39842dd21e221e7991ff8766a28fec6ecda385e1c2a467264a146497b,ラベルの内容
 f54e8af172880ccec3bc79f50f066f12c7e0c7940872d8e843d06acd75a6249f,tooltip の内容（デフォルト：''）
-000c7afc1b99549da5d971526db8490b0b529b03c98a1d688f91e4e75e60df26,"ページ上のコンテンツはクライアント（ブラウザタブ）に特有であり、独自のローカル要素コンテキストを持ちます。
-特定のページのすべてのクライアントに更新を送信したい場合は、`app.clients`イテレータを使用できます。
+000c7afc1b99549da5d971526db8490b0b529b03c98a1d688f91e4e75e60df26,"ページ上のコンテンツはクライアント（ブラウザータブ）に特有であり、独自のローカル要素コンテキストを持ちます。
+特定のページのすべてのクライアントに更新を送信したい場合は、`app.clients`イテレーターを使用できます。
 これは、バックグラウンドプロセスまたは他のページからUI要素を修正する場合に役立ちます。
 
 *バージョン2.7.0で追加*"
@@ -3286,7 +3286,7 @@ ab4270180141f6462e3c2a7e8689cae810fc44b60f06472f51538d929344d529,"CSSセレク�
 ac9752d342dc7e37c86c9283cebc9327093121e9cc72fa4367a6dfd78f9f4d1d,現在のカラー値
 7c7641e5339f51997631819722181935012895493d179bc414908d8fc9d80ca5,現在の日付値
 28cce71a9a081db6e8c0f11e4258d0b158c701ed87ec593824a6f2fa7a8fcb75,現在のエディタの言語。
-beab4ab982166e77ba0ecf730d94541b65d8c2f3b3ee93de464d5b8f504ec35c,ブラウザの現在のパス。
+beab4ab982166e77ba0ecf730d94541b65d8c2f3b3ee93de464d5b8f504ec35c,ブラウザーの現在のパス。
 e34b2fe42db2cba39b71103e959f262cbe8f50a0012dcd412342c982c104504a,現在のエディタートンプレート。
 e912df01a6f2798b10f617cf94f321cff68fe307f12e24f2e4601a1492f49cb6,現在時刻の値
 7b9cdd7efff5c774b251946dc8ac5a744b6af8906ff95c5bacadab55c2e75a76,テキスト入力の現在の値
@@ -3304,12 +3304,12 @@ d3357992e4f0410dd59e720b6c9583c6bd1ce03731dc25b183c67732b7f0fe3f,このクエリ
 [Quasar の tabs](https://quasar.dev/vue-components/tabs) および
 [tab panels](https://quasar.dev/vue-components/tab-panels) API に似ています。
 
-`ui.tabs` はタブのコンテナを作成します。例として、`ui.header` に配置できます。
-`ui.tab_panels` は実際のコンテンツを持つタブパネルのコンテナを作成します。
+`ui.tabs` はタブのコンテナーを作成します。例として、`ui.header` に配置できます。
+`ui.tab_panels` は実際のコンテンツを持つタブパネルのコンテナーを作成します。
 各 `ui.tab_panel` は `ui.tab` 要素と関連付けられています。"
 2d50199edde65a5d3c68df9943bc7d55d0104fb8c78e231d24c9f0b755025fa4,テキストで使用するエンコーディング（デフォルト：“utf-8”）
 ad294aa03aa1ed381cf4b1e7333a16f2b958307f774411c1a248b68bf906da6a,"ESM モジュール URL（例： ""https://cdn.jsdelivr.net/npm/ag-grid-enterprise@34.2.0/+esm""）"
-1c57d76531d1766825a076055b8721a3e3fc570c6253512adecf00fbfac86190,"イベントハンドラは、Python関数、JavaScript関数、または両方の組み合わせになることができます：
+1c57d76531d1766825a076055b8721a3e3fc570c6253512adecf00fbfac86190,"イベントハンドラーは、Python関数、JavaScript関数、または両方の組み合わせになることができます：
 
 - サーバー上でイベントを処理し、すべての（シリアル化可能）イベント引数を送信したい場合は、Python ``handler`` を使用します。
 
@@ -3319,17 +3319,17 @@ ad294aa03aa1ed381cf4b1e7333a16f2b958307f774411c1a248b68bf906da6a,"ESM モジュ�
 
     ``js_handler`` は、選択的に引数をサーバーに送信することもでき、その場合 Python ``handler`` は常に呼び出されません。
 
-*バージョン 2.18.0 で更新: 両方のハンドラを同時に指定できます。*"
+*バージョン 2.18.0 で更新: 両方のハンドラーを同時に指定できます。*"
 b421df66ce2cf7cd092c2207d55d989d49803ebf580c5e72e235f66cb54c0855,"イベントタイプをトリガーとして指定 (例: ""keydown.enter"", ""click"" など)"
 19673fb836337ea0c5ba9ce7961a4b11c07cc0e7eabe259f204b83c4279a1e27,"以下のデモでは、`ui.clipboard.read()`, `ui.clipboard.write()` および `ui.clipboard.read_image()` を使用してクリップボードとやり取りする方法を示します。
 
-注意：ブラウザがクリップボードへのアクセス許可を要求したり、この機能自体をサポートしていない場合もあります。"
+注意：ブラウザーがクリップボードへのアクセス許可を要求したり、この機能自体をサポートしていない場合もあります。"
 3dd02bdf543361ce45cfc013fbd7713ec73f9c0d56b0600300d2701bba830086,日付文字列の形式（デフォルト：'YYYY-MM-DD'）
 db4201817314733721a8790889863e0d77d494817cfed9a16b11a433bce607e4,time の文字列の形式（デフォルト：'HH:mm'）
 0b3ef35af038a9464719fbee7995d010407294ac0397fd79c1d43464cf66b118,"`app.storage.client` の目的は、現在のページ訪問期間のみデータを保存することです。
 `app.storage.tab` に保存されたデータとは異なり、
-- これはページ変更時、さらにはタブが開かれている限りブラウザ再起動時にも保持されます -
-`app.storage.client` に保存されたデータは、ユーザーがブラウザを閉じたり、ページを再ロードしたり、別のページに移動したりすると破棄されます。
+- これはページ変更時、さらにはタブが開かれている限りブラウザー再起動時にも保持されます -
+`app.storage.client` に保存されたデータは、ユーザーがブラウザーを閉じたり、ページを再ロードしたり、別のページに移動したりすると破棄されます。
 これは、リソースを多く必要とする、意図的に短時間で利用される、または機密性の高いデータに適しています。
 例としては、データベース接続であり、ユーザーがページを離れるとすぐに閉じる必要がある場合です。
 さらに、ユーザーがページを再ロードしたときに、デフォルト設定でページを返す場合に役立ちます。
@@ -3404,7 +3404,7 @@ c6a2c1a2ae181d561ad3fb71ca4320f726f9feb094d1db835d7baefff78ddabc,画像のソー
 ecd9efe466fddc5daf55fce165a0cbe3378b6efd1d510ee78e4fccaab7c77988,ステップサイズ（デフォルト：0.01）
 fbe9ce45cfec7ac5af2df057b7664b73a946835f16ca6e8ab2cb90f382978e2f,ステップサイズは、有効な値間の間隔。
 f3cc9c9bec8f0bb94fedd5a5c8c38b87e2c80a8672ead10ca45589bedbe0a3f6,ステップサイズのステッパーボタン
-78c9220560d791ae94a0ba9a329d7b08483e7a9fe143237064e681a06b065ad3,元素的スタイル。
+78c9220560d791ae94a0ba9a329d7b08483e7a9fe143237064e681a06b065ad3,要素のスタイル。
 44a10ebfbb94be94a73cdc3f2dcc65a336f81310db8bf808344cc6fcdbc667ad,"表示される値に付加するサフィックス。
 
 *バージョン 3.5.0 で追加*"
@@ -3457,7 +3457,7 @@ NiceGUIが書き込みアクセスを検出し、値の伝播をすぐにトリ�
 
 *バージョン 2.14.0 で追加*
 "
-cec53405c8a7cebed80428291fcf7cb80ae127aecb574419bea61c0afb6dc4ae,"これらの関数は、ブラウザの履歴を移動したり、外部URLにアクセスしたりするのに役立ちます。
+cec53405c8a7cebed80428291fcf7cb80ae127aecb574419bea61c0afb6dc4ae,"これらの関数は、ブラウザーの履歴を移動したり、外部URLにアクセスしたりするのに役立ちます。
 
 *バージョン2.0.0で追加*
 "
@@ -3484,7 +3484,7 @@ bd5a6db8a20a6c614cd2f0a06acf7617d616b80121705e91c3a4c2913352516d,"このチャ�
   コードの構造化戦略については、`our modularization example <https://github.com/zauberzeug/nicegui/tree/main/examples/modularization/>`_ を参照してください。"
 eaeecf4bcdd1d3df0e203c1410345330c77de9ffb81960bc6203ef40d33cd280,"このデモでは、X、Y、Z軸を色分けして座標系を表示するためのカスタムクラスを作成します。
 これは、デフォルトの `axes_helper` オブジェクトに比べて便利な代替手段となる場合があります。"
-885b11f640e1e21ad452081fff49072759dd330b121bb4bad429d061d5357130,このデモでは、ツールチップ、カスタムセパレータ、コールバックを含むすべてのスロットとパラメータを表示します。
+885b11f640e1e21ad452081fff49072759dd330b121bb4bad429d061d5357130,このデモでは、ツールチップ、カスタムセパレータ、コールバックを含むすべてのスロットとパラメーターを表示します。
 dbcfa1952b9a7f1acec5777b55ef076c3015b4e8a74356ba22ff171b8d546d2a,このデモでは、ユーザーがカンマ区切りの値を入力した場合に、値を自動的に分割する方法を示しています。
 469956d1541844bbb844d7b927ac716ef2d955fa94e00f8b0d55afa8bb28ac12,このデモでは、ボタンのクリックで制限を変更する方法を示しています。
 11723266252f0835a40f6713c36e17d6be11640cd0617d0c5ff6c14efd15e233,このデモでは、最大可能な評価値を変更する方法と、スライダーに値をバインドする方法を示しています。
@@ -3527,7 +3527,7 @@ a2226f80a2131a2fa627313e07027807fa89e8c8831cfa8131445ddbf1ee381c,"このデモ�
 新しいチップを追加するには、ラベルを入力してEnterキーを押すか、プラスボタンをクリックしてください。
 削除されたチップはまだ存在しますが、その値は`False`に設定されています。"
 ed6d62d839c6cd6aea373b93dd70ad90351906980bb56dcc86f8ff87f2ff0692,このデモでは、テーブルセルにEChartsグラフを埋め込む方法を示しています。
-48091c61a80fd1912f07c4afaa0e57cbffb63e79f650b9a7b92912dd0d332d8d,このデモでは、要素をコンテナ間またはコンテナ内での移動方法を示します。
+48091c61a80fd1912f07c4afaa0e57cbffb63e79f650b9a7b92912dd0d332d8d,このデモでは、要素をコンテナー間またはコンテナー内での移動方法を示します。
 e0b26880ea4c6bba29d647efef1b5948500ec3fb0e8bba1b7a107562db4a4e48,このデモでは、要素内のスロット間で要素を移動する方法を示しています。
 12f4a859e34004c51cd36ef277054d962b9a5043d3ddc32c11a2ef24dc57ef5e,このデモでは、プログラム的に再生、一時停止、およびスクロールする方法を示します。
 708fc6c035f80c19c3dc6ede0a506b26cc8f50c6fa6ad2f454a147a12de70e26,"このデモでは、複数の列にセルをまたぐ方法を示します。
@@ -3538,7 +3538,7 @@ e0b26880ea4c6bba29d647efef1b5948500ec3fb0e8bba1b7a107562db4a4e48,このデモで
 1ab7300154f2aefce9e1d14f6993a29153bb7966a31cf6a5c8785466198ed046,このデモでは、[利用可能なイベント](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio#events)にサブスクライブする方法を示します。
 6984db61fc7f645e7996eee686d18f3a3c2d0eea345561dd7065fefa3c2ed031,"このデモでは、リアルタイムでプロットを更新する方法を示します。
 ボタンをクリックすると、プロットに新しいトレースが追加されます。
-新しいプロットをブラウザに送信するには、`plot.update()` または `ui.update(plot)` を明示的に呼び出すようにしてください。"
+新しいプロットをブラウザーに送信するには、`plot.update()` または `ui.update(plot)` を明示的に呼び出すようにしてください。"
 4807b926efe96463c0c20812a02cc9fd16b89babb8009f2a673795425da641e7,このデモでは、[cellClassRules](https://www.ag-grid.com/javascript-grid-cell-styles/#cell-class-rules) を使用して、セルの値を基に条件付きでセルをフォーマットする方法を示しています。
 0cc568818d55ed80b58716ef9c5ebdee70898670f19f159b5ec1a3de9392ffd7,"このデモでは、`.picker` をカスタマイズすることで、底にある `ui.date` 要素を使用した日付入力の利用方法を示します。
 
@@ -3574,17 +3574,17 @@ b5fc7456ba549b9d9b7c8efd2b2a57f1b9e7f12ba9593bef88ee9f0ab8c5347c,"この要素�
 重要な注意点：
 
 * セキュリティ上の理由から、フルスクリーンモードは、ボタンクリックなどの以前のユーザーインタラクションからの入開始のみ可能です。
-* 長い押し動作によるエスケープ機能は、Google ChromeやMicrosoft Edgeなどの一部のブラウザでのみ有効です。
+* 長い押し動作によるエスケープ機能は、Google ChromeやMicrosoft Edgeなどの一部のブラウザーでのみ有効です。
 
 *バージョン2.11.0で追加*"
 32014640cb076fd3bd3d0ddb40b616d5a5d3a8cffd792f71f223d8ab878f2034,"この要素は、Quasar の `QBtn <https://quasar.dev/vue-components/button>`_ コンポーネントをベースにしています。
 
-``color`` パラメータは、Quasar カラー、Tailwind カラー、または CSS カラーを受け付けます。
+``color`` パラメーターは、Quasar カラー、Tailwind カラー、または CSS カラーを受け付けます。
 Quasar カラーが使用された場合、ボタンはテーマに従ってスタイルされ、テキストの色も含まれます。
 「red」のような Quasar カラーと CSS カラーの両方として存在する色の場合、Quasar カラーが使用されます。"
 7e39a67a56f471f6edcfd282f38f2bb1e09464be3754e89b7287af2dd522d485,"この要素は、Quasar の `QBtnDropDown <https://quasar.dev/vue-components/button-dropdown>`_ コンポーネントをベースにしています。
 
-``color`` パラメータは、Quasar カラー、Tailwind カラー、または CSS カラーを受け付けます。
+``color`` パラメーターは、Quasar カラー、Tailwind カラー、または CSS カラーを受け付けます。
 Quasar カラーが使用された場合、ボタンはテーマに従ってスタイルされ、テキストの色も含まれます。
 「red」のような Quasar カラーと CSS カラーの両方として存在する色もあります。
 そのような場合、Quasar カラーが使用されます。"
@@ -3596,7 +3596,7 @@ a5cd4b88a843421072e93b3bcd55f163e387795975902d65e3a92fce321bf590,"この要素�
 オプションは、値のリストとして指定することも、値とラベルをマッピングする辞書として指定することもできます。
 オプションを操作した後、UI のオプションを更新するために `update()` を呼び出してください。"
 326b826ebb98a4f886477e06457742dda79f185ae5f8b0fab81fb3e098b24012,"この要素は、Quasarの `QCard <https://quasar.dev/vue-components/card>`_ コンポーネントをベースにしています。
-ドロップシャドウ付きのコンテナを提供します。
+ドロップシャドウ付きのコンテナーを提供します。
 
 注記：
 この要素とは異なり、
@@ -3606,7 +3606,7 @@ a5cd4b88a843421072e93b3bcd55f163e387795975902d65e3a92fce321bf590,"この要素�
 *バージョン2.0.0で更新: ネストされた要素の外側の境界線とシャドウを非表示にするのをやめました。*"
 74e01c5d1280b89aedf5fb2c6417f3052eba9771527c44c42f91e6aac48437c9,この要素は、Quasar の `QCheckbox <https://quasar.dev/vue-components/checkbox>`_ コンポーネントをベースにしています。
 16ab78201803a19986885329056f2b056ba3c24c33e004403948a1ce0b4afa76,"この要素は、Quasarの `QDate <https://quasar.dev/vue-components/date>`_ コンポーネントをベースにしています。
-日付は、`mask`パラメータで定義された形式の文字列です。
+日付は、`mask`パラメーターで定義された形式の文字列です。
 
 また、`range`または `multiple`プロパティを使用して、日付範囲や複数の日付を選択することもできます::
 
@@ -3617,14 +3617,14 @@ f0ec343cbba2d05b891ea51a160f6b01d745d2e5680921b334429c0ae8a6168f,"この要素�
 
 他のレイアウト要素と同様に、左側のドロワーは他の要素の中にネストすることはできません。
 
-注記：左側のドロワーは、アクセシビリティの向上に役立つように、DOM内でメインページコンテナの上に自動的に配置されます。順序を変更するには、`move` メソッドを使用してください。
+注記：左側のドロワーは、アクセシビリティの向上に役立つように、DOM内でメインページコンテナーの上に自動的に配置されます。順序を変更するには、`move` メソッドを使用してください。
 
 ``None`` の値は、現在のレイアウト幅（ブレークポイント：>=1024 px）に応じて、ドロワーを自動的に開いたり閉じたりします。値は、WebSocket接続が確立された際にクライアントから要求されます。"
 36285bd168346b8782387c0de78177faaa9167ffd294390600a86fa21f0ae159,"この要素は、Quasar の `QDrawer <https://quasar.dev/layout/drawer>`_ コンポーネントに基づいています。
 
 他のレイアウト要素と同様に、右側のドロワーは他の要素の中にネストすることはできません。
 
-注記：右側のドロワーは、アクセシビリティの向上に役立つように、DOM内でメインページコンテナの下に自動的に配置されます。順序を変更するには、`move` メソッドを使用してください。
+注記：右側のドロワーは、アクセシビリティの向上に役立つように、DOM内でメインページコンテナーの下に自動的に配置されます。順序を変更するには、`move` メソッドを使用してください。
 
 ``None`` の値は、現在のレイアウト幅（ブレークポイント：>=1024 px）に応じて、ドロワーを自動的に開いたり閉じたりします。値は、WebSocket接続が確立された際にクライアントから要求されます。"
 6a3a04e44e005db0035cfe44864c0fd74d116d0ee98cd41e511bfedbbfb77efd,"この要素は、Quasar の `QFooter <https://quasar.dev/layout/header-and-footer#qfooter-api>`_ コンポーネントに基づいています。
@@ -3646,7 +3646,7 @@ ceffcfe083a9196f0842aa17f6ac7216362747cda1c4f0ce417e27e2631a48fd,"この要素�
 ユーザーが入力を確認するまで待つ場合は、カスタムイベントコールバックを登録できます。例：
 `ui.input(...).on('keydown.enter', ...)` または `ui.input(...).on('blur', ...)`.
 
-`validation` パラメータを使用して、検証ルールの辞書を定義できます。
+`validation` パラメーターを使用して、検証ルールの辞書を定義できます。
 例： ``{'Too long!': lambda value: len(value) < 3}``.
 最初に失敗したルールのキーはエラーメッセージとして表示されます。
 あるいは、オプションのエラーメッセージを返す呼び出し可能オブジェクトを渡すこともできます。
@@ -3658,7 +3658,7 @@ Quasar の `QInput` コンポーネントは、ネイティブな `input` 要素
 詳細については、`QInput <https://quasar.dev/vue-components/input>`_ ドキュメントの「Style」プロパティセクションを参照してください。"
 558af326dc2f78de9c53d8ad5171e6239cec3649a340afe0f57aee220494559c,"この要素は、Quasar の `QInput <https://quasar.dev/vue-components/input>`_ コンポーネントをベースにしています。
 
-`validation` パラメータを使用して、検証ルールを辞書として定義できます。
+`validation` パラメーターを使用して、検証ルールを辞書として定義できます。
 例： ``{'Too small!': lambda value: value > 3}``.
 最初のルールが失敗したキーが表示されます。
 あるいは、オプションのエラーメッセージを返すコールラブルを渡すこともできます。
@@ -3666,7 +3666,7 @@ Quasar の `QInput` コンポーネントは、ネイティブな `input` 要素
 ae795dbeea4672b37e3db86fb7f123bbac3cc6d026212df3d367874f99e2e08b,"この要素は、Quasarの `QInput <https://quasar.dev/vue-components/input>`_ コンポーネントをベースにしています。
 ``type`` は ``textarea`` に設定することで、複数行のテキスト入力を作成します。
 
-`validation` パラメータを使用すると、検証ルールを辞書として定義できます。
+`validation` パラメーターを使用すると、検証ルールを辞書として定義できます。
 例： ``{'Too long!': lambda value: len(value) < 3}``.
 最初のルールに失敗したキーがエラーメッセージとして表示されます。
 あるいは、オプションのエラーメッセージを返すコールラブルを渡すこともできます。
@@ -3680,7 +3680,7 @@ ae795dbeea4672b37e3db86fb7f123bbac3cc6d026212df3d367874f99e2e08b,"この要素�
 オプションを操作した後、UI のオプションを更新するには `update()` を呼び出してください。"
 e529fb8ca563f171d41a8031c88ad2bd7bf0f057769948c63c6dd490f0bd6d21,"この要素は、Quasar の `QPageScroller <https://quasar.dev/layout/page-scroller>`_ コンポーネントに基づいて構築されています。
 
-``ui.page_sticky`` と非常に似ており、``position``、``x_offset``、``y_offset``、および ``expand`` パラメータを共有しています。
+``ui.page_sticky`` と非常に似ており、``position``、``x_offset``、``y_offset``、および ``expand`` パラメーターを共有しています。
 
 ただし、``ui.page_sticky`` は常に表示され、``ui.page_scroller`` は ``scroll-offset`` に到達するまで表示されません。
 
@@ -3697,27 +3697,27 @@ a5cfdbbf85b0f1e0c02214d9f1091392d527f7096ce52629fb0510e3d0398683,"この要素�
 オプションは、値のリストとして指定することも、値とラベルのマッピングを辞書として指定することもできます。
 オプションを操作した後、UI のオプションを更新するには `update()` を呼び出してください。
 
-`with_input` が True の場合、オプションをフィルタするための入力フィールドが表示されます。
+`with_input` が True の場合、オプションをフィルターするための入力フィールドが表示されます。
 
 `new_value_mode` が None でない場合、`with_input=True` を意味し、ユーザーは入力フィールドに新しい値を入力できます。
 詳細は、`Quasar's documentation <https://quasar.dev/vue-components/select#the-new-value-mode-prop>`__ を参照してください。
 このモードは、`value` プロパティをプログラム的に設定する場合には効果がありません。
 
-`validation` パラメータを使用して、検証ルールの辞書を定義できます。
+`validation` パラメーターを使用して、検証ルールの辞書を定義できます。
 例： ``{'Too long!': lambda value: len(value) < 3}``.
 最初のルールが失敗した場合のキーはエラーメッセージとして表示されます。
 あるいは、オプションのエラーメッセージを返すコールラブルを渡すこともできます。
 すべての値の変更で自動検証を無効にするには、`without_auto_validation` メソッドを使用してください。"
 db0a8846fbc63de7859f67376867fdd47ae71cc7842f4c5932cc2a65b50ea99d,"この要素は、Quasar の `QSeparator <https://quasar.dev/vue-components/separator>`_ コンポーネントに基づいています。
 
-カード、メニュー、その他のコンポーネントコンテナなどを区切りとして使用し、HTML の <hr> タグに似ています。
+カード、メニュー、その他のコンポーネントコンテナーなどを区切りとして使用し、HTML の <hr> タグに似ています。
 "
 5affe9e43a89b9c2701e64d878bb1e7a22cb9db927e8a2204cfbf67ee3cae1e5,"この要素は、Quasar の `QSkeleton <https://quasar.dev/vue-components/skeleton>`_ コンポーネントをベースにしています。
-カード、メニュー、その他のコンポーネントコンテナでコンテンツの読み込みを待つためのプレースホルダーとして機能します。
+カード、メニュー、その他のコンポーネントコンテナーでコンテンツの読み込みを待つためのプレースホルダーとして機能します。
 利用可能なタイプの一覧については、`Quasar ドキュメント <https://quasar.dev/vue-components/skeleton/#predefined-types>`_ を参照してください。"
 1e1184f41e046cf20f3eecf0f8a6b0162aa885862aeecfd5bb68ef58de5476b2,"この要素は、Quasar の `QSlideItem <https://quasar.dev/vue-components/slide-item/>`_ コンポーネントをベースにしています。
 
-``text`` パラメータが提供された場合、指定されたテキストを持つネストされた ``ui.item`` 要素が作成されます。
+``text`` パラメーターが提供された場合、指定されたテキストを持つネストされた ``ui.item`` 要素が作成されます。
 テキストの表示方法をカスタマイズしたい場合は、スライドアイテム内にカスタム要素を配置できます。
 
 個別のスライドアクションのプレースホルダーを埋めるには、``left``、``right``、``top``、または ``bottom`` メソッドを使用するか、サイド引数 (""left""、""right""、""top""、または ""bottom"") を持つ ``action`` メソッドを使用します。
@@ -3732,7 +3732,7 @@ db0a8846fbc63de7859f67376867fdd47ae71cc7842f4c5932cc2a65b50ea99d,"この要素�
 "
 50f6a6e4f9cd1dcf827cb5ad6abb8c5cd1b7431fad02b3ad5a2297f20505d876,この要素は、Quasar の `QSpinner <https://quasar.dev/vue-components/spinners>`_ コンポーネントに基づいています。
 b01d413682aaca7339ae6e73f9bbc002585e95859fa1e4daf6600c0a35ffa78f,"この要素は、Quasar の `QTime <https://quasar.dev/vue-components/time>`_ コンポーネントをベースにしています。
-時刻は、`mask` パラメータで定義された形式の文字列です。"
+時刻は、`mask` パラメーターで定義された形式の文字列です。"
 fd6330d8ec527bbd921d18cbba5473ff0e1e46f6806e435d96e90e7ad00f7af8,この要素は、Quasar の `QToggle <https://quasar.dev/vue-components/toggle>`_ コンポーネントをベースにしています。
 0bb3d58cbb7e9249219a700831a90be671042ab5be336cfaaff553999a2c63e1,"この要素は、Quasar の `QTooltip <https://quasar.dev/vue-components/tooltip>`_ コンポーネントをベースにしています。
 他の要素の中に配置することで、ホバー時に追加情報を表示できます。
@@ -3762,7 +3762,7 @@ b64dd1ba8eeaa8fbfa0cd309ed52e484282fb8eb3bef19b81b31b718cb60a7e5,"この関数�
 *バージョン2.0.0で追加*
 
 **注意:** この関数は非推奨であり、NiceGUI 4.0では削除されます。`add_css`を使用してください。"
-56ac80b7d4ec514ac6a3179234df1cc6f8131c3ae02527e9c9e7c84d3c99614a,"この関数は、ブラウザで実行されるJavaScriptコードをページ上で任意の動作させます。
+56ac80b7d4ec514ac6a3179234df1cc6f8131c3ae02527e9c9e7c84d3c99614a,"この関数は、ブラウザーで実行されるJavaScriptコードをページ上で任意の動作させます。
 IDを使ってクライアントサイドのVueコンポーネントやHTML要素にアクセスするには、`getElement()` または `getHtmlElement()` というJavaScript関数を使用します (*バージョン2.9.0で追加*)。
 
 関数がawaitされる場合、JavaScriptコードの結果が返されます。
@@ -3770,7 +3770,7 @@ IDを使ってクライアントサイドのVueコンポーネントやHTML要�
 
 JavaScriptコードは、クライアントが接続された後にのみ実行されるのは明らかです。
 内部的には、JavaScriptコードの実行前に ``await client.connected()`` が呼び出されます (*バージョン3.0.0以降*)。
-これにより、JavaScriptコードの実行が遅延する可能性があり、``timeout`` パラメータでカバーされません。
+これにより、JavaScriptコードの実行が遅延する可能性があり、``timeout`` パラメーターでカバーされません。
 
 :return: JavaScriptコードの結果を取得するためにawaitできるAwaitableResponse"
 4826ca952836280f1f115bb4ececb89b48834c7a6ec3bb27dc4d62e958bbce44,この例では、非同期処理の期間中にボタンを無効にするのに使用できるコンテキストマネージャーを示しています。
@@ -3808,7 +3808,7 @@ e9aa1a877ad0024838d204752073b8f88a0ab0b0d7396a1fadf1d4415dabed61,"オブジェ�
 c420da6705b3681a91f6f3673ce7f4182d828fe374b7b7795055fb2dd268ce96,"要素を操作するには、`ui.query`関数を使用できます。
 クエリの結果を使って、他のUI要素と同様にクラス、スタイル、属性を追加できます。
 例えば、ページの背景色を変更するのに役立ちます（例：`ui.query('body').classes('bg-green')`)）。"
-02a08e45e4af8c159281bb1b22f381c975824a51449da0853bf0f0bc60016cc0,"すべての要素を、行、列、またはカードコンテナから削除するには、以下を呼び出します。
+02a08e45e4af8c159281bb1b22f381c975824a51449da0853bf0f0bc60016cc0,"すべての要素を、行、列、またはカードコンテナーから削除するには、以下を呼び出します。
 ```py
 container.clear()
 ```
@@ -4116,18 +4116,18 @@ e8109e7ac33f094f77ff8a7263e128ee8958f43b36d241631b951c7280156c53,セッション
 9b9c85e99fed6f7285b5ee3f46fbcf78c479a0b4252e58a0153c278479f00d84,Stripe を使用して決済を処理する。
 d6fee4c5d377b4caa85e3d0665e3992059843dcddbccf997d1baf6e974109ef5,[websockets ライブラリ](https://websockets.readthedocs.io/) を使用して WebSocket サーバーを起動する。
 71fed8e78ca616338bfd4db8a28314f09cd533cda4e77fd6ea4880237a2d6706,`auto-close` プロパティを使用することで、サーバー往復なしで任意のクリックイベントでメニューを自動的に閉じる。
-1739a5b9c252bf623f44814f88fdb14e0453bc51607d2339739cd447ae57102f,`tag` パラメータを使用して、div 以外の要素を生成します。
+1739a5b9c252bf623f44814f88fdb14e0453bc51607d2339739cd447ae57102f,`tag` パラメーターを使用して、div 以外の要素を生成します。
 b4539c6281a40e17edc53908a8e1666fac7b0dcd98037c0f5dc5714ec003648c,公式の [zauberzeug/nicegui](https://hub.docker.com/r/zauberzeug/nicegui) Docker イメージを使用する。
 cea761a1a1ec5dfe317aea5318ea550be8655e8c4362419c6786c9b410be01f9,[thecocktaildb.com](https://www.thecocktaildb.com/) の公開 API を使用して、カクテルを検索する。
 0a4ac082e91dda1e2e54be4f45b417dcc93007c0f06d13eea98aa64364941bd0,use this port (デフォルト: 通常モードでは8080、ネイティブモードでは自動的に決定される空きポート)
 5feea846cee7399559094805e0579cca73ab94d7d2f1e07a10fa378fed8f6abd,"use UnoCSS を指定されたプリセットで Tailwind CSS の代わりに使う (デフォルト: ``None``, オプション: ""mini"", ""wind3"", ""wind4"" *バージョン 3.7.0 で追加*)"
 08fe4dc003901e4dcb6d4ca021b18c8ae498627466e44db5c2d3656c240246ad,ユーザーの断言
-cc05aecd072c27a1729892f13a6045b8900fb2ad10ac3363a2fc2341865b1390,ユーザー Fixture
+cc05aecd072c27a1729892f13a6045b8900fb2ad10ac3363a2fc2341865b1390,ユーザー フィクスチャ
 e5999b636348a9ec0fb633fbfe86536679854ee7e72be672d4a9f665c6409d02,ユーザーインタラクション
 8a865f557022531de4ce5feced12a5d87b6e122f9066d6541e88d74718dbd470,ユーザーリファレンス
 54c68e664ec876dfb57a55d83c1618aee65526b5007c34b55cd4e200fcf69463,ユーザーシミュレーションコンテキスト
 c351e247e320e3fb008fef0fa2e8acdc1270c251fc94dccff17c351152aec775,ユーザーインタラクション参照
-5e7926c2fcc00e385c0297c8132238530e838e7f8290bdb02460a3ddc3c499ef,"Using `run_javascript` でも、ブラウザ上で非同期コードを実行できます。
+5e7926c2fcc00e385c0297c8132238530e838e7f8290bdb02460a3ddc3c499ef,"Using `run_javascript` でも、ブラウザー上で非同期コードを実行できます。
 次のデモでは、ユーザーの現在地を取得する方法を示しています。"
 8b5b471dd9eef4d6b31b234edee2f153e922864267e2a25237feeee634712405,ElementFilterの使用
 4e879fed044cf1b00b47e2b1697a2dab68f2961d549617313129840255e1518c,ANSIエスケープコードの使用
@@ -4136,7 +4136,7 @@ a0add43ee49ebabc330cf5539ed11390108a0c68b949dccc04a1a028ddebe5ae,ページ引数
 9e8a0f1be931ed5ebcfa91bf454273ce7f7c5354a37849c835cc6e2d68029ef3,"Using the `get_camera` method, you can get a dictionary of current camera parameters like position, rotation, field of view and more.
 This demo shows how to continuously move a sphere towards the camera.
 Try moving the camera around to see the sphere following it."
-562194408e6357a9dbff70084dbd85918e118e9bd09bd08dc70aefa2f8b7b3bc,"`text_html`パラメータを使用すると、チャットにHTMLテキストを送信できます。
+562194408e6357a9dbff70084dbd85918e118e9bd09bd08dc70aefa2f8b7b3bc,"`text_html`パラメーターを使用すると、チャットにHTMLテキストを送信できます。
 ユーザー入力をHTMLとして表示する場合、XSS攻撃を防ぐためにサニタイズ関数を指定する必要があります。"
 db90392d929a7f3511d821ff9ad97c40e3501801779905a9c4d2350b79e6e508,[replicate](https://replicate.com)ライブラリを利用して、音声からテキストへのトランスクリプションを実行
 6ebcd4d025144b1292659dbfc3b5aea9334e4146a3c56c4611dc9a35e8ac8067,"現在の値を検証し、必要に応じてエラーメッセージを設定します。
@@ -4238,8 +4238,8 @@ de2b783b5ace7522fd1b2d1d6efe8ed25fd11fc98445d78688fa270bb9a11603,通知が複数
 1fbed73089f9eb5e9fbfc0f02934f8480e071800633cdbd2b4bc76b5e50f5b2d,選択したオプションをクリックすることで、トグルをクリアできるか。
 44f44073db8b1b25e23215a0cd8ea060f85dad1691dd199a4c6a84f8970c5d80,"フルスクリーンモードから退出するために、ユーザーが長押しするかエスケープキーを押す必要があるかどうか。
 
-この機能は、Google ChromeやMicrosoft Edgeなどの一部のブラウザでのみサポートされています。
-サポートされていないブラウザでは、この設定は効果を持ちません。"
+この機能は、Google ChromeやMicrosoft Edgeなどの一部のブラウザーでのみサポートされています。
+サポートされていないブラウザーでは、この設定は効果を持ちません。"
 3ce9ba4a071d4d31ab181d0db58db5afb6178f4be468ee128fb95036d962c80e,フルスクリーンモードから抜け出すために、ユーザーがエスケープキーを長押しする必要があるかどうか。
 0d4d69d674d15b5fb7b08f79f13865847909ca3e78dee2cf4c5bb6216660c0b0,whether the video should be initially muted (デフォルト: `False`)
 03b973a7071ec7de50fb867d104ac93f8e16ac62df89fe7dc3998d31b2ea7818,whether the video should loop (デフォルト: `False`)
@@ -4263,7 +4263,7 @@ dbeec6b8f095a5e732a89dadb5e5b3c44f3ced5462c51c62f7fd6cc7323764c1,"描かれた�
 a8666e59e41d3c32954ea7e003915e223b471a54d4f6250aa994b4f9b95af8e2,whether to hide the input (デフォルト: False)
 f75eba5ad6f04ab7b90d43fecc1dc197c8ca853630a8050c45247e2301b024d4,whether to highlight whitespace (デフォルト: `False`)
 216d3afa123c370dc80c81c467d91fa396554b41a378f60bafac54fa9352352e,繰り返し処理中に要素自体を含めるかどうか
-1e7679bcba6195d4cdbb08d593f3574c170765226f05690da88b2d3725832b67,対象を新しいタブで開くかどうか (ブラウザによってブロックされる可能性がある)
+1e7679bcba6195d4cdbb08d593f3574c170765226f05690da88b2d3725832b67,対象を新しいタブで開くかどうか (ブラウザーによってブロックされる可能性がある)
 3f446eb21d26729fdbe714497cbf24aaaccb6d3c028d2aadad7823d21af85e69,角丸を削除して境界線を四角にするかどうか (デフォルト: ``False``)
 56a4bba4c8e0a15b7fa138df2b8296206f7cca5e6c66feaf75c92d06a9c9636a,whether to return the result of the validation (デフォルト: ``True``)
 9fd08136912bbd1111a9db54dab5511312da6e99ee2096b1c610295f26cb86a3,完全にパスを消費できない場合に、404 エラーメッセージを表示するかどうか
@@ -4285,7 +4285,7 @@ a2febeb30cd858774df7ee316039d477b7d592b5f3e06a0f5721c99406085e95,whether to show
 f6fbd9c5f5a217007f91b500d6b35743ed1ee860d3b31a385c56ad155653adce,ドロップダウンアイコンを別のボタンに分割するかどうか (デフォルト: `False`)
 f2cb986bc13fbd2e32590c6fbaeea2538c7ea5448f3d4c0eb9bf24cbea1236e9,自動でオーディオを再生するかどうか（デフォルト：`False`）
 0deade1c0e7ed0acdac70977277b40c78d81467fb56cda24bab7df2f894aecaa,whether to start playing the video automatically (デフォルト: `False`)
-2b152f22bb389e63782a56c28ebb127b67a9663e810899002fb1a387db058de1,最後のイベント発生後にイベントハンドラをトリガーするかどうか (デフォルト: ``True``)
+2b152f22bb389e63782a56c28ebb127b67a9663e810899002fb1a387db058de1,最後のイベント発生後にイベントハンドラーをトリガーするかどうか (デフォルト: ``True``)
 104bf572da900bc0185c9e030be9d511f11350a98a104c12947527e8f2816cb5,whether to trigger the event handler immediately upon the first event occurrence (デフォルト: ``True``)
 89333eb8c5d820cbe138466194e74d5b61e5630b9fe47c038e13cbb1c5b758f8,現在のクライアントが削除された際に、コールバックからサブスクリプションを解除するかどうか
 fa7c20796fbfe562bfbceb577eb9c50c03823cd86b7c68756bac7b7cc20fba78,"Quasar のダークモードを使用するかどうか（デフォルト：`False`、""自動"" モードの場合は `None`）"
@@ -4297,7 +4297,7 @@ bf90895fa6e6322fe5f84ebeed30be3644ea0fb95860f387678442f0c606a451,whether to wrap
 46e52677e8e345616d21e6a9bb508f30319f87b2999a553abf1d59b6d441093e,whether to wrap the content (デフォルト: `False`)
 686205f433560bef2401f36f5d31fe4a1bbde669a6dbb3552cab5b04e3c6c659,whether to wrap the content (デフォルト: `True`)
 4ef0af9a71c15097d0a87da1d974f262912633714e18869159b925daf8538fa2,"While `ui.sub_pages` は、同期サブページビルダーでページブロックエラーが発生した場合にサブページの表示をブロックしますが、
-その背後にあるクライアントは依然として機能しており、インページ例外ハンドラは非同期および同期ビルダーの両方に対して呼び出されます。
+その背後にあるクライアントは依然として機能しており、インページ例外ハンドラーは非同期および同期ビルダーの両方に対して呼び出されます。
 
 注記: より詳しい情報については、[エラーハンドリング](section_action_events#error_handling) のセクションを参照してください。"
 fc6d7f9f65c18ccdc13800df2f1a8eb3ce11d52dac9bf694646b62a119ae7f2f,"`ui.timer`は現在のページのコンテキスト内で動作するUI要素ですが、UIに依存しないタイマーを使用する場合は、グローバルな `app.timer`を利用できます。
@@ -4338,7 +4338,7 @@ fd156152db356ab7aa865215e8b20b39958bb3e6c45450761d8424c309405565,幅のキャン
 29d134a349a24310fc66085de08cb3a0050a9bd394a4f28a65ecb53dc8431671,正しい CSS セレクタを使用すると、標準のラジオ要素内に任意のコンテンツを配置できます。
 b278f4da8f4f5731a89bd289dda9406f90a0950c280d3bce534aaa513c11005f,"NiceGUI で Altair チャートを anywidget を使ってラップします。
 
-Altair パラメータを Python と同期させることに関する詳細は、`altair documentation <https://altair-viz.github.io/user_guide/interactions/jupyter_chart.html#accessing-variable-params>`_ を参照してください。
+Altair パラメーターを Python と同期させることに関する詳細は、`altair documentation <https://altair-viz.github.io/user_guide/interactions/jupyter_chart.html#accessing-variable-params>`_ を参照してください。
 
 *バージョン 3.5.0 で追加*"
 c543a0fbe58a891e159c8b0350cedbc36c78191629265c1bb395e1336dceec72,カスタム Vue コンポーネントを作成し統合する。
@@ -4403,8 +4403,8 @@ c199e4001faec39b7b40b98df74bd6d0d57b2c5ed917aab0c696f866cced96a5,"グリッド�
 922154fef441bb0a0b35c5258484bf75c0434180aa1d922cd7a1b311d1132b54,"マーカーをマップに追加するには、`marker` を使用します。
 `center` 引数は緯度と経度のタプルです。
 このデモでは、マップをクリックすることでマーカーを追加します。
-「map-click」イベントはマップオブジェクトのクリックイベントを指し、「click」イベントはコンテナ div のクリックイベントを指します。"
-70d267db442409650906b87edc3ecde376ac53711d34ecd176ae2c04b4389d0c,"マップにプラグインを追加するには、`additional_resources` パラメータに JS および CSS ファイルの URL を渡します。
+「map-click」イベントはマップオブジェクトのクリックイベントを指し、「click」イベントはコンテナー div のクリックイベントを指します。"
+70d267db442409650906b87edc3ecde376ac53711d34ecd176ae2c04b4389d0c,"マップにプラグインを追加するには、`additional_resources` パラメーターに JS および CSS ファイルの URL を渡します。
 このデモでは、[Leaflet.RotatedMarker](https://github.com/bbecquet/Leaflet.RotatedMarker) プラグインの追加方法を示しています。
 これにより、指定された `rotationAngle` でマーカーを回転させることができます。
 
@@ -4421,13 +4421,13 @@ ee69eec91f66bfa3102ec40c1a0e3c2cb0f205069a5565dfa9ddc585445670c0,"[キー修飾�
 c8fb00d0dac678681bd99fc4169017979b48b8905d9193a13a6e4072d6286df5,Base64 文字列も画像ソースとして使用できます。
 94668ac1e2ee71ecdd7f0b5ea91b8dfda0247703384b90b08bd0876794e0d5eb,PIL 画像を画像ソースとして使用することもできます。
 9829ed2d53214d2624656ae6b0332181250fa4ffe15dc65f2ca8e83a6808a39a,favicon として base64 エンコードされた画像を扱うこともできます。
-7957c96741efdff670a0c270ec35349dd09ddcb60ef99155f97c3be6a60f8bc5,"`on` メソッドを使用して、純粋な JavaScript イベントハンドラを登録することもできます。
+7957c96741efdff670a0c270ec35349dd09ddcb60ef99155f97c3be6a60f8bc5,"`on` メソッドを使用して、純粋な JavaScript イベントハンドラーを登録することもできます。
 サーバーにデータを送信せずにJavaScriptコードを実行したい場合に役立ちます。
 この例では、`navigator.clipboard` API を使用して文字列をクリップボードにコピーしています。"
 b59f929e44ba5156744a7d32c2b864b1894243218aa6510e090a130fcf751911,"カスタムテーマは、[Theme Builder](https://echarts.apache.org/en/theme-builder.html) で作成したものを適用できます。
 
 辞書としてテーマを渡す代わりに、JSONファイルのURLを指定することも可能です。
-これにより、ブラウザはテーマをキャッシュし、同じテーマが複数回使用された場合に読み込みを高速化できます。
+これにより、ブラウザーはテーマをキャッシュし、同じテーマが複数回使用された場合に読み込みを高速化できます。
 
 *バージョン 2.15.0 で追加*"
 55df1ff6d20cc4f31c700e03639ad819174d9a472e2cc510c62998582c1cadae,"ボタングループに、ボタンと同様のスタイリングオプションを適用できます。例えば、「flat」、「outline」、「push」などです。
@@ -4437,7 +4437,7 @@ b59f929e44ba5156744a7d32c2b864b1894243218aa6510e090a130fcf751911,"カスタム�
 そうしないと、ハンドラーはログ要素への参照を保持し続け、その結果としてログ要素がガベージコレクションされません。"
 c872d3f8b9bea6a3949baa53f47e33d692225f7fb52dee3314e022c8e4a048bd,"`ui.run()` はオプションの引数とともに呼び出すことができます。
 ほとんどは停止してアプリケーションを完全に再起動した後にのみ適用され、自動再ロードでは適用されません。"
-348f2211064d68644daf379fa79ce686bdc22635a1a2de69cf3343d46f8ae866,`once` パラメータ付きのタイマーを使用して、遅延後に関数を呼び出すことができます。
+348f2211064d68644daf379fa79ce686bdc22635a1a2de69cf3343d46f8ae866,`once` パラメーター付きのタイマーを使用して、遅延後に関数を呼び出すことができます。
 0a85a5bc168ace26352e6fbd2d3e48bd1ccb2b83dbcc1ae094304ad31891ab00,Markdown 要素の内容は、`content` プロパティを設定するか、`set_content` メソッドを呼び出すことで変更できます。
 787dabb8e9fc1e58102ac526f5b286f06d15388099235370918ec97601222c49,"AG Grid のテーマは、`theme` プロパティを設定することで変更できます。
 ページのダークモード設定に応じて、ダークモードは自動的に適用されます。"
@@ -4445,14 +4445,14 @@ c872d3f8b9bea6a3949baa53f47e33d692225f7fb52dee3314e022c8e4a048bd,"`ui.run()` は
 デフォルト値は 20 です。
 変更内容を確認するには、`show_stats` 引数を使用して統計表示を有効にします。
 このデモでは、メインシーンのフレームレートを 40 FPS に設定し、静的ビューのフレームレートを 5 FPS に設定する方法を示しています。
-FPS は一般的にターゲットフレームレートよりも低くなります。これは、ブラウザもシーンのレンダリングに時間をかけるためです。
+FPS は一般的にターゲットフレームレートよりも低くなります。これは、ブラウザーもシーンのレンダリングに時間をかけるためです。
 この原則は `ui.scene_view` にも適用されます。
 
 *バージョン 3.2.0 で追加*"
 2b7297871b4038cdec205942e84b0cd2cbd5e7278a347bd6acb251821ea5ce6a,"サブプロセスの出力をターミナルに接続できます。
 `subprocess.PIPE` がメモリ内の `StreamReader` オブジェクトに書き込みをバッファリングしていることに注意してください。
 サブプロセスがターミナルで実行されているように動作させたい場合は、pty を使用する必要があるかもしれません。
-`convertEol` パラメータは、行頭文字 (`\n`) をキャリッジリターン + 行頭文字 (`\r\n`) に自動的に変換し、サブプロセスの出力を表示する際に適切な行末を実現します。"
+`convertEol` パラメーターは、行頭文字 (`\n`) をキャリッジリターン + 行頭文字 (`\r\n`) に自動的に変換し、サブプロセスの出力を表示する際に適切な行末を実現します。"
 ba65ba57b1d0a1aa15cf2640532a4fc7a92311391d784671651aa4b0b14983bd,"Pandas DataFrame からテーブルを作成するには、`from_pandas` メソッドを使用できます。
 このメソッドは Pandas DataFrame を入力として受け取り、テーブルを返します。"
 055a4c4c7042ee5ecf314289c0e279c0c6dab789a71ae350b5b3852b99fa5e4c,"Polars DataFrame を `from_polars` メソッドを使ってテーブルとして作成できます。
@@ -4483,7 +4483,7 @@ d3dd4424d658cb24393b6bada3ee047f224fca206e26f4d239a677e5e34e7565,"pyecharts オ�
 e9711eb02081a3038fa171b19639ad250dd7edc4dca3669116db6ef697afc069,"色選択器は、プロパティ、クラス、およびスタイル属性を通じてカスタマイズできます。
 QColor コンポーネントがメニュー内にネストされているため、`props` メソッドを直接使用することはできませんが、`q_color` 属性を使用します。"
 7f7654f150dc4c4e4002f4801e0f22d1cee7e2dc8992271cf9d8fa9d3781a73b,範囲の色とラベルは、個別に設定するか、まとめて範囲全体に設定することでカスタマイズできます。
-e1fbd398dfe5dc7a7b92bb0f61bb4019e65e03fe2a7d5123de0fa30981852ed3,"すべての列に適用されるデフォルトの列パラメータを定義できます。
+e1fbd398dfe5dc7a7b92bb0f61bb4019e65e03fe2a7d5123de0fa30981852ed3,"すべての列に適用されるデフォルトの列パラメーターを定義できます。
 この例では、すべての列はデフォルトで左揃えになっており、青い大文字のヘッダーを持っています。
 
 *バージョン2.0.0で追加*"
@@ -4502,11 +4502,11 @@ e3768c465e6272d1ea2ac7d4ac100d75e08229563aae55d2c4a0db25e3199b19,"線の色と�
 このデモでは、マップをクリックすることでマーカーとポリゴンを追加します。
 「編集」と「削除」を `True` (デフォルト) に設定すると、描画された形状の編集と削除を有効にできます。"
 61672bb68b30dc03c0791099a6a3ffe76d27f0bff598be63f29e7139c7286c7b,"NiceGUI のネイティブモードを有効にするには、`ui.run` 関数内で `native=True` を指定します。
-初期ウィンドウのサイズや表示モードをカスタマイズするには、それぞれ `window_size` と `fullscreen` パラメータを使用します。
+初期ウィンドウのサイズや表示モードをカスタマイズするには、それぞれ `window_size` と `fullscreen` パラメーターを使用します。
 さらに、`app.native.window_args` と `app.native.start_args` を使用して、追加のキーワード引数を指定できます。
-内部で使用されている [pywebview モジュール](https://pywebview.flowrl.com/api) で定義されているパラメータを、任意に選択してください。
+内部で使用されている [pywebview モジュール](https://pywebview.flowrl.com/api) で定義されているパラメーターを、任意に選択してください。
 `webview.create_window` および `webview.start` 関数で使用されるものです。
-これらのキーワード引数は、`ui.run` で定義されたパラメータよりも優先されます。
+これらのキーワード引数は、`ui.run` で定義されたパラメーターよりも優先されます。
 
 また、`app.native.settings` を使用して、`webview.settings` を変更できます。
 
@@ -4517,16 +4517,16 @@ Windows では、ネイティブモードでは .NET Framework をインスト�
 pywebview は、EdgeChromium のバックエンドとしてこれを使用するためです。
 標準の Windows インストールでは通常、事前にインストールされていますが、最小限版または新規にインストールされたシステムでは欠落している可能性があります。"
 bb74d51c62a132f11f16b81af4cd76bd3af0b5351a2bde4bd0c9b8897e8719cf,スライド項目とそのアクションスロットをカスタム UI 要素で埋められます。
-8f94d8a97f7d20b4dc4a0e78e2d5c531a126b235ceb9e7575020df2550417d52,"`filter` プロパティを設定することで、ノードをフィルタできます。
-ツリーには、フィルタに一致するノードのみが表示されます。"
+8f94d8a97f7d20b4dc4a0e78e2d5c531a126b235ceb9e7575020df2550417d52,"`filter` プロパティを設定することで、ノードをフィルターできます。
+ツリーには、フィルターに一致するノードのみが表示されます。"
 1934802b7b1d06cb66441e1c6ff49f5ac19246a7c3359e584a0d4ee21cc0ccf3,"You can filter the return values of method calls by passing a string that defines a JavaScript function.
 This demo runs the grid method ""getDisplayedRowAtIndex"" and returns the ""data"" property of the result."
 819f662e27c4239ff97cf89cf47bf0d216c2819acba894ff4a1b1a33a6a3f0d2,"画像を強制的に再読み込みするには、`force_reload` メソッドを呼び出します。
-URL にタイムスタンプを追加することで、ブラウザが画像を再読み込みします。"
+URL にタイムスタンプを追加することで、ブラウザーが画像を再読み込みします。"
 34ed3355e5f7a7ad9814457f623eb6ec1c22df6076922f65a85e07fb1216c3dc,"エラーの処理には、`error` イベントを監視します。
 イベント `args` には、`hash`、`message`、`str` などのプロパティと、追加情報を含む `error` オブジェクトが含まれます。"
-dc4df5e178fe54ce45ce563baca3ef3af7d903422c497a148ff8b2824a80b410,ページネーションの変更を処理するには、`on_pagination_change` パラメータを使用します。
-1bb61b0926cb14e6d932e7f57f5d02a52f9a5fcffaec6e73338d03cc5eddfc41,"reStructuredText 元素をインデントすることで階層構造を作成できます。
+dc4df5e178fe54ce45ce563baca3ef3af7d903422c497a148ff8b2824a80b410,ページネーションの変更を処理するには、`on_pagination_change` パラメーターを使用します。
+1bb61b0926cb14e6d932e7f57f5d02a52f9a5fcffaec6e73338d03cc5eddfc41,"reStructuredText 要素をインデントすることで階層構造を作成できます。
 一般的なインデントは、相対インデントを保持するために各行の先頭から自動的に削除されるため、複数行文字列をインデントできます。"
 9a44db5a33bd72a7f3b09a899cda50232aeb302df43dfe3be385c6d66df49428,別のページにリンクするには、パスまたは関数参照をリンクターゲットとして提供できます。
 c3f7fd6bf78bd95f59ff6d43769ed56964c7a7886aac39c1171635daabad1705,"画像がロードされたことを知るために、""loaded"" イベントを監視できます。"
@@ -4584,7 +4584,7 @@ e054a089f483272dabc1b97379e1ef7537ea6ed2108f79e466ca59bbd4e096e6,"NiceGUIの起�
 - `app.on_exception`: 例外が発生したときに呼び出される (オプション引数: 例外)
 
 NiceGUIがシャットダウンまたは再起動された場合、実行中のすべてのタスクは自動的にキャンセルされます。"
-ff9261a0ef04ac0c022b5b8ccdb39d66f6ca8211f66b10aa661b25e75cd315fd,"`on_node_click`パラメータを使用して、クリックイベントを登録できます。
+ff9261a0ef04ac0c022b5b8ccdb39d66f6ca8211f66b10aa661b25e75cd315fd,"`on_node_click`パラメーターを使用して、クリックイベントを登録できます。
 
 *バージョン3.3.0で追加*"
 f4f6fd542c591a6e6414b24321d79f0325c3ca05abfc382ba7e116f993714e9c,"カードから影を取り除くには、`no-shadow`クラスを追加します。
@@ -4598,7 +4598,7 @@ f4f6fd542c591a6e6414b24321d79f0325c3ca05abfc382ba7e116f993714e9c,"カードか�
 997789164a22dcaa7af479af2cdbd0e493ded662bc783c97114bc31a2d951c71,"エスケープキーを長押しすることで、ユーザーにフルスクリーンモードから退出させるように設定できます。
 これは、フォーム作業やデータ編集などの際に、誤って退出してしまうのを防ぐのに役立ちます。
 
-ただし、この機能はGoogle ChromeやMicrosoft Edgeなどの一部のブラウザでのみ動作します。"
+ただし、この機能はGoogle ChromeやMicrosoft Edgeなどの一部のブラウザーでのみ動作します。"
 b66964c741962035a5ba13fbb0abbab2f75088b65c41ad67dfb6e73ee32657ef,"EChartインスタンスのメソッドを`run_chart_method`メソッドを使用して実行できます。
 このデモでは、ロードアニメーションの表示と非表示の方法、グラフの現在の幅の取得方法、カスタムフォーマッタを使用したツールチップの追加方法を示しています。
 
@@ -4620,7 +4620,7 @@ a4473ec6e5db00562b1928c594c783c84ea5623b2b33fedc981a70ab8add1e9c,"Leafletマッ�
 グリッドを `update` メソッドを使用して更新した場合とは異なります。"
 676fbcf1c4a3912bb8189c3cbd8400a140e0028c6c15956dafca9aecc1a40f7b,`select()` および `deselect()` メソッドを使用することで、ノードを選択または選択解除できます。
 856c1d6fef2fddd224ba0d2ec8f4537e5544503c1f08ff4647902b83cef19583,文字列のリストを渡すことで、複数のメッセージ部分を送信できます。
-03e045bfad310a1b7a9f847f7da30ac70a7ddb7f1c7c89c8fe8a95fc2de4cf4b,`ui.scene` の `background_color` パラメータを使用して、カスタムの背景色を設定できます。
+03e045bfad310a1b7a9f847f7da30ac70a7ddb7f1c7c89c8fe8a95fc2de4cf4b,`ui.scene` の `background_color` パラメーターを使用して、カスタムの背景色を設定できます。
 49789e9925a63e2852a0e264bca1385fab18b84af1d06047b856b0f12c058377,"特定のクラスのすべての要素にデフォルトスタイルを設定できます。
 これにより、同じスタイルを繰り返し設定する必要がなくなります。
 
@@ -4631,7 +4631,7 @@ a4473ec6e5db00562b1928c594c783c84ea5623b2b33fedc981a70ab8add1e9c,"Leafletマッ�
 この API は `ui.colors()` の初期化子の API と同じですが、特定のページで `ui.colors()` によって上書きされない限り、カラーはすべてのページに適用されます。
 
 *バージョン 3.6.0 で追加*"
-0bb365ae263d2d579e47ab6304b3bf0b101d75566995cd69910a33481bf4438e,"`ui.scene` の `grid` パラメータを使用して、カスタムのグリッドパラメータを設定できます。
+0bb365ae263d2d579e47ab6304b3bf0b101d75566995cd69910a33481bf4438e,"`ui.scene` の `grid` パラメーターを使用して、カスタムのグリッドパラメーターを設定できます。
 これは、グリッドサイズと分割数を表す 2 つの整数のタプルを受け取ります。"
 59aeb1771dedf0d2eb70226b8efa906af16d7ad34451a5b4b2526e6898092303,"特定のクラスのすべての要素にデフォルトクラスを設定できます。
 これにより、同じクラスを繰り返し設定する必要がなくなります。
@@ -4653,8 +4653,8 @@ a26b3f0c043c9840bdb174722f26add66379e323cf82264466407c8db73a55ea,"特定のク�
 - `NICEGUI_REDIS_URL` (default: None, means local file storage): 共有永続ストレージとして使用する Redis サーバーの URL。
 - `NICEGUI_REDIS_KEY_PREFIX` (default: ""nicegui:"") : Redis キーのプレフィックス。"
 937ca492fbd469ccfa6f39d0c0c08fd2a2b4fabfaf2be5afbc2d248fa2ade747,独自の関数を `getRowHeight` 引数に渡すことで、個々の行の高さを設定できます。
-822e9cb076c4fd54bc0952bba24f8d80358eef25652e63663a72bf0ba029075c,"テーブルの選択タイプを設定するには、`selection` パラメータを使用します。
-選択が変更されると、`on_select` イベントハンドラが呼び出され、`selected` プロパティには選択された行が含まれます。
+822e9cb076c4fd54bc0952bba24f8d80358eef25652e63663a72bf0ba029075c,"テーブルの選択タイプを設定するには、`selection` パラメーターを使用します。
+選択が変更されると、`on_select` イベントハンドラーが呼び出され、`selected` プロパティには選択された行が含まれます。
 
 *バージョン 2.11.0 で追加:*
 `selection` プロパティと `set_selection` メソッドを使用して、選択タイプを変更できます。"
@@ -4664,14 +4664,14 @@ cc5b30d1fe2aa6df0dc65ee70686e76d1d7a29830fce73905c24caae90f28b90,"`cross=True` �
 *バージョン 2.4.0 以降:*
 `add_slot` メソッドを使用して、独自の SVG テンプレートを持つカスタム ""cross"" スロットを追加できます。
 テンプレート内では、`props.x` および `props.y` 変数はクロスヘアの位置を表します。"
-a224b62a118d117a0f90364da7e9f1eb6b0b4c3456562d8b16aed5ae7ed9d1d3,"`precision` パラメータを使用して、小数点以下の桁数を指定できます。
+a224b62a118d117a0f90364da7e9f1eb6b0b4c3456562d8b16aed5ae7ed9d1d3,"`precision` パラメーターを使用して、小数点以下の桁数を指定できます。
 負の値は、小数点前の桁数を示します。
 丸め処理は、入力がフォーカスを失ったとき、
-サニタイズパラメータ（min, max, precisionなど）が変更されたとき、
+サニタイズパラメーター（min, max, precisionなど）が変更されたとき、
 または `sanitize()` が手動で呼び出されたときに発生します。"
-65f3034e81a87e562f99a8f5e48ca810a35e94a93013aa4660ac13851f3a86f5,"You can style the FAB and its actions using the `color` パラメータ。
-The `color` パラメータ accepts a Quasar color, a Tailwind color, or a CSS color。
-You can also change the direction of the FAB using the `direction` パラメータ。"
+65f3034e81a87e562f99a8f5e48ca810a35e94a93013aa4660ac13851f3a86f5,"You can style the FAB and its actions using the `color` パラメーター。
+The `color` パラメーター accepts a Quasar color, a Tailwind color, or a CSS color。
+You can also change the direction of the FAB using the `direction` パラメーター。"
 4fec79d44c14d6fbe5d49927f102d0292001119d819df13ef9eb857d62656916,"SVG 要素のイベントに登録するには、""svg:"" プレフィックスを持つ `on` メソッドを使用します。
 イベントを受信したい SVG 要素には、`pointer-events=""all""` を設定してください。
 
@@ -4771,17 +4771,17 @@ body-cell-slot に関する詳細については、[Quasar ドキュメント](h
 3df5eacba946074852b7beddae1b554530b103895c5040d0606d39d907cd749e,"「range」プロパティを使用することで、日付の範囲を選択できます。
 `value` は、「from」と「to」キーを含む辞書になります。
 日付範囲ピッカーを入力要素にバインドする方法のデモが以下に示されており、`forward` および `backward` 関数を使用して、日付範囲ピッカーの辞書と入力文字列間の変換を行います。"
-bc7ff7d3110622b9f097d2436c5e76d5125bcbc54c77efd480b28b4b1079f789,You can use the `app.clients` イテレータに、特定のページのクライアント要素にフィルタを適用できます。
+bc7ff7d3110622b9f097d2436c5e76d5125bcbc54c77efd480b28b4b1079f789,You can use the `app.clients` イテレーターに、特定のページのクライアント要素にフィルターを適用できます。
 6ed26250758588d0587b16f93c62d27ca0ddf724d9541b12d77f0f039efacfd0,"`ui.scene` の `camera` 引数を使用することで、カスタムカメラを使用できます。
 これにより、透視カメラの視野角を設定したり、正射カメラのサイズを設定したりできます。"
 d1f56c727531e49eecbdbd46dced55c50180d2ca3ba901e931fe7d47d8b85bf2,"`fit` メソッドを使用することで、ターミナルのサイズを調整できます。
-ターミナルの行数と列数をコンテナのサイズに合わせます。
+ターミナルの行数と列数をコンテナーのサイズに合わせます。
 ターミナルの新しいサイズに合わせてバックエンド pty のサイズも調整する必要がある場合があります。
 ターミナルの `resize` イベントをサブスクライブすることで実現できます。
 また、ネイティブな `pty` モジュールはサイズ変更をサポートしていません。"
 c1518698793b39a72be0f00311991ce774a74b9bff6ac109e120fb6a4e2b4bee,"`grid` プロパティを使用することで、テーブルをモザイクのようなグリッドとして表示できます。
 詳細については、[Quasar ドキュメント](https://quasar.dev/vue-components/table#grid-style)を参照してください。"
-632e1278ef221602b20e6f3c79c5106135d9678fddc5ae9a7d6a23dce975147c,"`on` メソッドの `js_handler` パラメータを使用することで、イベントをクライアント側でどのように処理するかを制御できます。
+632e1278ef221602b20e6f3c79c5106135d9678fddc5ae9a7d6a23dce975147c,"`on` メソッドの `js_handler` パラメーターを使用することで、イベントをクライアント側でどのように処理するかを制御できます。
 デフォルトの動作を防止するには、`event` オブジェクトの `preventDefault` メソッドを呼び出します。
 イベントの伝播を停止するには、`event` オブジェクトの `stopPropagation` メソッドを呼び出すこともできます。
 
@@ -4805,7 +4805,7 @@ e7bf8499a038be23f2925902e5131963a4d93e62d00c9390f98e65dfce05f09c,"`ui.scene` で
 - `sender`: イベントを生成したスクロールエリア
 - `client`: 関連するクライアント
 - [Quasar の ScrollArea API ドキュメント](https://quasar.dev/vue-components/scroll-area/#qscrollarea-api) で説明されている追加の引数"
-37e9ae4b5624e2196832f7ca777b91d5370db34de0b98eaad4dc4a0986603e18,"`schema` パラメータを使用することで、編集中のデータを検証するための [JSON schema](https://json-schema.org/) を定義できます。
+37e9ae4b5624e2196832f7ca777b91d5370db34de0b98eaad4dc4a0986603e18,"`schema` パラメーターを使用することで、編集中のデータを検証するための [JSON schema](https://json-schema.org/) を定義できます。
 このデモでは、データが schema に一致しない場合、エディタは警告を表示します:
 
 - `id` は整数でなければなりません
@@ -4827,7 +4827,7 @@ fc5393246e1ca33736784ea24122cea59f607e951ca6d6d39e9a6bcaa5145185,"他のアイ�
 78d46c0f6ce295eed31c31366d10c06b568898f8cddf33525d93f9251a2e170d,"この要素を使用すると、ページでダークモードを有効にする、無効にする、または切り替えることができます。
 `None` の値は自動モードを表し、クライアントのシステム設定を使用します。
 
-注意：この要素は `ui.run` 関数とページデコレータの `dark` パラメータを上書きします。"
+注意：この要素は `ui.run` 関数とページデコレータの `dark` パラメーターを上書きします。"
 91d3ecec11e8838e185bfda301aded5fab37fdbdde1db5d662628fd4975b2e06,"入力を検証する方法は2つあります：
 
 - エラーメッセージまたは `None` を返す呼び出し可能オブジェクトを渡すこと、
