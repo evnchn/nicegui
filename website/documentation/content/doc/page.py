@@ -13,14 +13,6 @@ _REPO_ROOT = Path(__file__).parents[4]
 _GITHUB_BASE = 'https://github.com/zauberzeug/nicegui/blob/main'
 
 
-def _auto_source(name: str) -> Path | None:
-    """Try to find the source file for a page with the given name."""
-    for candidate in [f'nicegui/elements/{name}.py', f'nicegui/functions/{name}.py', f'nicegui/{name}.py']:
-        if (_REPO_ROOT / candidate).exists():
-            return Path(candidate)
-    return None
-
-
 @dataclass(**KWONLY_SLOTS)
 class DocumentationPage:
     name: str
@@ -40,7 +32,12 @@ class DocumentationPage:
     @property
     def source(self) -> Path | None:
         """Return the local source path: explicit > auto-derived from element > filename-probed."""
-        return self._source or _auto_source(self.name)
+        if self._source:
+            return self._source
+        for candidate in [f'nicegui/elements/{self.name}.py', f'nicegui/functions/{self.name}.py', f'nicegui/{self.name}.py']:
+            if (_REPO_ROOT / candidate).exists():
+                return Path(candidate)
+        return None
 
     @property
     def source_url(self) -> str | None:

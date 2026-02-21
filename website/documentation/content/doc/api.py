@@ -135,10 +135,7 @@ def demo(*args, **kwargs) -> Callable[[Callable], Callable]:
                 page.title = f'ui.*{ui_name}*'
             elif app_name:
                 page.title = f'app.*{app_name}*'
-            if page._source is None:
-                source = _derive_source(element)
-                if source:
-                    page._source = source
+            _set_source_if_missing(page, element)
         page.parts.append(DocumentationPart(
             title=title_,
             description=description,
@@ -192,16 +189,21 @@ def _derive_source(obj: Any) -> Path | None:
         return None
 
 
+def _set_source_if_missing(page: DocumentationPage, element: Any) -> None:
+    """Derive and set the source path from *element* if not already set."""
+    if page._source is None:
+        source = _derive_source(element)
+        if source:
+            page._source = source
+
+
 def reference(element: type, *,
               title: str = 'Reference',  # pylint: disable=redefined-outer-name
               ) -> None:
     """Add a reference section to the current documentation page."""
     page = _get_current_page()
     page.parts.append(DocumentationPart(title=title, reference=element))
-    if page._source is None:
-        source = _derive_source(element)
-        if source:
-            page._source = source
+    _set_source_if_missing(page, element)
 
 
 def extra_column(function: Callable) -> Callable:

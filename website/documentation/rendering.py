@@ -90,7 +90,6 @@ def render_page(documentation: DocumentationPage) -> None:
     def render_content():
         first_demo_seen = False
         section_heading(documentation.subtitle or '', documentation.heading)
-        # NOTE: Task 4 - render reading time, difficulty and source link below the heading
         _render_page_metadata(documentation)
         for part in documentation.parts:
             if part.title:
@@ -126,7 +125,6 @@ def render_page(documentation: DocumentationPage) -> None:
         else:
             render_content()
     with ui.column().classes('w-full p-4 items-end gap-1'):
-        # NOTE: Task 4 - suggest-an-edit button at the bottom of every documentation page
         if documentation.name:
             _render_suggest_edit_button(documentation)
         ui.link('Imprint & Privacy', '/imprint_privacy').classes('text-sm')
