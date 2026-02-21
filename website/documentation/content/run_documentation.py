@@ -5,8 +5,6 @@ from . import doc
 doc.title('ui.*run*')
 
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/run.py')
-
 @doc.demo(ui.run, tab='My App')
 def demo() -> None:
     ui.label('page with custom title')

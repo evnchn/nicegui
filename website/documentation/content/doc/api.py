@@ -15,7 +15,7 @@ from nicegui import ui as nicegui_ui
 from nicegui.elements.markdown import remove_indentation
 from nicegui.functions.navigate import Navigate
 
-from .page import DocumentationPage
+from .page import DocumentationPage, _GITHUB_BASE, _REPO_ROOT
 from .part import Demo, DocumentationPart
 
 registry: dict[str, DocumentationPage] = {}
@@ -75,7 +75,7 @@ def metadata(*, difficulty: 'str | None' = None, source_url: str | None = None) 
     if difficulty is not None:
         page.difficulty = difficulty  # type: ignore[assignment]
     if source_url is not None:
-        page.source_url = source_url
+        page._source_url = source_url
 
 
 def text(title_: str, description: str) -> None:
@@ -135,6 +135,10 @@ def demo(*args, **kwargs) -> Callable[[Callable], Callable]:
                 page.title = f'ui.*{ui_name}*'
             elif app_name:
                 page.title = f'app.*{app_name}*'
+            if page._reference_source_url is None:
+                url = _derive_source_url(element)
+                if url:
+                    page._reference_source_url = url
         page.parts.append(DocumentationPart(
             title=title_,
             description=description,
@@ -179,11 +183,26 @@ def intro(documentation: types.ModuleType) -> None:
     current_page.parts.append(part)
 
 
+def _derive_source_url(obj: Any) -> str | None:
+    """Try to derive a GitHub source URL from a class or callable via inspect.getfile."""
+    try:
+        source_file = Path(inspect.getfile(obj))
+        rel = source_file.relative_to(_REPO_ROOT)
+        return f'{_GITHUB_BASE}/{rel.as_posix()}'
+    except (TypeError, ValueError):
+        return None
+
+
 def reference(element: type, *,
               title: str = 'Reference',  # pylint: disable=redefined-outer-name
               ) -> None:
     """Add a reference section to the current documentation page."""
-    _get_current_page().parts.append(DocumentationPart(title=title, reference=element))
+    page = _get_current_page()
+    page.parts.append(DocumentationPart(title=title, reference=element))
+    if page._reference_source_url is None:
+        url = _derive_source_url(element)
+        if url:
+            page._reference_source_url = url
 
 
 def extra_column(function: Callable) -> Callable:

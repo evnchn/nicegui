@@ -3,8 +3,6 @@ from nicegui import ui
 from ..windows import WINDOW_BG_COLORS
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/dark_mode.py')
-
 
 @doc.demo(ui.dark_mode)
 def main_demo() -> None:

@@ -2,8 +2,6 @@ from nicegui import ui
 
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/button_dropdown.py')
-
 
 @doc.demo(ui.dropdown_button)
 def main_demo() -> None:

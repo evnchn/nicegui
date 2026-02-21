@@ -2,8 +2,6 @@ from nicegui import ui, Event
 
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/events.py')
-
 
 @doc.demo(Event)
 def events_demo():

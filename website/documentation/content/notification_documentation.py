@@ -2,8 +2,6 @@ from nicegui import ui
 
 from . import doc
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/notification.py')
-
 
 @doc.demo(ui.notification)
 def main_demo() -> None:

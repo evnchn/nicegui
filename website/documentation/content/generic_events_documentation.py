@@ -5,8 +5,6 @@ from . import doc
 doc.title('Generic Events')
 
 
-doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/element.py')
-
 @doc.demo('Generic Events', '''
     Most UI elements come with predefined events.
     For example, a `ui.button` like "A" in the demo has an `on_click` parameter that expects a coroutine or function.
