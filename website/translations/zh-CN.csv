@@ -132,7 +132,7 @@ bbf6fbde33443953182707738e0edd1df282337a8242e188bc00bd1b40659a95,"
         当新数据到达时，会触发事件来更新图表。
     "
 cc25cf08c948de5b71bbd35cbaf9dfd828b7a0eccdf6d8c261335b407ba58c8f,"
-        我们推荐尽可能使用 `user`  fixture 替代 [`screen` fixture](/documentation/screen)，因为其执行速度与单元测试一样快，且无需依赖 Selenium。`user` fixture 剪除了浏览器，改用轻量级模拟替代。
+        我们推荐尽可能使用 `user` 夹具 替代 [`screen` 夹具](/documentation/screen)，因为其执行速度与单元测试一样快，且无需依赖 Selenium。`user` 夹具 剪除了浏览器，改用轻量级模拟替代。
 
         您可以断言“看到”特定元素或内容，点击按钮、向输入框输入文本并触发事件。我们旨在提供一个优雅的 API 来编写验收测试，其语法像故事一样易懂。由于执行速度极快，传统的 [测试金字塔](https://martinfowler.com/bliki/TestPyramid.html)（将 UI 测试视为缓慢、易出错且昂贵）已不再适用 🚀。
     "
@@ -272,11 +272,11 @@ d5e434b46f00907944cc1dc428efefae1ac2bff97e929afad8cf953447afe7cf,"
     *2.7.0 版本新增：触发事件*
 "
 2827ebab32964151e3904236251781eb69751e2009f463337d94a3e3016d6038,"
-    通过省略浏览器，测试执行速度比 [`screen` 固件](/documentation/screen) 快得多。
+    通过省略浏览器，测试执行速度比 [`screen` 夹具](/documentation/screen) 快得多。
     请参见我们的 [pytest 示例](https://github.com/zauberzeug/nicegui/tree/main/examples/pytests)
-    该示例同时使用两种固件实现了相同的测试。
+    该示例同时使用两种夹具实现了相同的测试。
     当然，一些功能如截图或浏览器特定行为不可用，
-    但在大多数情况下，`user` 固件的速度使其成为首选。
+    但在大多数情况下，`user` 夹具的速度使其成为首选。
 "
 5fc3d54841500d8645385a84befe2baddba2833684bc6270312897a81f5e66ce,"
     默认情况下，通用和用户存储数据以无缩进的 JSON 格式存储。
@@ -419,9 +419,9 @@ f49bc27ce79b029291826f3139bd88377f468f820b5278343631ab37a5f92084,"
     以获取完整演示。
 "
 655b5a8ca86c3b6a38a7546fade02b60f6f07af78fea3c75e36dd749ce1188e9,"[`user_simulation`](https://github.com/zauberzeug/nicegui/blob/main/nicegui/testing/user_simulation.py) 上下文
-是 `user` fixture 的底层构建模块。
+是 `user` 夹具的底层构建模块。
 它在同一个事件循环中启动 NiceGUI 应用，从而实现无需 Selenium 的确定性测试控制。
-与 `user` fixture 不同，它不依赖于 pytest 特定的基础设施，
+与 `user` 夹具不同，它不依赖于 pytest 特定的基础设施，
 因此可以与 `unittest` 或纯异步代码一同使用。
 
 该上下文支持以下三种测试方法：
@@ -433,7 +433,7 @@ f49bc27ce79b029291826f3139bd88377f468f820b5278343631ab37a5f92084,"
 更多使用示例，请参阅
 [`tests/test_user_simulation_context.py`](https://github.com/zauberzeug/nicegui/blob/main/tests/test_user_simulation_context.py)。"
 c332e456495f18d576e93b06511fc4795fcc3ac8ea2a8b675a7ffdbff913ca3b,"
-    `screen` 固定 fixture 可通过设置以下静态属性进行配置：
+    `screen` 夹具可通过设置以下静态属性进行配置：
 
     - `PORT`：用于服务器的端口（默认：3392）。
     - `IMPLICIT_WAIT`：隐式等待时间（单位：秒）（默认：4）。
@@ -477,11 +477,11 @@ a5a03832df951e1be19fe9626f1d0bff342d6ba29857232a3aa2b0b1a73573b3,"
 7186edb63c51daea9464f1e075d179f6dbba2bffd5e5baf6f300f3d9b8494468,"
     NiceGUI 包提供了一个 [pytest 插件](https://docs.pytest.org/en/stable/how-to/writing_plugins.html)
     可通过 `-p nicegui.testing.plugin` 参数激活。
-    这使得您可以使用专门的 [fixture](https://docs.pytest.org/en/stable/explanation/fixtures.html)
+    这使得您可以使用专门的 [夹具](https://docs.pytest.org/en/stable/explanation/fixtures.html)
     来编写针对 NiceGUI 用户界面的集成测试。
-    通过 [`screen` fixture](/documentation/screen) 您可以在无头浏览器中运行集成测试（速度较慢）。
-    另一方面，通过 [`user` fixture](/documentation/user) 可以在 Python 中完全模拟集成测试（速度快）。
-    如果您只想要一种类型的测试 fixture，
+    通过 [`screen` 夹具](/documentation/screen) 您可以在无头浏览器中运行集成测试（速度较慢）。
+    另一方面，通过 [`user` 夹具](/documentation/user) 可以在 Python 中完全模拟集成测试（速度快）。
+    如果您只想要一种类型的测试夹具，
     您也可以使用插件 `nicegui.testing.user_plugin` 或 `nicegui.testing.screen_plugin`。
 
     项目和测试的结构方式有很多。
@@ -608,7 +608,7 @@ f80775796380e171ae9df28410bec84fb4608686c4fc10b2d2d70c75a6424e48,"
     2. 在项目根目录的 `pytest.ini` 配置文件中设置 `main_file` 选项。
     3. 如果您在同一代码库中维护多个应用，请使用 `@pytest.mark.nicegui_main_file` 装饰器标记您的测试函数。
 
-    主文件将自动被用作每个集成测试（`user` 固定 fixture 或 `screen` 固定 fixture）的入口点。
+    主文件将自动被用作每个集成测试（`user` 夹具 或 `screen` 夹具）的入口点。
     您还需要在 `pytest.ini` 文件中设置 [`asyncio_mode = auto`](/documentation/user#async_execution) 选项
     以及使用的插件（`nicegui.testing.plugin`、`nicegui.testing.user_plugin` 或 `nicegui.testing.screen_plugin`）。
 
@@ -1591,7 +1591,7 @@ f24e87b3020c59a87366c017aa9737471bee2ece5775e7fe8d54e728e617eb27,列元素
 d107373ff6cdbb485a7375f78b972d3adee28bb2e0794e36a058486e3178ad15,每行开头的常见缩进将自动移除。因此您可以对 Markdown 元素进行缩进，它们仍会被正确渲染。
 5d142c8c0f233da10c0fc501f5127c1facd54b6c69c9fd3d897236a6387b5cae,与串口设备通信
 6b39de5d4a833846fe4e0f80b48adaaeee816d1f9e9a1ed695ae9cb06b5e7a1c,使用 WebSerial API 与串口设备通信
-56bb529fc77a116f29edb40d9d779cc72fdcc1c6d72ced75cd5d200e00636283,与屏幕 fixture 的比较
+56bb529fc77a116f29edb40d9d779cc72fdcc1c6d72ced75cd5d200e00636283,与屏幕夹具的比较
 7807740bd53795808a4944af1bda5ada33ddb4a1e1f745c3e355d02264888c86,复杂元素
 e1c0721ede719208c4868d0d5976dd1dab6c8cfed14f73c7105bc98f5ae243d8,组件选择
 084562ebc7b30e09cede76fec57bf312405575b23529c1c83667be651d22ca71,计算字段
@@ -2862,7 +2862,7 @@ f52f5eaa252b2206576970d530ad2e3102a6a6a59c0277958e3232b893b75b4b,场景视图
 更多详情请参阅 [Quasar 文档](https://quasar.dev/vue-components/table#expanding-rows)。"
 1f8d5f15d084579ce8f47997c385d28838f6be3dbf8f206de693841fcda45fe9,"可以使用作用域插槽向树节点的标题和内容区域插入自定义内容。
 更多详情请参阅 [Quasar 文档](https://quasar.dev/vue-components/tree#customize-content)。"
-c954d080a8a07f77ca018336199f8163801c6b3ea25325ae1d891e77c612b211,屏幕 fixture
+c954d080a8a07f77ca018336199f8163801c6b3ea25325ae1d891e77c612b211,屏幕夹具
 ef4db667732e63cd4c929c7da9e33377742c6ec43eb74166396e428bf290d277,脚本执行器
 f2782f7e1fc7223b93f854eb0f0c59f346c8330e544172bd8606f632847f36d2,脚本模式
 898e15e6ef8b44ef6a2895cb80a6025445ef306d9965dd6ec9c83746616ca36b,带根目录的脚本模式
@@ -4041,7 +4041,7 @@ cea761a1a1ec5dfe317aea5318ea550be8655e8c4362419c6786c9b410be01f9,使用 [thecock
 0a4ac082e91dda1e2e54be4f45b417dcc93007c0f06d13eea98aa64364941bd0,使用此端口（默认：普通模式下为 8080，本机模式下为自动确定的开放端口）
 5feea846cee7399559094805e0579cca73ab94d7d2f1e07a10fa378fed8f6abd,"使用指定预设的 UnoCSS 替代 Tailwind CSS（默认：``None``，选项：""mini""、""wind3""、""wind4""，自版本 3.7.0 开始加入）"
 08fe4dc003901e4dcb6d4ca021b18c8ae498627466e44db5c2d3656c240246ad,用户断言
-cc05aecd072c27a1729892f13a6045b8900fb2ad10ac3363a2fc2341865b1390,用户 fixture
+cc05aecd072c27a1729892f13a6045b8900fb2ad10ac3363a2fc2341865b1390,用户夹具
 e5999b636348a9ec0fb633fbfe86536679854ee7e72be672d4a9f665c6409d02,用户交互
 8a865f557022531de4ce5feced12a5d87b6e122f9066d6541e88d74718dbd470,用户引用
 54c68e664ec876dfb57a55d83c1618aee65526b5007c34b55cd4e200fcf69463,用户模拟上下文
