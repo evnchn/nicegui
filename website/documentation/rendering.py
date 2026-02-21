@@ -64,20 +64,21 @@ def _render_page_metadata(documentation: DocumentationPage) -> None:
 
 
 def _render_suggest_edit_button(documentation: DocumentationPage) -> None:
-    """Render a 'Suggest an Edit' button that links to a pre-filled GitHub issue."""
+    """Render a 'Suggest an Edit' button that links to a new GitHub discussion."""
+    import urllib.parse
     page_url = f'https://nicegui.io/documentation/{documentation.name}'
-    issue_title = f'Docs improvement: {(documentation.title or documentation.name).replace("*", "")}'
-    issue_body = (
+    clean_title = (documentation.title or documentation.name).replace('*', '')
+    title_ = f'Docs improvement: {clean_title}'
+    body = (
         f'**Page:** [{page_url}]({page_url})\n\n'
         '**Suggestion:**\n\n'
         '<!-- Please describe your suggested improvement here -->'
     )
-    import urllib.parse
-    params = urllib.parse.urlencode({'title': issue_title, 'body': issue_body, 'labels': 'documentation'})
-    issue_url = f'{_GITHUB_REPO}/issues/new?{params}'
+    params = urllib.parse.urlencode({'category': 'ideas-feature-requests', 'title': title_, 'body': body})
+    discussion_url = f'{_GITHUB_REPO}/discussions/new?{params}'
     with ui.row().classes('items-center gap-1 mt-2'):
         ui.icon('edit', size='xs').classes('text-gray-400')
-        ui.link('Suggest an Edit', issue_url) \
+        ui.link('Suggest an Edit', discussion_url) \
             .classes('text-xs text-gray-400 hover:text-primary') \
             .props('target=_blank')
 
