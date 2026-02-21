@@ -13,6 +13,8 @@ from . import (
 doc.title('Styling & Appearance')
 
 
+doc.metadata(difficulty='intermediate')
+
 @doc.demo('Styling', '''
     NiceGUI uses the [Quasar Framework](https://quasar.dev/) and hence has its full design power.
     Each NiceGUI element provides a `props` method whose content is passed [to the Quasar component](https://justpy.io/quasar_tutorial/introduction/#props-of-quasar-components):

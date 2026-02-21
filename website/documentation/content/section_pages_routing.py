@@ -16,6 +16,8 @@ CONSTANT_UUID = str(uuid.uuid4())
 
 doc.title('*Pages* & Routing')
 
+doc.metadata(difficulty='intermediate')
+
 doc.intro(page_documentation)
 doc.intro(page_layout_documentation)
 doc.intro(sub_pages_documentation)

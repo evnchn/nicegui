@@ -1,19 +1,19 @@
 import inspect
 import sys
 import types
+from collections.abc import Callable, Generator
+from contextlib import contextmanager
 from copy import deepcopy
 from pathlib import Path
 from types import ModuleType
 from typing import Any, overload
-from collections.abc import Callable, Generator
-from contextlib import contextmanager
 
 import nicegui
-from nicegui import app as nicegui_app
 from nicegui import Client
+from nicegui import app as nicegui_app
 from nicegui import ui as nicegui_ui
-from nicegui.functions.navigate import Navigate
 from nicegui.elements.markdown import remove_indentation
+from nicegui.functions.navigate import Navigate
 
 from .page import DocumentationPage
 from .part import Demo, DocumentationPart
@@ -63,6 +63,19 @@ def title(title_: str | None = None, subtitle: str | None = None) -> None:
     page = _get_current_page()
     page.title = title_
     page.subtitle = subtitle
+
+
+def metadata(*, difficulty: 'str | None' = None, source_url: str | None = None) -> None:
+    """Set developer-experience metadata for the current documentation page.
+
+    :param difficulty: difficulty level of the page ('beginner', 'intermediate', 'advanced').
+    :param source_url: direct link to the primary source file on GitHub.
+    """
+    page = _get_current_page()
+    if difficulty is not None:
+        page.difficulty = difficulty  # type: ignore[assignment]
+    if source_url is not None:
+        page.source_url = source_url
 
 
 def text(title_: str, description: str) -> None:

@@ -2,6 +2,8 @@ from nicegui import ui
 
 from . import doc
 
+doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/fullscreen.py')
+
 
 @doc.demo(ui.fullscreen)
 def main_demo() -> None:

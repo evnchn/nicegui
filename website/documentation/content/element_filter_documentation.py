@@ -2,6 +2,8 @@ from nicegui import ElementFilter, ui
 
 from . import doc
 
+doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/element_filter.py')
+
 
 @doc.demo(ElementFilter)
 def main_demo() -> None:

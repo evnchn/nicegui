@@ -33,6 +33,8 @@ from . import (
 
 doc.title('*Controls*')
 
+doc.metadata(difficulty='beginner')
+
 doc.intro(button_documentation)
 doc.intro(button_group_documentation)
 doc.intro(button_dropdown_documentation)

@@ -2,6 +2,8 @@ from nicegui import ui
 
 from . import doc
 
+doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/button_group.py')
+
 
 @doc.demo(ui.button_group)
 def main_demo() -> None:

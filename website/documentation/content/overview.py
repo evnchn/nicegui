@@ -1,5 +1,6 @@
 from nicegui import ui
 
+from ...style import subheading
 from . import (
     doc,
     section_action_events,
@@ -8,6 +9,7 @@ from . import (
     section_configuration_deployment,
     section_controls,
     section_data_elements,
+    section_getting_started,
     section_page_layout,
     section_pages_routing,
     section_security,
@@ -15,7 +17,6 @@ from . import (
     section_testing,
     section_text_elements,
 )
-from ...style import subheading
 
 doc.title('*NiceGUI* Documentation', 'Reference, Demos and more')
 
@@ -104,6 +105,9 @@ doc.text('Testing', '''
 ''')
 
 tiles = [
+    (section_getting_started, '''
+        New to NiceGUI? Start here: installation, Hello World, data binding, and a guided learning path.
+    '''),
     (section_text_elements, '''
         Elements like `ui.label`, `ui.markdown`, `ui.restructured_text` and `ui.html` can be used to display text and other content.
     '''),

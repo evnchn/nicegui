@@ -2,6 +2,8 @@ from nicegui import ui
 
 from . import doc
 
+doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/scroll_area.py')
+
 
 @doc.demo(ui.scroll_area)
 def main_demo() -> None:

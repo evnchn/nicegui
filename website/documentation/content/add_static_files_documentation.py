@@ -2,6 +2,8 @@ from nicegui import app, ui
 
 from . import doc
 
+doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/app/app.py')
+
 
 @doc.demo(app.add_static_files)
 def main_demo() -> None:

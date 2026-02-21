@@ -2,6 +2,8 @@ from nicegui import ui
 
 from . import doc
 
+doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/avatar.py')
+
 
 @doc.demo(ui.avatar)
 def main_demo() -> None:

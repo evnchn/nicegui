@@ -14,6 +14,8 @@ from . import (
 
 doc.title('Action & *Events*')
 
+doc.metadata(difficulty='intermediate')
+
 doc.intro(timer_documentation)
 doc.intro(keyboard_documentation)
 

@@ -13,6 +13,8 @@ from .html_documentation import other_html_elements_description, other_html_elem
 
 doc.title('*Text* Elements')
 
+doc.metadata(difficulty='beginner')
+
 doc.intro(label_documentation)
 doc.intro(link_documentation)
 doc.intro(chat_message_documentation)

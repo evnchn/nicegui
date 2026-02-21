@@ -2,6 +2,8 @@ from nicegui import ui
 
 from . import doc
 
+doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/date_input.py')
+
 
 @doc.demo(ui.date_input)
 def main_demo() -> None:

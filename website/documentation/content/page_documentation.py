@@ -2,6 +2,8 @@ from nicegui import ui
 
 from . import doc
 
+doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/page.py')
+
 
 @doc.auto_execute
 @doc.demo(ui.page)

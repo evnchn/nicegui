@@ -26,6 +26,8 @@ from . import (
 
 doc.title('*Data* Elements')
 
+doc.metadata(difficulty='intermediate')
+
 doc.intro(table_documentation)
 doc.intro(aggrid_documentation)
 if optional_features.has('highcharts'):

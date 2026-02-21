@@ -9,6 +9,8 @@ from nicegui import ui
 
 doc.title('*Testing*')
 
+doc.metadata(difficulty='advanced')
+
 doc.redirects['project_structure_documentation'] = 'section_testing'
 doc.text('Running Integration Tests', '''
     The NiceGUI package provides a [pytest plugin](https://docs.pytest.org/en/stable/how-to/writing_plugins.html)

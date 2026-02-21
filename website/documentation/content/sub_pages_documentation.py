@@ -7,6 +7,8 @@ from nicegui.sub_pages_router import SubPagesRouter
 
 from . import doc
 
+doc.metadata(source_url='https://github.com/zauberzeug/nicegui/blob/main/nicegui/elements/sub_pages.py')
+
 
 class FakeSubPages(ui.column):
 
