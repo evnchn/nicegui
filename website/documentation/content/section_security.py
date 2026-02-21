@@ -5,6 +5,8 @@ from . import doc
 doc.title('Security Best Practices')
 
 
+doc.metadata(difficulty='advanced')
+
 doc.text('Security Model', '''
     NiceGUI provides secure defaults and built-in protections, but **developers must write secure code**.
     Not all UI components can safely handle untrusted input,

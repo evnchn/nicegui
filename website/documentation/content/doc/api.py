@@ -15,7 +15,7 @@ from nicegui import ui as nicegui_ui
 from nicegui.functions.navigate import Navigate
 from nicegui.elements.markdown import remove_indentation
 
-from .page import DocumentationPage
+from .page import DocumentationPage, _REPO_ROOT
 from .part import Demo, DocumentationPart
 
 registry: dict[str, DocumentationPage] = {}
@@ -63,6 +63,19 @@ def title(title_: str | None = None, subtitle: str | None = None) -> None:
     page = _get_current_page()
     page.title = title_
     page.subtitle = subtitle
+
+
+def metadata(*, difficulty: 'str | None' = None, source: 'str | Path | None' = None) -> None:
+    """Set developer-experience metadata for the current documentation page.
+
+    :param difficulty: difficulty level of the page ('beginner', 'intermediate', 'advanced').
+    :param source: path to the primary source file, relative to the repo root.
+    """
+    page = _get_current_page()
+    if difficulty is not None:
+        page.difficulty = difficulty  # type: ignore[assignment]
+    if source is not None:
+        page._source = Path(source)
 
 
 def text(title_: str, description: str) -> None:
@@ -122,6 +135,7 @@ def demo(*args, **kwargs) -> Callable[[Callable], Callable]:
                 page.title = f'ui.*{ui_name}*'
             elif app_name:
                 page.title = f'app.*{app_name}*'
+            _set_source_if_missing(page, element)
         page.parts.append(DocumentationPart(
             title=title_,
             description=description,
@@ -166,11 +180,22 @@ def intro(documentation: types.ModuleType) -> None:
     current_page.parts.append(part)
 
 
+def _set_source_if_missing(page: DocumentationPage, element: Any) -> None:
+    """Derive and set the source path from *element* if not already set."""
+    if page._source is None:
+        try:
+            page._source = Path(inspect.getfile(element)).relative_to(_REPO_ROOT)
+        except (TypeError, ValueError):
+            pass
+
+
 def reference(element: type, *,
               title: str = 'Reference',  # pylint: disable=redefined-outer-name
               ) -> None:
     """Add a reference section to the current documentation page."""
-    _get_current_page().parts.append(DocumentationPart(title=title, reference=element))
+    page = _get_current_page()
+    page.parts.append(DocumentationPart(title=title, reference=element))
+    _set_source_if_missing(page, element)
 
 
 def extra_column(function: Callable) -> Callable:

@@ -6,6 +6,8 @@ from . import doc, run_documentation
 doc.title('Configuration & Deployment')
 
 
+doc.metadata(difficulty='advanced')
+
 @doc.demo('URLs', '''
     You can access the list of all URLs on which the NiceGUI app is available via `app.urls`.
     The URLs are not available in `app.on_startup` because the server is not yet running.

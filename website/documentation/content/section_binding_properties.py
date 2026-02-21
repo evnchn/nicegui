@@ -7,6 +7,8 @@ date = '2023-01-01'
 doc.title('*Binding* Properties')
 
 
+doc.metadata(difficulty='intermediate')
+
 @doc.demo('Bindings', '''
     NiceGUI is able to directly bind UI elements to models.
     Binding is possible for UI element properties like text, value or visibility and for model properties that are (nested) class attributes.

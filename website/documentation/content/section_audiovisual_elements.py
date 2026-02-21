@@ -12,6 +12,8 @@ from . import (
 
 doc.title('*Audiovisual* Elements')
 
+doc.metadata(difficulty='beginner')
+
 doc.intro(image_documentation)
 
 
