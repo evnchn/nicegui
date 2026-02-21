@@ -99,13 +99,13 @@ dae936edb09bf169ec5e6066199792f5e22d1b1e68e992da99ca44077d606209,"
         NiceGUI 提供了多种用户交互元素，例如 `ui.button`、`ui.slider`、`ui.inputs` 等。
     "
 700ca20ca06232edc226961a04915fd10118682f6d5e2d0499d7ed15643b7616,"
-        `screen` 固定装置启动一个真实的（无头）浏览器以与您的应用程序进行交互。
+        `screen` 夹具启动一个真实的（无头）浏览器以与您的应用程序进行交互。
         这仅在您需要测试浏览器特定行为时是必需的。
-        NiceGUI 本身已使用此固定装置进行充分测试，以确保每个组件按预期工作。
+        NiceGUI 本身已使用此夹具进行充分测试，以确保每个组件按预期工作。
         因此，我们仅推荐在绝对必要时使用它。
     "
 6b50ecabe9f8699b3fd3d3a1ae3336c491273d88aaddf5575750f73784b50765,"
-        `screen` 固定装置底层使用 Selenium。
+        `screen` 夹具底层使用 Selenium。
         目前仅测试了与 Chrome 驱动程序的兼容性。
         为自动在测试中使用它，建议在您的 `pytest.ini` 中添加选项 `--driver Chrome`：
     "
@@ -223,7 +223,7 @@ f277c09f60c7ea143b8108b5c611090fb73346ee3dbdf788b7c66343c3633bf3,"
         正是为此原因，`nicegui-pack` 使用 `python -m PyInstaller` 而非直接 `pyinstaller` 来调用 PyInstaller。
 "
 fa90845987f4d51dbc03e7c71e27a1737256e2d95b879064dc62e40a3079121c,"
-    **原生模式打包**
+    **本机模式打包**
 
         在打包您的应用（使用 nicegui-pack、PyInstaller、py2exe 等工具）时，
         您需要调用 `freeze_support()` 以防止新进程在无限循环中被创建。
@@ -391,7 +391,7 @@ d43e42425de973be28cc730f2d0f6efe56eb59a526ea2a6ecc666a3ea5c85e61,"
     因此，任何在主守护程序（[main guard](https://docs.python.org/3/library/__main__.html#idiomatic-usage)）下运行的代码所做的配置更改都将被原生应用忽略。
     以下示例展示了有效配置与无效配置之间的区别。
 
-    对于打包的应用程序（nicegui-pack、PyInstaller 等），请参见下文“使用原生模式打包”部分，
+    对于打包的应用程序（nicegui-pack、PyInstaller 等），请参见下文“使用本机模式打包”部分，
     了解 `freeze_support()` 的正确放置位置。
 "
 b879822086ff1fd36b143d21159bdcda02ab7103b8728aee004098e12818d52a,"
@@ -413,7 +413,7 @@ a235a421e32a53c4e2a0e8b1ee3dbce65c737fcaaeaa643ec13f77cc0ee20cc4,"
 "
 f49bc27ce79b029291826f3139bd88377f468f820b5278343631ab37a5f92084,"
     有时仅与 UI 作为单个用户交互并不足够。
-    除了 `user` 固定装置外，我们还提供 `create_user` 固定装置，这是一个用于创建用户的工厂函数。
+    除了 `user` 夹具外，我们还提供 `create_user` 夹具，这是一个用于创建用户的工厂函数。
     `User` 实例彼此独立，可以并行与 UI 交互。
     请参见我们的[聊天应用示例](https://github.com/zauberzeug/nicegui/blob/main/examples/chat_app/test_chat_app.py)
     以获取完整演示。
@@ -528,7 +528,7 @@ a5a03832df951e1be19fe9626f1d0bff342d6ba29857232a3aa2b0b1a73573b3,"
 如果同时提供了证书和密钥文件，应用程序将自动通过 HTTPS 提供服务："
 80effebc107345fa1ebd2016c1d7b6669f75276b7c341482f606683b8105a8a8,"NiceGUI 提供了多种部署选项。默认情况下，NiceGUI 会在本地运行一个服务器，并将您的应用作为本地机器上的私有网页来运行。以这种方式运行时，您的应用会显示在一个网页浏览器窗口中。您也可以选择让 NiceGUI 在一个独立于网页浏览器的原生窗口中运行。此外，您还可以将 NiceGUI 部署在一个能服务多个客户端的服务器上——您现在正在阅读的这个网站就是由 NiceGUI 提供的服务。
 
-使用组件创建您的应用页面后，您需要调用 `ui.run()` 来启动 NiceGUI 服务器。`ui.run` 的可选参数可以用来设置服务器绑定的网络地址和端口、应用是否以原生模式运行、初始窗口大小以及许多其他选项。_Configuration and Deployment_ 章节详细介绍了 `ui.run()` 函数及其所基于的 FastAPI 框架的各项选项。"
+使用组件创建您的应用页面后，您需要调用 `ui.run()` 来启动 NiceGUI 服务器。`ui.run` 的可选参数可以用来设置服务器绑定的网络地址和端口、应用是否以本机模式运行、初始窗口大小以及许多其他选项。_Configuration and Deployment_ 章节详细介绍了 `ui.run()` 函数及其所基于的 FastAPI 框架的各项选项。"
 e625d7e31bf6d335c80d575ea7b1a4a3ad42e0d23bc946a7c0d858374283a567,"
     有些元素具有复杂的可视化和交互行为（`ui.upload`、`ui.table` 等）。
     并非这些元素的每个方面都能通过 `should_see` 和 `UserInteraction` 进行测试。
@@ -722,7 +722,7 @@ c245c88b400b9190e3422c28a6a1178e01dc5096ee4d5e6573fa606b38bb3871,一个包裹 Qu
 b6fbf74fc1fd974251b936d3faf0f532c511d20acded28216e88954bc22221fe,一个包裹 Quasar 的 `QBadge <https://quasar.dev/vue-components/badge>`_ 组件的徽章元素。
 18e2b0b5360aa7eb1155a3bce98fd916be4709cf4fb7e7c3e51d26c28862afbc,用于为新值生成字典键的回调或迭代器
 a524ee539854171ffe06defc45b282cb2a4eb5e20fd091b161cf1d8fb1f226d0,可以在标题下方添加一个副标题或说明文字。
-e7578600eca4950be0d5455e92280b82d22203f025ac5443e6784067b341c3bd,"一个包裹 Quasar 的 `QChip <https://quasar.dev/vue-components/chip>`_ 组件的芯片元素。
+e7578600eca4950be0d5455e92280b82d22203f025ac5443e6784067b341c3bd,"一个封装 Quasar `QChip <https://quasar.dev/vue-components/chip>`_ 组件的标签片（Chip）元素。
 它可以被点击、选择和移除。"
 d0ae7bbde579faf3c5b6bd01c34d018720a1dea1cb5aad919d76f684a4200e09,"一个包裹 Quasar 的
 `QCircularProgress <https://quasar.dev/vue-components/circular-progress>`_ 的圆形进度条。"
@@ -755,7 +755,7 @@ c7569fea365144331547574327eb5830d0ccf4bf143bcf087bf13a829a574890,在显示值后
 ``rows`` 中的单元格不能包含列表，因为这可能导致浏览器崩溃。
 为显示复杂数据结构，首先将其转换为字符串（例如，使用 ``str()`` 或自定义格式化）。"
 4424dc3da8e222a9d22bed114c32f09638102dca2e362ca52b044d898e3b9749,"通过封装内容来自定义滚动条。
-此元素暴露了 Quasar 的 `ScrollArea <https://quasar.dev/vue-components/scroll-area/>`_ 组件。"
+此元素封装了 Quasar 的 `ScrollArea <https://quasar.dev/vue-components/scroll-area/>`_ 组件。"
 2141a0150cda95165f895318200459d0984ddf83772fe43b3f76ac8b611fbc14,"基于 `Quasar 的 QEditor <https://quasar.dev/vue-components/editor>`_ 的所见即所得编辑器。
 值为包含格式化文本的 HTML 字符串。"
 af73534c797cd643782259753389461aa61d63fbc0cacd83f7ae014f5aeb71cc,"强调色（默认值：""#9c27b0"")"
@@ -859,7 +859,7 @@ d97d978e4df17a94895cf36c0912a52651617162396284f31940abc686510ab3,为表格添加
 7377e3b40f739643c1ecdbd6f17e420111f3653d61d384bbb0600a3b6beeac62,添加行
 aa48ed6954969dda0620bdbc66cb525fe5dc4569ef999d9333f6e151cc2f7bb0,添加子页面
 af1eafa3123bf772f52dfaa8f2fbeac69a611e6d1eb87bb2f806fc0cac142644,应传给 `pyplot.legend <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html>`_ 的附加参数
-14b3a73ae32922c384f416a5402e1daba49efeb9c4daa756d0ada646a4600483,此外的关键词参数将传递给 `uvicorn.run`
+14b3a73ae32922c384f416a5402e1daba49efeb9c4daa756d0ada646a4600483,此外的关键字参数将传递给 `uvicorn.run`
 d368409c2a747ca27a8fb773bcaac3cfd6ddf3ae62b7606009ab96f33ae2b9ef,传递给 FastAPI 的 @app.get 方法的额外关键字参数
 53d819ff0cc7f1d68a7f0aeafb9fe4d1f0b3544047df8f4b2f02c902c40fca08,传递给 SessionMiddleware 的额外关键字参数，用于创建浏览器存储所用的会话 Cookie
 59556114dd24a558198f67b9e7cc171677804cee279f269fbc53cbf8514ba886,传递给 Leaflet 地图的附加选项（默认为 {}）
@@ -952,7 +952,7 @@ a1fb583d55a7a8f1f0d5d288acb65a83643427c6d5261da5ebada663596f876a,可以定义一
 用户可以通过输入添加新芯片，或通过点击或使用键盘快捷键移除现有芯片。
 
 此元素基于 Quasar 的 `QSelect <https://quasar.dev/vue-components/select>`_ 组件。
-与传统的下拉选择不同，此变体专注于自由形式的文本输入与芯片，适合用于标签、关键词或任何用户自定义值的列表。
+与传统的下拉选择不同，此变体专注于自由形式的文本输入与芯片，适合用于标签、关键字或任何用户自定义值的列表。
 
 您可以使用 ``validation`` 参数来定义一个包含验证规则的字典，例如 ``{'Too long!': lambda value: len(value) < 3}``。
 第一个失败的规则的键将作为错误消息显示。
@@ -1231,7 +1231,7 @@ c763e0b4681cda914a06983bcf8f773c74ef8639c49ff21a4c4a465c209ef090,"将此元素�
 
 绑定双向进行，从该元素到目标，也从目标到该元素。
 更新立即发生，且在值变化时自动更新。
-初始同步时，反向绑定优先。
+初始同步时，以反向绑定为准。
 
     若对象不是字典则进行检查，*自版本 3.0.0 添加*。"
 a1c0c3e8874b6b097d723396e868dc695cb1f3699844bbb641379e2e5154d80b,"将此元素的名称绑定到目标对象的 target_name 属性。
@@ -1250,7 +1250,7 @@ a1c0c3e8874b6b097d723396e868dc695cb1f3699844bbb641379e2e5154d80b,"将此元素�
 
 绑定双向进行，从该元素到目标，也从目标到该元素。
 更新立即发生，且在值变化时自动更新。
-初始同步时，反向绑定优先。
+初始同步时，以反向绑定为准。
 
     若对象不是字典则进行检查，*自版本 3.0.0 添加*。"
 c5b8ddf008094ecf1ed6bbc07e1234d543d39eb3fb0a73ad221a7f7c4ff047de,"将此元素的选择状态绑定到目标对象的 target_name 属性。
@@ -1269,7 +1269,7 @@ d9aa6f266c9023f620ed5dbde253b80eb2625c6f25be2ffb85095e177eaa3b03,"将此元素�
 
 绑定双向生效，从该元素到目标对象，以及从目标对象到该元素。
 更新立即发生，且在值变化时自动触发。
-初始同步时，反向绑定优先。
+初始同步时，以反向绑定为准。
 
     若对象不是字典，则进行检查，*自版本 3.0.0 添加*。"
 837584945434015095701429e9937604f34adcee6bda69ed780f567fb4f1fcff,"将此元素的源绑定到目标对象的 target_name 属性。
@@ -1307,7 +1307,7 @@ d9aa6f266c9023f620ed5dbde253b80eb2625c6f25be2ffb85095e177eaa3b03,"将此元素�
 
 绑定双向进行，从该元素到目标，以及从目标到该元素。
 更新立即发生，且每当值发生变化时都会更新。
-初始同步时，反向绑定优先。
+初始同步时，以反向绑定为准。
 
     若对象不是字典，则进行检查（自版本 3.0.0 添加）。"
 1f3ecc99f47d77643bbfef46e52ba27e72df9c421c0feb443abb22e65eef5901,"将此元素的文本绑定到目标对象的 target_name 属性。
@@ -1326,7 +1326,7 @@ a685dfb31b4f8dfbc16ad667c3ce72468278c21df3f33acb88901463cc3bba57,"将此元素�
 
 绑定双向进行，从该元素到目标，以及从目标到该元素。
 更新立即发生，且每当值发生变化时都会更新。
-初始同步时，反向绑定优先。
+初始同步时，以反向绑定为准。
 
     若对象不是字典，则进行检查（自版本 3.0.0 添加）。"
 7bdd32e1bc9a704674ba2df9d23d7e02bb22f1354790a26a4c24cd902e17e80f,"将此元素的值绑定到目标对象的 target_name 属性。
@@ -1345,7 +1345,7 @@ ee47f737f3e02be362e96237c453f337e5ab3980136da6fe52d8996eaeb45c23,"将此元素�
 
 绑定支持双向绑定，从该元素到目标对象，以及从目标对象到该元素。
 更新会立即发生，并在值更改时自动更新。
-初始同步时，反向绑定优先。
+初始同步时，以反向绑定为准。
 
     若对象不是字典，则进行检查，*此功能在 3.0.0 版本中新增*。"
 41449559e5d0f7c6da8526ee4a7c118921a064a4032bbba98f9985d2f3935e68,"将此元素的可见性绑定到目标对象的 target_name 属性。
@@ -1819,12 +1819,12 @@ e63d2b5daeeca1c8413804a132dd0443ba393fca24ca401c4b12fdf55ab45fa8,文本输入框
 2d99ce5fc81ca4594940f13a6518f6310e979e842c6c208129d1a80e5c9cf1bc,文本域的显示名称
 dd5390d2912ea8c7c4a4d57a3a121cb1ed0386dfadf204d761dd34145668b2c5,"在屏幕上显示一条通知。
 
-注意：您可以根据 `Quasar 的通知 API <https://quasar.dev/quasar-plugins/notify#notify-api>`_ 传递额外的关键词参数。"
+注意：您可以根据 `Quasar 的通知 API <https://quasar.dev/quasar-plugins/notify#notify-api>`_ 传递额外的关键字参数。"
 15d7217c048001bd4e7d358f7023c78b34117754bff958a7293792f1a8d63ea7,"在屏幕上显示一条通知。
 与 `ui.notify` 不同，此元素允许在通知显示后更新通知消息和其他属性。
 可通过调用 `dismiss()` 移除通知。
 
-注意：您可以根据 `Quasar 的通知 API <https://quasar.dev/quasar-plugins/notify#notify-api>`_ 传递额外的关键词参数。"
+注意：您可以根据 `Quasar 的通知 API <https://quasar.dev/quasar-plugins/notify#notify-api>`_ 传递额外的关键字参数。"
 a4343bfd77939d25700b7d61200c9c6c6b805e160586a331a903bcb9e04a7077,"播放视频。
 
 参见 `此处 <https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video#events>`_，了解可通过通用事件订阅 `on()` 订阅的事件列表。"
@@ -3011,7 +3011,7 @@ fd1172cfe3d279b894b52b76cd13a3e47850a6e1b007c319bdaf46be5466d446,加载动画
 9f6aa7cd7b4381cc1e2e8260641cc434e9453c31b267c64555e6db8cb40a4873,分割面板
 981784ec15e03272df793ee6fd208d524c8c410a0d95065e9e209429ffbb83cf,SQLite 数据库
 4d7f272a1ca37c1086e270d112411afc75ab516df1d34d8b39073e7e60ee3a00,在 GitHub 上给我们点星！
-6d617ede1a74d042d9d794f31f8e9d958416be9753d38cfea2cc353cd52b9187,使用此主机启动服务器（默认在原生模式下为 `'127.0.0.1'`，否则为 `'0.0.0.0'`）
+6d617ede1a74d042d9d794f31f8e9d958416be9753d38cfea2cc353cd52b9187,使用此主机启动服务器（默认在本机模式下为 `'127.0.0.1'`，否则为 `'0.0.0.0'`）
 ab535683ad88e5cd019b48cb41c078d064b7681ea8aa6f55b0a5b21b7713383a,在独立线程中启动网络服务器。
 abec21c9dd60deffdc4772b85ae5b8ea1e3f38bfa2e637e28a2fa1df04f045f0,步长
 d455e53ead1a2494258a010c4bd3db813948620b326e8dc989d7eb300e50a994,步骤条
@@ -4038,7 +4038,7 @@ d6fee4c5d377b4caa85e3d0665e3992059843dcddbccf997d1baf6e974109ef5,使用 [websock
 1739a5b9c252bf623f44814f88fdb14e0453bc51607d2339739cd447ae57102f,使用 `tag` 参数生成除 div 以外的元素。
 b4539c6281a40e17edc53908a8e1666fac7b0dcd98037c0f5dc5714ec003648c,使用官方的 [zauberzeug/nicegui](https://hub.docker.com/r/zauberzeug/nicegui) Docker 镜像
 cea761a1a1ec5dfe317aea5318ea550be8655e8c4362419c6786c9b410be01f9,使用 [thecocktaildb.com](https://www.thecocktaildb.com/) 的公共 API 搜索鸡尾酒
-0a4ac082e91dda1e2e54be4f45b417dcc93007c0f06d13eea98aa64364941bd0,使用此端口（默认：普通模式下为 8080，原生模式下为自动确定的开放端口）
+0a4ac082e91dda1e2e54be4f45b417dcc93007c0f06d13eea98aa64364941bd0,使用此端口（默认：普通模式下为 8080，本机模式下为自动确定的开放端口）
 5feea846cee7399559094805e0579cca73ab94d7d2f1e07a10fa378fed8f6abd,"使用指定预设的 UnoCSS 替代 Tailwind CSS（默认：``None``，选项：""mini""、""wind3""、""wind4""，自版本 3.7.0 开始加入）"
 08fe4dc003901e4dcb6d4ca021b18c8ae498627466e44db5c2d3656c240246ad,用户断言
 cc05aecd072c27a1729892f13a6045b8900fb2ad10ac3363a2fc2341865b1390,用户 fixture
@@ -4421,18 +4421,18 @@ e3768c465e6272d1ea2ac7d4ac100d75e08229563aae55d2c4a0db25e3199b19,"您可以使�
 `draw_control` 可用于配置工具栏。
 本演示通过点击地图添加标记和多边形。
 通过将 ""edit"" 和 ""remove"" 设置为 `True`（默认值），您可以启用编辑和删除已绘制形状的功能。"
-61672bb68b30dc03c0791099a6a3ffe76d27f0bff598be63f29e7139c7286c7b,"您可以通过在 `ui.run` 函数中指定 `native=True` 启用 NiceGUI 的原生模式。
+61672bb68b30dc03c0791099a6a3ffe76d27f0bff598be63f29e7139c7286c7b,"您可以通过在 `ui.run` 函数中指定 `native=True` 启用 NiceGUI 的本机模式。
 为自定义初始窗口大小和显示模式，请分别使用 `window_size` 和 `fullscreen` 参数。
-此外，您还可以通过 `app.native.window_args` 和 `app.native.start_args` 提供额外的关键词参数。
+此外，您还可以通过 `app.native.window_args` 和 `app.native.start_args` 提供额外的关键字参数。
 选择任意参数，这些参数均按内部使用的 [pywebview 模块](https://pywebview.flowrl.com/api) 为 `webview.create_window` 和 `webview.start` 函数所定义。
-请注意，这些关键词参数将优先于 `ui.run` 中定义的参数。
+请注意，这些关键字参数将优先于 `ui.run` 中定义的参数。
 
 此外，您还可以通过 `app.native.settings` 修改 `webview.settings`。
 
-在原生模式下，`app.native.main_window` 对象允许您访问底层窗口。
+在本机模式下，`app.native.main_window` 对象允许您访问底层窗口。
 它是一个异步版本的 [`Window` 从 pywebview](https://pywebview.flowrl.com/api/#webview-window)。
 
-在 Windows 上，原生模式需要安装 .NET Framework，
+在 Windows 上，本机模式需要安装 .NET Framework，
 因为 pywebview 使用它作为 EdgeChromium 后端。
 这通常在标准 Windows 安装中预先安装，
 但在精简版或全新安装的系统上可能缺失。"
