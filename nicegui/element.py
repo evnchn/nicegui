@@ -32,6 +32,7 @@ from .version import __version__
 
 if TYPE_CHECKING:
     from .client import Client
+    from .elements.sortable.sortable import Sortable
 
 # https://www.w3.org/TR/xml/#sec-common-syn
 TAG_START_CHAR = r':|[A-Z]|_|[a-z]|[\u00C0-\u00D6]|[\u00D8-\u00F6]|[\u00F8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|[\U00010000-\U000EFFFF]'
@@ -334,6 +335,47 @@ class Element(Visibility):
         from .elements.tooltip import Tooltip  # pylint: disable=import-outside-toplevel, cyclic-import
         Tooltip(text).props['target'] = f'#{self.html_id}'
         return self
+
+    def make_sortable(
+        self,
+        options: dict[str, Any] | None = None,
+        *,
+        on_sort_end: events.Handler | None = None,
+        animation: int = 150,
+        handle: str | None = None,
+        group: str | dict[str, Any] | None = None,
+        filter: str | None = None,
+        ghost_class: str = 'opacity-50',
+    ) -> Sortable:
+        """Attach SortableJS drag & drop behavior to this container and return a controller.
+
+        The element stays its original type (e.g. ``ui.column`` remains a ``ui.column``).
+        The returned :class:`Sortable` object provides methods to enable/disable sorting,
+        update options, and listen for sort events.
+
+        SortableJS uses CSS selectors for handles, filtered items, etc. — just add classes
+        to your elements, no per-item methods needed.
+
+        :param options: raw SortableJS options dictionary (overrides named parameters)
+        :param on_sort_end: callback when a drag operation ends
+        :param animation: animation speed in ms (default: 150)
+        :param handle: CSS selector for drag handle elements
+        :param group: group name or config for cross-container dragging
+        :param filter: CSS selector for elements that should not be draggable
+        :param ghost_class: CSS class applied to the ghost element (default: ``'opacity-50'``)
+        :return: a :class:`Sortable` controller object
+        """
+        from .elements.sortable.sortable import Sortable  # pylint: disable=import-outside-toplevel
+        return Sortable(
+            self,
+            options=options,
+            on_sort_end=on_sort_end,
+            animation=animation,
+            handle=handle,
+            group=group,
+            filter=filter,
+            ghost_class=ghost_class,
+        )
 
     def on(self,
            type: str,  # pylint: disable=redefined-builtin

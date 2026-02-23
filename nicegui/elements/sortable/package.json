@@ -1,0 +1,19 @@
+{
+  "name": "nicegui-sortable-bundle",
+  "version": "1.0.0",
+  "description": "SortableJS bundling for NiceGUI",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "clean": "rimraf ./dist/*"
+  },
+  "dependencies": {
+    "sortablejs": "^1.15.6"
+  },
+  "devDependencies": {
+    "vite": "^7.1.11",
+    "terser": "^5.44.0",
+    "rimraf": "^6.0.1"
+  }
+}
