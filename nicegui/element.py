@@ -23,6 +23,7 @@ from .dependencies import (
     register_resource,
     register_vue_component,
 )
+from .elements.mixins.sortable_element import SortableElement
 from .elements.mixins.visibility import Visibility
 from .event_listener import EventListener
 from .props import Props
@@ -39,7 +40,7 @@ TAG_CHAR = TAG_START_CHAR + r'|-|\.|[0-9]|\u00B7|[\u0300-\u036F]|[\u203F-\u2040]
 TAG_PATTERN = re.compile(fr'^({TAG_START_CHAR})({TAG_CHAR})*$')
 
 
-class Element(Visibility):
+class Element(SortableElement, Visibility):
     component: Component | None = None
     exposed_libraries: ClassVar[list[Library]] = []
     _default_props: ClassVar[dict[str, Any]] = {}
