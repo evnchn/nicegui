@@ -1,0 +1,394 @@
+# German translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-02-27 09:15+0000\n"
+"PO-Revision-Date: 2026-02-27 09:29+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: website/examples_page.py:11 website/main_page.py:160
+msgid "In-depth examples"
+msgstr "German translation of: In-depth examples"
+
+#: website/examples_page.py:11 website/main_page.py:160
+msgid "Pick your *solution*"
+msgstr "Wählen Sie Ihre *Lösung*"
+
+#: website/header.py:30 website/main_page.py:55
+msgid "Installation"
+msgstr ""
+
+#: website/header.py:31 website/main_page.py:103
+msgid "Features"
+msgstr "Funktionen"
+
+#: website/header.py:32 website/main_page.py:144
+msgid "Demos"
+msgstr ""
+
+#: website/header.py:33 website/main_page.py:155
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#: website/header.py:34
+msgid "Examples"
+msgstr "Beispiele"
+
+#: website/header.py:35 website/main_page.py:212
+msgid "Why?"
+msgstr "Warum?"
+
+#: website/header.py:59
+msgid "Cycle theme mode through dark, light, and system/auto."
+msgstr "Wechsle den Themenmodus zyklisch durch dunkel, hell und system/auto."
+
+#: website/header.py:67
+msgid "Discord"
+msgstr ""
+
+#: website/header.py:69
+msgid "Reddit"
+msgstr ""
+
+#: website/header.py:71
+msgid "GitHub"
+msgstr ""
+
+#: website/main_page.py:21
+msgid "Meet the *NiceGUI*."
+msgstr "Treffen Sie die *NiceGUI*."
+
+#: website/main_page.py:22
+msgid "And let any browser be the frontend of your Python code."
+msgstr "Und lassen Sie jeden Browser das Frontend Ihres Python-Codes sein."
+
+#: website/main_page.py:34
+msgid ""
+"Interact with Python through buttons, dialogs, 3D&nbsp;scenes, plots and "
+"much more."
+msgstr "Interagieren Sie mit Python über Schaltflächen, Dialoge, 3D&nbsp;Szenen, Diagramme und vieles mehr."
+
+#: website/main_page.py:37
+msgid ""
+"NiceGUI manages web development details, letting you focus on Python code"
+" for diverse applications,\n"
+"including robotics, IoT solutions, smart home automation, and machine "
+"learning.\n"
+"Designed to work smoothly with connected peripherals like webcams and "
+"GPIO pins in IoT setups,\n"
+"NiceGUI streamlines the management of all your code in one place.\n"
+"<br><br>\n"
+"With a gentle learning curve, NiceGUI is user-friendly for beginners\n"
+"and offers advanced customization for experienced users,\n"
+"ensuring simplicity for basic tasks and feasibility for complex projects."
+"\n"
+"<br><br><br>\n"
+"Available as\n"
+"[PyPI package](https://pypi.org/project/nicegui/),\n"
+"[Docker image](https://hub.docker.com/r/zauberzeug/nicegui) and on\n"
+"[GitHub](https://github.com/zauberzeug/nicegui)."
+msgstr ""
+
+#: website/main_page.py:55
+msgid "Get *started*"
+msgstr "*Loslegen*"
+
+#: website/main_page.py:59
+msgid "Create __main.py__"
+msgstr "Erstelle __main.py__"
+
+#: website/main_page.py:72
+msgid "Install and launch"
+msgstr "Installieren und starten"
+
+#: website/main_page.py:82
+msgid "Enjoy!"
+msgstr "Viel Spaß!"
+
+#: website/main_page.py:85
+msgid "...or use Docker to run your main.py"
+msgstr "...oder verwenden Sie Docker, um Ihre main.py auszuführen"
+
+#: website/main_page.py:88
+msgid ""
+"With our [multi-arch Docker "
+"image](https://hub.docker.com/repository/docker/zauberzeug/nicegui)\n"
+"you can start the server without installing any packages.\n"
+"\n"
+"The command searches for `main.py` in in your current directory and makes"
+" the app available at http://localhost:8888."
+msgstr ""
+
+#: website/main_page.py:103
+msgid "Code *nicely*"
+msgstr "Code *sauber*"
+
+#: website/main_page.py:105
+msgid "Interaction"
+msgstr "Interaktion"
+
+#: website/main_page.py:106
+msgid "[buttons, switches, sliders, inputs, ...](/documentation/section_controls)"
+msgstr "[Buttons, Schalter, Slider, Eingaben, ...](/documentation/section_controls)"
+
+#: website/main_page.py:107
+msgid "[notifications, dialogs and menus](/documentation/section_page_layout)"
+msgstr "[Benachrichtigungen, Dialoge und Menüs](/documentation/section_page_layout)"
+
+#: website/main_page.py:108
+msgid "[interactive images](/documentation/interactive_image) with SVG overlays"
+msgstr "[interaktive Bilder](/documentation/interactive_image) mit SVG-Overlays"
+
+#: website/main_page.py:109
+msgid ""
+"web pages and [native window "
+"apps](/documentation/section_configuration_deployment#native_mode)"
+msgstr "Webseiten und [native Fenster-Apps](/documentation/section_configuration_deployment#native_mode)"
+
+#: website/main_page.py:111
+msgid "Layout"
+msgstr ""
+
+#: website/main_page.py:112
+msgid "[navigation bars, tabs, panels, ...](/documentation/section_page_layout)"
+msgstr "[navigationsleisten, Tabs, Panels, ...](/documentation/section_page_layout)"
+
+#: website/main_page.py:113
+msgid "grouping with rows, columns, grids and cards"
+msgstr "Gruppierung mit Zeilen, Spalten, Grids und Karten"
+
+#: website/main_page.py:114
+msgid ""
+"[HTML](/documentation/html) and [Markdown](/documentation/markdown) "
+"elements"
+msgstr "[HTML](/documentation/html) und [Markdown](/documentation/markdown)-Elemente"
+
+#: website/main_page.py:115
+msgid "flex layout by default"
+msgstr "Standardmäßig Flex-Layout"
+
+#: website/main_page.py:117
+msgid "Visualization"
+msgstr "Visualisierung"
+
+#: website/main_page.py:118
+msgid ""
+"[charts, diagrams, tables](/documentation/section_data_elements), "
+"[audio/video](/documentation/section_audiovisual_elements)"
+msgstr "[Diagramme, Grafiken, Tabellen](/documentation/section_data_elements), [Audio/Video](/documentation/section_audiovisual_elements)"
+
+#: website/main_page.py:119
+msgid "[3D scenes](/documentation/scene)"
+msgstr "[3D-Szenen](/documentation/scene)"
+
+#: website/main_page.py:120
+msgid "straight-forward [data binding](/documentation/section_binding_properties)"
+msgstr "einfaches [Datenbindung](/documentation/section_binding_properties)"
+
+#: website/main_page.py:121
+msgid "built-in [timer for data refresh](/documentation/timer)"
+msgstr "eingebauter [Timer zur Datenaktualisierung](/documentation/timer)"
+
+#: website/main_page.py:123
+msgid "Styling"
+msgstr ""
+
+#: website/main_page.py:124
+msgid ""
+"customizable [color "
+"themes](/documentation/section_styling_appearance#color_theming)"
+msgstr "anpassbare [Farbschemata](/documentation/section_styling_appearance#color_theming)"
+
+#: website/main_page.py:125
+msgid "custom CSS and classes"
+msgstr "benutzerdefiniertes CSS und Klassen"
+
+#: website/main_page.py:126
+msgid "modern look with material design"
+msgstr "moderner Look mit Material Design"
+
+#: website/main_page.py:127
+msgid "[Tailwind CSS](https://tailwindcss.com/)"
+msgstr ""
+
+#: website/main_page.py:129
+msgid "Coding"
+msgstr "Programmierung"
+
+#: website/main_page.py:130
+msgid "single page apps with [ui.sub_pages](/documentation/sub_pages)"
+msgstr "Single-Page-Apps mit [ui.sub_pages](/documentation/sub_pages)"
+
+#: website/main_page.py:131
+msgid "auto-reload on code change"
+msgstr "Automatisches Neuladen bei Codeänderung"
+
+#: website/main_page.py:132
+msgid "persistent [user sessions](/documentation/storage)"
+msgstr "persistente [Benutzersitzungen](/documentation/storage)"
+
+#: website/main_page.py:133
+msgid "super powerful [testing framework](/documentation/section_testing)"
+msgstr "super leistungsstarkes [Test-Framework](/documentation/section_testing)"
+
+#: website/main_page.py:135
+msgid "Foundation"
+msgstr "Grundlage"
+
+#: website/main_page.py:136
+msgid "generic [Vue](https://vuejs.org/) to Python bridge"
+msgstr "generische [Vue](https://vuejs.org/)-zu-Python-Brücke"
+
+#: website/main_page.py:137
+msgid "dynamic GUI through [Quasar](https://quasar.dev/)"
+msgstr "dynamische GUI durch [Quasar](https://quasar.dev/)"
+
+#: website/main_page.py:138
+msgid "content is served with [FastAPI](https://fastapi.tiangolo.com/)"
+msgstr "Inhalte werden mit [FastAPI](https://fastapi.tiangolo.com/) bereitgestellt"
+
+#: website/main_page.py:139
+msgid "Python 3.10+"
+msgstr ""
+
+#: website/main_page.py:144
+msgid "Try *this*"
+msgstr "Probieren Sie *dieses* aus"
+
+#: website/main_page.py:151
+msgid "Browse through plenty of live demos."
+msgstr "Durchsuchen Sie zahlreiche Live-Demos."
+
+#: website/main_page.py:153
+msgid "Fun-Fact: This whole website is also coded with NiceGUI."
+msgstr "Fun-Fact: Diese ganze Website ist ebenfalls mit NiceGUI programmiert."
+
+#: website/main_page.py:171
+msgid "NiceGUI is supported by"
+msgstr "NiceGUI wird unterstützt von"
+
+#: website/main_page.py:202
+msgid "Become a sponsor"
+msgstr "Werden Sie Sponsor"
+
+#: website/main_page.py:215
+msgid ""
+"We at\n"
+"[Zauberzeug](https://zauberzeug.com)\n"
+"like\n"
+"[Streamlit](https://streamlit.io/)\n"
+"but find it does\n"
+"[too much "
+"magic](https://github.com/zauberzeug/nicegui/issues/1#issuecomment-847413651)"
+"\n"
+"when it comes to state handling.\n"
+"In search for an alternative nice library to write simple graphical user "
+"interfaces in Python we discovered\n"
+"[JustPy](https://justpy.io/).\n"
+"Although we liked the approach, it is too \"low-level HTML\" for our "
+"daily usage.\n"
+"But it inspired us to use\n"
+"[Vue](https://vuejs.org/)\n"
+"and\n"
+"[Quasar](https://quasar.dev/)\n"
+"for the frontend."
+msgstr ""
+
+#: website/main_page.py:232
+msgid ""
+"We have built on top of\n"
+"[FastAPI](https://fastapi.tiangolo.com/),\n"
+"which itself is based on the ASGI framework\n"
+"[Starlette](https://www.starlette.io/)\n"
+"and the ASGI webserver\n"
+"[Uvicorn](https://www.uvicorn.org/)\n"
+"because of their great performance and ease of use."
+msgstr ""
+
+#: website/main_page.py:242
+msgid "Imprint & Privacy"
+msgstr "German translation of: Imprint & Privacy"
+
+#: website/search.py:41
+msgid "Search documentation"
+msgstr "Dokumentation durchsuchen"
+
+#: website/search.py:57
+msgid "Press Ctrl+K or / to search the documentation"
+msgstr "Drücken Sie Strg+K oder /, um die Dokumentation zu durchsuchen"
+
+#: website/star.py:45
+msgid "Star us on GitHub!"
+msgstr "Gib uns einen Stern auf GitHub!"
+
+#: website/star.py:46
+msgid "And tell others about NiceGUI."
+msgstr "Und erzählen Sie anderen von NiceGUI."
+
+#: website/style.py:46
+msgid "...and many more"
+msgstr "...und viele mehr"
+
+#: website/style.py:47
+msgid "Browse through plenty of examples."
+msgstr "Durchsuchen Sie zahlreiche Beispiele."
+
+#: website/documentation/intro.py:13
+msgid "Single-Page Applications"
+msgstr "Single-Page-Anwendungen"
+
+#: website/documentation/intro.py:14
+msgid ""
+"Build applications with fast client-side routing using "
+"[`ui.sub_pages`](/documentation/sub_pages)\n"
+"and a `root` function as single entry point.\n"
+"For each visitor, the `root` function is executed and generates the "
+"interface.\n"
+"[`ui.link`](/documentation/link) and "
+"[`ui.navigate`](/documentation/navigate) can be used to navigate to other"
+" sub pages.\n"
+"\n"
+"If you do not want a single-page application, you can also use "
+"[`@ui.page('/your/path')`](/documentation/page)\n"
+"to define standalone content available at a specific path."
+msgstr ""
+
+#: website/documentation/intro.py:50
+msgid "Reactive Transformations"
+msgstr "Reaktive Transformationen"
+
+#: website/documentation/intro.py:51
+msgid ""
+"Create real-time interfaces with automatic updates.\n"
+"Type and watch text flow in both directions.\n"
+"When input changes, the "
+"[binding](/documentation/section_binding_properties) transforms the text"
+"\n"
+"with a custom Python function and updates the label."
+msgstr ""
+
+#: website/documentation/intro.py:66
+msgid "Event System"
+msgstr "Ereignissystem"
+
+#: website/documentation/intro.py:67
+msgid ""
+"Use an [Event](/documentation/event) to trigger actions and pass data.\n"
+"Here we have an IoT temperature sensor submitting its readings\n"
+"to a [FastAPI "
+"endpoint](/documentation/section_pages_routing#api_responses) with path "
+"\"/sensor\".\n"
+"When a new value arrives, it emits an event for the chart to be updated."
+msgstr ""

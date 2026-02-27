@@ -32,6 +32,7 @@ repos:
             nicegui/static/dompurify\..*|
             nicegui/static/unocss/.*|
             nicegui/translations\.py|
+            website/translations/.*|
             website/static/fuse\.js\@.*|
           )$
         additional_dependencies:

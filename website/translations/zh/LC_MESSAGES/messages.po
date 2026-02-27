@@ -1,0 +1,447 @@
+# Chinese translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-02-27 09:15+0000\n"
+"PO-Revision-Date: 2026-02-27 09:15+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: website/examples_page.py:11 website/main_page.py:160
+msgid "In-depth examples"
+msgstr "深入示例"
+
+#: website/examples_page.py:11 website/main_page.py:160
+msgid "Pick your *solution*"
+msgstr "挑选您的*方案*"
+
+#: website/header.py:30 website/main_page.py:55
+msgid "Installation"
+msgstr "安装"
+
+#: website/header.py:31 website/main_page.py:103
+msgid "Features"
+msgstr "功能"
+
+#: website/header.py:32 website/main_page.py:144
+msgid "Demos"
+msgstr "演示"
+
+#: website/header.py:33 website/main_page.py:155
+msgid "Documentation"
+msgstr "文档"
+
+#: website/header.py:34
+msgid "Examples"
+msgstr "示例"
+
+#: website/header.py:35 website/main_page.py:212
+msgid "Why?"
+msgstr "为什么？"
+
+#: website/header.py:59
+msgid "Cycle theme mode through dark, light, and system/auto."
+msgstr "切换主题模式：深色、浅色和系统/自动。"
+
+#: website/header.py:67
+msgid "Discord"
+msgstr "Discord"
+
+#: website/header.py:69
+msgid "Reddit"
+msgstr "Reddit"
+
+#: website/header.py:71
+msgid "GitHub"
+msgstr "GitHub"
+
+#: website/main_page.py:21
+msgid "Meet the *NiceGUI*."
+msgstr "遇见 *NiceGUI*。"
+
+#: website/main_page.py:22
+msgid "And let any browser be the frontend of your Python code."
+msgstr "让任何浏览器成为您 Python 代码的前端。"
+
+#: website/main_page.py:34
+msgid ""
+"Interact with Python through buttons, dialogs, 3D&nbsp;scenes, plots and "
+"much more."
+msgstr "通过按钮、对话框、3D&nbsp;场景、图表等与 Python 交互。"
+
+#: website/main_page.py:37
+msgid ""
+"NiceGUI manages web development details, letting you focus on Python code"
+" for diverse applications,\n"
+"including robotics, IoT solutions, smart home automation, and machine "
+"learning.\n"
+"Designed to work smoothly with connected peripherals like webcams and "
+"GPIO pins in IoT setups,\n"
+"NiceGUI streamlines the management of all your code in one place.\n"
+"<br><br>\n"
+"With a gentle learning curve, NiceGUI is user-friendly for beginners\n"
+"and offers advanced customization for experienced users,\n"
+"ensuring simplicity for basic tasks and feasibility for complex projects."
+"\n"
+"<br><br><br>\n"
+"Available as\n"
+"[PyPI package](https://pypi.org/project/nicegui/),\n"
+"[Docker image](https://hub.docker.com/r/zauberzeug/nicegui) and on\n"
+"[GitHub](https://github.com/zauberzeug/nicegui)."
+msgstr ""
+"NiceGUI 处理 Web 开发的细节，让您专注于 Python 代码，适用于各种应用场景，\n"
+"包括机器人、物联网解决方案、智能家居自动化和机器学习。\n"
+"旨在与网络摄像头和 GPIO 引脚等外围设备顺畅配合，\n"
+"NiceGUI 让您在一个地方管理所有代码。\n"
+"<br><br>\n"
+"学习曲线平缓，NiceGUI 对初学者友好，\n"
+"同时为有经验的用户提供高级自定义选项，\n"
+"确保简单任务的简洁性和复杂项目的可行性。\n"
+"<br><br><br>\n"
+"可通过\n"
+"[PyPI 包](https://pypi.org/project/nicegui/)、\n"
+"[Docker 镜像](https://hub.docker.com/r/zauberzeug/nicegui) 和\n"
+"[GitHub](https://github.com/zauberzeug/nicegui) 获取。"
+
+#: website/main_page.py:55
+msgid "Get *started*"
+msgstr "开始*使用*"
+
+#: website/main_page.py:59
+msgid "Create __main.py__"
+msgstr "创建 __main.py__"
+
+#: website/main_page.py:72
+msgid "Install and launch"
+msgstr "安装并启动"
+
+#: website/main_page.py:82
+msgid "Enjoy!"
+msgstr "开始体验！"
+
+#: website/main_page.py:85
+msgid "...or use Docker to run your main.py"
+msgstr "……或使用 Docker 运行您的 main.py"
+
+#: website/main_page.py:88
+msgid ""
+"With our [multi-arch Docker "
+"image](https://hub.docker.com/repository/docker/zauberzeug/nicegui)\n"
+"you can start the server without installing any packages.\n"
+"\n"
+"The command searches for `main.py` in in your current directory and makes"
+" the app available at http://localhost:8888."
+msgstr ""
+"使用我们的[多架构 Docker 镜像](https://hub.docker.com/repository/docker/zauberzeug/nicegui)，\n"
+"您可以无需安装任何软件包即可启动服务器。\n"
+"\n"
+"该命令会在当前目录中搜索 `main.py` 并使应用在 http://localhost:8888 上可用。"
+
+#: website/main_page.py:103
+msgid "Code *nicely*"
+msgstr "优雅*编程*"
+
+#: website/main_page.py:105
+msgid "Interaction"
+msgstr "交互"
+
+#: website/main_page.py:106
+msgid "[buttons, switches, sliders, inputs, ...](/documentation/section_controls)"
+msgstr "[按钮、开关、滑块、输入框等](/documentation/section_controls)"
+
+#: website/main_page.py:107
+msgid "[notifications, dialogs and menus](/documentation/section_page_layout)"
+msgstr "[通知、对话框和菜单](/documentation/section_page_layout)"
+
+#: website/main_page.py:108
+msgid "[interactive images](/documentation/interactive_image) with SVG overlays"
+msgstr "[交互式图像](/documentation/interactive_image)（支持 SVG 叠加）"
+
+#: website/main_page.py:109
+msgid ""
+"web pages and [native window "
+"apps](/documentation/section_configuration_deployment#native_mode)"
+msgstr "网页和[原生窗口应用](/documentation/section_configuration_deployment#native_mode)"
+
+#: website/main_page.py:111
+msgid "Layout"
+msgstr "布局"
+
+#: website/main_page.py:112
+msgid "[navigation bars, tabs, panels, ...](/documentation/section_page_layout)"
+msgstr "[导航栏、标签页、面板等](/documentation/section_page_layout)"
+
+#: website/main_page.py:113
+msgid "grouping with rows, columns, grids and cards"
+msgstr "通过行、列、网格和卡片进行分组"
+
+#: website/main_page.py:114
+msgid ""
+"[HTML](/documentation/html) and [Markdown](/documentation/markdown) "
+"elements"
+msgstr "[HTML](/documentation/html) 和 [Markdown](/documentation/markdown) 元素"
+
+#: website/main_page.py:115
+msgid "flex layout by default"
+msgstr "默认弹性布局"
+
+#: website/main_page.py:117
+msgid "Visualization"
+msgstr "可视化"
+
+#: website/main_page.py:118
+msgid ""
+"[charts, diagrams, tables](/documentation/section_data_elements), "
+"[audio/video](/documentation/section_audiovisual_elements)"
+msgstr "[图表、图示、表格](/documentation/section_data_elements)、[音频/视频](/documentation/section_audiovisual_elements)"
+
+#: website/main_page.py:119
+msgid "[3D scenes](/documentation/scene)"
+msgstr "[3D 场景](/documentation/scene)"
+
+#: website/main_page.py:120
+msgid "straight-forward [data binding](/documentation/section_binding_properties)"
+msgstr "简洁的[数据绑定](/documentation/section_binding_properties)"
+
+#: website/main_page.py:121
+msgid "built-in [timer for data refresh](/documentation/timer)"
+msgstr "内置[数据刷新定时器](/documentation/timer)"
+
+#: website/main_page.py:123
+msgid "Styling"
+msgstr "样式"
+
+#: website/main_page.py:124
+msgid ""
+"customizable [color "
+"themes](/documentation/section_styling_appearance#color_theming)"
+msgstr "可自定义的[颜色主题](/documentation/section_styling_appearance#color_theming)"
+
+#: website/main_page.py:125
+msgid "custom CSS and classes"
+msgstr "自定义 CSS 和类"
+
+#: website/main_page.py:126
+msgid "modern look with material design"
+msgstr "Material Design 现代外观"
+
+#: website/main_page.py:127
+msgid "[Tailwind CSS](https://tailwindcss.com/)"
+msgstr "[Tailwind CSS](https://tailwindcss.com/)"
+
+#: website/main_page.py:129
+msgid "Coding"
+msgstr "编程"
+
+#: website/main_page.py:130
+msgid "single page apps with [ui.sub_pages](/documentation/sub_pages)"
+msgstr "使用 [ui.sub_pages](/documentation/sub_pages) 构建单页应用"
+
+#: website/main_page.py:131
+msgid "auto-reload on code change"
+msgstr "代码更改时自动重载"
+
+#: website/main_page.py:132
+msgid "persistent [user sessions](/documentation/storage)"
+msgstr "持久化[用户会话](/documentation/storage)"
+
+#: website/main_page.py:133
+msgid "super powerful [testing framework](/documentation/section_testing)"
+msgstr "超强大的[测试框架](/documentation/section_testing)"
+
+#: website/main_page.py:135
+msgid "Foundation"
+msgstr "基础"
+
+#: website/main_page.py:136
+msgid "generic [Vue](https://vuejs.org/) to Python bridge"
+msgstr "通用的 [Vue](https://vuejs.org/) 到 Python 桥接"
+
+#: website/main_page.py:137
+msgid "dynamic GUI through [Quasar](https://quasar.dev/)"
+msgstr "通过 [Quasar](https://quasar.dev/) 实现动态 GUI"
+
+#: website/main_page.py:138
+msgid "content is served with [FastAPI](https://fastapi.tiangolo.com/)"
+msgstr "内容由 [FastAPI](https://fastapi.tiangolo.com/) 提供"
+
+#: website/main_page.py:139
+msgid "Python 3.10+"
+msgstr "Python 3.10+"
+
+#: website/main_page.py:144
+msgid "Try *this*"
+msgstr "试试*看*"
+
+#: website/main_page.py:151
+msgid "Browse through plenty of live demos."
+msgstr "浏览大量在线演示。"
+
+#: website/main_page.py:153
+msgid "Fun-Fact: This whole website is also coded with NiceGUI."
+msgstr "趣闻：整个网站也是用 NiceGUI 编写的。"
+
+#: website/main_page.py:171
+msgid "NiceGUI is supported by"
+msgstr "NiceGUI 由以下赞助商支持"
+
+#: website/main_page.py:202
+msgid "Become a sponsor"
+msgstr "成为赞助商"
+
+#: website/main_page.py:215
+msgid ""
+"We at\n"
+"[Zauberzeug](https://zauberzeug.com)\n"
+"like\n"
+"[Streamlit](https://streamlit.io/)\n"
+"but find it does\n"
+"[too much "
+"magic](https://github.com/zauberzeug/nicegui/issues/1#issuecomment-847413651)"
+"\n"
+"when it comes to state handling.\n"
+"In search for an alternative nice library to write simple graphical user "
+"interfaces in Python we discovered\n"
+"[JustPy](https://justpy.io/).\n"
+"Although we liked the approach, it is too \"low-level HTML\" for our "
+"daily usage.\n"
+"But it inspired us to use\n"
+"[Vue](https://vuejs.org/)\n"
+"and\n"
+"[Quasar](https://quasar.dev/)\n"
+"for the frontend."
+msgstr ""
+"我们\n"
+"[Zauberzeug](https://zauberzeug.com)\n"
+"喜欢\n"
+"[Streamlit](https://streamlit.io/)，\n"
+"但发现它在状态管理方面\n"
+"[过于神奇](https://github.com/zauberzeug/nicegui/issues/1#issuecomment-847413651)。\n"
+"在寻找一个用 Python 编写简单图形用户界面的优秀替代库时，我们发现了\n"
+"[JustPy](https://justpy.io/)。\n"
+"虽然我们喜欢这种方式，但它对于日常使用来说太 \"底层 HTML\" 了。\n"
+"不过它启发我们使用\n"
+"[Vue](https://vuejs.org/)\n"
+"和\n"
+"[Quasar](https://quasar.dev/)\n"
+"作为前端。"
+
+#: website/main_page.py:232
+msgid ""
+"We have built on top of\n"
+"[FastAPI](https://fastapi.tiangolo.com/),\n"
+"which itself is based on the ASGI framework\n"
+"[Starlette](https://www.starlette.io/)\n"
+"and the ASGI webserver\n"
+"[Uvicorn](https://www.uvicorn.org/)\n"
+"because of their great performance and ease of use."
+msgstr ""
+"我们基于\n"
+"[FastAPI](https://fastapi.tiangolo.com/) 构建，\n"
+"它本身基于 ASGI 框架\n"
+"[Starlette](https://www.starlette.io/)\n"
+"和 ASGI Web 服务器\n"
+"[Uvicorn](https://www.uvicorn.org/)，\n"
+"因为它们具有出色的性能和易用性。"
+
+#: website/main_page.py:242
+msgid "Imprint & Privacy"
+msgstr "版权声明与隐私政策"
+
+#: website/search.py:41
+msgid "Search documentation"
+msgstr "搜索文档"
+
+#: website/search.py:57
+msgid "Press Ctrl+K or / to search the documentation"
+msgstr "按 Ctrl+K 或 / 搜索文档"
+
+#: website/star.py:45
+msgid "Star us on GitHub!"
+msgstr "在 GitHub 上给我们加星！"
+
+#: website/star.py:46
+msgid "And tell others about NiceGUI."
+msgstr "并告诉其他人关于 NiceGUI。"
+
+#: website/style.py:46
+msgid "...and many more"
+msgstr "……还有更多"
+
+#: website/style.py:47
+msgid "Browse through plenty of examples."
+msgstr "浏览大量示例。"
+
+#: website/documentation/intro.py:13
+msgid "Single-Page Applications"
+msgstr "单页应用"
+
+#: website/documentation/intro.py:14
+msgid ""
+"Build applications with fast client-side routing using "
+"[`ui.sub_pages`](/documentation/sub_pages)\n"
+"and a `root` function as single entry point.\n"
+"For each visitor, the `root` function is executed and generates the "
+"interface.\n"
+"[`ui.link`](/documentation/link) and "
+"[`ui.navigate`](/documentation/navigate) can be used to navigate to other"
+" sub pages.\n"
+"\n"
+"If you do not want a single-page application, you can also use "
+"[`@ui.page('/your/path')`](/documentation/page)\n"
+"to define standalone content available at a specific path."
+msgstr ""
+"使用 [`ui.sub_pages`](/documentation/sub_pages) 和 `root` 函数作为单一入口点，\n"
+"构建具有快速客户端路由的应用。\n"
+"对于每个访客，`root` 函数会执行并生成界面。\n"
+"[`ui.link`](/documentation/link) 和 [`ui.navigate`](/documentation/navigate) 可用于导航到其他子页面。\n"
+"\n"
+"如果不需要单页应用，也可以使用 [`@ui.page('/your/path')`](/documentation/page)\n"
+"来定义在特定路径上可用的独立内容。"
+
+#: website/documentation/intro.py:50
+msgid "Reactive Transformations"
+msgstr "响应式转换"
+
+#: website/documentation/intro.py:51
+msgid ""
+"Create real-time interfaces with automatic updates.\n"
+"Type and watch text flow in both directions.\n"
+"When input changes, the "
+"[binding](/documentation/section_binding_properties) transforms the text"
+"\n"
+"with a custom Python function and updates the label."
+msgstr ""
+"创建具有自动更新的实时界面。\n"
+"输入并观察文本双向流动。\n"
+"当输入更改时，[绑定](/documentation/section_binding_properties)会使用自定义 Python 函数\n"
+"转换文本并更新标签。"
+
+#: website/documentation/intro.py:66
+msgid "Event System"
+msgstr "事件系统"
+
+#: website/documentation/intro.py:67
+msgid ""
+"Use an [Event](/documentation/event) to trigger actions and pass data.\n"
+"Here we have an IoT temperature sensor submitting its readings\n"
+"to a [FastAPI "
+"endpoint](/documentation/section_pages_routing#api_responses) with path "
+"\"/sensor\".\n"
+"When a new value arrives, it emits an event for the chart to be updated."
+msgstr ""
+"使用 [Event](/documentation/event) 触发操作并传递数据。\n"
+"这里有一个物联网温度传感器将其读数\n"
+"提交到路径为 \"/sensor\" 的 [FastAPI 端点](/documentation/section_pages_routing#api_responses)。\n"
+"当新值到达时，它会发出事件以更新图表。"
