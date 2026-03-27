@@ -146,5 +146,17 @@
         });
       }
     </script>
+    <script type="module">
+      // NOTE: globalThis.Vue is set by the earlier module script (import * as Vue from "vue").
+      // If the import map pipeline failed (e.g. unsupported browser), Vue remains undefined.
+      if (typeof Vue === "undefined") {
+        document.body.innerHTML =
+          '<div style="font-family:sans-serif;padding:2rem;color:#c00">'
+          + '<b>NiceGUI failed to load.</b> '
+          + 'Your browser engine does not support ES module import maps (requires Chrome 89+, Firefox 108+, or Safari 16.4+). '
+          + 'In native mode, upgrade to Qt6 or a modern WebKitGTK backend.'
+          + '</div>';
+      }
+    </script>
   </body>
 </html>
