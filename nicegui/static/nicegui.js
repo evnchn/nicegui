@@ -500,6 +500,10 @@ function createApp(elements, options) {
               delete this.elements[id];
               continue;
             }
+            const existing = this.elements[id];
+            if (existing && element.props) {
+              element.props = { ...existing.props, ...element.props };
+            }
             replaceUndefinedAttributes(element);
             this.elements[id] = element;
           }
