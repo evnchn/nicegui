@@ -3,7 +3,7 @@ from colorsys import rgb_to_yiq
 from typing import Any
 
 from ..defaults import DEFAULT_PROP, DEFAULT_PROPS, resolve_defaults
-from ..events import Handler, ValueChangeEventArguments
+from ..events import GenericEventArguments, Handler, ValueChangeEventArguments
 from .button import Button as button
 from .color_picker import ColorPicker as color_picker
 from .mixins.disableable_element import DisableableElement
@@ -75,3 +75,6 @@ class ColorInput(LabelElement, ValueElement[str], DisableableElement):
         luminance = rgb_to_yiq(r, g, b)[0]
         icon_color = 'grey-10' if luminance > 0.5 else 'grey-3'
         self.button.style(f'background-color: {color}').props(f'color="{icon_color}"')
+
+    def _event_args_to_value(self, e: GenericEventArguments) -> str:
+        return e.args if e.args is not None else ''

@@ -1,7 +1,7 @@
 from typing import Any
 
 from ..defaults import DEFAULT_PROP, resolve_defaults
-from ..events import Handler, ValueChangeEventArguments
+from ..events import GenericEventArguments, Handler, ValueChangeEventArguments
 from .mixins.disableable_element import DisableableElement
 from .mixins.value_element import ValueElement
 
@@ -32,3 +32,6 @@ class Editor(ValueElement[str], DisableableElement, component='editor.js', defau
         super()._handle_value_change(value)
         if self._send_update_on_value_change:
             self.run_method('updateValue')
+
+    def _event_args_to_value(self, e: GenericEventArguments) -> str:
+        return e.args if e.args is not None else ''

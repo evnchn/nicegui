@@ -1,5 +1,5 @@
 from ..defaults import DEFAULT_PROP, DEFAULT_PROPS, resolve_defaults
-from ..events import Handler, ValueChangeEventArguments
+from ..events import GenericEventArguments, Handler, ValueChangeEventArguments
 from .button import Button as button
 from .menu import Menu as menu
 from .mixins.disableable_element import DisableableElement
@@ -39,3 +39,6 @@ class TimeInput(LabelElement, ValueElement[str], DisableableElement):
                     self.picker = time()
 
         self.picker.bind_value(self)
+
+    def _event_args_to_value(self, e: GenericEventArguments) -> str:
+        return e.args if e.args is not None else ''
