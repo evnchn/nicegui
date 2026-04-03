@@ -100,25 +100,10 @@ function replaceUndefinedAttributes(element) {
   element.text ??= null;
   element.events ??= [];
   element.update_method ??= null;
-  element.children ??= [];
-  element.slots = { ...(element.slots ?? {}), default: { ids: element.children } };
-}
-
-function deepMergeElement(target, source) {
-  const result = { ...target };
-  for (const key of Object.keys(source)) {
-    const sourceVal = source[key];
-    if (sourceVal === null) {
-      delete result[key];
-    } else if (typeof sourceVal === "object" && !Array.isArray(sourceVal)) {
-      const targetVal = target[key];
-      const isObj = targetVal !== null && typeof targetVal === "object" && !Array.isArray(targetVal);
-      result[key] = deepMergeElement(isObj ? targetVal : {}, sourceVal);
-    } else {
-      result[key] = sourceVal;
-    }
-  }
-  return result;
+  element.slots = {
+    default: { ids: element.children || [] },
+    ...(element.slots ?? {}),
+  };
 }
 
 function getElement(id) {
@@ -138,19 +123,21 @@ function runMethod(target, method_name, args) {
   if (typeof target === "object") {
     if (method_name in target) {
       return target[method_name](...args);
-    } else {
-      return eval(method_name)(target, ...args);
+    }
+  } else {
+    const element = getElement(target);
+    if (element === null || element === undefined) return;
+    if (method_name in element) {
+      return element[method_name](...args);
+    } else if (method_name in (element.$refs.qRef || [])) {
+      return element.$refs.qRef[method_name](...args);
     }
   }
-  const element = getElement(target);
-  if (element === null || element === undefined) return;
-  if (method_name in element) {
-    return element[method_name](...args);
-  } else if (method_name in (element.$refs.qRef || [])) {
-    return element.$refs.qRef[method_name](...args);
-  } else {
-    return eval(method_name)(element, ...args);
+  let msg = `Method "${method_name}" not found.`;
+  if (method_name.includes("=>") || method_name.startsWith("(")) {
+    msg += " To run arbitrary JavaScript, use ui.run_javascript() instead.";
   }
+  logAndEmit("error", msg);
 }
 
 function getComputedProp(target, prop_name) {
@@ -239,6 +226,7 @@ function throttle(callback, time, leading, trailing, id) {
     }
   }
 }
+
 function renderRecursively(elements, id, propsContext) {
   const element = elements[id];
   if (element === undefined) {
@@ -414,7 +402,7 @@ function createApp(elements, options) {
       mounted_app = this;
       window.documentId = createRandomUUID();
       window.clientId = options.query.client_id;
-      const url = window.location.protocol === "https:" ? "wss://" : "ws://" + window.location.host;
+      const url = (window.location.protocol === "https:" ? "wss://" : "ws://") + window.location.host;
       window.path_prefix = options.prefix;
       window.nextMessageId = options.query.next_message_id;
       window.ackedMessageId = -1;
@@ -493,13 +481,11 @@ function createApp(elements, options) {
         },
         update: async (msg) => {
           let eventListenersChanged = false;
-          const savedForRerender = {};
           for (const [id, element] of Object.entries(msg)) {
             if (element === null) continue;
             if (!(id in this.elements)) continue;
             const oldListenerIds = new Set((this.elements[id]?.events || []).map((ev) => ev.listener_id));
             if (element.events?.some((e) => !oldListenerIds.has(e.listener_id))) {
-              savedForRerender[id] = this.elements[id];
               delete this.elements[id];
               eventListenersChanged = true;
             }
@@ -514,15 +500,16 @@ function createApp(elements, options) {
               delete this.elements[id];
               continue;
             }
-            const base = savedForRerender[id] ?? this.elements[id];
-            const merged = base ? deepMergeElement(base, element) : element;
-            replaceUndefinedAttributes(merged);
-            this.elements[id] = merged;
+            const existing = this.elements[id];
+            if (existing && element.props) {
+              element.props = { ...existing.props, ...element.props };
+            }
+            replaceUndefinedAttributes(element);
+            this.elements[id] = element;
           }
 
           await this.$nextTick();
-          for (const id of Object.keys(msg)) {
-            const element = this.elements[id];
+          for (const [id, element] of Object.entries(msg)) {
             if (element?.update_method) {
               getElement(id)?.[element.update_method]();
             }

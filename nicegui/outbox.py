@@ -81,6 +81,17 @@ class Outbox:
         self.messages.append((target_id, message_type, data))
         self._set_enqueue_event()
 
+    @staticmethod
+    def _build_element_dict(element: Element) -> dict[str, Any]:
+        """Build the update dict for an element, omitting VALUE_PROP if the value came from the client."""
+        element_dict = element._to_dict()  # pylint: disable=protected-access
+        if getattr(element, '_value_from_client', False):
+            from .elements.mixins.value_element import ValueElement  # pylint: disable=import-outside-toplevel
+            if isinstance(element, ValueElement) and 'props' in element_dict:
+                element_dict['props'].pop(element.VALUE_PROP, None)
+            element._value_from_client = False  # type: ignore[attr-defined]  # pylint: disable=protected-access
+        return element_dict
+
     async def loop(self) -> None:
         """Send updates and messages to all clients in an endless loop."""
         self._enqueue_event = asyncio.Event()
@@ -104,9 +115,8 @@ class Outbox:
                 coros = []
                 if self.updates:
                     data = {
-                        element_id: None if element is deleted else diff  # type: ignore
+                        element_id: None if element is deleted else self._build_element_dict(element)  # type: ignore[arg-type]
                         for element_id, element in self.updates.items()
-                        if isinstance(element, Deleted) or (diff := element._to_dict_diff()) is not None  # pylint: disable=protected-access
                     }
                     js_components = [
                         component
@@ -120,8 +130,7 @@ class Outbox:
                             'components': [{'key': c.key, 'tag': c.tag} for c in js_components],
                         })))
                         self._loaded_components.update(c.name for c in js_components)
-                    if data:
-                        coros.append(self._emit((client.id, 'update', data)))
+                    coros.append(self._emit((client.id, 'update', data)))
                     self.updates.clear()
 
                 if self.messages:
@@ -185,3 +194,4 @@ class Outbox:
     def stop(self) -> None:
         """Stop the outbox loop."""
         self._should_stop = True
+        self._set_enqueue_event()  # wake the loop so it checks _should_stop immediately
