@@ -1,5 +1,5 @@
 from ..defaults import DEFAULT_PROP, DEFAULT_PROPS, resolve_defaults
-from ..events import GenericEventArguments, Handler, ValueChangeEventArguments
+from ..events import Handler, ValueChangeEventArguments
 from .button import Button as button
 from .date import Date as date
 from .menu import Menu as menu
@@ -8,7 +8,7 @@ from .mixins.label_element import LabelElement
 from .mixins.value_element import ValueElement
 
 
-class DateInput(LabelElement, ValueElement[str], DisableableElement):
+class DateInput(LabelElement, ValueElement[str | None], DisableableElement):
     LOOPBACK = False
 
     @resolve_defaults
@@ -57,6 +57,3 @@ class DateInput(LabelElement, ValueElement[str], DisableableElement):
             return {'from': from_date, 'to': to_date}
         else:
             return value
-
-    def _event_args_to_value(self, e: GenericEventArguments) -> str:
-        return e.args if e.args is not None else ''
