@@ -53,7 +53,7 @@ class Tab(LabelElement, IconElement, DisableableElement):
         self.tabs = context.slot.parent
 
 
-class TabPanels(ValueElement):
+class TabPanels(ValueElement, component='tab_panels.js'):
 
     @resolve_defaults
     def __init__(self,
@@ -62,6 +62,7 @@ class TabPanels(ValueElement):
                  on_change: Handler[ValueChangeEventArguments] | None = None,
                  animated: bool = DEFAULT_PROP | True,
                  keep_alive: bool = DEFAULT_PROP | True,
+                 eager: bool = False,
                  ) -> None:
         """Tab Panels
 
@@ -77,12 +78,14 @@ class TabPanels(ValueElement):
         :param on_change: callback to be executed when the visible tab panel changes (*since version 3.6.0*: event ``value`` is the tab name)
         :param animated: whether the tab panels should be animated (default: `True`)
         :param keep_alive: whether to use Vue's keep-alive component on the content (default: `True`)
+        :param eager: whether to render all tab panels immediately so that elements like AG Grid are mounted in the DOM (default: `False`)
         """
-        super().__init__(tag='q-tab-panels', value=value, on_value_change=on_change)
+        tag = None if eager else 'q-tab-panels'
+        super().__init__(tag=tag, value=value, on_value_change=on_change)
         if tabs is not None:
             tabs.bind_value(self, 'value')
         self._props.set_bool('animated', animated)
-        self._props.set_bool('keep-alive', keep_alive)
+        self._props.set_bool('keep-alive', keep_alive or eager)
 
     def _value_to_model_value(self, value: Any) -> Any:
         return value.props['name'] if isinstance(value, (Tab, TabPanel)) else value
