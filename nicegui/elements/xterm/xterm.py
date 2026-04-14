@@ -15,7 +15,7 @@ from ...events import (
 )
 
 
-class Xterm(Element, component='xterm.js', esm={'nicegui-xterm': 'dist'}):
+class Xterm(Element, component='xterm.compiled.js', esm={'nicegui-xterm': 'dist'}):
 
     @resolve_defaults
     def __init__(self,

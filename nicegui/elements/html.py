@@ -3,7 +3,7 @@ from collections.abc import Callable
 from .mixins.content_element import ContentElement
 
 
-class Html(ContentElement, component='html.js'):
+class Html(ContentElement, component='html.compiled.js'):
 
     def __init__(self, content: str = '', *, sanitize: Callable[[str], str] | bool = True, tag: str = 'div') -> None:
         """HTML Element

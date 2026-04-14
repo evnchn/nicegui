@@ -40,5 +40,21 @@ class Context:
         """Return the current client."""
         return self.slot.parent.client
 
+    @property
+    def nonce(self) -> str:
+        """Return the CSP nonce for the current request, or an empty string when CSP is disabled.
+
+        Intended for user code that injects its own inline ``<script>``/``<style>`` tags via
+        ``ui.add_head_html`` or ``ui.add_body_html`` under a strict Content Security Policy.
+
+        WARNING: the nonce is a trust token. Only stamp it on content that the server fully
+        controls. Never embed the nonce into output derived from untrusted user input.
+        """
+        from .storage import request_contextvar  # pylint: disable=import-outside-toplevel,cyclic-import
+        request = request_contextvar.get()
+        if request is None:
+            return ''
+        return getattr(request.state, 'csp_nonce', '')
+
 
 context = Context()

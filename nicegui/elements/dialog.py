@@ -8,7 +8,7 @@ from ..element import Element
 from .mixins.value_element import ValueElement
 
 
-class Dialog(ValueElement[bool], component='dialog.js'):
+class Dialog(ValueElement[bool], component='dialog.compiled.js'):
 
     @resolve_defaults
     def __init__(self, *, value: bool = DEFAULT_PROPS['model-value'] | False) -> None:

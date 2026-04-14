@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from PIL.Image import Image as PIL_Image
 
 
-class Parallax(Image, component='image.js'):
+class Parallax(Image, component='image.compiled.js'):
 
     def __init__(self, source: str | Path | PIL_Image = '', *, height: float = 500.0, speed: float = 1.0) -> None:
         """Parallax Image

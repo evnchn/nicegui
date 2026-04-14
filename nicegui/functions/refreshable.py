@@ -45,7 +45,7 @@ class RefreshableTarget:
         return result
 
 
-class RefreshableContainer(Element, component='refreshable.js'):
+class RefreshableContainer(Element, component='refreshable.compiled.js'):
     pass
 
 

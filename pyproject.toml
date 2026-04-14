@@ -235,6 +235,6 @@ disable = [
 ]
 
 [tool.codespell]
-skip = '*.min.js,*.min.js.map,*.prod.js,*.lock'
+skip = '*.min.js,*.min.js.map,*.prod.js,*.lock,*compiler-dom*'
 check-hidden = true
 ignore-words-list = 'simpy'

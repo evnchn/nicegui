@@ -33,7 +33,13 @@ export default {
       off: function (event, callback) {
         if (!event) this.callbacks = {};
         else if (!callback) this.callbacks[event] = [];
-        else this.callbacks[event]?.delete(callback);
+        else {
+          const callbacks = this.callbacks[event];
+          if (Array.isArray(callbacks)) {
+            const index = callbacks.indexOf(callback);
+            if (index !== -1) callbacks.splice(index, 1);
+          }
+        }
       },
       emit: function (event, value) {
         this.callbacks[event]?.forEach((cb) => cb(value));

@@ -14,7 +14,7 @@ with suppress(ImportError):
     optional_features.register('pillow')
 
 
-class Image(SourceElement, component='image.js'):
+class Image(SourceElement, component='image.compiled.js'):
     PIL_CONVERT_FORMAT = 'PNG'
 
     def __init__(self, source: str | Path | PIL_Image = '') -> None:

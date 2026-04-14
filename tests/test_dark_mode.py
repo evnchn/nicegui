@@ -6,6 +6,12 @@ from nicegui import app, ui
 from nicegui.testing import Screen
 
 
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
+
+
 @pytest.mark.parametrize('unocss', [None, 'mini', 'wind3', 'wind4'])
 def test_dark_mode(screen: Screen, unocss: Literal['mini', 'wind3', 'wind4'] | None):
     app.config.unocss = unocss

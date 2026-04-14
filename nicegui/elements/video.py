@@ -4,7 +4,7 @@ from ..defaults import DEFAULT_PROP, resolve_defaults
 from .mixins.source_element import SourceElement
 
 
-class Video(SourceElement, component='video.js'):
+class Video(SourceElement, component='video.compiled.js'):
     SOURCE_IS_MEDIA_FILE = True
 
     @resolve_defaults

@@ -8,7 +8,7 @@ from .mixins.content_element import ContentElement
 from .timer import Timer as timer
 
 
-class Code(ContentElement, component='code.js', default_classes='nicegui-code'):
+class Code(ContentElement, component='code.compiled.js', default_classes='nicegui-code'):
 
     def __init__(self, content: str = '', *, language: str | None = 'python') -> None:
         """Code

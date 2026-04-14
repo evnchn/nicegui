@@ -9,6 +9,12 @@ from nicegui import binding, ui
 from nicegui.testing import Screen, User
 
 
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
+
+
 def test_ui_select_with_tuple_as_key(screen: Screen):
     class Model:
         selection: tuple[int, int] | None = None

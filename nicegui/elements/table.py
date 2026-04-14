@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     import polars as pl
 
 
-class Table(FilterElement, component='table.js'):
+class Table(FilterElement, component='table.compiled.js'):
 
     @resolve_defaults
     def __init__(self,

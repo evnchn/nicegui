@@ -12,7 +12,7 @@ from ...events import GenericEventArguments
 from .leaflet_layer import Layer
 
 
-class Leaflet(Element, component='leaflet.js', esm={'nicegui-leaflet': 'dist'}, default_classes='nicegui-leaflet'):
+class Leaflet(Element, component='leaflet.compiled.js', esm={'nicegui-leaflet': 'dist'}, default_classes='nicegui-leaflet'):
     # pylint: disable=import-outside-toplevel
     from .leaflet_layers import GenericLayer as generic_layer
     from .leaflet_layers import ImageOverlay as image_overlay

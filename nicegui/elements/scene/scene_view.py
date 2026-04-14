@@ -15,7 +15,7 @@ from ...events import (
 from .scene import Scene, SceneCamera
 
 
-class SceneView(Element, component='scene_view.js', default_classes='nicegui-scene-view'):
+class SceneView(Element, component='scene_view.compiled.js', default_classes='nicegui-scene-view'):
     # NOTE: The ESM is already registered in scene.py.
 
     @resolve_defaults

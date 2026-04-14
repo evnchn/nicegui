@@ -5,7 +5,7 @@ from ..events import Handler, ValueChangeEventArguments
 from .input import Input
 
 
-class Textarea(Input, component='input.js'):
+class Textarea(Input, component='input.compiled.js'):
 
     @resolve_defaults
     def __init__(self,

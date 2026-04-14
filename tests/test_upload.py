@@ -29,6 +29,12 @@ async def test_uploading_text_file(screen: Screen):
     assert await results[0].file.read() == test_path1.read_bytes()
 
 
+@pytest.fixture(autouse=True)
+def enable_csp_for_module(enable_csp):
+    """Enable CSP for all tests in this module."""
+    yield
+
+
 def test_two_upload_elements(screen: Screen):
     results: list[events.UploadEventArguments] = []
 

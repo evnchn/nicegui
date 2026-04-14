@@ -28,3 +28,17 @@ jobs:
         run: uv sync
       - name: ${{ matrix.target.name }}
         run: uv run ${{ matrix.target.command }}
+
+  compile-templates-check:
+    name: compile-templates --check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install node dependencies
+        run: npm ci
+      - name: Verify compiled templates are up-to-date
+        run: node compile_templates.js --check

@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from .. import core
 from . import general
 
 # pylint: disable=redefined-outer-name
@@ -35,3 +36,22 @@ def nicegui_reset_globals():
     """Reset the global state of the NiceGUI package."""
     with general.nicegui_reset_globals():
         yield
+
+
+@pytest.fixture
+def enable_csp(nicegui_reset_globals):  # pylint: disable=unused-argument
+    """Enable CSP for a specific test to verify CSP-compatible functionality.
+
+    Tailwind and UnoCSS work under CSP via nonce monkey-patching of document.createElement.
+    Depends on nicegui_reset_globals to ensure CSP state is set after globals are reset.
+
+    Example:
+        @pytest.fixture(autouse=True)
+        def enable_csp_for_module(enable_csp):
+            '''Enable CSP for all tests in this module.'''
+            yield
+    """
+    original_value = core.app.config.csp_enabled
+    core.app.config.csp_enabled = True
+    yield
+    core.app.config.csp_enabled = original_value

@@ -21,7 +21,7 @@ with suppress(ImportError):
     optional_features.register('pillow')
 
 
-class InteractiveImage(SourceElement, ContentElement, component='interactive_image.js'):
+class InteractiveImage(SourceElement, ContentElement, component='interactive_image.compiled.js'):
     CONTENT_PROP = 'content'
     PIL_CONVERT_FORMAT = 'PNG'
 
@@ -135,7 +135,7 @@ class InteractiveImage(SourceElement, ContentElement, component='interactive_ima
         return super()._handle_content_change(content)
 
 
-class InteractiveImageLayer(SourceElement, ContentElement, component='interactive_image.js'):
+class InteractiveImageLayer(SourceElement, ContentElement, component='interactive_image.compiled.js'):
     CONTENT_PROP = 'content'
     PIL_CONVERT_FORMAT = 'PNG'
 

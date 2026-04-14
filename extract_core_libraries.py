@@ -58,8 +58,13 @@ def _minify_js(input_path: Path, output_path: Path) -> None:
                    capture_output=True, text=True, check=True)
 
 
-shutil.copy2(NODE_MODULES / 'vue' / 'dist' / 'vue.esm-browser.js', STATIC / 'vue.esm-browser.js')
-shutil.copy2(NODE_MODULES / 'vue' / 'dist' / 'vue.esm-browser.prod.js', STATIC / 'vue.esm-browser.prod.js')
+shutil.copy2(NODE_MODULES / 'vue' / 'dist' / 'vue.runtime.esm-browser.js', STATIC / 'vue.esm-browser.js')
+shutil.copy2(NODE_MODULES / 'vue' / 'dist' / 'vue.runtime.esm-browser.prod.js', STATIC / 'vue.esm-browser.prod.js')
+
+shutil.copy2(NODE_MODULES / '@vue' / 'compiler-dom' / 'dist' / 'compiler-dom.esm-browser.js',
+             STATIC / 'compiler-dom.esm-browser.js')
+shutil.copy2(NODE_MODULES / '@vue' / 'compiler-dom' / 'dist' / 'compiler-dom.esm-browser.prod.js',
+             STATIC / 'compiler-dom.esm-browser.prod.js')
 
 shutil.copy2(NODE_MODULES / 'quasar' / 'dist' / 'quasar.umd.js', STATIC / 'quasar.umd.js')
 shutil.copy2(NODE_MODULES / 'quasar' / 'dist' / 'quasar.umd.prod.js', STATIC / 'quasar.umd.prod.js')

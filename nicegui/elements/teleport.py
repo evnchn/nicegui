@@ -1,7 +1,7 @@
 from ..element import Element
 
 
-class Teleport(Element, component='teleport.js'):
+class Teleport(Element, component='teleport.compiled.js'):
 
     def __init__(self, to: str | Element) -> None:
         """Teleport

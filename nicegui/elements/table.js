@@ -17,6 +17,11 @@ export default {
       return this.columns;
     },
   },
+  unmounted() {
+    // Ensure the fullscreen scroll-behavior class does not linger on <html> if the
+    // table is destroyed while fullscreen.
+    document.documentElement.classList.remove("nicegui-table-fullscreen");
+  },
   methods: {
     setFullscreenClass(isFullscreen) {
       // NOTE: prevent the page from smooth-scrolling when the table exits fullscreen;
@@ -28,8 +33,5 @@ export default {
         setTimeout(() => document.documentElement.classList.remove("nicegui-table-fullscreen"));
       }
     },
-  },
-  unmounted() {
-    this.setFullscreenClass(false);
   },
 };

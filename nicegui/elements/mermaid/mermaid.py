@@ -5,7 +5,7 @@ from ...events import Handler, MermaidNodeClickEventArguments, handle_event
 from ..mixins.content_element import ContentElement
 
 
-class Mermaid(ContentElement, component='mermaid.js', esm={'nicegui-mermaid': 'dist'}):
+class Mermaid(ContentElement, component='mermaid.compiled.js', esm={'nicegui-mermaid': 'dist'}):
     CONTENT_PROP = 'content'
 
     @resolve_defaults

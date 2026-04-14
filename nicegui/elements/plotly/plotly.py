@@ -10,7 +10,7 @@ with suppress(ImportError):
     optional_features.register('plotly')
 
 
-class Plotly(Element, component='plotly.js', esm={'nicegui-plotly': 'dist'}):
+class Plotly(Element, component='plotly.compiled.js', esm={'nicegui-plotly': 'dist'}):
 
     def __init__(self, figure: dict | go.Figure) -> None:
         """Plotly Element

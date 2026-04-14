@@ -16,7 +16,7 @@ from ..logging import log
 from ..page_arguments import PageArguments, RouteMatch
 
 
-class SubPages(Element, component='sub_pages.js', default_classes='nicegui-sub-pages'):
+class SubPages(Element, component='sub_pages.compiled.js', default_classes='nicegui-sub-pages'):
 
     def __init__(self,
                  routes: dict[str, Callable] | None = None,
