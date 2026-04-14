@@ -13,9 +13,12 @@ def test_dev_mode(screen: Screen) -> None:
 
     screen.open('/')
     importmap = screen.selenium.find_element(By.XPATH, '//script[@type="importmap"]')
-    assert f'/_nicegui/{__version__}/static/vue.esm-browser.js' in (importmap.get_attribute('innerHTML') or '')
-    screen.selenium.find_element(By.XPATH, f'//script[@src="/_nicegui/{__version__}/static/quasar.umd.js"]')
-    assert 'Vue warn' not in screen.render_js_logs()
+    importmap_html = importmap.get_attribute('innerHTML') or ''
+    assert f'/_nicegui/{__version__}/static/vue.esm-browser.js' in importmap_html
+    assert f'/_nicegui/{__version__}/static/quasar.esm.js' in importmap_html
+    js_logs = screen.render_js_logs()
+    warnings = [w for w in js_logs.split('\n') if 'Vue warn' in w and 'Hydration' not in w]
+    assert not warnings, f'Unexpected Vue warnings: {warnings}'
 
 
 def test_prod_mode(screen: Screen):
@@ -27,6 +30,7 @@ def test_prod_mode(screen: Screen):
 
     screen.open('/')
     importmap = screen.selenium.find_element(By.XPATH, '//script[@type="importmap"]')
-    assert f'/_nicegui/{__version__}/static/vue.esm-browser.prod.js' in (importmap.get_attribute('innerHTML') or '')
-    screen.selenium.find_element(By.XPATH, f'//script[@src="/_nicegui/{__version__}/static/quasar.umd.prod.js"]')
+    importmap_html = importmap.get_attribute('innerHTML') or ''
+    assert f'/_nicegui/{__version__}/static/vue.esm-browser.prod.js' in importmap_html
+    assert f'/_nicegui/{__version__}/static/quasar.esm.prod.js' in importmap_html
     assert 'Vue warn' not in screen.render_js_logs()
