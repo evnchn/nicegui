@@ -389,7 +389,10 @@ function createApp(elements, options) {
   Object.entries(elements).forEach(([_, element]) => replaceUndefinedAttributes(element));
   setInterval(() => ack(), 3000);
   initUnoCss();
-  return (app = Vue.createApp({
+  const appDiv = document.getElementById("app");
+  const useSSR = appDiv && appDiv.innerHTML.trim() !== "";
+  const vueCreateApp = useSSR ? Vue.createSSRApp : Vue.createApp;
+  return (app = vueCreateApp({
     data() {
       return {
         elements,
@@ -400,6 +403,9 @@ function createApp(elements, options) {
     },
     mounted() {
       mounted_app = this;
+      if (this.$q?.onSSRHydrated) {
+        this.$q.onSSRHydrated();
+      }
       window.documentId = createRandomUUID();
       window.clientId = options.query.client_id;
       const url = (window.location.protocol === "https:" ? "wss://" : "ws://") + window.location.host;

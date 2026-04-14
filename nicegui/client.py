@@ -43,6 +43,15 @@ HTML_ESCAPE_TABLE = str.maketrans({
 HEADWIND_CONTENT = (Path(__file__).parent / 'static' / 'headwind.css').read_text().strip()
 
 
+def _render_ssr_html(elements: dict[int, Element]) -> str:
+    """Render element tree to HTML string for SSR hydration using Vue's server renderer."""
+    from .ssr import render_to_string  # pylint: disable=import-outside-toplevel
+    elements_dict = {
+        id: element._to_dict() for id, element in elements.items()  # pylint: disable=protected-access
+    }
+    return render_to_string(elements_dict)
+
+
 class ClientConnectionTimeout(TimeoutError):
     def __init__(self, client: Client) -> None:
         super().__init__(f'ClientConnectionTimeout: {client.id}')
@@ -164,6 +173,7 @@ class Client:
         }
         vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls = \
             generate_resources(prefix, self.elements.values())
+        ssr_html = _render_ssr_html(self.elements)
         return templates.TemplateResponse(
             request=request,
             name='index.html',
@@ -189,6 +199,7 @@ class Client:
                 'tailwind': core.app.config.tailwind,
                 'unocss': core.app.config.unocss,
                 'headwind_css': HEADWIND_CONTENT if core.app.config.tailwind else '',
+                'ssr_html': ssr_html,
                 'prod_js': core.app.config.prod_js,
                 'socket_io_js_query_params': socket_io_js_query_params,
                 'socket_io_js_extra_headers': core.app.config.socket_io_js_extra_headers,

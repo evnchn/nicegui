@@ -87,6 +87,7 @@ dev = [
     "rcssmin>=1.2.1,<2",
     "tinycss2>=1.4.0,<2",
     "poetry-dynamic-versioning>=1.8.0,<2",
+    "mini-racer>=0.12.4",
 ]
 types = [
     "types-aiofiles>=23.1.0",
@@ -140,6 +141,7 @@ testpaths = ["tests"]
 filterwarnings = [
   'error',
   "ignore:'asyncio\\.iscoroutinefunction' is deprecated and slated for removal:DeprecationWarning",
+  "ignore:Exception ignored in.*MiniRacer:pytest.PytestUnraisableExceptionWarning",
 ]
 
 [tool.mypy]
@@ -235,6 +237,6 @@ disable = [
 ]
 
 [tool.codespell]
-skip = '*.min.js,*.min.js.map,*.prod.js,*.lock'
+skip = '*.min.js,*.min.js.map,*.prod.js,*.lock,*ssr-bundle.js'
 check-hidden = true
 ignore-words-list = 'simpy'

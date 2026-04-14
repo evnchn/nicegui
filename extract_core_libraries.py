@@ -63,6 +63,47 @@ shutil.copy2(NODE_MODULES / 'vue' / 'dist' / 'vue.esm-browser.prod.js', STATIC /
 
 shutil.copy2(NODE_MODULES / 'quasar' / 'dist' / 'quasar.umd.js', STATIC / 'quasar.umd.js')
 shutil.copy2(NODE_MODULES / 'quasar' / 'dist' / 'quasar.umd.prod.js', STATIC / 'quasar.umd.prod.js')
+
+# Build Quasar ESM with SSR client flags (enables proper createSSRApp hydration)
+_quasar_version = subprocess.run(
+    ['node', '-e', "console.log(require('quasar/package.json').version)"],
+    capture_output=True, text=True, check=True, cwd=ROOT,
+).stdout.strip()
+_quasar_esm_entry = ROOT / 'quasar-esm-entry.js'
+_quasar_esm_defines = [
+    f'--define:__QUASAR_VERSION__=\'"{ _quasar_version }"\'',
+    '--define:__QUASAR_SSR__=false',
+    '--define:__QUASAR_SSR_SERVER__=false',
+    '--define:__QUASAR_SSR_CLIENT__=true',
+    '--define:__QUASAR_SSR_PWA__=false',
+]
+_quasar_esm_entry.write_text('''\
+import installQuasar from 'quasar/src/install-quasar.js'
+import Lang from 'quasar/src/plugins/lang/Lang.js'
+import IconSet from 'quasar/src/plugins/icon-set/IconSet.js'
+import * as components from 'quasar/src/components.js'
+import * as directives from 'quasar/src/directives.js'
+import * as plugins from 'quasar/src/plugins.js'
+import * as utils from 'quasar/src/utils.js'
+import * as composables from 'quasar/src/composables.js'
+window.Quasar = {
+  version: __QUASAR_VERSION__,
+  install(app, opts) { installQuasar(app, { components, directives, plugins, ...opts }) },
+  lang: Lang, iconSet: IconSet,
+  ...components, ...directives, ...plugins, ...composables, ...utils
+}
+''')
+subprocess.run([
+    'npx', 'esbuild', str(_quasar_esm_entry),
+    '--bundle', '--format=esm', '--external:vue', *_quasar_esm_defines,
+    f'--outfile={STATIC / "quasar.esm.js"}',
+], capture_output=True, text=True, check=True, cwd=ROOT)
+subprocess.run([
+    'npx', 'esbuild', str(_quasar_esm_entry),
+    '--bundle', '--format=esm', '--external:vue', '--minify', *_quasar_esm_defines,
+    f'--outfile={STATIC / "quasar.esm.prod.js"}',
+], capture_output=True, text=True, check=True, cwd=ROOT)
+_quasar_esm_entry.unlink()
 for entry in (NODE_MODULES / 'quasar' / 'dist' / 'lang').glob('*.umd.prod.js'):
     shutil.copy2(entry, STATIC / 'lang' / entry.name)
 _extract_quasar_css(NODE_MODULES / 'quasar' / 'dist' / 'quasar.rtl.css')
