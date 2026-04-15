@@ -339,8 +339,14 @@ class Client:
         document_id = self._socket_to_document_id.pop(socket_id)
         self._cancel_delete_task(document_id)
         self._num_connections[document_id] -= 1
-        tab_id_to_close = self.tab_id
-        self.tab_id = None
+        # On shared pages, a single `Client.tab_id` cannot represent the many connected tabs:
+        # it is overwritten on every handshake, so closing it on disconnect would close
+        # whichever tab happened to connect most recently - possibly one still in use.
+        # Tab storage is also disallowed on shared pages (see storage.py), so there is
+        # nothing meaningful to close here.
+        tab_id_to_close = None if self.is_shared else self.tab_id
+        if not self.is_shared:
+            self.tab_id = None
 
         for t in self.disconnect_handlers:
             self.safe_invoke(t)
@@ -352,7 +358,8 @@ class Client:
             if self._num_connections[document_id] == 0:
                 self._num_connections.pop(document_id)
                 self._delete_tasks.pop(document_id)
-                await core.app.storage.close_tab(tab_id_to_close)
+                if tab_id_to_close is not None:
+                    await core.app.storage.close_tab(tab_id_to_close)
                 if not self.is_shared:
                     self.delete()
         self._delete_tasks[document_id] = \

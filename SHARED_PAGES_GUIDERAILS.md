@@ -125,6 +125,6 @@ When a browser disconnects from a normal page, the client is deleted after a tim
 
 2. **Errors for identity-dependent features**: Storage tiers (`tab`, `client`, `user`, `browser`) fundamentally depend on knowing *which* user is making the request. On a shared page this information is lost, so any use is a bug. `app.storage.general` is recommended as the alternative.
 
-3. **Weakref-based client reuse**: The shared client is held via `weakref.ref` on the `page` instance. If the client is somehow garbage-collected (all references dropped), the next visitor transparently creates a fresh one. This avoids memory leaks while keeping the shared page alive as long as it's in use.
+3. **Application-lifetime shared clients**: The `page` instance keeps a direct reference to the shared `Client`. Shared clients are also retained by the normal client registry (`Client.instances`) and are intentionally exempt from pruning and disconnect-based deletion, so they persist for the lifetime of the application. This matches the mental model of a shared page: a single long-lived instance that all visitors see, regardless of whether any browser is currently connected.
 
 4. **No auto-index re-implementation**: NiceGUI 2.x had an "auto-index" page that was implicitly shared. This was removed in 3.0 (PR #5005) because it was too complex and confusing. The new `shared=True` parameter is explicit, opt-in, and much simpler — it's just 15 lines in `page.py` plus guiderails.

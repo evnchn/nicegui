@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import inspect
-import weakref
 from collections.abc import Callable
 from functools import wraps
 from pathlib import Path
@@ -75,7 +74,7 @@ class page:
         self.kwargs = kwargs
         self.api_router = api_router or core.app.router
         self.reconnect_timeout = reconnect_timeout
-        self._shared_client: weakref.ref[Client] | None = None
+        self._shared_client: Client | None = None
         self._shared_lock: asyncio.Lock = asyncio.Lock()
 
         create_favicon_route(self.path, favicon)
@@ -160,18 +159,24 @@ class page:
             # NOTE cleaning up the keyword args so the signature is consistent with "func" again
             dec_kwargs = {k: v for k, v in dec_kwargs.items() if k in parameters_of_decorated_func}
 
-            # Shared page: reuse existing client or create one under lock to prevent races
+            # Shared page: serialize all requests under a single lock to prevent races
+            # between concurrent first-visitors creating multiple Client instances or seeing
+            # a partially-built shared client. After the shared client is fully built,
+            # subsequent requests take the fast reuse path (also under lock, but very fast).
             if self.shared:
                 async with self._shared_lock:
-                    if self._shared_client is not None and (client := self._shared_client()) is not None:
-                        client._request = request  # pylint: disable=protected-access
+                    if self._shared_client is not None:
+                        self._shared_client._request = request  # pylint: disable=protected-access
                         request.scope['nicegui_page_path'] = self.path
                         binding._refresh_step()  # pylint: disable=protected-access
-                        return client.build_response(request)
+                        return self._shared_client.build_response(request)
+                    response = await build_and_respond(request, dec_args, dec_kwargs)
+                    return response
 
+            return await build_and_respond(request, dec_args, dec_kwargs)
+
+        async def build_and_respond(request: Request, dec_args: tuple, dec_kwargs: dict) -> Response:
             with Client(self, request=request) as client:
-                if self.shared:
-                    self._shared_client = weakref.ref(client)
                 if any(p.name == 'client' for p in inspect.signature(func).parameters.values()):
                     dec_kwargs['client'] = client
                 try:
@@ -219,6 +224,9 @@ class page:
 
             if isinstance(result, Response):  # NOTE if setup returns a response, we don't need to render the page
                 return result
+            # Publish the shared client only after the page has been fully built.
+            if self.shared and self._shared_client is None:
+                self._shared_client = client
             binding._refresh_step()  # pylint: disable=protected-access
             return client.build_response(request, client.status_code)
 
