@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 
@@ -9,6 +10,7 @@ from nicegui import app, ui
 from . import design as d
 from . import github_stars
 from .design import phosphor_icon
+from .i18n import SUPPORTED_LANGUAGES, get_url_prefix, t
 from .search import Search
 
 HEADER_HTML = (Path(__file__).parent / 'static' / 'header.html').read_text(encoding='utf-8')
@@ -21,14 +23,17 @@ FONT_LINKS = '''
     <link href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css" rel="stylesheet" />
 '''
 
-MENU_ITEMS = {
-    'Installation': '/#installation',
-    'Features': '/#features',
-    'Demos': '/#demos',
-    'Documentation': '/documentation',
-    'Examples': '/examples',
-    'Why?': '/#why',
-}
+def _menu_items() -> dict[str, str]:
+    """Return menu items translated and prefixed for the current language."""
+    prefix = get_url_prefix()
+    return {
+        t('Installation'): f'{prefix}/#installation',
+        t('Features'): f'{prefix}/#features',
+        t('Demos'): f'{prefix}/#demos',
+        t('Documentation'): f'{prefix}/documentation',
+        t('Examples'): f'{prefix}/examples',
+        t('Why?'): f'{prefix}/#why',
+    }
 
 SM_UP = 'max-[460px]:hidden'
 MD_UP = 'max-[590px]:hidden'
@@ -73,6 +78,8 @@ def add_header(menu: ui.left_drawer) -> ui.button:
             body: JSON.stringify({{value: {e.value}}}),
         }});
     '''))
+    prefix = get_url_prefix()
+    menu_items = _menu_items()
     with ui.header() \
         .style('background: transparent; box-shadow: none') \
         .classes(
@@ -87,25 +94,26 @@ def add_header(menu: ui.left_drawer) -> ui.button:
         f' [.q-layout:has(.q-drawer--standard:not(.q-layout--prevent-focus))_&]:dark:!shadow-[0_1px_0_{d._BORDER_DARK}]'
     ):
         menu_button = ui.button(on_click=menu.toggle, icon='menu').props('flat round').classes('lg:hidden')
-        with ui.link(target='/'):
+        with ui.link(target=f'{prefix}/'):
             ui.markdown('**Nice**GUI').classes(f'{d.TEXT_19PX} {d.TEXT_PRIMARY} tracking-wide')
 
         ui.space()
 
         with ui.row().classes(f'{d.TEXT_SECONDARY} gap-8 {LG_UP}'):
-            for title_, target in MENU_ITEMS.items():
+            for title_, target in menu_items.items():
                 ui.link(title_, target).classes(d.TEXT_15PX)
 
         with ui.row().classes('gap-2 items-center ml-8'):
             search = Search()
             _search_pill(search)
             _theme_toggle(dark_mode)
+            _language_selector()
             _github_badge()
 
         with ui.row().classes(LG_DOWN):
             with ui.button(icon='more_vert').props('flat round'):
                 with ui.menu().classes(f'rounded-xl {d.BG_SURFACE} {d.BORDER} no-shadow'):
-                    for title_, target in MENU_ITEMS.items():
+                    for title_, target in menu_items.items():
                         ui.menu_item(title_, on_click=lambda target=target: ui.navigate.to(target)) \
                             .classes(f'{d.TEXT_15PX} {d.TEXT_SECONDARY}')
 
@@ -120,7 +128,7 @@ def _search_pill(search: Search) -> None:
                      ' hover:border-gray-500 transition-[border-color] duration-150'):
         with ui.row().classes(f'gap-2 items-center {d.TEXT_MUTED}'):
             phosphor_icon('ph-magnifying-glass').classes('text-base')
-            ui.label('Search').classes(f'font-normal {MD_UP}')
+            ui.label(t('Search')).classes(f'font-normal {MD_UP}')
             ui.label('\u2318K') \
                 .classes(f'{d.TEXT_13PX_MONO} px-1.5 rounded {d.BG_SURFACE} {d.BORDER} {d.TEXT_MUTED} {MD_UP}')
 
@@ -128,7 +136,7 @@ def _search_pill(search: Search) -> None:
 def _theme_toggle(dark_mode: ui.dark_mode) -> None:
     """Single theme toggle button cycling dark → light → auto."""
     with ui.element().classes(f'saturate-0 {SM_UP}'):
-        d.tooltip('Cycle theme mode through dark, light, and system/auto.')
+        d.tooltip(t('Cycle theme mode through dark, light, and system/auto.'))
         with ui.button(on_click=lambda: dark_mode.set_value(None)).props('flat round') \
                 .classes('size-9').bind_visibility_from(dark_mode, 'value', value=True):
             phosphor_icon('ph-moon').classes('text-[1.125rem]')
@@ -138,6 +146,34 @@ def _theme_toggle(dark_mode: ui.dark_mode) -> None:
         with ui.button(on_click=lambda: dark_mode.set_value(False)).props('flat round') \
                 .classes('size-9').bind_visibility_from(dark_mode, 'value', lambda mode: mode is None):
             phosphor_icon('ph-circle-half').classes('text-[1.125rem]')
+
+
+def _language_selector() -> None:
+    """Dropdown menu to switch between supported languages."""
+    def switch_language(lang: str) -> None:
+        new_prefix = f'/{lang}' if lang != 'en' else ''
+        prefixes_js = json.dumps([f'/{code}' for code in SUPPORTED_LANGUAGES if code != 'en'])
+        new_prefix_js = json.dumps(new_prefix)
+        ui.run_javascript(f'''
+            const path = window.location.pathname;
+            const prefixes = {prefixes_js};
+            const newPrefix = {new_prefix_js};
+            let basePath = path;
+            for (const p of prefixes) {{
+                if (path.startsWith(p + '/') || path === p) {{
+                    basePath = path.substring(p.length) || '/';
+                    break;
+                }}
+            }}
+            window.location.href = newPrefix + basePath;
+        ''')
+
+    with ui.button().props('flat round').classes(f'size-9 {SM_UP}'):
+        phosphor_icon('ph-translate').classes('text-[1.125rem]')
+        with ui.menu().classes(f'rounded-xl {d.BG_SURFACE} {d.BORDER} no-shadow'):
+            for lang, name in SUPPORTED_LANGUAGES.items():
+                ui.menu_item(name, on_click=lambda lang=lang: switch_language(lang)) \
+                    .classes(f'{d.TEXT_15PX} {d.TEXT_SECONDARY}')
 
 
 def _github_badge() -> None:

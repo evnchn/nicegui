@@ -4,6 +4,7 @@ from nicegui import ui
 
 from .. import design as d
 from ..design import phosphor_icon
+from ..i18n import t
 
 
 def create() -> None:
@@ -13,35 +14,35 @@ def create() -> None:
                                'grid-cols-[2fr_1fr_1fr_1fr] max-sm:grid-cols-1'):
             with ui.column().classes('gap-3'):
                 ui.markdown('**Nice**GUI').classes(f'{d.TEXT_19PX} -mt-3')
-                ui.label('The Python UI framework that shows up in your browser.') \
+                ui.label(t('The Python UI framework that shows up in your browser.')) \
                     .classes(f'{d.TEXT_15PX} leading-normal {d.TEXT_SECONDARY}')
                 with ui.row().classes('gap-3 mt-2'):
                     _icon_link('ph-github-logo', 'https://github.com/zauberzeug/nicegui/')
                     _icon_link('ph-discord-logo', 'https://discord.gg/TEpFeAaF4f')
                     _icon_link('ph-reddit-logo', 'https://www.reddit.com/r/nicegui/')
 
-            _column('Resources', [
-                ('Documentation', '/documentation'),
-                ('Examples', '/examples'),
+            _column(t('Resources'), [
+                (t('Documentation'), '/documentation'),
+                (t('Examples'), '/examples'),
                 ('GitHub', 'https://github.com/zauberzeug/nicegui/'),
                 ('PyPI', 'https://pypi.org/project/nicegui/'),
             ])
-            _column('Community', [
-                ('Discussions', 'https://github.com/zauberzeug/nicegui/discussions'),
+            _column(t('Community'), [
+                (t('Discussions'), 'https://github.com/zauberzeug/nicegui/discussions'),
                 ('Discord', 'https://discord.gg/TEpFeAaF4f'),
                 ('Reddit', 'https://www.reddit.com/r/nicegui/'),
-                ('Contributing', 'https://github.com/zauberzeug/nicegui/blob/main/CONTRIBUTING.md'),
-                ('Sponsors', 'https://github.com/sponsors/zauberzeug'),
+                (t('Contributing'), 'https://github.com/zauberzeug/nicegui/blob/main/CONTRIBUTING.md'),
+                (t('Sponsors'), 'https://github.com/sponsors/zauberzeug'),
             ])
-            _column('Legal', [
-                ('Imprint', '/imprint_privacy#imprint'),
-                ('Privacy', '/imprint_privacy#privacy'),
+            _column(t('Legal'), [
+                (t('Imprint'), '/imprint_privacy#imprint'),
+                (t('Privacy'), '/imprint_privacy#privacy'),
             ])
 
         with ui.row().classes(
             f'max-w-[1280px] mx-auto w-full py-4 justify-between items-center {d.TEXT_13PX} {d.TEXT_SECONDARY} {d.BORDER_T}'
         ):
-            ui.markdown('Made with NiceGUI by [Zauberzeug](https://zauberzeug.com)')
+            ui.markdown(t('Made with NiceGUI by [Zauberzeug](https://zauberzeug.com)'))
             ui.markdown(f'\u00a9 {datetime.now().year} [Zauberzeug GmbH](https://zauberzeug.com)')
 
 
