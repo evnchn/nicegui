@@ -172,7 +172,11 @@ def setup_esm_package(package_file: str, package_name: str, esm_name: str, expor
         __all__ = ['AgGrid']
     """
     dist = Path(package_file).parent / 'dist'
-    register_esm(esm_name, dist, max_time=dist.stat().st_mtime)
+    try:
+        max_time = dist.stat().st_mtime
+    except OSError:
+        max_time = 0.0  # NOTE: stripped Pyodide wheels omit dist/ directories (bundles are served via importmap)
+    register_esm(esm_name, dist, max_time=max_time)
 
     by_submodule: dict[str, list[str]] = {}
     for attr, submodule in exports.items():
