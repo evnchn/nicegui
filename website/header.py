@@ -81,6 +81,7 @@ def add_header(menu: ui.left_drawer) -> ui.button:
         f' [&.fade]:!bg-[color-mix(in_srgb,{d._BG_SURFACE_LIGHT}_80%,transparent)]'
         f' dark:[&.fade]:!bg-[color-mix(in_srgb,{d._BG_SURFACE_DARK}_80%,transparent)]'
         f' [&.fade]:backdrop-blur-[12px]'
+        f' media-[(prefers-reduced-transparency:reduce)]:[&.fade]:backdrop-blur-none'
         f' [&.fade]:!shadow-[0_1px_0_{d._BORDER_LIGHT}]'
         f' [&.fade]:dark:!shadow-[0_1px_0_{d._BORDER_DARK}]'
         f' [.q-layout:has(.q-drawer--standard:not(.q-layout--prevent-focus))_&]:!shadow-[0_1px_0_{d._BORDER_LIGHT}]'
