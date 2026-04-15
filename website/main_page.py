@@ -11,10 +11,16 @@ from .components import (
     sponsors_section,
     why_section,
 )
+from .seo import DEFAULT_DESCRIPTION, breadcrumb_jsonld, page_seo_html
 
 
 def create() -> None:
     """Create the content of the main page."""
+    title = 'NiceGUI - Easy-to-Use Python-Based UI Framework'
+    ui.page_title(title)
+    ui.add_head_html(page_seo_html(title=title, description=DEFAULT_DESCRIPTION, path='/'))
+    ui.add_head_html(breadcrumb_jsonld([('Home', '/')]))
+
     ui.run_javascript('''
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
