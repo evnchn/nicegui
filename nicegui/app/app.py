@@ -33,9 +33,9 @@ else:
     Server = None  # type: ignore
     CacheControlledStaticFiles = None  # type: ignore
 
-from ..storage import Storage  # pylint: disable=wrong-import-position  # noqa: E402
-from .app_config import AppConfig  # pylint: disable=wrong-import-position  # noqa: E402
-from .range_response import get_range_response  # pylint: disable=wrong-import-position  # noqa: E402
+from ..storage import Storage  # pylint: disable=wrong-import-position
+from .app_config import AppConfig  # pylint: disable=wrong-import-position
+from .range_response import get_range_response  # pylint: disable=wrong-import-position
 
 
 class State(Enum):
