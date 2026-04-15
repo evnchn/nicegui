@@ -42,3 +42,14 @@ def test_at_rule(screen: Screen):
 
     screen.open('/')
     assert screen.find_by_tag('button').value_of_css_property('background-color') == 'rgba(255, 0, 0, 1)'
+
+
+def test_at_rule_supersedes_plain_colors(screen: Screen):
+    @ui.page('/')
+    def page():
+        ui.colors(primary='red')
+        ui.colors(primary='blue', at_rule='@media (min-width: 0px)')
+        ui.button('Test Button')
+
+    screen.open('/')
+    assert screen.find_by_tag('button').value_of_css_property('background-color') == 'rgba(0, 0, 255, 1)'

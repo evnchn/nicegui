@@ -34,7 +34,17 @@ export default {
       css += `\n  .text-${name} { color: var(${varName}) !important; }`;
       css += `\n  .bg-${name} { background-color: var(${varName}) !important; }`;
     }
+    // Clear any prior NiceGUI-added color styles so earlier plain `ui.colors(...)` calls
+    // don't bleed through globally when this scoped at-rule block takes over.
+    // Mirrors the `[data-nicegui-custom-colors]` cleanup pattern in `applyColors` (static/nicegui.js).
+    document.head
+      .querySelectorAll("[data-nicegui-custom-colors], [data-nicegui-scoped-colors]")
+      .forEach((el) => el.remove());
+    for (const key of Object.keys(colors)) {
+      document.body.style.removeProperty(key);
+    }
     this.styleEl = document.createElement("style");
+    this.styleEl.dataset.niceguiScopedColors = "";
     this.styleEl.innerHTML = `${this.atRule} {\n${css}\n}`;
     document.head.appendChild(this.styleEl);
   },
