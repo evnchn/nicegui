@@ -130,7 +130,7 @@ class PyodideRuntime:
                 rel = comp.path.relative_to(ELEMENTS_DIR)
             except ValueError:
                 continue
-            components.append({'url': f'./components/{rel}', 'tag': comp.tag})
+            components.append({'url': f'./components/{rel.as_posix()}', 'tag': comp.tag})
         return components
 
     async def _handle_event(self, msg_json: str) -> None:

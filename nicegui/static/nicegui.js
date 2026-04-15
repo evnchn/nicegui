@@ -460,7 +460,17 @@ function createApp(elements, options) {
           const target = msg.new_tab ? "_blank" : "_self";
           window.open(url, target);
         },
-        download: (msg) => download(msg.src, msg.filename, msg.media_type, options.prefix || ""),
+        download: (msg) => {
+          let src = msg.src;
+          if (src && typeof src === "object" && typeof src.__b64 === "string") {
+            // Pyodide bridge encodes bytes as {__b64: "..."}; decode to Uint8Array for Blob parts
+            const binary = atob(src.__b64);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+            src = bytes;
+          }
+          download(src, msg.filename, msg.media_type, options.prefix || "");
+        },
         notify: (msg) => Quasar.Notify.create(msg),
       };
 
@@ -492,7 +502,7 @@ function createApp(elements, options) {
       } else {
         // Standard socket.io mode
         window.clientId = options.query.client_id;
-        const url = window.location.protocol === "https:" ? "wss://" : "ws://" + window.location.host;
+        const url = (window.location.protocol === "https:" ? "wss://" : "ws://") + window.location.host;
         options.query.document_id = window.documentId;
         options.query.tab_id = TAB_ID;
         options.query.old_tab_id = OLD_TAB_ID;

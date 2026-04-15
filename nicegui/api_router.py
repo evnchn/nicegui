@@ -41,6 +41,8 @@ class APIRouter(_APIRouterBase):
         :param response_timeout: maximum time for the decorated function to build the page (default: 3.0)
         :param kwargs: additional keyword arguments passed to FastAPI's @app.get method
         """
+        if ui_page is None:
+            raise RuntimeError('APIRouter.page() is not available in Pyodide mode (no HTTP routes).')
         return ui_page(
             path,
             title=title,

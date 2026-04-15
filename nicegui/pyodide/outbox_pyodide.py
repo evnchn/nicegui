@@ -80,7 +80,7 @@ class PyodideOutbox(Outbox):
                         rel = c.path.relative_to(ELEMENTS_DIR)
                     except ValueError:
                         continue
-                    comp_list.append({'url': f'./components/{rel}', 'tag': c.tag})
+                    comp_list.append({'url': f'./components/{rel.as_posix()}', 'tag': c.tag})
                 if comp_list:
                     coros.append(self._emit((client.id, 'load_js_components', {
                         'components': comp_list,
