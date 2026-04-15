@@ -46,7 +46,7 @@ class PyodideBridge:
         :param data: the data payload
         :param room: the target client ID (ignored in Pyodide, there's only one client)
         """
-        from js import window  # type: ignore  # pylint: disable=import-outside-toplevel
+        from js import window  # type: ignore  # pylint: disable=import-outside-toplevel,import-error
 
         from .. import json  # pylint: disable=import-outside-toplevel
         data_json = json.dumps(_encode_bytes(data))

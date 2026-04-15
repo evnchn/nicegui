@@ -12,6 +12,8 @@ except ImportError:
 
 if not IS_PYODIDE:
     from .page import page as ui_page
+else:
+    ui_page = None  # type: ignore
 
 
 class APIRouter(_APIRouterBase):

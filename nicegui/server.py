@@ -14,6 +14,8 @@ except ImportError:
 from . import core, storage
 from .native import native
 
+_ConfigBase: type[Any]
+_ServerBase: type[Any]
 if uvicorn is not None:
     _ConfigBase = uvicorn.Config
     _ServerBase = uvicorn.Server
@@ -52,4 +54,4 @@ class Server(_ServerBase):
                 threading.Thread(target=monitor_shutdown_event, daemon=True).start()
 
         storage.set_storage_secret(self.config.storage_secret, self.config.session_middleware_kwargs)
-        super().run(sockets=sockets)
+        super().run(sockets=sockets)  # pylint: disable=no-member

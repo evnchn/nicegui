@@ -17,6 +17,6 @@ class CacheControlledStaticFiles(_StaticFilesBase):
         super().__init__(*args, **kwargs)
 
     async def get_response(self, path: str, scope: Scope) -> Response:
-        response = await super().get_response(path, scope)
+        response = await super().get_response(path, scope)  # pylint: disable=no-member
         response.headers['Cache-Control'] = f'public, max-age={self.max_cache_age}'
         return response

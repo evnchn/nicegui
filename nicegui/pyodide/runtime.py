@@ -79,8 +79,8 @@ class PyodideRuntime:
 
     async def mount(self) -> None:
         """Serialize all elements and send them to the JavaScript frontend for rendering."""
-        from js import window  # type: ignore  # pylint: disable=import-outside-toplevel
-        from pyodide.ffi import create_proxy  # type: ignore  # pylint: disable=import-outside-toplevel
+        from js import window  # type: ignore  # pylint: disable=import-outside-toplevel,import-error
+        from pyodide.ffi import create_proxy  # type: ignore  # pylint: disable=import-outside-toplevel,import-error
 
         # Serialize all elements
         elements = {
@@ -161,7 +161,7 @@ class PyodideRuntime:
         import base64  # pylint: disable=import-outside-toplevel
 
         from ..elements.upload import Upload  # pylint: disable=import-outside-toplevel
-        from ..elements.upload_files import SmallFileUpload  # pylint: disable=import-outside-toplevel
+        from ..elements.upload_files import FileUpload, SmallFileUpload  # pylint: disable=import-outside-toplevel
         from ..events import UiEventArguments, handle_event  # pylint: disable=import-outside-toplevel
 
         msg = json.loads(msg_json)
@@ -173,7 +173,7 @@ class PyodideRuntime:
         for handler in element._begin_upload_handlers:
             handle_event(handler, UiEventArguments(sender=element, client=self.client))
 
-        files = []
+        files: list[FileUpload] = []
         for file_data in msg['files']:
             content = base64.b64decode(file_data['data'])
             files.append(SmallFileUpload(name=file_data['name'], content_type=file_data.get('type', ''), _data=content))

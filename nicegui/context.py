@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from . import core
 from .slot import Slot
@@ -19,13 +19,14 @@ class Context:
             # create a pseudo client to "survive" until reaching `ui.run()`
             from .client import Client  # pylint: disable=import-outside-toplevel,cyclic-import
             from .pyodide_compat import IS_PYODIDE  # pylint: disable=import-outside-toplevel
+            page_cls: Any
             if IS_PYODIDE:
-                from .page_pyodide import page  # pylint: disable=import-outside-toplevel
+                from .page_pyodide import page as page_cls  # pylint: disable=import-outside-toplevel
             else:
-                from .page import page  # pylint: disable=import-outside-toplevel,cyclic-import
+                from .page import page as page_cls  # pylint: disable=import-outside-toplevel,cyclic-import
             if not Client.instances:  # in case some kind of dummy client is already created
                 core.script_mode = True
-                core.script_client = Client(page('/')).__enter__()  # pylint: disable=unnecessary-dunder-call
+                core.script_client = Client(page_cls('/')).__enter__()  # pylint: disable=unnecessary-dunder-call
                 stack = Slot.get_stack()
         return stack
 
