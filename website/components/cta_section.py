@@ -1,7 +1,7 @@
 from nicegui import ui
 
 from .. import design as d
-from ..i18n import t
+from ..i18n import get_url_prefix, t
 from .shared import cta_button, section
 
 
@@ -14,7 +14,8 @@ def create() -> None:
                 .classes(f'{d.TEXT_CTA_TITLE} font-semibold tracking-tight mb-2 {d.TEXT_PRIMARY}')
             ui.label(t('Fun-Fact: This whole website is also made with NiceGUI.')) \
                 .classes(f'{d.TEXT_19PX} mb-8 {d.TEXT_SECONDARY}')
-            cta_button(t('Documentation'), on_click=lambda: ui.navigate.to('/documentation')).classes('mb-12')
+            prefix = get_url_prefix()
+            cta_button(t('Documentation'), on_click=lambda: ui.navigate.to(f'{prefix}/documentation')).classes('mb-12')
             ui.markdown(t(
                 '**Or, let your AI do it!**\n'
                 'Most LLMs already know NiceGUI, and\n'

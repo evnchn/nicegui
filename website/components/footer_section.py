@@ -4,11 +4,12 @@ from nicegui import ui
 
 from .. import design as d
 from ..design import phosphor_icon
-from ..i18n import t
+from ..i18n import get_url_prefix, t
 
 
 def create() -> None:
     """Create the 4-column footer with brand, links, and bottom bar."""
+    prefix = get_url_prefix()
     with ui.element('footer').classes(f'w-full mt-20 pt-20 px-6 {d.BG_FOOTER} {d.BORDER_T}'):
         with ui.grid().classes('max-w-[1280px] mx-auto w-full pb-12 gap-12 '
                                'grid-cols-[2fr_1fr_1fr_1fr] max-sm:grid-cols-1'):
@@ -22,8 +23,8 @@ def create() -> None:
                     _icon_link('ph-reddit-logo', 'https://www.reddit.com/r/nicegui/')
 
             _column(t('Resources'), [
-                (t('Documentation'), '/documentation'),
-                (t('Examples'), '/examples'),
+                (t('Documentation'), f'{prefix}/documentation'),
+                (t('Examples'), f'{prefix}/examples'),
                 ('GitHub', 'https://github.com/zauberzeug/nicegui/'),
                 ('PyPI', 'https://pypi.org/project/nicegui/'),
             ])
@@ -35,8 +36,8 @@ def create() -> None:
                 (t('Sponsors'), 'https://github.com/sponsors/zauberzeug'),
             ])
             _column(t('Legal'), [
-                (t('Imprint'), '/imprint_privacy#imprint'),
-                (t('Privacy'), '/imprint_privacy#privacy'),
+                (t('Imprint'), f'{prefix}/imprint_privacy#imprint'),
+                (t('Privacy'), f'{prefix}/imprint_privacy#privacy'),
             ])
 
         with ui.row().classes(

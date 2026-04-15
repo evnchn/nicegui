@@ -28,12 +28,12 @@ def _menu_items() -> dict[str, str]:
     """Return menu items translated and prefixed for the current language."""
     prefix = get_url_prefix()
     return {
-        t('Installation'): f'{prefix}/#installation',
-        t('Features'): f'{prefix}/#features',
-        t('Demos'): f'{prefix}/#demos',
+        t('Installation'): f'{prefix}#installation' if prefix else '/#installation',
+        t('Features'): f'{prefix}#features' if prefix else '/#features',
+        t('Demos'): f'{prefix}#demos' if prefix else '/#demos',
         t('Documentation'): f'{prefix}/documentation',
         t('Examples'): f'{prefix}/examples',
-        t('Why?'): f'{prefix}/#why',
+        t('Why?'): f'{prefix}#why' if prefix else '/#why',
     }
 
 
@@ -96,7 +96,7 @@ def add_header(menu: ui.left_drawer) -> ui.button:
         f' [.q-layout:has(.q-drawer--standard:not(.q-layout--prevent-focus))_&]:dark:!shadow-[0_1px_0_{d._BORDER_DARK}]'
     ):
         menu_button = ui.button(on_click=menu.toggle, icon='menu').props('flat round').classes('lg:hidden')
-        with ui.link(target=f'{prefix}/'):
+        with ui.link(target=prefix or '/'):
             ui.markdown('**Nice**GUI').classes(f'{d.TEXT_19PX} {d.TEXT_PRIMARY} tracking-wide')
 
         ui.space()
@@ -167,7 +167,13 @@ def _language_selector() -> None:
                     break;
                 }}
             }}
-            window.location.href = newPrefix + basePath;
+            // Avoid '/<lang>/' (trailing slash triggers a redirect that can drop the fragment):
+            // if we'd build '<newPrefix>/', collapse it to '<newPrefix>' (or '/' for English).
+            let target = newPrefix + basePath;
+            if (basePath === '/' && newPrefix !== '') {{
+                target = newPrefix;
+            }}
+            window.location.href = target + window.location.search + window.location.hash;
         ''')
 
     with ui.button().props('flat round').classes(f'size-9 {SM_UP}'):
