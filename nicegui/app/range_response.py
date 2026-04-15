@@ -5,10 +5,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 try:
-    import aiofiles
-except ImportError:
-    aiofiles = None  # type: ignore
-try:
     from fastapi import Request
     from fastapi.responses import Response, StreamingResponse
 except ImportError:
@@ -60,11 +56,15 @@ def get_range_response(file: Path, request: Request, chunk_size: int) -> Respons
     })
 
     async def content_reader(file: Path, start: int, end: int) -> AsyncGenerator[bytes, None]:
-        async with aiofiles.open(file, 'rb') as data:
-            await data.seek(start)
+        # NOTE: use synchronous file I/O with an explicit context manager to guarantee the
+        # handle is closed even when the client disconnects mid-stream; aiofiles' threadpool
+        # close was racing with worker shutdown and leaking the underlying file descriptor
+        # (see test_malicious_chunk_size_is_clamped).
+        with file.open('rb') as data:
+            data.seek(start)
             remaining_bytes = end - start + 1
             while remaining_bytes > 0:
-                chunk = await data.read(min(chunk_size, remaining_bytes))
+                chunk = data.read(min(chunk_size, remaining_bytes))
                 if not chunk:
                     break
                 yield chunk
