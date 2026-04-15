@@ -23,6 +23,7 @@ FONT_LINKS = '''
     <link href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css" rel="stylesheet" />
 '''
 
+
 def _menu_items() -> dict[str, str]:
     """Return menu items translated and prefixed for the current language."""
     prefix = get_url_prefix()
@@ -34,6 +35,7 @@ def _menu_items() -> dict[str, str]:
         t('Examples'): f'{prefix}/examples',
         t('Why?'): f'{prefix}/#why',
     }
+
 
 SM_UP = 'max-[460px]:hidden'
 MD_UP = 'max-[590px]:hidden'
