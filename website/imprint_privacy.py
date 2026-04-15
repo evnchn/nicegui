@@ -2,10 +2,15 @@ from nicegui import ui
 
 from . import design as d
 from .components.shared import section
+from .seo import apply_page_seo
 
 
 def create() -> None:
-    ui.page_title('Imprint & Privacy | NiceGUI')
+    title = 'Imprint & Privacy Policy - NiceGUI'
+    description = 'Legal information, imprint, and privacy policy for NiceGUI by Zauberzeug GmbH.'
+    ui.page_title(title)
+    apply_page_seo(title=title, description=description, path='/imprint_privacy',
+                   breadcrumbs=[('Home', '/'), ('Imprint & Privacy', '/imprint_privacy')])
 
     with section('imprint'):
         ui.link_target('imprint')
