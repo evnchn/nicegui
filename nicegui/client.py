@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import re
 import time
 import uuid
 from collections import defaultdict
@@ -164,6 +165,17 @@ class Client:
         }
         vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls = \
             generate_resources(prefix, self.elements.values())
+        csp_nonce = getattr(request.state, 'csp_nonce', '')
+        head_html = self.head_html
+        vue_style_tag = '<style>' + '\n'.join(vue_styles) + '</style>'
+        body_html = vue_style_tag + '\n' + self.body_html + '\n' + '\n'.join(vue_html)
+        if csp_nonce:
+            nonce_attr = f'nonce="{csp_nonce}"'
+            for tag in ('style', 'script'):
+                pattern = rf'<{tag}(?!\s[^>]*nonce=)(?=[\s>])'
+                replacement = f'<{tag} {nonce_attr}'
+                head_html = re.sub(pattern, replacement, head_html, flags=re.IGNORECASE)
+                body_html = re.sub(pattern, replacement, body_html, flags=re.IGNORECASE)
         return templates.TemplateResponse(
             request=request,
             name='index.html',
@@ -171,8 +183,8 @@ class Client:
                 'request': request,
                 'version': __version__,
                 'elements': elements.translate(HTML_ESCAPE_TABLE),
-                'head_html': self.head_html,
-                'body_html': '<style>' + '\n'.join(vue_styles) + '</style>\n' + self.body_html + '\n' + '\n'.join(vue_html),
+                'head_html': head_html,
+                'body_html': body_html,
                 'vue_scripts': '\n'.join(vue_scripts),
                 'imports': json.dumps(imports),
                 'js_imports': '\n'.join(js_imports),
@@ -193,6 +205,7 @@ class Client:
                 'socket_io_js_query_params': socket_io_js_query_params,
                 'socket_io_js_extra_headers': core.app.config.socket_io_js_extra_headers,
                 'socket_io_js_transports': core.app.config.socket_io_js_transports,
+                'csp_nonce': csp_nonce,
             },
             status_code=status_code,
             headers={'Cache-Control': 'no-store', 'X-NiceGUI-Content': 'page'},

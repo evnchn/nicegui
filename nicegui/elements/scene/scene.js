@@ -8,8 +8,8 @@ const {
   GLTFLoader,
   MapControls,
   OrbitControls,
-  TrackballControls,
   STLLoader,
+  TrackballControls,
   THREE,
   TWEEN,
   Stats,
@@ -194,7 +194,7 @@ export default {
     const applyConstraint = (constraint, position) => {
       if (!constraint) return;
       const [variable, expression] = constraint.split("=").map((s) => s.trim());
-      position[variable] = eval(expression.replace(/x|y|z/g, (match) => `(${position[match]})`));
+      position[variable] = cspSafeEval(expression.replace(/x|y|z/g, (match) => `(${position[match]})`));
     };
     const handleDrag = (event) => {
       this.dragConstraints.split(",").forEach((constraint) => applyConstraint(constraint, event.object.position));
@@ -585,8 +585,8 @@ export default {
     clickEvents: Array,
     dragConstraints: String,
     backgroundColor: String,
+    controlType: String,
     fps: Number,
     showStats: Boolean,
-    controlType: String,
   },
 };

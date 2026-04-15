@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "build": "python3 extract_core_libraries.py"
+    "build": "python3 extract_core_libraries.py",
+    "compile-templates": "node compile_templates.js",
+    "compile-templates:check": "node compile_templates.js --check"
   },
   "dependencies": {
     "@tailwindcss/browser": "4.1.13",
@@ -10,6 +12,7 @@
     "quasar": "2.18.5",
     "sass": "^1.94.0",
     "socket.io": "4.8.1",
+    "@vue/compiler-dom": "3.5.22",
     "vue": "3.5.22"
   }
 }

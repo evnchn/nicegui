@@ -24,7 +24,7 @@ with suppress(ImportError):
     optional_features.register('pyecharts')
 
 
-class EChart(Element, component='echart.js', esm={'nicegui-echart': 'dist'}, default_classes='nicegui-echart'):
+class EChart(Element, component='echart.compiled.js', esm={'nicegui-echart': 'dist'}, default_classes='nicegui-echart'):
 
     @resolve_defaults
     def __init__(self,

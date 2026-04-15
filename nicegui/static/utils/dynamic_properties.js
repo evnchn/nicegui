@@ -10,15 +10,17 @@ export function convertDynamicProperties(obj, recursive) {
   }
   for (const [attr, value] of Object.entries(obj)) {
     if (attr.startsWith(":")) {
-      try {
-        try {
-          obj[attr.slice(1)] = new Function(`return (${value})`)();
-        } catch (e) {
-          obj[attr.slice(1)] = eval(value);
-        }
+      let result = cspSafeEval("(" + value + ")");
+      if (result === undefined) {
+        result = cspSafeEval(value);
+      }
+      if (result === undefined) {
+        // Evaluation failed — keep the original `:attr` key intact so the caller can see
+        // the raw expression instead of overwriting with undefined.
+        console.error(`Error while converting ${attr} attribute to dynamic property`);
+      } else {
+        obj[attr.slice(1)] = result;
         delete obj[attr];
-      } catch (e) {
-        console.error(`Error while converting ${attr} attribute to function:`, e);
       }
     } else {
       if (recursive) {

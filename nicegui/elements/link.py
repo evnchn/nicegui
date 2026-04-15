@@ -6,7 +6,7 @@ from ..element import Element
 from .mixins.text_element import TextElement
 
 
-class Link(TextElement, component='link.js', default_classes='nicegui-link'):
+class Link(TextElement, component='link.compiled.js', default_classes='nicegui-link'):
 
     def __init__(self,
                  text: str = '',

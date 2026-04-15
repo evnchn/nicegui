@@ -11,7 +11,7 @@ from .. import core
 from .mixins.content_element import ContentElement
 
 
-class Markdown(ContentElement, component='markdown.js', default_classes='nicegui-markdown'):
+class Markdown(ContentElement, component='markdown.compiled.js', default_classes='nicegui-markdown'):
     # NOTE: The Mermaid ESM is already registered in mermaid.py.
 
     def __init__(self,

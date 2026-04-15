@@ -8,7 +8,7 @@ from .mixins.value_element import ValueElement
 
 
 class Expansion(SortableElement, IconElement, TextElement, ValueElement[bool], DisableableElement,
-                component='expansion.js', default_classes='nicegui-expansion'):
+                component='expansion.compiled.js', default_classes='nicegui-expansion'):
 
     @resolve_defaults
     def __init__(self,

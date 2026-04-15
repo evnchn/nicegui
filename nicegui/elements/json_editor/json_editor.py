@@ -12,7 +12,7 @@ from ...events import (
 )
 
 
-class JsonEditor(Element, component='json_editor.js', esm={'nicegui-json-editor': 'dist'}):
+class JsonEditor(Element, component='json_editor.compiled.js', esm={'nicegui-json-editor': 'dist'}):
 
     @resolve_defaults
     def __init__(self,

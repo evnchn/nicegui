@@ -42,7 +42,7 @@ export default {
     run_terminal_method(name, ...args) {
       if (name.startsWith(":")) {
         name = name.slice(1);
-        args = args.map((arg) => new Function(`return (${arg});`).call(this.terminal));
+        args = args.map((arg) => cspSafeEval("(" + arg + ")", this.terminal));
       }
       return runMethod(this.terminal, name, args);
     },

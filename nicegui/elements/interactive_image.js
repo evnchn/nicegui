@@ -33,7 +33,6 @@ export default {
       waiting_source: undefined,
       loading: false,
       DOMPurify: null,
-      previousContent: null,
     };
   },
   mounted() {
@@ -76,7 +75,6 @@ export default {
   methods: {
     renderContent() {
       const content = this.content || "";
-      if (content === this.previousContent) return;
       if (this.sanitize) {
         if (!this.DOMPurify) return;
         const sanitized = this.DOMPurify.sanitize(`<svg>${content}</svg>`, {
@@ -87,7 +85,6 @@ export default {
       } else {
         this.$refs.contentGroup.innerHTML = content;
       }
-      this.previousContent = content;
     },
     compute_src() {
       const suffix = this.t ? (this.src.includes("?") ? "&" : "?") + "_nicegui_t=" + this.t : "";

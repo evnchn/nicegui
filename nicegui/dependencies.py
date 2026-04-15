@@ -231,8 +231,10 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
     vue_scripts: list[str] = []
     vue_html: list[str] = []
     vue_styles: list[str] = []
+    prod_suffix = '.prod' if core.app.config.prod_js else ''
     imports: dict[str, str] = {
-        'vue': f'{prefix}/_nicegui/{__version__}/static/vue.esm-browser{".prod" if core.app.config.prod_js else ""}.js',
+        'vue': f'{prefix}/_nicegui/{__version__}/static/vue.esm-browser{prod_suffix}.js',
+        '@vue/compiler-dom': f'{prefix}/_nicegui/{__version__}/static/compiler-dom.esm-browser{prod_suffix}.js',
         'sass': f'{prefix}/_nicegui/{__version__}/static/sass.default.js',
         'immutable': f'{prefix}/_nicegui/{__version__}/static/immutable.es.js',
         'dompurify': f'{prefix}/_nicegui/{__version__}/static/dompurify.mjs',
@@ -260,7 +262,10 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
             vue_html.append(vue_component.html)
             url = f'{prefix}/_nicegui/{__version__}/components/{vue_component.key}'
             js_imports.append(f'import {{ default as {vue_component.name} }} from "{url}";')
-            js_imports.append(f"{vue_component.name}.template = '#tpl-{vue_component.name}';")
+            js_imports.append(
+                f'{vue_component.name}.render = compileVueTemplate('
+                f"document.getElementById('tpl-{vue_component.name}').innerHTML);"
+            )
             js_imports.append(f'app.component("{vue_component.tag}", {vue_component.name});')
             js_imports_urls.append(url)
             vue_styles.append(vue_component.style)
@@ -273,6 +278,11 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
             if js_component.key not in done_components and js_component.path.suffix.lower() == '.js':
                 url = f'{prefix}/_nicegui/{__version__}/components/{js_component.key}'
                 js_imports.append(f'import {{ default as {js_component.name} }} from "{url}";')
+                js_imports.append(
+                    f'if ({js_component.name}.template && !{js_component.name}.render) '
+                    f'{{ {js_component.name}.render = compileVueTemplate({js_component.name}.template); '
+                    f'delete {js_component.name}.template; }}'
+                )
                 js_imports.append(f'app.component("{js_component.tag}", {js_component.name});')
                 js_imports_urls.append(url)
                 done_components.add(js_component.key)

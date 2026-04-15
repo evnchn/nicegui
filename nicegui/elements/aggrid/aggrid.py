@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     import polars as pl
 
 
-class AgGrid(Element, component='aggrid.js', esm={'nicegui-aggrid': 'dist'}, default_classes='nicegui-aggrid'):
+class AgGrid(Element, component='aggrid.compiled.js', esm={'nicegui-aggrid': 'dist'}, default_classes='nicegui-aggrid'):
     VERSION = '34.2.0'  # AG Grid version used by NiceGUI
 
     @resolve_defaults

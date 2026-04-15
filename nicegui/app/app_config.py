@@ -8,6 +8,18 @@ from ..language import Language
 @dataclass(kw_only=True, slots=True)
 class AppConfig:
     endpoint_documentation: Literal['none', 'internal', 'page', 'all'] = 'none'
+    _csp_enabled: bool = False
+    csp_extra_directives: list[str] = field(default_factory=list)
+
+    @property
+    def csp_enabled(self) -> bool:
+        """Whether CSP is enabled."""
+        return self._csp_enabled
+
+    @csp_enabled.setter
+    def csp_enabled(self, value: bool) -> None:
+        """Enable or disable CSP."""
+        self._csp_enabled = value
     socket_io_js_query_params: dict = field(default_factory=dict)
     socket_io_js_extra_headers: dict = field(default_factory=dict)
     socket_io_js_transports: list[Literal['websocket', 'polling']] = \

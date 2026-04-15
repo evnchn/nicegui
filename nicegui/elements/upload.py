@@ -12,7 +12,7 @@ from .mixins.label_element import LabelElement
 from .upload_files import create_file_upload
 
 
-class Upload(LabelElement, DisableableElement, component='upload.js'):
+class Upload(LabelElement, DisableableElement, component='upload.compiled.js'):
     # pylint: disable=import-outside-toplevel
     from .upload_files import FileUpload, LargeFileUpload, SmallFileUpload
 
