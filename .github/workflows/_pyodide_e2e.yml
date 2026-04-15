@@ -1,0 +1,39 @@
+name: Pyodide E2E
+
+# End-to-end coverage for the Pyodide runtime path.
+# Pure CPython unit tests don't exercise the real in-browser Pyodide runtime,
+# so we boot the example app in headless Chromium and assert round-trip behavior
+# (button clicks -> Python handlers -> outbox -> client DOM updates).
+
+on: workflow_call
+
+jobs:
+  pyodide-e2e:
+    name: Pyodide E2E (headless Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Install nicegui + dev deps
+        run: uv sync
+      - name: Install Playwright into the uv venv
+        run: uv run --with playwright python -m playwright install --with-deps chromium
+      - name: Build Pyodide bundle (prepare.py)
+        working-directory: examples/pyodide
+        run: uv run python prepare.py
+      - name: Run Pyodide E2E test (headless Chromium)
+        working-directory: examples/pyodide
+        run: uv run --with playwright python test_pyodide.py --click --no-build --timeout 240
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pyodide-e2e-screenshots
+          path: examples/pyodide/screenshots/
+          retention-days: 14
