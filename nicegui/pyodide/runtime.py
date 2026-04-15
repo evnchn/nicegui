@@ -110,8 +110,8 @@ class PyodideRuntime:
         # createNiceGUIApp is async — it loads components before mounting Vue
         await window.createNiceGUIApp(elements_json, config_json, components_json)
 
-        # Set the ready flag
-        window.__pyodide_ready = True
+        # Set the ready flag (read from JS side; name chosen to match entrypoint convention)
+        setattr(window, '__pyodide_ready', True)
 
     def _collect_components(self) -> list[dict[str, str]]:
         """Collect Vue component URLs for all elements that need custom JS components.
@@ -170,7 +170,7 @@ class PyodideRuntime:
         if not isinstance(element, Upload):
             return
 
-        for handler in element._begin_upload_handlers:
+        for handler in element._begin_upload_handlers:  # pylint: disable=protected-access  # pyodide path mirrors the server-side upload dispatcher
             handle_event(handler, UiEventArguments(sender=element, client=self.client))
 
         files: list[FileUpload] = []

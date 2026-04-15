@@ -23,7 +23,7 @@ class PyodideOutbox(Outbox):
     JavaScript frontend without an explicit ``flush()`` call.
     """
 
-    def __init__(self, client: Client) -> None:
+    def __init__(self, client: Client) -> None:  # pylint: disable=super-init-not-called  # Outbox.__init__ starts an asyncio loop task; Pyodide flushes via microtask instead
         import weakref  # pylint: disable=import-outside-toplevel
         from collections import deque  # pylint: disable=import-outside-toplevel
 

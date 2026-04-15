@@ -39,7 +39,7 @@ class PyodideBridge:
     def __init__(self) -> None:
         self.eio = _FakeEngineIO()
 
-    async def emit(self, event: str, data: Any, room: str | None = None, **kwargs: Any) -> None:
+    async def emit(self, event: str, data: Any, room: str | None = None, **kwargs: Any) -> None:  # pylint: disable=unused-argument  # signature mirrors socketio.AsyncServer.emit
         """Emit an event to the JavaScript frontend.
 
         :param event: the event type (e.g., 'update', 'run_javascript', 'notify')

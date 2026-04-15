@@ -4,11 +4,6 @@ import asyncio
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-try:
-    from socketio import AsyncServer
-except ImportError:
-    AsyncServer = None  # type: ignore
-
 if TYPE_CHECKING:
     from .air import Air
     from .app import App

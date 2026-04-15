@@ -147,7 +147,7 @@ _LAZY_IMPORTS = {
     'run_with': ('.ui_run_with', 'run_with'),
 }
 
-from .pyodide_compat import IS_PYODIDE  # noqa: E402
+from .pyodide_compat import IS_PYODIDE  # noqa: E402  # pylint: disable=wrong-import-position  # imported after _LAZY_IMPORTS so it can patch the table
 
 if IS_PYODIDE:
     # In Pyodide there is no server; route `page` to the browser-side implementation

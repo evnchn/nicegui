@@ -38,21 +38,27 @@ class page:
 
     @property
     def path(self) -> str:
+        """Return the page path."""
         return self._path
 
     def resolve_title(self) -> str:
+        """Resolve the page title, falling back to the default."""
         return self.title or 'NiceGUI'
 
     def resolve_viewport(self) -> str:
+        """Resolve the viewport meta value, falling back to the default."""
         return self.viewport or 'width=device-width, initial-scale=1'
 
     def resolve_dark(self) -> bool | None:
+        """Resolve the dark mode setting."""
         return self.dark
 
     def resolve_language(self) -> Language:
+        """Resolve the page language, falling back to ``'en-US'``."""
         return self.language if self.language is not ... else 'en-US'  # type: ignore
 
     def resolve_reconnect_timeout(self) -> float:
+        """Resolve the reconnect timeout, falling back to the default."""
         return self.reconnect_timeout if self.reconnect_timeout is not None else 5.0
 
     def __call__(self, func: Callable[..., Any]) -> Callable[..., Any]:

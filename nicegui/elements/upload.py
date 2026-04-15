@@ -17,9 +17,9 @@ if not IS_PYODIDE:
 else:
     _app = None  # type: ignore
 
-from .mixins.disableable_element import DisableableElement
-from .mixins.label_element import LabelElement
-from .upload_files import create_file_upload
+from .mixins.disableable_element import DisableableElement  # pylint: disable=wrong-import-position  # noqa: E402
+from .mixins.label_element import LabelElement  # pylint: disable=wrong-import-position  # noqa: E402
+from .upload_files import create_file_upload  # pylint: disable=wrong-import-position  # noqa: E402
 
 
 class Upload(LabelElement, DisableableElement, component='upload.js'):
