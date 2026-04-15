@@ -158,6 +158,14 @@ def register_esm(name: str, path: Path, *, max_time: float | None) -> None:
         if esm_modules[key].name == name:
             return
         raise ValueError(f'Conflicting ESM registration for key "{key}": "{esm_modules[key].name}" vs "{name}"')
+    for existing_key, existing in esm_modules.items():
+        if existing.name == name:
+            if existing.path == path:
+                # NOTE: idempotent re-registration (e.g. sub_pages re-imports in Pyodide, or max_time drift)
+                esm_modules[key] = existing
+                return
+            raise ValueError(
+                f'Duplicate ESM name "{name}" for path {path}; already registered with {existing.path} (key "{existing_key}")')
     esm_modules[key] = EsmModule(name=name, path=path)
 
 
