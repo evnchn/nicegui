@@ -94,6 +94,11 @@ def prepare_components() -> None:
     ESM bundles (``dist/`` directories) are copied to ``esm/{module_name}/``
     and an ``importmap.json`` is generated for the browser.
     """
+    # Force-import all elements so they register themselves with js_components.
+    # PEP 562 lazy imports mean the classes aren't defined until each attribute is accessed.
+    from nicegui import ui as _ui
+    for _name in getattr(_ui, '__all__', None) or list(getattr(_ui, '_LAZY_IMPORTS', {}).keys()):
+        getattr(_ui, _name)
     from nicegui.dependencies import esm_modules, js_components
 
     components_dir = DEMO_DIR / 'components'
@@ -145,7 +150,7 @@ def prepare_components() -> None:
     imports['dompurify'] = './static/dompurify.mjs'
 
     # --- Inject import map into index.html ---
-    importmap = {'imports': imports}
+    importmap = {'imports': dict(sorted(imports.items()))}
     importmap_tag = f'<script type="importmap">\n{json_mod.dumps(importmap, indent=2)}\n    </script>'
     html_path = DEMO_DIR / 'index.html'
     html = html_path.read_text()
