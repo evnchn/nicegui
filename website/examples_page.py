@@ -3,7 +3,7 @@ from nicegui import ui
 from .components.examples_section import example_card
 from .design import section_heading
 from .examples import examples
-from .seo import breadcrumb_jsonld, page_seo_html
+from .seo import apply_page_seo
 
 
 def create() -> None:
@@ -11,8 +11,8 @@ def create() -> None:
     description = ('Browse in-depth NiceGUI examples including authentication, chat apps, todo lists, and more. '
                    'See real Python GUI code with live demos.')
     ui.page_title(title)
-    ui.add_head_html(page_seo_html(title=title, description=description, path='/examples'))
-    ui.add_head_html(breadcrumb_jsonld([('Home', '/'), ('Examples', '/examples')]))
+    apply_page_seo(title=title, description=description, path='/examples',
+                   breadcrumbs=[('Home', '/'), ('Examples', '/examples')])
     with ui.column().classes('w-full p-8 lg:p-16 max-w-[1600px] mx-auto'):
         section_heading('In-depth examples', 'Pick your *solution*')
         with ui.grid().classes('w-full grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'):

@@ -3,7 +3,7 @@ import functools
 from nicegui import ui
 
 from ..design import section_heading, subheading
-from ..seo import DEFAULT_DESCRIPTION, TAGLINE, breadcrumb_jsonld, extract_description, page_seo_html
+from ..seo import DEFAULT_DESCRIPTION, TAGLINE, apply_page_seo, extract_description
 from .content import DocumentationPage
 from .content.overview import tiles
 from .custom_restructured_text import CustomRestructuredText as custom_restructured_text
@@ -61,7 +61,6 @@ def render_page(documentation: DocumentationPage) -> None:
 
     description = _build_page_description(documentation)
     path = f'/documentation/{documentation.name}' if documentation.name else '/documentation'
-    ui.add_head_html(page_seo_html(title=seo_title, description=description, path=path, og_type='article'))
 
     breadcrumbs = [('Home', '/'), ('Documentation', '/documentation')]
     if documentation.name:
@@ -72,7 +71,8 @@ def render_page(documentation: DocumentationPage) -> None:
                 parent_title = parent.title.replace('*', '')
                 breadcrumbs.append((parent_title, f'/documentation/{documentation.back_link}'))
         breadcrumbs.append((title, path))
-    ui.add_head_html(breadcrumb_jsonld(breadcrumbs))
+    apply_page_seo(title=seo_title, description=description, path=path,
+                   breadcrumbs=breadcrumbs, og_type='article')
 
     def render_content():
         first_demo_seen = False

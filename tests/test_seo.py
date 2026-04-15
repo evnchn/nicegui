@@ -107,13 +107,21 @@ def test_extract_description_collapses_whitespace():
 
 def test_page_seo_html_contains_meta_description():
     result = page_seo_html(title='Test', description='A test page', path='/test')
-    assert '<meta name="description"' in result
+    assert 'name="description"' in result
     assert 'A test page' in result
+
+
+def test_page_seo_html_tags_carry_seo_marker():
+    # SPA navigation removes previously injected SEO tags via this marker;
+    # every emitted tag must carry it so the cleanup query catches them.
+    result = page_seo_html(title='Test', description='A test page', path='/test')
+    for line in result.splitlines():
+        assert 'data-nicegui-seo' in line, f'missing SEO marker on: {line}'
 
 
 def test_page_seo_html_contains_canonical():
     result = page_seo_html(title='Test', description='A test page', path='/test')
-    assert '<link rel="canonical"' in result
+    assert 'rel="canonical"' in result
     assert 'https://nicegui.io/test' in result
 
 
@@ -150,7 +158,7 @@ def test_page_seo_html_og_type_article():
 
 def test_breadcrumb_jsonld_structure():
     result = breadcrumb_jsonld([('Home', '/'), ('Docs', '/docs')])
-    assert '<script type="application/ld+json">' in result
+    assert 'type="application/ld+json"' in result
     assert '</script>' in result
     assert 'BreadcrumbList' in result
     assert '"position":1' in result

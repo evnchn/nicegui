@@ -3,6 +3,8 @@ import html
 import json
 import re
 
+from nicegui import ui
+
 SITE_URL = 'https://nicegui.io'
 SITE_NAME = 'NiceGUI'
 TAGLINE = 'Python-Based UI Framework'
@@ -17,17 +19,20 @@ OG_IMAGE_HEIGHT = 290
 MIN_DESCRIPTION_LENGTH = 50
 
 
+SEO_MARKER = 'data-nicegui-seo'
+
+
 def meta(name: str, content: str) -> str:
-    return f'<meta name="{name}" content="{html.escape(content, quote=True)}" />'
+    return f'<meta {SEO_MARKER} name="{name}" content="{html.escape(content, quote=True)}" />'
 
 
 def meta_property(prop: str, content: str) -> str:
-    return f'<meta property="{prop}" content="{html.escape(content, quote=True)}" />'
+    return f'<meta {SEO_MARKER} property="{prop}" content="{html.escape(content, quote=True)}" />'
 
 
 def canonical_link(path: str) -> str:
     url = SITE_URL + path
-    return f'<link rel="canonical" href="{html.escape(url, quote=True)}" />'
+    return f'<link {SEO_MARKER} rel="canonical" href="{html.escape(url, quote=True)}" />'
 
 
 def open_graph_tags(*, title: str, description: str, url: str, og_type: str = 'website') -> str:
@@ -84,7 +89,31 @@ def breadcrumb_jsonld(items: list[tuple[str, str]]) -> str:
         ],
     }
     payload = json.dumps(ld, separators=(',', ':')).replace('</', '<\\/')
-    return f'<script type="application/ld+json">{payload}</script>'
+    return f'<script {SEO_MARKER} type="application/ld+json">{payload}</script>'
+
+
+def apply_page_seo(*, title: str, description: str, path: str,
+                   breadcrumbs: list[tuple[str, str]], og_type: str = 'website') -> None:
+    """Apply per-page SEO tags to the document head.
+
+    The first call per client uses ``ui.add_head_html`` so the tags are present
+    in the SSR HTML that crawlers see. Subsequent calls (triggered by SPA
+    navigation through ``ui.sub_pages``) patch the live DOM via JavaScript,
+    removing previously injected tags (identified by ``data-nicegui-seo``)
+    before appending the new ones -- preventing duplicate meta/link/JSON-LD
+    entries from accumulating in ``document.head``.
+    """
+    html_block = (page_seo_html(title=title, description=description, path=path, og_type=og_type)
+                  + '\n' + breadcrumb_jsonld(breadcrumbs))
+    client = ui.context.client
+    if getattr(client, '_seo_applied', False):
+        ui.run_javascript(
+            f'document.head.querySelectorAll("[{SEO_MARKER}]").forEach(e => e.remove());'
+            f'document.head.insertAdjacentHTML("beforeend", {json.dumps(html_block)});'
+        )
+    else:
+        ui.add_head_html(html_block)
+        client._seo_applied = True  # pylint: disable=protected-access
 
 
 def extract_description(text: str, max_length: int = 160) -> str | None:
