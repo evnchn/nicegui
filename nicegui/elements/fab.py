@@ -82,3 +82,6 @@ class FabAction(LabelElement, IconElement, BackgroundColorElement, DisableableEl
         """Add a callback to be invoked when the action element is clicked."""
         self.on('click', lambda _: handle_event(callback, ClickEventArguments(sender=self, client=self.client)), [])
         return self
+
+    def _render_markdown(self) -> str | None:
+        return self.label or ''

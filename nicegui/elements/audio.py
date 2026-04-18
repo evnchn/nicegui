@@ -50,3 +50,6 @@ class Audio(SourceElement, component='audio.js'):
     def pause(self) -> None:
         """Pause audio."""
         self.run_method('pause')
+
+    def _render_markdown(self) -> str | None:
+        return None

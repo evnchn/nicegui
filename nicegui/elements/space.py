@@ -11,3 +11,6 @@ class Space(Element):
         Its purpose is to simply fill all available space inside of a flexbox element.
         """
         super().__init__('q-space')
+
+    def _render_markdown(self) -> str | None:
+        return None

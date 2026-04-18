@@ -23,3 +23,6 @@ class Time(ValueElement[str | None], DisableableElement):
         """
         super().__init__(tag='q-time', value=value, on_value_change=on_change)
         self._props['mask'] = mask
+
+    def _render_markdown(self) -> str | None:
+        return f'Time: {self.value}' if self.value else ''

@@ -4,7 +4,6 @@ from .mixins.value_element import ValueElement
 
 
 class DarkMode(ValueElement[bool | None], component='dark_mode.js'):
-    MARKDOWN_SKIP = True
     VALUE_PROP = 'value'
 
     @resolve_defaults
@@ -47,3 +46,6 @@ class DarkMode(ValueElement[bool | None], component='dark_mode.js'):
         This will use the client's system preference.
         """
         self.value = None
+
+    def _render_markdown(self) -> str | None:
+        return None

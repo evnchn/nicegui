@@ -35,3 +35,6 @@ class Avatar(IconElement, BackgroundColorElement, TextColorElement):
         self._props['rounded'] = rounded
         self._props.set_optional('size', size)
         self._props.set_optional('font-size', font_size)
+
+    def _render_markdown(self) -> str | None:
+        return None

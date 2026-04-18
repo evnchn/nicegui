@@ -10,7 +10,6 @@ from ..style import Style
 
 
 class QueryElement(Element, component='query.js'):
-    MARKDOWN_SKIP = True
 
     def __init__(self, selector: str) -> None:
         super().__init__()
@@ -118,3 +117,6 @@ class Query:
         if element.props['props']:
             element.run_method('add_props', element.props['props'])
         return self
+
+    def _render_markdown(self) -> str | None:
+        return None

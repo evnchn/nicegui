@@ -57,3 +57,10 @@ class InputChips(LabelElement, ValidationElement[list[str]], DisableableElement)
 
     def _event_args_to_value(self, e: GenericEventArguments) -> list[str]:
         return e.args or []
+
+    def _render_markdown(self) -> str | None:
+        if not self.value:
+            return ''
+        label = self.label or ''
+        chips = ', '.join(str(v) for v in self.value)
+        return f'{label}: {chips}' if label else chips

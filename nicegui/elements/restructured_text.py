@@ -17,6 +17,9 @@ class ReStructuredText(Markdown):
         """
         super().__init__(content=content)
 
+    def _render_markdown(self) -> str | None:
+        return self.content or ''
+
     def _handle_content_change(self, content: str) -> None:
         html = prepare_content(content)
         if self._props.get('innerHTML') != html:

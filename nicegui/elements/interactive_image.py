@@ -134,6 +134,10 @@ class InteractiveImage(SourceElement, ContentElement, component='interactive_ima
             content = self._sanitize(content)
         return super()._handle_content_change(content)
 
+    def _render_markdown(self) -> str | None:
+        src = self._props.get('src', '')
+        return f'![image]({src})' if src else ''
+
 
 class InteractiveImageLayer(SourceElement, ContentElement, component='interactive_image.js'):
     CONTENT_PROP = 'content'

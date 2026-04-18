@@ -27,3 +27,6 @@ class Parallax(Image, component='image.js'):
         self._props['height'] = height
         self._props['speed'] = speed
         self._props['tag'] = 'q-parallax'
+
+    def _render_markdown(self) -> str | None:
+        return None

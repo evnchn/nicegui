@@ -2,7 +2,6 @@ from ..element import Element
 
 
 class ContextMenu(Element):
-    MARKDOWN_SKIP = True
 
     def __init__(self) -> None:
         """Context Menu
@@ -22,3 +21,6 @@ class ContextMenu(Element):
     def close(self) -> None:
         """Close the context menu."""
         self.run_method('hide')
+
+    def _render_markdown(self) -> str | None:
+        return None

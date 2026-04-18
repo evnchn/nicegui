@@ -51,3 +51,6 @@ class Spinner(TextColorElement):
         super().__init__(tag='q-spinner' if type == 'default' else f'q-spinner-{type}', text_color=color)
         self._props['size'] = size
         self._props['thickness'] = thickness
+
+    def _render_markdown(self) -> str | None:
+        return None

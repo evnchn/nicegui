@@ -123,3 +123,6 @@ class Upload(LabelElement, DisableableElement, component='upload.js'):
     def _handle_delete(self) -> None:
         app.remove_route(self._props['url'])
         super()._handle_delete()
+
+    def _render_markdown(self) -> str | None:
+        return None

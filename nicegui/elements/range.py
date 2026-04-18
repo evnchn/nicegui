@@ -62,3 +62,6 @@ class Range(ValueElement[dict[str, float] | None], DisableableElement):
         if self._props['step'] == value:
             return
         self._props['step'] = value
+
+    def _render_markdown(self) -> str | None:
+        return None

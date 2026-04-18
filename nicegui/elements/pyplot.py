@@ -75,6 +75,9 @@ class Pyplot(Element, default_classes='nicegui-pyplot'):
         plt.close(self.fig)
         super()._handle_delete()
 
+    def _render_markdown(self) -> str | None:
+        return None
+
 
 class Matplotlib(Element, default_classes='nicegui-matplotlib'):
 

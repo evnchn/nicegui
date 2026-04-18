@@ -59,6 +59,9 @@ class Markdown(ContentElement, component='markdown.js', default_classes='nicegui
             HtmlFormatter(nobackground=True, style='github-dark').get_style_defs('.body--dark .codehilite')
         )
 
+    def _render_markdown(self) -> str | None:
+        return self.content or ''
+
     def _handle_content_change(self, content: str) -> None:
         html = prepare_content(content, extras=' '.join(self.extras))
         if callable(self._sanitize):

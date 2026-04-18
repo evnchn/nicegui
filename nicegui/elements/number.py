@@ -158,3 +158,8 @@ class Number(LabelElement, ValidationElement[float | None], DisableableElement):
         if value == '':
             return 0
         return self.format % float(value)
+
+    def _render_markdown(self) -> str | None:
+        label = self.label or ''
+        v = self.value
+        return f'{label}: {v}' if label else str(v) if v is not None else ''

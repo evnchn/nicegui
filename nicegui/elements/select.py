@@ -176,3 +176,10 @@ class Select(LabelElement, ValidationElement[Any], ChoiceElement, DisableableEle
                     self.options.update({key: value})
             self._update_values_and_labels()
             return key
+
+    def _render_markdown(self) -> str | None:
+        label = self.label or ''
+        v = self.value
+        if isinstance(v, list):
+            v = ', '.join(str(x) for x in v)
+        return f'{label}: {v}' if label else str(v) if v is not None else ''

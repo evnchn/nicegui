@@ -50,3 +50,6 @@ class Video(SourceElement, component='video.js'):
     def pause(self) -> None:
         """Pause video."""
         self.run_method('pause')
+
+    def _render_markdown(self) -> str | None:
+        return None

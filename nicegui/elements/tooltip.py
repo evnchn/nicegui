@@ -2,7 +2,6 @@ from .mixins.text_element import TextElement
 
 
 class Tooltip(TextElement):
-    MARKDOWN_SKIP = True
 
     def __init__(self, text: str = '') -> None:
         """Tooltip
@@ -15,3 +14,6 @@ class Tooltip(TextElement):
         :param text: the content of the tooltip (default: '')
         """
         super().__init__(tag='q-tooltip', text=text)
+
+    def _render_markdown(self) -> str | None:
+        return None

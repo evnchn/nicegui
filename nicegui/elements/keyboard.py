@@ -17,7 +17,6 @@ from ..events import (
 
 
 class Keyboard(Element, component='keyboard.js'):
-    MARKDOWN_SKIP = True
     active = BindableProperty()
 
     @resolve_defaults
@@ -106,3 +105,6 @@ class Keyboard(Element, component='keyboard.js'):
         """Add a callback to be invoked when keyboard events occur."""
         self._key_handlers.append(handler)
         return self
+
+    def _render_markdown(self) -> str | None:
+        return None

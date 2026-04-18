@@ -102,3 +102,6 @@ class LinePlot(Pyplot):
             line.set_data([], [])
         self._convert_to_html()
         return self
+
+    def _render_markdown(self) -> str | None:
+        return None

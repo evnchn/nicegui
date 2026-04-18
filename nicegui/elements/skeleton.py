@@ -68,3 +68,6 @@ class Skeleton(Element):
         self._props.set_optional('size', size)
         self._props.set_optional('width', width)
         self._props.set_optional('height', height)
+
+    def _render_markdown(self) -> str | None:
+        return None

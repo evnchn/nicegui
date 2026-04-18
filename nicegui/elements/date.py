@@ -33,3 +33,6 @@ class Date(ValueElement[Any], DisableableElement):
         """
         super().__init__(tag='q-date', value=value, on_value_change=on_change)
         self._props['mask'] = mask
+
+    def _render_markdown(self) -> str | None:
+        return f'Date: {self.value}' if self.value else ''

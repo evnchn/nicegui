@@ -43,3 +43,6 @@ class PageScroller(Element):
         self._props['duration'] = duration * 1000
         self._props.set_bool('expand', expand)
         self._props.set_bool('reverse', reverse)
+
+    def _render_markdown(self) -> str | None:
+        return None

@@ -4,7 +4,6 @@ from .mixins.color_elements import QUASAR_COLORS
 
 
 class Colors(Element, component='colors.js'):
-    MARKDOWN_SKIP = True
 
     @resolve_defaults
     def __init__(self, *,
@@ -50,3 +49,6 @@ class Colors(Element, component='colors.js'):
 
         self._props.add_rename('dark_page', 'dark-page')  # DEPRECATED: remove in NiceGUI 4.0
         self._props.add_rename('custom_colors', 'custom-colors')  # DEPRECATED: remove in NiceGUI 4.0
+
+    def _render_markdown(self) -> str | None:
+        return None

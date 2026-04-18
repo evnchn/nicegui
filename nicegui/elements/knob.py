@@ -7,7 +7,6 @@ from .mixins.value_element import ValueElement
 
 
 class Knob(ValueElement[float], DisableableElement, TextColorElement):
-    MARKDOWN_SKIP = True
 
     @resolve_defaults
     def __init__(self,
@@ -53,3 +52,6 @@ class Knob(ValueElement[float], DisableableElement, TextColorElement):
         if show_value:
             with self:
                 self.label = Label().bind_text_from(self, 'value')
+
+    def _render_markdown(self) -> str | None:
+        return None

@@ -39,3 +39,7 @@ class TimeInput(LabelElement, ValueElement[str | None], DisableableElement):
                     self.picker = time()
 
         self.picker.bind_value(self)
+
+    def _render_markdown(self) -> str | None:
+        label = self.label or 'Time'
+        return f'{label}: {self.value}' if self.value else ''

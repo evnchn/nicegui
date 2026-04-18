@@ -40,3 +40,6 @@ class ColorPicker(Menu):
         """Add a callback to be invoked when a color is picked."""
         self._pick_handlers.append(callback)
         return self
+
+    def _render_markdown(self) -> str | None:
+        return None

@@ -6,7 +6,6 @@ from .mixins.value_element import ValueElement
 
 
 class Fullscreen(ValueElement[bool], component='fullscreen.js'):
-    MARKDOWN_SKIP = True
     LOOPBACK = None
 
     @resolve_defaults
@@ -61,3 +60,6 @@ class Fullscreen(ValueElement[bool], component='fullscreen.js'):
     def _handle_value_change(self, value: Any) -> None:
         super()._handle_value_change(value)
         self.run_method('enter' if value else 'exit')
+
+    def _render_markdown(self) -> str | None:
+        return None

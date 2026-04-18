@@ -5,7 +5,6 @@ from .mixins.value_element import ValueElement
 
 
 class Slider(ValueElement[float | None], DisableableElement):
-    MARKDOWN_SKIP = True
 
     @resolve_defaults
     def __init__(self, *,
@@ -29,3 +28,6 @@ class Slider(ValueElement[float | None], DisableableElement):
         self._props['min'] = min
         self._props['max'] = max
         self._props['step'] = step
+
+    def _render_markdown(self) -> str | None:
+        return None

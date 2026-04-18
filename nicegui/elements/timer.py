@@ -7,7 +7,6 @@ from ..timer import Timer as BaseTimer
 
 
 class Timer(BaseTimer, Element, component='timer.js'):
-    MARKDOWN_SKIP = True
 
     def _get_context(self) -> AbstractContextManager:
         return self.parent_slot or nullcontext()
@@ -46,3 +45,6 @@ class Timer(BaseTimer, Element, component='timer.js'):
 
     def set_visibility(self, visible: bool) -> None:
         raise NotImplementedError('Use `activate()`, `deactivate()` or `cancel()`. See #3670 for more information.')
+
+    def _render_markdown(self) -> str | None:
+        return None

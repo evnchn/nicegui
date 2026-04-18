@@ -31,3 +31,6 @@ class Altair(AnyWidget):
             chart = altair.JupyterChart(chart)
 
         super().__init__(chart, throttle=throttle)  # type: ignore[arg-type]
+
+    def _render_markdown(self) -> str | None:
+        return None

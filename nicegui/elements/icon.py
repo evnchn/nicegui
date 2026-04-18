@@ -4,7 +4,6 @@ from .mixins.name_element import NameElement
 
 
 class Icon(NameElement, TextColorElement):
-    MARKDOWN_SKIP = True
 
     @resolve_defaults
     def __init__(self,
@@ -26,3 +25,6 @@ class Icon(NameElement, TextColorElement):
         super().__init__(tag='q-icon', name=name, text_color=color)
 
         self._props.set_optional('size', size)
+
+    def _render_markdown(self) -> str | None:
+        return None

@@ -33,6 +33,9 @@ class Tab(LabelElement, IconElement, DisableableElement):
             helpers.warn_once('A ui.tab should be a child of a ui.tabs element. '
                               'This will raise an error in NiceGUI 4.0.')
 
+    def _render_markdown(self) -> str | None:
+        return self.label or ''
+
 
 class TabPanel(DisableableElement, default_classes='nicegui-tab-panel'):
 

@@ -5,7 +5,6 @@ from .mixins.value_element import ValueElement
 
 
 class Pagination(ValueElement[int | None], DisableableElement):
-    MARKDOWN_SKIP = True
 
     @resolve_defaults
     def __init__(self,
@@ -56,3 +55,6 @@ class Pagination(ValueElement[int | None], DisableableElement):
     @direction_links.setter
     def direction_links(self, value: bool) -> None:
         self._props['direction-links'] = value
+
+    def _render_markdown(self) -> str | None:
+        return None

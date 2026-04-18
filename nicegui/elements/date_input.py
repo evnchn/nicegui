@@ -57,3 +57,7 @@ class DateInput(LabelElement, ValueElement[str | None], DisableableElement):
             return {'from': from_date, 'to': to_date}
         else:
             return value
+
+    def _render_markdown(self) -> str | None:
+        label = self.label or 'Date'
+        return f'{label}: {self.value}' if self.value else ''

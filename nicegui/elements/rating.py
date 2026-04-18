@@ -5,7 +5,6 @@ from .mixins.value_element import ValueElement
 
 
 class Rating(ValueElement[float | None], DisableableElement):
-    MARKDOWN_SKIP = True
 
     @resolve_defaults
     def __init__(self,
@@ -41,3 +40,6 @@ class Rating(ValueElement[float | None], DisableableElement):
         self._props.set_optional('icon-selected', icon_selected)
         self._props.set_optional('icon-half', icon_half)
         self._props.set_optional('size', size)
+
+    def _render_markdown(self) -> str | None:
+        return None
