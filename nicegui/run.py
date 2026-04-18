@@ -1,20 +1,29 @@
+from __future__ import annotations
+
 import asyncio
 import logging
 import traceback
 from collections.abc import Callable
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-from concurrent.futures.process import BrokenProcessPool
 from contextlib import suppress
 from functools import partial
-from pickle import PicklingError
 from typing import Any, TypeVar
+
+try:
+    from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+    from concurrent.futures.process import BrokenProcessPool
+    from pickle import PicklingError
+except ImportError:
+    ProcessPoolExecutor = None  # type: ignore
+    ThreadPoolExecutor = None  # type: ignore
+    BrokenProcessPool = Exception  # type: ignore
+    PicklingError = Exception  # type: ignore
 
 from typing_extensions import ParamSpec
 
 from . import core, helpers
 
 process_pool: ProcessPoolExecutor | None = None
-thread_pool = ThreadPoolExecutor()
+thread_pool = ThreadPoolExecutor() if ThreadPoolExecutor is not None else None  # type: ignore
 
 P = ParamSpec('P')
 R = TypeVar('R')
@@ -90,7 +99,7 @@ async def cpu_bound(callback: Callable[P, R], *args: P.args, **kwargs: P.kwargs)
         if core.script_mode:
             raise RuntimeError('Unable to run CPU-bound in script mode. Use a `@ui.page` function instead.') from e
         raise e
-    except BrokenProcessPool as e:
+    except BrokenProcessPool as e:  # pylint: disable=bad-except-order,duplicate-except  # BrokenProcessPool falls back to Exception when concurrent.futures is unavailable (Pyodide)
         try:
             await _run(process_pool, safe_callback, lambda: None)
         except BrokenProcessPool:

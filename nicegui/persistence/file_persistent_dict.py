@@ -1,6 +1,9 @@
 from pathlib import Path
 
-import aiofiles
+try:
+    import aiofiles
+except ImportError:
+    aiofiles = None  # type: ignore
 
 from .. import background_tasks, core, json
 from ..logging import log
@@ -16,6 +19,9 @@ class FilePersistentDict(PersistentDict):
         super().__init__(data={}, on_change=self.backup)
 
     async def initialize(self) -> None:
+        if aiofiles is None:
+            self.initialize_sync()
+            return
         try:
             if self.filepath.exists():
                 async with aiofiles.open(self.filepath, encoding=self.encoding) as f:
@@ -48,7 +54,7 @@ class FilePersistentDict(PersistentDict):
             async with aiofiles.open(self.filepath, 'w', encoding=self.encoding) as f:
                 await f.write(json.dumps(self, indent=self.indent))
 
-        if core.is_loop_running():
+        if aiofiles is not None and core.is_loop_running():
             background_tasks.create_lazy(async_backup(), name=self.filepath.stem)
         else:
             self.filepath.write_text(json.dumps(self, indent=self.indent), encoding=self.encoding)

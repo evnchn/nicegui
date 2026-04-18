@@ -1,11 +1,16 @@
 import os
 
-import ifaddr
+try:
+    import ifaddr
+except ImportError:
+    ifaddr = None  # type: ignore
 
 from . import core, run
 
 
 def _get_all_ips() -> list[str]:
+    if ifaddr is None:
+        return []
     ips: list[str] = []
     for adapter in ifaddr.get_adapters():
         ips.extend(str(i.ip) for i in adapter.ips if i.is_IPv4)

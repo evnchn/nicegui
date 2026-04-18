@@ -1,12 +1,22 @@
 from collections.abc import Callable
 from pathlib import Path
 
-import fastapi
+from .pyodide_compat import IS_PYODIDE
 
-from .page import page as ui_page
+try:
+    import fastapi
+    _APIRouterBase = fastapi.APIRouter
+except ImportError:
+    fastapi = None  # type: ignore
+    _APIRouterBase = object  # type: ignore
+
+if not IS_PYODIDE:
+    from .page import page as ui_page
+else:
+    ui_page = None  # type: ignore
 
 
-class APIRouter(fastapi.APIRouter):
+class APIRouter(_APIRouterBase):
 
     def page(self,
              path: str, *,
@@ -31,6 +41,8 @@ class APIRouter(fastapi.APIRouter):
         :param response_timeout: maximum time for the decorated function to build the page (default: 3.0)
         :param kwargs: additional keyword arguments passed to FastAPI's @app.get method
         """
+        if ui_page is None:
+            raise RuntimeError('APIRouter.page() is not available in Pyodide mode (no HTTP routes).')
         return ui_page(
             path,
             title=title,

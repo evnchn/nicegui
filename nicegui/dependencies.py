@@ -158,6 +158,14 @@ def register_esm(name: str, path: Path, *, max_time: float | None) -> None:
         if esm_modules[key].name == name:
             return
         raise ValueError(f'Conflicting ESM registration for key "{key}": "{esm_modules[key].name}" vs "{name}"')
+    for existing_key, existing in esm_modules.items():
+        if existing.name == name:
+            if existing.path == path:
+                # NOTE: idempotent re-registration (e.g. sub_pages re-imports in Pyodide, or max_time drift)
+                esm_modules[key] = existing
+                return
+            raise ValueError(
+                f'Duplicate ESM name "{name}" for path {path}; already registered with {existing.path} (key "{existing_key}")')
     esm_modules[key] = EsmModule(name=name, path=path)
 
 
@@ -172,7 +180,11 @@ def setup_esm_package(package_file: str, package_name: str, esm_name: str, expor
         __all__ = ['AgGrid']
     """
     dist = Path(package_file).parent / 'dist'
-    register_esm(esm_name, dist, max_time=dist.stat().st_mtime)
+    try:
+        max_time = dist.stat().st_mtime
+    except OSError:
+        max_time = 0.0  # NOTE: stripped Pyodide wheels omit dist/ directories (bundles are served via importmap)
+    register_esm(esm_name, dist, max_time=max_time)
 
     by_submodule: dict[str, list[str]] = {}
     for attr, submodule in exports.items():
