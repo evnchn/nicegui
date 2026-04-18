@@ -45,8 +45,10 @@ export default {
           qRef.uploadedFiles = qRef.uploadedFiles.concat(files);
           files.forEach((f) => qRef.updateFileStatus(f, "uploaded"));
         }
-        // Empty URL makes performUpload skip XHR and just decrement workingThreads
-        return { url: "" };
+        // Dummy data-URI prevents Quasar's "invalid or no URL" warning while
+        // ensuring no real XHR is sent (data URIs are same-origin, instant, and
+        // the response is discarded since the bridge already handled the upload).
+        return { url: "data:," };
       });
     },
   },
