@@ -220,6 +220,23 @@ async def test_notification(user: User):
     await _assert_markdown(user, build, 'Page content\n\nHello notification!')
 
 
+def test_rest_link_conversion():
+    from website.documentation.custom_restructured_text import _rest_to_markdown
+    assert _rest_to_markdown('text with `Quasar Chat <https://quasar.dev/x>`_ component.') \
+        == 'text with [Quasar Chat](https://quasar.dev/x) component.'
+
+
+def test_rest_field_list_conversion():
+    from website.documentation.custom_restructured_text import _rest_to_markdown
+    rst = ':text: the message body\n:name: the message author'
+    assert _rest_to_markdown(rst) == '- **text**: the message body\n- **name**: the message author'
+
+
+def test_rest_passthrough_for_plain_text():
+    from website.documentation.custom_restructured_text import _rest_to_markdown
+    assert _rest_to_markdown('just a plain sentence.') == 'just a plain sentence.'
+
+
 async def _assert_markdown(user: User, build: Callable, expected: str) -> None:
     @ui.page('/', markdown=True)
     def _():
