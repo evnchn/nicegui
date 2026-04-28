@@ -98,14 +98,14 @@ def section_heading(subtitle_: str, title_: str) -> None:
 def subheading(text: str, *, link: str | None = None, major: bool = False, anchor_name: str | None = None) -> None:
     """Render a subheading with an anchor that can be linked to with a hash."""
     name = anchor_name or create_anchor_name(text)
-    ui.html(f'<div id="{name}"></div>', sanitize=False).style('position: relative; top: -90px')
+    _DecorativeHtml(f'<div id="{name}"></div>', sanitize=False).style('position: relative; top: -90px')
     with ui.row().classes('group gap-2 items-center relative'):
         classes = TEXT_32PX if major else TEXT_24PX
         if link:
             ui.link(text, link).classes(classes)
         else:
             ui.label(text).classes(classes)
-        with ui.link(target=f'#{name}').classes('absolute').style('transform: translateX(-150%)'):
+        with _DecorativeLink(target=f'#{name}').classes('absolute').style('transform: translateX(-150%)'):
             phosphor_icon('ph-link').classes('opacity-0 group-hover:opacity-50 transition-opacity')
 
 
@@ -116,7 +116,21 @@ def create_anchor_name(text: str) -> str:
 
 def phosphor_icon(name: str) -> ui.html:
     """Render a Phosphor duotone icon, e.g. ``phosphor_icon('ph-code')``."""
-    return ui.html(f'<i class="ph-duotone {name}"></i>', sanitize=False).classes('-mb-1')
+    return _DecorativeHtml(f'<i class="ph-duotone {name}"></i>', sanitize=False).classes('-mb-1')
+
+
+class _DecorativeHtml(ui.html):
+    """A ui.html element that contributes nothing to the markdown stream (used for purely decorative chrome)."""
+
+    def _render_markdown(self) -> str:
+        return ''
+
+
+class _DecorativeLink(ui.link):
+    """A ui.link element that contributes nothing to the markdown stream (used for icon-only anchor links)."""
+
+    def _render_markdown(self) -> str:
+        return ''
 
 
 def themed_image(src: str, *, classes: str = '') -> None:
