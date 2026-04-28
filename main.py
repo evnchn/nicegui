@@ -13,6 +13,7 @@ from website import design as d
 from website import documentation, examples_page, fly, header, imprint_privacy, main_page, rate_limits, svg
 from website.components import footer_section
 from website.documentation.intersection_observer import IntersectionObserver as intersection_observer
+from website.i18n import SUPPORTED_LANGUAGES, get_url_prefix, set_language
 
 
 @app.add_middleware
@@ -55,18 +56,18 @@ class custom_sub_pages(ui.sub_pages):
         return super()._render_page(match)
 
 
-@ui.page('/')
-@ui.page('/examples')
-@ui.page('/documentation')
-@ui.page('/documentation/{path:path}')
-@ui.page('/imprint_privacy')
-def _main_page() -> None:
+def _build_page(lang: str = 'en') -> None:
+    """Build the page content for a given language."""
+    set_language(lang)
+    prefix = get_url_prefix()
+
     ui.context.client.content.classes('p-0 gap-0')
 
     header.add_head_html()
 
     with ui.left_drawer().classes(f'column no-wrap gap-1 {d.BG_FOOTER} {d.BORDER_R} p-8') as menu:
-        tree = ui.tree([], label_key='title', on_select=lambda e: ui.navigate.to(f'/documentation/{e.value}')) \
+        tree = ui.tree([], label_key='title',
+                       on_select=lambda e: ui.navigate.to(f'{prefix}/documentation/{e.value}')) \
             .classes(r'w-full [&_.q-tree\_\_children]:pl-4') \
             .props('accordion no-connectors no-selection-unset icon=chevron_right color=primary')
         tree.visible = False
@@ -95,7 +96,7 @@ def _main_page() -> None:
         '/documentation': lambda: documentation.render_page(documentation.registry['']),
         '/documentation/{name}': lambda name: _documentation_detail_page(name, tree),
         '/imprint_privacy': imprint_privacy.create,
-    }, show_404=False).classes('w-full')
+    }, root_path=prefix or None, show_404=False).classes('w-full')
 
     footer_section.create()
 
@@ -111,13 +112,46 @@ def _main_page() -> None:
     _update_menu(ui.context.client.sub_pages_router.current_path)
 
 
+@ui.page('/')
+@ui.page('/examples')
+@ui.page('/documentation')
+@ui.page('/documentation/{path:path}')
+@ui.page('/imprint_privacy')
+def _main_page() -> None:
+    _build_page('en')
+
+
+# Register language-prefixed routes for each supported language (except English).
+for _lang in SUPPORTED_LANGUAGES:
+    if _lang == 'en':
+        continue
+
+    def _make_i18n_handler(lang: str):
+        def handler() -> None:
+            _build_page(lang)
+        handler.__name__ = f'_i18n_page_{lang}'
+        handler.__qualname__ = f'_i18n_page_{lang}'
+        return handler
+
+    _handler = _make_i18n_handler(_lang)
+    for _route in [
+        f'/{_lang}',
+        f'/{_lang}/examples',
+        f'/{_lang}/documentation',
+        f'/{_lang}/documentation/{{path:path}}',
+        f'/{_lang}/imprint_privacy',
+    ]:
+        _handler = ui.page(_route)(_handler)
+
+
 def _documentation_detail_page(name: str, tree: ui.tree) -> None:
     tree.props.update(expanded=documentation.tree.ancestors(name))
     tree.update()
+    prefix = get_url_prefix()
     if name in documentation.registry:
         documentation.render_page(documentation.registry[name])
     elif name in documentation.redirects:
-        ui.navigate.to('/documentation/' + documentation.redirects[name])
+        ui.navigate.to(f'{prefix}/documentation/' + documentation.redirects[name])
     else:
         ui.status_code(404)
         with ui.column().classes('w-full min-h-[50vh] items-center justify-center text-center p-16'):

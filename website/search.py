@@ -4,6 +4,7 @@ from . import design as d
 from .design import phosphor_icon
 from .documentation import CustomRestructuredText as custom_restructured_text
 from .documentation.search import search_index
+from .i18n import t
 
 
 class Search:
@@ -40,7 +41,7 @@ class Search:
                 .classes(f'w-[800px] h-[600px] {d.BG_SURFACE} {d.BORDER} rounded-xl'):
             with ui.row().classes(f'w-full items-center gap-3 px-4 {d.BORDER_B}'):
                 phosphor_icon('ph-magnifying-glass').classes(f'text-xl {d.TEXT_MUTED}')
-                self.input = ui.input(placeholder='Search documentation', on_change=self._handle_input) \
+                self.input = ui.input(placeholder=t('Search documentation'), on_change=self._handle_input) \
                     .classes('flex-grow').props('borderless autofocus') \
                     .on('keydown.down.prevent', self._select_next) \
                     .on('keydown.up.prevent', self._select_prev) \
