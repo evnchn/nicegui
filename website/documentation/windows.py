@@ -70,6 +70,11 @@ def browser_window(content: Callable, *, tab: str | Callable | None = None, lazy
                 if callable(result):
                     inner_result = result()
                     assert not helpers.should_await(inner_result), 'async functions are not supported in non-lazy demos'
+    # The browser-window chrome (tab label, spinner) is irrelevant to agents reading via
+    # `Accept: text/markdown`, and the lazy preview never hydrates server-side anyway, so the
+    # placeholder leaks `localhost:8080` and `![](/static/loading.gif)` into the markdown stream.
+    # Skip rendering the entire window in markdown output; the python_window source remains.
+    window._render_markdown = lambda: ''  # type: ignore[method-assign]  # pylint: disable=protected-access
     return window
 
 
