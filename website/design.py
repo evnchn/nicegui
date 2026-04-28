@@ -89,10 +89,31 @@ MERMAID_CLASSES = f'''
 
 # --- Helpers ---
 
+class _MarkdownH1(ui.markdown):
+    """``ui.markdown`` that emits a leading ``# `` in the markdown response."""
+
+    def _render_markdown(self) -> str:
+        return f'# {super()._render_markdown()}'
+
+
+class _MarkdownH2Link(ui.link):
+    """``ui.link`` that emits a leading ``## `` in the markdown response."""
+
+    def _render_markdown(self) -> str:
+        return f'## {super()._render_markdown()}'
+
+
+class _MarkdownH2Label(ui.label):
+    """``ui.label`` that emits a leading ``## `` in the markdown response."""
+
+    def _render_markdown(self) -> str:
+        return f'## {super()._render_markdown()}'
+
+
 def section_heading(subtitle_: str, title_: str) -> None:
     """Render a section heading with a subtitle."""
     ui.label(subtitle_).classes(f'{TEXT_19PX} font-medium {TEXT_SECONDARY}')
-    ui.markdown(title_).classes(f'{TEXT_SECTION_TITLE} font-medium mt-[-12px] [&_em]:not-italic [&_em]:{TEXT_BLUE}')
+    _MarkdownH1(title_).classes(f'{TEXT_SECTION_TITLE} font-medium mt-[-12px] [&_em]:not-italic [&_em]:{TEXT_BLUE}')
 
 
 def subheading(text: str, *, link: str | None = None, major: bool = False, anchor_name: str | None = None) -> None:
@@ -102,9 +123,9 @@ def subheading(text: str, *, link: str | None = None, major: bool = False, ancho
     with ui.row().classes('group gap-2 items-center relative'):
         classes = TEXT_32PX if major else TEXT_24PX
         if link:
-            ui.link(text, link).classes(classes)
+            _MarkdownH2Link(text, link).classes(classes)
         else:
-            ui.label(text).classes(classes)
+            _MarkdownH2Label(text).classes(classes)
         with ui.link(target=f'#{name}').classes('absolute').style('transform: translateX(-150%)'):
             phosphor_icon('ph-link').classes('opacity-0 group-hover:opacity-50 transition-opacity')
 

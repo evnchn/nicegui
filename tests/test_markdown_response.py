@@ -220,6 +220,25 @@ async def test_notification(user: User):
     await _assert_markdown(user, build, 'Page content\n\nHello notification!')
 
 
+async def test_subclass_can_override_render_markdown(user: User):
+    class _H2Label(ui.label):
+        def _render_markdown(self) -> str:
+            return f'## {self._text or ""}'
+
+    class _H2Link(ui.link):
+        def _render_markdown(self) -> str:
+            return f'## [{self._text or ""}]({self._props["href"]})'
+
+    class _H1Markdown(ui.markdown):
+        def _render_markdown(self) -> str:
+            return f'# {self.content}'
+
+    await _assert_markdown(user, lambda: _H2Label('Section'), '## Section')
+    await _assert_markdown(user, lambda: _H2Link('Label', '/documentation/label'),
+                           '## [Label](/documentation/label)')
+    await _assert_markdown(user, lambda: _H1Markdown('*Text* Elements'), '# *Text* Elements')
+
+
 async def _assert_markdown(user: User, build: Callable, expected: str) -> None:
     @ui.page('/', markdown=True)
     def _():
