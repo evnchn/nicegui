@@ -3,8 +3,9 @@ import sys
 import warnings
 
 # httpxyz registers itself as `httpx` in `sys.modules` via `setdefault` (no-op if real
-# httpx was imported first). NiceGUI 4.0 will require httpxyz; until then we stay
-# neutral and just warn when real httpx is loaded so the user can prepare with one line.
+# httpx was imported first). NiceGUI 4.0 will require httpxyz; until then we warn when
+# real httpx already owns the slot, and otherwise try to load httpxyz so cold users
+# get auto-forward-compat for free.
 _httpxyz = sys.modules.get('httpxyz')
 _httpx = sys.modules.get('httpx')
 if _httpx is not None and _httpx is not _httpxyz:
@@ -17,4 +18,9 @@ if _httpx is not None and _httpx is not _httpxyz:
         UserWarning,
         stacklevel=3,
     )
+else:
+    try:
+        import httpxyz  # noqa: F401
+    except ImportError:
+        pass
 del _httpxyz, _httpx

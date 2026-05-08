@@ -32,6 +32,19 @@ def test_warning_fires_iff_real_httpx_loaded(setup, expect_warning):
         assert WARNING_FRAGMENT not in result.stderr
 
 
+@needs_httpxyz
+def test_cold_auto_aliases_httpxyz_when_available():
+    result = _run('''
+        import nicegui
+        import httpx
+        import httpxyz
+        assert httpx is httpxyz, f"expected `import httpx` -> httpxyz, got {httpx}"
+        print("AUTO_ALIAS_OK")
+    ''')
+    assert result.returncode == 0, result.stderr
+    assert 'AUTO_ALIAS_OK' in result.stdout
+
+
 def test_warning_points_at_user_code_not_nicegui():
     result = _run('''
         import warnings
