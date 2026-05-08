@@ -1,21 +1,10 @@
-"""Forward-compat advisory for httpxyz (#6024).
-
-httpxyz registers itself as `httpx` in `sys.modules` via `setdefault`, so
-`import httpx` resolves to httpxyz when httpxyz is imported first. NiceGUI
-4.0 will depend exclusively on httpxyz; until then NiceGUI itself stays
-neutral and works with whichever module owns `sys.modules['httpx']`.
-
-When this module is imported it warns the user once if real httpx is loaded
-in this process — i.e. the user (or a library they imported before NiceGUI)
-is using real httpx, and adding `import httpxyz` as the first line of their
-entry point would prepare them for 4.0 and route every HTTP library through
-the same stack today.
-"""
-from __future__ import annotations
-
+"""httpxyz forward-compat advisory; see https://github.com/zauberzeug/nicegui/issues/6024."""
 import sys
 import warnings
 
+# httpxyz registers itself as `httpx` in `sys.modules` via `setdefault` (no-op if real
+# httpx was imported first). NiceGUI 4.0 will require httpxyz; until then we stay
+# neutral and just warn when real httpx is loaded so the user can prepare with one line.
 _httpxyz = sys.modules.get('httpxyz')
 _httpx = sys.modules.get('httpx')
 if _httpx is not None and _httpx is not _httpxyz:
