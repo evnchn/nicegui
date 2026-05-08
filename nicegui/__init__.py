@@ -1,3 +1,5 @@
+# Must run before any submodule does `import httpx`, so the httpxyz forward-compat advisory (#6024) sees clean state.
+from . import _httpxyz_compat  # noqa: F401, I001
 from . import binding, elements, html, run, storage, ui
 from .api_router import APIRouter
 from .app.app import App
