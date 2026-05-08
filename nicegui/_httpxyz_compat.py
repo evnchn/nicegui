@@ -20,13 +20,11 @@ _httpxyz = sys.modules.get('httpxyz')
 _httpx = sys.modules.get('httpx')
 if _httpx is not None and _httpx is not _httpxyz:
     warnings.warn(
-        'Real httpx is loaded in this process. NiceGUI 4.0 will depend '
-        'exclusively on httpxyz; add '
-        "'import httpxyz' "
-        'as the first line of your entry point (installing httpxyz first if '
-        'needed) to alias httpx -> httpxyz process-wide so every HTTP '
-        'library (NiceGUI, anthropic, openai, ...) routes through the same '
-        'stack. See https://github.com/zauberzeug/nicegui/issues/6024.',
+        'Real httpx is loaded in this process. NiceGUI 4.0 will require '
+        "httpxyz; install and 'import httpxyz' as the first line of your "
+        'entry point. This aliases httpx -> httpxyz process-wide so every '
+        'HTTP library (NiceGUI, anthropic, openai, ...) uses httpxyz. See '
+        'https://github.com/zauberzeug/nicegui/issues/6024.',
         UserWarning,
         stacklevel=3,
     )
