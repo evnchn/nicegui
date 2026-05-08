@@ -13,7 +13,7 @@ import textwrap
 
 import pytest
 
-WARNING_FRAGMENT = 'httpxyz is loaded but real httpx was imported first'
+WARNING_FRAGMENT = 'Real httpx is loaded in this process'
 
 httpxyz_available = importlib.util.find_spec('httpxyz') is not None
 needs_httpxyz = pytest.mark.skipif(not httpxyz_available, reason='httpxyz not installed')
@@ -29,8 +29,8 @@ def _run(code: str) -> subprocess.CompletedProcess[str]:
     )
 
 
-def test_no_httpxyz_no_warning() -> None:
-    """When httpxyz is not imported, NiceGUI must stay silent."""
+def test_cold_import_nicegui_no_warning() -> None:
+    """A bare ``import nicegui`` with no prior httpx/httpxyz must stay silent."""
     result = _run('import nicegui  # noqa: F401')
     assert result.returncode == 0, result.stderr
     assert WARNING_FRAGMENT not in result.stderr
@@ -47,12 +47,10 @@ def test_httpxyz_first_no_warning() -> None:
     assert WARNING_FRAGMENT not in result.stderr
 
 
-@needs_httpxyz
-def test_real_httpx_first_warns() -> None:
-    """When real httpx is imported before httpxyz, the alias fails and we warn."""
+def test_real_httpx_loaded_warns_without_httpxyz() -> None:
+    """When real httpx is loaded but httpxyz is not, we still warn — that user is the migration target."""
     result = _run('''
         import httpx  # noqa: F401
-        import httpxyz  # noqa: F401
         import nicegui  # noqa: F401
     ''')
     assert result.returncode == 0, result.stderr
@@ -63,18 +61,28 @@ def test_real_httpx_first_warns() -> None:
 
 
 @needs_httpxyz
+def test_real_httpx_with_late_httpxyz_warns() -> None:
+    """When real httpx wins the slot before httpxyz is imported, we warn (alias was a no-op)."""
+    result = _run('''
+        import httpx  # noqa: F401
+        import httpxyz  # noqa: F401
+        import nicegui  # noqa: F401
+    ''')
+    assert result.returncode == 0, result.stderr
+    assert WARNING_FRAGMENT in result.stderr
+
+
 def test_warning_points_at_user_code_not_nicegui() -> None:
     """``stacklevel`` must point at the caller's ``import nicegui``, not at ``nicegui/__init__.py``."""
     result = _run('''
         import warnings
         warnings.simplefilter("always")
         import httpx  # noqa: F401
-        import httpxyz  # noqa: F401
         with warnings.catch_warnings(record=True) as caught:
             warnings.simplefilter("always")
             import nicegui  # noqa: F401
         for w in caught:
-            if "httpxyz" in str(w.message):
+            if "Real httpx is loaded" in str(w.message):
                 # filename should be the -c script (\"<string>\"), not somewhere inside the nicegui package
                 assert "nicegui" not in w.filename, f"warning points inside the package: {w.filename}"
                 print("STACKLEVEL_OK", w.filename)
