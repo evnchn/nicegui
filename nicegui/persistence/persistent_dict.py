@@ -27,4 +27,4 @@ class PersistentDict(observables.ObservableDict, abc.ABC):
         try:
             json.dumps(value)
         except (TypeError, ValueError) as e:
-            raise TypeError(f'cannot store value in app.storage: {e}') from e
+            raise TypeError(f'cannot store value in persistent storage: {e}') from e

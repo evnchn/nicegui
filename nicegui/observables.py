@@ -116,7 +116,8 @@ class ObservableDict(ObservableCollection, dict):
         self._handle_change()
 
     def setdefault(self, __key: Any, __default: Any = None) -> Any:
-        self._validate(__default)
+        if __key not in self:
+            self._validate(__default)
         item = super().setdefault(__key, self._observe(__default))
         self._handle_change()
         return item

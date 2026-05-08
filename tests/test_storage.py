@@ -405,6 +405,9 @@ def test_persistent_dict_validates_at_insert_time(tmp_path: Path):
     with pytest.raises(TypeError, match=r'[Ss]et'):
         d['a_list'].append({1, 2, 3})
     assert d['a_list'] == []
+    d['kept'] = 'value'
+    d.setdefault('kept', {1, 2, 3})
+    assert d['kept'] == 'value'
 
 
 @pytest.mark.parametrize('custom_cookie_headers', [False, True])
