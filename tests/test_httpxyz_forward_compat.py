@@ -15,42 +15,21 @@ def _run(code):
                           capture_output=True, text=True, timeout=60, check=False)
 
 
-def test_cold_import_nicegui_no_warning():
-    result = _run('import nicegui')
+@pytest.mark.parametrize('setup, expect_warning', [
+    pytest.param('import nicegui', False, id='cold'),
+    pytest.param('import httpxyz; import nicegui', False, id='httpxyz-first', marks=needs_httpxyz),
+    pytest.param('import httpx; import nicegui', True, id='httpx-only'),
+    pytest.param('import httpx; import httpxyz; import nicegui', True, id='httpx-then-httpxyz', marks=needs_httpxyz),
+])
+def test_warning_fires_iff_real_httpx_loaded(setup, expect_warning):
+    result = _run(setup)
     assert result.returncode == 0, result.stderr
-    assert WARNING_FRAGMENT not in result.stderr
-
-
-@needs_httpxyz
-def test_httpxyz_first_no_warning():
-    result = _run('''
-        import httpxyz
-        import nicegui
-    ''')
-    assert result.returncode == 0, result.stderr
-    assert WARNING_FRAGMENT not in result.stderr
-
-
-def test_real_httpx_loaded_warns_without_httpxyz():
-    result = _run('''
-        import httpx
-        import nicegui
-    ''')
-    assert result.returncode == 0, result.stderr
-    assert WARNING_FRAGMENT in result.stderr
-    assert 'first line of your entry point' in result.stderr
-    assert 'https://github.com/zauberzeug/nicegui/issues/6024' in result.stderr
-
-
-@needs_httpxyz
-def test_real_httpx_with_late_httpxyz_warns():
-    result = _run('''
-        import httpx
-        import httpxyz
-        import nicegui
-    ''')
-    assert result.returncode == 0, result.stderr
-    assert WARNING_FRAGMENT in result.stderr
+    if expect_warning:
+        assert WARNING_FRAGMENT in result.stderr
+        assert 'first line of your entry point' in result.stderr
+        assert 'https://github.com/zauberzeug/nicegui/issues/6024' in result.stderr
+    else:
+        assert WARNING_FRAGMENT not in result.stderr
 
 
 def test_warning_points_at_user_code_not_nicegui():
