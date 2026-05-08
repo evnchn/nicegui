@@ -389,6 +389,24 @@ async def test_awaiting_backup_scheduled_during_teardown(user: User, tmp_path):
     assert path.read_text(encoding='utf-8') == '{"key":"value"}'
 
 
+def test_persistent_dict_validates_at_insert_time(tmp_path: Path):
+    d = FilePersistentDict(tmp_path / 'storage.json', encoding='utf-8')
+    with pytest.raises(TypeError, match=r'[Ss]et'):
+        d['users'] = {1, 2, 3}
+    assert 'users' not in d
+    with pytest.raises(TypeError, match=r'[Ss]et'):
+        d.update(bad={1, 2, 3})
+    assert 'bad' not in d
+    d['a_dict'] = {}
+    with pytest.raises(TypeError, match=r'[Ss]et'):
+        d['a_dict']['a_key'] = {1, 2, 3}
+    assert d['a_dict'] == {}
+    d['a_list'] = []
+    with pytest.raises(TypeError, match=r'[Ss]et'):
+        d['a_list'].append({1, 2, 3})
+    assert d['a_list'] == []
+
+
 @pytest.mark.parametrize('custom_cookie_headers', [False, True])
 def test_storage_cookie_headers(screen: Screen, custom_cookie_headers: bool):
     @ui.page('/')

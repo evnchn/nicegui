@@ -54,6 +54,16 @@ class ObservableCollection(abc.ABC):  # noqa: B024
             return ObservableSet(data, _parent=self)
         return data
 
+    def _validate(self, value: Any) -> None:
+        """Reject ``value`` if some ancestor disallows it.
+
+        The default walks up the parent chain so that subclasses (e.g. ``PersistentDict``)
+        can inject a check at the root and have nested mutations honor it without each
+        ``ObservableCollection`` needing to know about persistence.
+        """
+        if self._parent is not None:
+            self._parent._validate(value)  # pylint: disable=protected-access
+
     def __copy__(self) -> Self:
         if isinstance(self, dict):
             return ObservableDict(self, _parent=self._parent)
@@ -96,7 +106,9 @@ class ObservableDict(ObservableCollection, dict):
         return item
 
     def update(self, *args: Any, **kwargs: Any) -> None:
-        super().update(self._observe(dict(*args, **kwargs)))
+        new_data = dict(*args, **kwargs)
+        self._validate(new_data)
+        super().update(self._observe(new_data))
         self._handle_change()
 
     def clear(self) -> None:
@@ -104,11 +116,13 @@ class ObservableDict(ObservableCollection, dict):
         self._handle_change()
 
     def setdefault(self, __key: Any, __default: Any = None) -> Any:
+        self._validate(__default)
         item = super().setdefault(__key, self._observe(__default))
         self._handle_change()
         return item
 
     def __setitem__(self, __key: Any, __value: Any) -> None:
+        self._validate(__value)
         super().__setitem__(__key, self._observe(__value))
         self._handle_change()
 
@@ -120,8 +134,9 @@ class ObservableDict(ObservableCollection, dict):
         return super().__or__(other)
 
     def __ior__(self, other: Any) -> Any:
-        other_dict = self._observe(dict(other))
-        super().__ior__(other_dict)
+        other_dict = dict(other)
+        self._validate(other_dict)
+        super().__ior__(self._observe(other_dict))
         self._handle_change()
         return self
 
@@ -139,14 +154,18 @@ class ObservableList(ObservableCollection, list):
             super().__setitem__(i, self._observe(item))
 
     def append(self, item: Any) -> None:
+        self._validate(item)
         super().append(self._observe(item))
         self._handle_change()
 
     def extend(self, iterable: Iterable) -> None:
-        super().extend(self._observe(list(iterable)))
+        new_items = list(iterable)
+        self._validate(new_items)
+        super().extend(self._observe(new_items))
         self._handle_change()
 
     def insert(self, index: SupportsIndex, obj: Any) -> None:
+        self._validate(obj)
         super().insert(index, self._observe(obj))
         self._handle_change()
 
@@ -176,6 +195,7 @@ class ObservableList(ObservableCollection, list):
         self._handle_change()
 
     def __setitem__(self, key: SupportsIndex | slice, value: Any) -> None:
+        self._validate(value)
         super().__setitem__(key, self._observe(value))
         self._handle_change()
 
@@ -183,7 +203,9 @@ class ObservableList(ObservableCollection, list):
         return super().__add__(other)
 
     def __iadd__(self, other: Any) -> Any:
-        super().__iadd__(self._observe(other))
+        new_items = list(other)
+        self._validate(new_items)
+        super().__iadd__(self._observe(new_items))
         self._handle_change()
         return self
 
