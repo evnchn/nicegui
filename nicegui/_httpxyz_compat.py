@@ -20,7 +20,7 @@ if _httpx is not None and _httpx is not _httpxyz:
     )
 else:
     try:
-        import httpxyz  # noqa: F401
+        import httpxyz  # noqa: F401  # pylint: disable=unused-import
     except ImportError:
         pass
 del _httpxyz, _httpx
