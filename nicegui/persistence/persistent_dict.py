@@ -34,7 +34,6 @@ class PersistentDict(observables.ObservableDict, abc.ABC):
         _check(value)
 
 
-_KNOWN_GOOD_LEAF: tuple[type, ...] = (str, int, float, bool, type(None))
 _KNOWN_BAD_LEAF: tuple[type, ...] = (set, frozenset)
 
 
@@ -43,15 +42,15 @@ def _check(value: Any) -> None:
         type_name = 'frozenset' if isinstance(value, frozenset) else 'set'
         raise TypeError(f"cannot store value of type '{type_name}' in persistent storage "
                         '(JSON has no set type)')
-    if isinstance(value, _KNOWN_GOOD_LEAF):
+    if isinstance(value, json.KNOWN_GOOD_LEAF):
         return
     if isinstance(value, dict):
-        if all(type(k) is str for k in value):
+        if all(isinstance(k, json.KNOWN_GOOD_KEY) for k in value):
             for v in value.values():
                 _check(v)
             return
-        # non-string keys may still be valid under orjson's OPT_NON_STR_KEYS (int, datetime, etc.);
-        # defer to the encoder for the dict as a whole rather than re-implement orjson's key rules
+        # keys outside the wrapper's known-good set — defer to the encoder for the dict
+        # as a whole rather than re-implement per-wrapper key rules
     elif isinstance(value, (list, tuple)):
         for item in value:
             _check(item)

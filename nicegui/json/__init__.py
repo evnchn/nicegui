@@ -9,12 +9,14 @@ to override Python's default json module.
 """
 
 try:
-    from .orjson_wrapper import NiceGUIJSONResponse, dumps, loads
+    from .orjson_wrapper import KNOWN_GOOD_KEY, KNOWN_GOOD_LEAF, NiceGUIJSONResponse, dumps, loads
 except ImportError:
-    from .builtin_wrapper import NiceGUIJSONResponse, dumps, loads  # type: ignore
+    from .builtin_wrapper import KNOWN_GOOD_KEY, KNOWN_GOOD_LEAF, NiceGUIJSONResponse, dumps, loads  # type: ignore
 
 
 __all__ = [
+    'KNOWN_GOOD_KEY',
+    'KNOWN_GOOD_LEAF',
     'NiceGUIJSONResponse',
     'dumps',
     'loads',

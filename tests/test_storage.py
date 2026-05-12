@@ -1,6 +1,7 @@
 import asyncio
 import copy
 import time
+from datetime import datetime
 from pathlib import Path
 
 import httpx
@@ -411,8 +412,10 @@ def test_persistent_dict_validates_at_insert_time(tmp_path: Path):
     with pytest.raises(TypeError, match=r'frozenset'):
         d['frozen'] = frozenset({1, 2})
     assert 'frozen' not in d
-    d['int_keys'] = {1: 'a', 2: 'b'}  # orjson's OPT_NON_STR_KEYS accepts these
+    d['int_keys'] = {1: 'a', 2: 'b'}  # primitive non-string keys still pass the fast-path
     assert d['int_keys'] == {1: 'a', 2: 'b'}
+    d['when'] = datetime(2026, 5, 12, 11, 0)  # datetime/date leaves are also fast-pathed
+    assert d['when'] == datetime(2026, 5, 12, 11, 0)
 
 
 @pytest.mark.parametrize('custom_cookie_headers', [False, True])

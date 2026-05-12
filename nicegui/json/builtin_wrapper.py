@@ -10,6 +10,13 @@ try:
 except (ModuleNotFoundError, ValueError):
     HAS_NUMPY = False
 
+#: Non-container types this wrapper accepts without raising. Used by
+#: ``nicegui.persistence.persistent_dict._check`` to fast-path validation.
+KNOWN_GOOD_LEAF: tuple[type, ...] = (str, int, float, bool, type(None), datetime, date)
+
+#: Dict-key types this wrapper coerces to JSON strings without raising.
+KNOWN_GOOD_KEY: tuple[type, ...] = (str, int, float, bool, type(None))
+
 
 def dumps(obj: Any,
           sort_keys: bool = False,

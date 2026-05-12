@@ -1,4 +1,7 @@
+import datetime
+import enum
 import importlib.util
+import uuid
 from decimal import Decimal
 from typing import Any
 
@@ -12,6 +15,17 @@ except (ModuleNotFoundError, ValueError):
     HAS_NUMPY = False
 
 ORJSON_OPTS = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_NON_STR_KEYS
+
+#: Non-container types this wrapper accepts without raising. Used by
+#: ``nicegui.persistence.persistent_dict._check`` to fast-path validation.
+KNOWN_GOOD_LEAF: tuple[type, ...] = (
+    str, int, float, bool, type(None),
+    datetime.datetime, datetime.date, datetime.time,
+    uuid.UUID, Decimal, enum.Enum,
+)
+
+#: Dict-key types this wrapper accepts (via ``OPT_NON_STR_KEYS``).
+KNOWN_GOOD_KEY: tuple[type, ...] = (str, int, float, bool, type(None))
 
 
 def dumps(obj: Any,
