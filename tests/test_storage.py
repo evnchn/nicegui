@@ -408,6 +408,11 @@ def test_persistent_dict_validates_at_insert_time(tmp_path: Path):
     d['kept'] = 'value'
     d.setdefault('kept', {1, 2, 3})
     assert d['kept'] == 'value'
+    with pytest.raises(TypeError, match=r'frozenset'):
+        d['frozen'] = frozenset({1, 2})
+    assert 'frozen' not in d
+    d['int_keys'] = {1: 'a', 2: 'b'}  # orjson's OPT_NON_STR_KEYS accepts these
+    assert d['int_keys'] == {1: 'a', 2: 'b'}
 
 
 @pytest.mark.parametrize('custom_cookie_headers', [False, True])

@@ -23,8 +23,40 @@ class PersistentDict(observables.ObservableDict, abc.ABC):
         The check runs at insert time, so the traceback points at the line that wrote the
         bad value rather than at the deferred backup task. The cost is bounded by the size
         of ``value`` (the upserted content), not the size of the full storage.
+
+        Most stored values are str-keyed dicts of primitives, which the walker confirms in
+        pure-Python isinstance checks without invoking the JSON encoder. Only nodes that
+        are not in the known-good set (e.g. ``datetime``, ``UUID``, NumPy arrays, custom
+        classes covered by ``_orjson_converter``) are individually passed to
+        ``json.dumps`` — so the steady-state hot path on ``app.storage.user["counter"] += 1``
+        does no JSON work.
         """
-        try:
-            json.dumps(value)
-        except (TypeError, ValueError) as e:
-            raise TypeError(f'cannot store value in persistent storage: {e}') from e
+        _check(value)
+
+
+_KNOWN_GOOD_LEAF: tuple[type, ...] = (str, int, float, bool, type(None))
+_KNOWN_BAD_LEAF: tuple[type, ...] = (set, frozenset)
+
+
+def _check(value: Any) -> None:
+    if isinstance(value, _KNOWN_BAD_LEAF):
+        type_name = 'frozenset' if isinstance(value, frozenset) else 'set'
+        raise TypeError(f"cannot store value of type '{type_name}' in persistent storage "
+                        '(JSON has no set type)')
+    if isinstance(value, _KNOWN_GOOD_LEAF):
+        return
+    if isinstance(value, dict):
+        if all(type(k) is str for k in value):
+            for v in value.values():
+                _check(v)
+            return
+        # non-string keys may still be valid under orjson's OPT_NON_STR_KEYS (int, datetime, etc.);
+        # defer to the encoder for the dict as a whole rather than re-implement orjson's key rules
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            _check(item)
+        return
+    try:
+        json.dumps(value)
+    except (TypeError, ValueError) as e:
+        raise TypeError(f'cannot store value in persistent storage: {e}') from e
