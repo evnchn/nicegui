@@ -34,14 +34,18 @@ class PersistentDict(observables.ObservableDict, abc.ABC):
         _check(value)
 
 
-_KNOWN_BAD_LEAF: tuple[type, ...] = (set, frozenset)
+_KNOWN_BAD_LEAF: tuple[type, ...] = (set, frozenset, bytes, bytearray)
 
 
 def _check(value: Any) -> None:
     if isinstance(value, _KNOWN_BAD_LEAF):
-        type_name = 'frozenset' if isinstance(value, frozenset) else 'set'
-        raise TypeError(f"cannot store value of type '{type_name}' in persistent storage "
-                        '(JSON has no set type)')
+        if isinstance(value, (set, frozenset)):
+            type_name = 'frozenset' if isinstance(value, frozenset) else 'set'
+            hint = 'JSON has no set type'
+        else:
+            type_name = 'bytearray' if isinstance(value, bytearray) else 'bytes'
+            hint = 'JSON has no bytes type; encode as str first'
+        raise TypeError(f"cannot store value of type '{type_name}' in persistent storage ({hint})")
     if isinstance(value, json.KNOWN_GOOD_LEAF):
         return
     if isinstance(value, dict):
@@ -49,8 +53,9 @@ def _check(value: Any) -> None:
             for v in value.values():
                 _check(v)
             return
-        # keys outside the wrapper's known-good set — defer to the encoder for the dict
-        # as a whole rather than re-implement per-wrapper key rules
+        # keys outside the wrapper's known-good set (e.g. ``datetime``, ``UUID``, ``tuple``):
+        # defer to the encoder for the whole dict — one encoder call per such mutation, an
+        # acceptable trade-off vs. re-implementing per-wrapper key-acceptance rules
     elif isinstance(value, (list, tuple)):
         for item in value:
             _check(item)

@@ -412,6 +412,9 @@ def test_persistent_dict_validates_at_insert_time(tmp_path: Path):
     with pytest.raises(TypeError, match=r'frozenset'):
         d['frozen'] = frozenset({1, 2})
     assert 'frozen' not in d
+    with pytest.raises(TypeError, match=r'bytes'):
+        d['blob'] = b'\x00\x01'
+    assert 'blob' not in d
     d['int_keys'] = {1: 'a', 2: 'b'}  # primitive non-string keys still pass the fast-path
     assert d['int_keys'] == {1: 'a', 2: 'b'}
     d['when'] = datetime(2026, 5, 12, 11, 0)  # datetime/date leaves are also fast-pathed
