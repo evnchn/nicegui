@@ -21,11 +21,17 @@ from . import core, optional_features
 try:
     from pycrdt import Doc as _PycrdtDoc
     optional_features.register('pycrdt')
+    _PYCRDT_AVAILABLE = True
 except ImportError:
     _PycrdtDoc = None  # type: ignore[assignment, misc]
+    _PYCRDT_AVAILABLE = False
 
 AccessCheck = Callable[[str, str], bool | Awaitable[bool]]
 '''Callable ``(doc_id, sid) -> bool`` invoked on every join; may be async.'''
+
+# pycrdt's apply_update is a blocking Rust call. Payloads above this threshold get
+# offloaded to a worker thread so a large paste doesn't stall the event loop.
+_OFFLOAD_BYTES = 32 * 1024
 
 _rooms: dict[str, _Room] = {}
 _access_checks: dict[str, list[AccessCheck]] = {}
@@ -37,9 +43,9 @@ class _Room:
     def __init__(self, doc_id: str) -> None:
         assert _PycrdtDoc is not None
         self.doc_id = doc_id
-        self.doc = _PycrdtDoc()
+        self.doc: Any = _PycrdtDoc()
         self.sids: set[str] = set()
-        # Serializes apply_update calls so concurrent yjs_update handlers don't
+        # Serializes apply_update / get_update calls so concurrent handlers don't
         # race against pycrdt's Rust state (pycrdt.Doc is not thread-safe).
         self.lock = asyncio.Lock()
 
@@ -48,9 +54,29 @@ def ensure_handlers_installed() -> None:
     """Install Socket.IO handlers if needed; idempotent.
 
     Call this from an element's opt-in path (e.g. ``ui.codemirror.with_crdt(...)``).
-    The room itself is created lazily on the first client ``yjs_join``.
+    The room itself is created lazily on the first client ``yjs_join``, unless
+    ``get_doc(doc_id)`` is called first to pre-create it for seeding.
     """
     _install_handlers_once()
+
+
+def get_doc(doc_id: str) -> Any:
+    """Return (creating if needed) the server-side ``pycrdt.Doc`` for ``doc_id``.
+
+    Use this to seed or surgically edit a collaborative document from the server.
+    Holding the room's ``asyncio.Lock`` (``_rooms[doc_id].lock``) while mutating
+    prevents races with incoming Socket.IO updates::
+
+        from nicegui import yjs_room
+        from pycrdt import Text
+
+        doc = yjs_room.get_doc('shared-doc')
+        async with yjs_room._rooms['shared-doc'].lock:
+            doc['text'] = Text()
+            doc['text'] += '# Initial content\\n'
+    """
+    ensure_handlers_installed()
+    return _rooms.setdefault(doc_id, _Room(doc_id)).doc
 
 
 def register_access_check(doc_id: str, check: AccessCheck) -> None:
@@ -95,7 +121,8 @@ def _install_handlers_once() -> None:
         room = _rooms.setdefault(doc_id, _Room(doc_id))
         room.sids.add(sid)
         await sio.enter_room(sid, _sio_room(doc_id))
-        state: bytes = room.doc.get_update()
+        async with room.lock:
+            state: bytes = room.doc.get_update()
         await sio.emit('yjs_init', {'doc_id': doc_id, 'update': state}, to=sid)
 
     @sio.on('yjs_update')
@@ -109,7 +136,12 @@ def _install_handlers_once() -> None:
             return
         update_bytes = bytes(update)
         async with room.lock:
-            room.doc.apply_update(update_bytes)
+            if len(update_bytes) > _OFFLOAD_BYTES:
+                # Race-free: the lock is held across the to_thread boundary, so the
+                # worker thread is the sole writer for the duration of apply_update.
+                await asyncio.to_thread(room.doc.apply_update, update_bytes)
+            else:
+                room.doc.apply_update(update_bytes)
         await sio.emit(
             'yjs_update',
             {'doc_id': doc_id, 'update': update_bytes},

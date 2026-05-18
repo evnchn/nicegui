@@ -1,8 +1,8 @@
 """Unit tests for the Yjs collaboration primitive.
 
 These exercise the server-side Socket.IO handlers directly so they don't depend on
-Selenium. End-to-end two-browser propagation is covered separately in
-``test_codemirror_crdt.py``.
+Selenium. End-to-end two-browser propagation tests against an actual Yjs client
+remain a follow-up (the current ``Screen`` fixture is single-window).
 """
 from __future__ import annotations
 
@@ -248,6 +248,49 @@ async def test_update_acquires_per_room_lock(fake_sio: MagicMock) -> None:
     server_doc = yjs_room._rooms['doc-A'].doc
     server_doc['text'] = pycrdt.Text()
     assert str(server_doc['text']) == 'x'
+
+
+async def test_get_doc_preseeds_room_for_initial_content(fake_sio: MagicMock) -> None:
+    # Regression for the Copilot finding that "seed before any client joins" was
+    # impossible because the room was created lazily on first yjs_join. get_doc()
+    # makes the room eagerly so the server can seed content first.
+    doc = yjs_room.get_doc('doc-A')
+    doc['text'] = pycrdt.Text()
+    doc['text'] += 'preseed'
+
+    assert 'doc-A' in yjs_room._rooms
+    # A joining client now receives the preseeded state in yjs_init.
+    await fake_sio.handlers['yjs_join']('sid-1', {'doc_id': 'doc-A'})
+    name, payload = fake_sio.emit.await_args.args[:2]
+    assert name == 'yjs_init'
+    fresh = pycrdt.Doc()
+    fresh.apply_update(payload['update'])
+    fresh['text'] = pycrdt.Text()
+    assert str(fresh['text']) == 'preseed'
+
+
+def test_with_crdt_sets_prop_and_installs_handlers(fake_sio: MagicMock) -> None:
+    # Regression for the Copilot finding that with_crdt() had no test of its own.
+    # Bypass full element construction — we're testing the chainable's side effects,
+    # not codemirror itself.
+    from nicegui.elements.codemirror.codemirror import CodeMirror
+    cm = object.__new__(CodeMirror)
+    cm._props = {}  # type: ignore[attr-defined]
+    returned = cm.with_crdt('test-doc')
+    assert returned is cm  # chainable
+    assert cm._props['crdt-doc-id'] == 'test-doc'  # type: ignore[attr-defined]
+    assert 'yjs_join' in fake_sio.handlers
+
+
+def test_with_crdt_access_check_is_registered(fake_sio: MagicMock) -> None:
+    from nicegui.elements.codemirror.codemirror import CodeMirror
+    cm = object.__new__(CodeMirror)
+    cm._props = {}  # type: ignore[attr-defined]
+
+    def check(_doc_id: str, _sid: str) -> bool:
+        return False
+    cm.with_crdt('gated-doc', access_check=check)
+    assert check in yjs_room._access_checks['gated-doc']
 
 
 async def test_async_access_check_via_future_is_handled(fake_sio: MagicMock) -> None:

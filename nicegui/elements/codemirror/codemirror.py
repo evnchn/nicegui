@@ -380,10 +380,21 @@ class CodeMirror(ValueElement[str], DisableableElement,
         The ``value`` parameter passed at construction time is **ignored** while
         collaboration is active — the document content is whatever the Y.Doc holds
         when the client connects (empty for the first client of a fresh room). To
-        seed initial content, write it into the pycrdt ``Doc`` on the server before
-        any client joins, via ``nicegui.yjs_room._rooms[doc_id].doc``. Runtime
-        ``editor.value = ...`` mutations are likewise unsupported; use the pycrdt
-        API directly for server-side edits.
+        seed initial content, fetch the server-side pycrdt ``Doc`` via
+        ``nicegui.yjs_room.get_doc(doc_id)`` and write to it before any client
+        connects::
+
+            from nicegui import yjs_room
+            from pycrdt import Text
+
+            doc = yjs_room.get_doc('shared-doc')
+            doc['text'] = Text()
+            doc['text'] += '# Initial content\\n'
+
+            ui.codemirror(language='Markdown').with_crdt('shared-doc')
+
+        Runtime ``editor.value = ...`` mutations are likewise unsupported; use the
+        pycrdt API directly for server-side edits.
 
         Requires the ``[crdt]`` extra: ``pip install "nicegui[crdt]"``.
 

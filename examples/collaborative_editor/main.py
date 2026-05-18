@@ -13,6 +13,7 @@ from nicegui import ui
 
 DOC_ID = 'shared-demo'  # treat as a soft secret; replace with a per-document UUID in a real app.
 
+
 @ui.page('/')
 def index() -> None:
     ui.label('Collaborative code editor').classes('text-xl font-bold')
