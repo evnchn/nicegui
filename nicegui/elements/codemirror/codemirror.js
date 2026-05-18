@@ -1,8 +1,7 @@
 import * as CM from "nicegui-codemirror";
 
-// Origin tag for Yjs updates applied locally from a remote source. The matching
-// `changeSender` plugin and ydoc-update handler use this to suppress the echo back
-// to the server, which would otherwise cause an infinite update storm.
+// Origin tag for Yjs updates applied locally from a remote source; used to suppress
+// the echo back to the server which would otherwise cause an infinite update storm.
 const YJS_REMOTE = "yjs-remote";
 
 export default {
@@ -109,8 +108,7 @@ export default {
     },
     setEditorValueFromProps() {
       // When collaboration is on, Yjs owns the document state; the `value` prop is no
-      // longer the source of truth. Ignore server-pushed value updates so they don't
-      // overwrite concurrent local edits.
+      // longer the source of truth.
       if (this.crdtDocId) return;
       this.setEditorValue(this.value);
     },
@@ -147,8 +145,25 @@ export default {
     setupExtensions() {
       const self = this;
 
-      const baseExtensions = [
+      // Sends a ChangeSet https://codemirror.net/docs/ref/#state.ChangeSet
+      // containing only the changes made to the document.
+      // This could potentially be optimized further by sending updates
+      // periodically instead of on every change and accumulating changesets
+      // with ChangeSet.compose.
+      const changeSender = CM.ViewPlugin.fromClass(
+        class {
+          update(update) {
+            if (!update.docChanged) return;
+            if (!self.emitting) return;
+            self.$emit("update:value", update.changes);
+          }
+        },
+      );
+
+      const extensions = [
         CM.basicSetup,
+        // In CRDT mode yjs owns the doc and emits via its own update channel; skip changeSender.
+        ...(this.crdtDocId ? [CM.yCollab(this.ytext, this.awareness)] : [changeSender]),
         // Enables the Tab key to indent the current lines https://codemirror.net/examples/tab/
         CM.keymap.of([CM.indentWithTab]),
         // Sets indentation https://codemirror.net/docs/ref/#language.indentUnit
@@ -164,32 +179,9 @@ export default {
         }),
       ];
 
-      if (this.highlightWhitespace) baseExtensions.push([CM.highlightWhitespace()]);
+      if (this.highlightWhitespace) extensions.push([CM.highlightWhitespace()]);
 
-      if (this.crdtDocId) {
-        // Yjs owns the doc; y-codemirror.next bidirectionally syncs CM <-> Y.Text.
-        // Skip the change-set sender entirely.
-        baseExtensions.push(CM.yCollab(this.ytext, this.awareness));
-        return baseExtensions;
-      }
-
-      // Sends a ChangeSet https://codemirror.net/docs/ref/#state.ChangeSet
-      // containing only the changes made to the document.
-      // This could potentially be optimized further by sending updates
-      // periodically instead of on every change and accumulating changesets
-      // with ChangeSet.compose.
-      const changeSender = CM.ViewPlugin.fromClass(
-        class {
-          update(update) {
-            if (!update.docChanged) return;
-            if (!self.emitting) return;
-            self.$emit("update:value", update.changes);
-          }
-        },
-      );
-      baseExtensions.push(changeSender);
-
-      return baseExtensions;
+      return extensions;
     },
     _setupCrdt() {
       this.ydoc = new CM.YjsDoc();
@@ -198,15 +190,15 @@ export default {
 
       const docId = this.crdtDocId;
 
-      this._onYjsUpdate = (data) => {
-        if (data.doc_id !== docId) return;
-        CM.applyYjsUpdate(this.ydoc, new Uint8Array(data.update), YJS_REMOTE);
-      };
       this._onYjsInit = (data) => {
         if (data.doc_id !== docId) return;
         const update = new Uint8Array(data.update);
         if (update.length === 0) return;
         CM.applyYjsUpdate(this.ydoc, update, YJS_REMOTE);
+      };
+      this._onYjsUpdate = (data) => {
+        if (data.doc_id !== docId) return;
+        CM.applyYjsUpdate(this.ydoc, new Uint8Array(data.update), YJS_REMOTE);
       };
       this._onYjsAwareness = (data) => {
         if (data.doc_id !== docId) return;
@@ -219,15 +211,14 @@ export default {
 
       this._ydocUpdateHandler = (update, origin) => {
         if (origin === YJS_REMOTE) return;
-        window.socket.emit("yjs_update", { doc_id: docId, update: update });
+        window.socket.emit("yjs_update", { doc_id: docId, update });
       };
       this.ydoc.on("update", this._ydocUpdateHandler);
 
       this._awarenessUpdateHandler = ({ added, updated, removed }, origin) => {
         if (origin === YJS_REMOTE) return;
-        const changedClients = added.concat(updated, removed);
-        const update = CM.encodeAwarenessUpdate(this.awareness, changedClients);
-        window.socket.emit("yjs_awareness", { doc_id: docId, update: update });
+        const update = CM.encodeAwarenessUpdate(this.awareness, added.concat(updated, removed));
+        window.socket.emit("yjs_awareness", { doc_id: docId, update });
       };
       this.awareness.on("update", this._awarenessUpdateHandler);
 
@@ -258,15 +249,12 @@ export default {
     this.editableStates = { true: CM.EditorView.editable.of(true), false: CM.EditorView.editable.of(false) };
     this.lineWrappingConfig = new CM.Compartment();
 
-    if (this.crdtDocId) {
-      this._setupCrdt();
-    }
+    if (this.crdtDocId) this._setupCrdt();
 
     const extensions = this.setupExtensions();
 
     this.editor = new CM.EditorView({
-      // In CRDT mode, the y-codemirror binding seeds the editor doc from ytext on its own.
-      // Passing `this.value` would race the initial yjs_init.
+      // In CRDT mode the y-codemirror binding seeds the editor from ytext on its own.
       doc: this.crdtDocId ? this.ytext.toString() : this.value,
       extensions: extensions,
       parent: this.$el,

@@ -3,12 +3,11 @@ from typing import Literal, get_args
 
 from typing_extensions import Self
 
-from ... import yjs_room
 from ...defaults import DEFAULT_PROP, resolve_defaults
+from ...elements.mixins.crdt_element import CrdtElement
 from ...elements.mixins.disableable_element import DisableableElement
 from ...elements.mixins.value_element import ValueElement
 from ...events import GenericEventArguments, Handler, ValueChangeEventArguments
-from ...yjs_room import AccessCheck
 
 SUPPORTED_LANGUAGES = Literal[
     'Angular Template',
@@ -250,7 +249,7 @@ SUPPORTED_THEMES = Literal[
 ]
 
 
-class CodeMirror(ValueElement[str], DisableableElement,
+class CodeMirror(ValueElement[str], DisableableElement, CrdtElement,
                  component='codemirror.js',
                  esm={'nicegui-codemirror': 'dist'},
                  default_classes='nicegui-codemirror'):
@@ -361,58 +360,6 @@ class CodeMirror(ValueElement[str], DisableableElement,
         *Added in version 3.2.0*
         """
         self._props['line-wrapping'] = value
-        return self
-
-    def with_crdt(self, doc_id: str, *, access_check: AccessCheck | None = None) -> Self:
-        """Enable real-time collaborative editing for this editor.
-
-        All ``ui.codemirror`` instances sharing the same ``doc_id``, across any number of
-        browser tabs connected to a *single* NiceGUI server process, edit a single shared
-        document. Edits, cursors and selections are kept in sync through a Yjs (CRDT)
-        document held server-side via `pycrdt <https://github.com/y-crdt/pycrdt>`_;
-        no individual server-to-client value sync is performed while collaboration is on.
-
-        Multi-process deployments are **not** transparently supported: the room registry
-        lives in a per-process in-memory dict, so unless a load balancer pins clients
-        sharing a ``doc_id`` to the same worker (sticky sessions on the ``client_id``
-        cookie, for example), they will edit divergent copies. A future iteration may
-        add a Redis-backed registry.
-
-        The ``doc_id`` is the room name. Any client that knows it can join, so treat it
-        as a soft secret (long unguessable strings) or supply ``access_check`` to gate
-        joins explicitly. ``access_check`` receives ``(doc_id, sid)`` and may be sync or
-        async; return ``False`` to deny.
-
-        The ``value`` parameter passed at construction time is **ignored** while
-        collaboration is active — the document content is whatever the Y.Doc holds
-        when the client connects (empty for the first client of a fresh room). To
-        seed initial content, fetch the server-side pycrdt ``Doc`` via
-        ``nicegui.yjs_room.get_doc(doc_id)`` and write to its ``'codemirror'`` Y.Text
-        (matching the shared-type name the client binding uses internally) before
-        any client connects::
-
-            from nicegui import yjs_room
-            from pycrdt import Text
-
-            doc = yjs_room.get_doc('shared-doc')
-            doc['codemirror'] = Text()
-            doc['codemirror'] += '# Initial content\\n'
-
-            ui.codemirror(language='Markdown').with_crdt('shared-doc')
-
-        Runtime ``editor.value = ...`` mutations are likewise unsupported; use the
-        pycrdt API directly for server-side edits.
-
-        Requires the ``[crdt]`` extra: ``pip install "nicegui[crdt]"``.
-
-        :param doc_id: name of the shared room (clients sharing this id share the document)
-        :param access_check: optional callable ``(doc_id, sid) -> bool`` to gate joins
-        """
-        self._props['crdt-doc-id'] = doc_id
-        if access_check is not None:
-            yjs_room.register_access_check(doc_id, access_check)
-        else:
-            yjs_room.ensure_handlers_installed()
         return self
 
     def _event_args_to_value(self, e: GenericEventArguments) -> str:

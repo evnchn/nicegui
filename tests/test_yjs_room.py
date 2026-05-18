@@ -1,8 +1,8 @@
 """Unit tests for the Yjs collaboration primitive.
 
 These exercise the server-side Socket.IO handlers directly so they don't depend on
-Selenium. End-to-end two-browser propagation tests against an actual Yjs client
-remain a follow-up (the current ``Screen`` fixture is single-window).
+Selenium. Browser-level codemirror+yjs integration is covered in
+``test_codemirror_crdt.py``; both layers can fail independently, so both are tested.
 """
 from __future__ import annotations
 
