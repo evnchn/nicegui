@@ -12,16 +12,27 @@ import asyncio
 import inspect
 import urllib.parse
 from collections.abc import Awaitable, Callable
+from pathlib import Path
 from typing import Any
 
 from . import core, optional_features
 from .client import Client
+from .dependencies import register_esm
 
 try:
     from pycrdt import Doc as _PycrdtDoc
     optional_features.register('pycrdt')
 except ImportError:
     _PycrdtDoc = None  # type: ignore[assignment, misc]
+
+# Register shared yjs ESM modules so any CRDT-capable element can mark them external
+# in its own rollup config and pick them up via the browser's import map — instead of
+# inlining a fresh ~100 KB of yjs into every consumer's bundle.
+_YJS_DIST = Path(__file__).parent / 'elements' / '_yjs_bundle' / 'dist'
+for _name, _subdir in (('yjs', 'yjs'), ('y-protocols/awareness', 'y-protocols-awareness')):
+    _path = _YJS_DIST / _subdir
+    if _path.is_dir():
+        register_esm(_name, _path, max_time=_path.stat().st_mtime)
 
 AccessCheck = Callable[[str, str], bool | Awaitable[bool]]
 

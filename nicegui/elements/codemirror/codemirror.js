@@ -1,4 +1,7 @@
 import * as CM from "nicegui-codemirror";
+import { yCollab } from "nicegui-codemirror/yjs-binding.js";
+import * as Y from "yjs";
+import { Awareness, applyAwarenessUpdate, encodeAwarenessUpdate } from "y-protocols/awareness";
 
 // Origin tag for Yjs updates applied locally from a remote source; used to suppress
 // the echo back to the server which would otherwise cause an infinite update storm.
@@ -163,7 +166,7 @@ export default {
       const extensions = [
         CM.basicSetup,
         // In CRDT mode yjs owns the doc and emits via its own update channel; skip changeSender.
-        ...(this.crdtDocId ? [CM.yCollab(this.ytext, this.awareness)] : [changeSender]),
+        ...(this.crdtDocId ? [yCollab(this.ytext, this.awareness)] : [changeSender]),
         // Enables the Tab key to indent the current lines https://codemirror.net/examples/tab/
         CM.keymap.of([CM.indentWithTab]),
         // Sets indentation https://codemirror.net/docs/ref/#language.indentUnit
@@ -184,9 +187,9 @@ export default {
       return extensions;
     },
     _setupCrdt() {
-      this.ydoc = new CM.YjsDoc();
+      this.ydoc = new Y.Doc();
       this.ytext = this.ydoc.getText("codemirror");
-      this.awareness = new CM.YAwareness(this.ydoc);
+      this.awareness = new Awareness(this.ydoc);
 
       const docId = this.crdtDocId;
 
@@ -194,15 +197,15 @@ export default {
         if (data.doc_id !== docId) return;
         const update = new Uint8Array(data.update);
         if (update.length === 0) return;
-        CM.applyYjsUpdate(this.ydoc, update, YJS_REMOTE);
+        Y.applyUpdate(this.ydoc, update, YJS_REMOTE);
       };
       this._onYjsUpdate = (data) => {
         if (data.doc_id !== docId) return;
-        CM.applyYjsUpdate(this.ydoc, new Uint8Array(data.update), YJS_REMOTE);
+        Y.applyUpdate(this.ydoc, new Uint8Array(data.update), YJS_REMOTE);
       };
       this._onYjsAwareness = (data) => {
         if (data.doc_id !== docId) return;
-        CM.applyAwarenessUpdate(this.awareness, new Uint8Array(data.update), YJS_REMOTE);
+        applyAwarenessUpdate(this.awareness, new Uint8Array(data.update), YJS_REMOTE);
       };
 
       window.socket.on("yjs_init", this._onYjsInit);
@@ -217,7 +220,7 @@ export default {
 
       this._awarenessUpdateHandler = ({ added, updated, removed }, origin) => {
         if (origin === YJS_REMOTE) return;
-        const update = CM.encodeAwarenessUpdate(this.awareness, added.concat(updated, removed));
+        const update = encodeAwarenessUpdate(this.awareness, added.concat(updated, removed));
         window.socket.emit("yjs_awareness", { doc_id: docId, update });
       };
       this.awareness.on("update", this._awarenessUpdateHandler);
