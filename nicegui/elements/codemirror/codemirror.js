@@ -207,31 +207,37 @@ export default {
         applyAwarenessUpdate(this.awareness, new Uint8Array(data.update), YJS_REMOTE);
       };
 
-      window.socket.on("yjs_init", this._onYjsInit);
-      window.socket.on("yjs_update", this._onYjsUpdate);
-      window.socket.on("yjs_awareness", this._onYjsAwareness);
-
       this._ydocUpdateHandler = (update, origin) => {
         if (origin === YJS_REMOTE) return;
         window.socket.emit("yjs_update", { doc_id: docId, update });
       };
-      this.ydoc.on("update", this._ydocUpdateHandler);
-
       this._awarenessUpdateHandler = ({ added, updated, removed }, origin) => {
         if (origin === YJS_REMOTE) return;
         const update = encodeAwarenessUpdate(this.awareness, added.concat(updated, removed));
         window.socket.emit("yjs_awareness", { doc_id: docId, update });
       };
-      this.awareness.on("update", this._awarenessUpdateHandler);
 
-      window.socket.emit("yjs_join", { doc_id: docId });
+      // window.socket only exists after NiceGUI's handshake, which races with this
+      // mount hook on first load; defer registration until the socket is ready.
+      const wireSocket = () => {
+        window.socket.on("yjs_init", this._onYjsInit);
+        window.socket.on("yjs_update", this._onYjsUpdate);
+        window.socket.on("yjs_awareness", this._onYjsAwareness);
+        this.ydoc.on("update", this._ydocUpdateHandler);
+        this.awareness.on("update", this._awarenessUpdateHandler);
+        window.socket.emit("yjs_join", { doc_id: docId });
+      };
+      const tryWire = () => (window.socket && window.did_handshake) ? wireSocket() : setTimeout(tryWire, 10);
+      tryWire();
     },
     _teardownCrdt() {
       if (!this.ydoc) return;
-      window.socket.emit("yjs_leave", { doc_id: this.crdtDocId });
-      window.socket.off("yjs_init", this._onYjsInit);
-      window.socket.off("yjs_update", this._onYjsUpdate);
-      window.socket.off("yjs_awareness", this._onYjsAwareness);
+      if (window.socket) {
+        window.socket.emit("yjs_leave", { doc_id: this.crdtDocId });
+        window.socket.off("yjs_init", this._onYjsInit);
+        window.socket.off("yjs_update", this._onYjsUpdate);
+        window.socket.off("yjs_awareness", this._onYjsAwareness);
+      }
       this.ydoc.off("update", this._ydocUpdateHandler);
       this.awareness.off("update", this._awarenessUpdateHandler);
       this.awareness.destroy();
