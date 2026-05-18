@@ -184,11 +184,16 @@ async def test_awareness_relay_only(fake_sio: MagicMock) -> None:
 
 async def test_invalid_payload_is_ignored(fake_sio: MagicMock) -> None:
     yjs_room.ensure_handlers_installed()
-    # Missing doc_id, wrong types, etc. should never raise.
+    # Missing doc_id, wrong types, non-dict shapes, etc. should never raise.
     await fake_sio.handlers['yjs_join']('sid-1', {})
+    await fake_sio.handlers['yjs_join']('sid-1', None)  # type: ignore[arg-type]
+    await fake_sio.handlers['yjs_join']('sid-1', ['not', 'a', 'dict'])  # type: ignore[arg-type]
     await fake_sio.handlers['yjs_update']('sid-1', {'doc_id': 'doc-A'})  # no update
+    await fake_sio.handlers['yjs_update']('sid-1', None)  # type: ignore[arg-type]
     await fake_sio.handlers['yjs_update']('sid-1', {'doc_id': 123, 'update': b''})
+    await fake_sio.handlers['yjs_awareness']('sid-1', None)  # type: ignore[arg-type]
     await fake_sio.handlers['yjs_awareness']('sid-1', {'doc_id': 'doc-A', 'update': 'not bytes'})
+    await fake_sio.handlers['yjs_leave']('sid-1', None)  # type: ignore[arg-type]
     fake_sio.emit.assert_not_awaited()
 
 

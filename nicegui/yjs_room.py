@@ -21,10 +21,8 @@ from . import core, optional_features
 try:
     from pycrdt import Doc as _PycrdtDoc
     optional_features.register('pycrdt')
-    _PYCRDT_AVAILABLE = True
 except ImportError:
     _PycrdtDoc = None  # type: ignore[assignment, misc]
-    _PYCRDT_AVAILABLE = False
 
 # AccessCheck is a callable ``(doc_id, sid) -> bool`` invoked on every join; may be async.
 AccessCheck = Callable[[str, str], bool | Awaitable[bool]]
@@ -113,6 +111,8 @@ def _install_handlers_once() -> None:
 
     @sio.on('yjs_join')
     async def _on_join(sid: str, data: dict[str, Any]) -> None:
+        if not isinstance(data, dict):
+            return
         doc_id = data.get('doc_id')
         if not isinstance(doc_id, str):
             return
@@ -127,6 +127,8 @@ def _install_handlers_once() -> None:
 
     @sio.on('yjs_update')
     async def _on_update(sid: str, data: dict[str, Any]) -> None:
+        if not isinstance(data, dict):
+            return
         doc_id = data.get('doc_id')
         update = data.get('update')
         if not isinstance(doc_id, str) or not isinstance(update, (bytes, bytearray)):
@@ -151,6 +153,8 @@ def _install_handlers_once() -> None:
 
     @sio.on('yjs_awareness')
     async def _on_awareness(sid: str, data: dict[str, Any]) -> None:
+        if not isinstance(data, dict):
+            return
         doc_id = data.get('doc_id')
         update = data.get('update')
         if not isinstance(doc_id, str) or not isinstance(update, (bytes, bytearray)):
@@ -170,6 +174,8 @@ def _install_handlers_once() -> None:
 
     @sio.on('yjs_leave')
     async def _on_leave(sid: str, data: dict[str, Any]) -> None:
+        if not isinstance(data, dict):
+            return
         doc_id = data.get('doc_id')
         if isinstance(doc_id, str):
             await _drop_client(sid, doc_id)
