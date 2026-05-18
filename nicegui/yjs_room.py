@@ -12,6 +12,7 @@ never opt in pay zero cost. Rooms are evicted when the last client leaves.
 from __future__ import annotations
 
 import asyncio
+import inspect
 from collections.abc import Awaitable, Callable
 from typing import Any
 
@@ -26,10 +27,6 @@ except ImportError:
 AccessCheck = Callable[[str, str], bool | Awaitable[bool]]
 '''Callable ``(doc_id, sid) -> bool`` invoked on every join; may be async.'''
 
-# Bytes payloads larger than this are applied via ``asyncio.to_thread`` to keep the
-# event loop responsive (pycrdt's Rust calls are blocking).
-_OFFLOAD_BYTES = 32 * 1024
-
 _rooms: dict[str, _Room] = {}
 _access_checks: dict[str, list[AccessCheck]] = {}
 _handlers_installed = False
@@ -42,6 +39,9 @@ class _Room:
         self.doc_id = doc_id
         self.doc = _PycrdtDoc()
         self.sids: set[str] = set()
+        # Serializes apply_update calls so concurrent yjs_update handlers don't
+        # race against pycrdt's Rust state (pycrdt.Doc is not thread-safe).
+        self.lock = asyncio.Lock()
 
 
 def ensure_handlers_installed() -> None:
@@ -67,7 +67,7 @@ def register_access_check(doc_id: str, check: AccessCheck) -> None:
 async def _check_access(doc_id: str, sid: str) -> bool:
     for check in _access_checks.get(doc_id, ()):
         result = check(doc_id, sid)
-        if asyncio.iscoroutine(result):
+        if inspect.isawaitable(result):
             result = await result
         if not result:
             return False
@@ -108,9 +108,7 @@ def _install_handlers_once() -> None:
         if room is None or sid not in room.sids:
             return
         update_bytes = bytes(update)
-        if len(update_bytes) > _OFFLOAD_BYTES:
-            await asyncio.to_thread(room.doc.apply_update, update_bytes)
-        else:
+        async with room.lock:
             room.doc.apply_update(update_bytes)
         await sio.emit(
             'yjs_update',
@@ -141,9 +139,17 @@ def _install_handlers_once() -> None:
         if isinstance(doc_id, str):
             await _drop_client(sid, doc_id)
 
+    # python-socketio replaces handlers on re-registration rather than chaining, so
+    # we have to call any pre-existing 'disconnect' handler explicitly. NiceGUI core's
+    # disconnect handler at nicegui.py runs sync; future ones might be async.
+    _existing_disconnect = sio.handlers.get('/', {}).get('disconnect')
+
     @sio.on('disconnect')
     async def _on_disconnect(sid: str) -> None:  # pylint: disable=unused-variable
-        # Coexists with NiceGUI core's disconnect handler — Socket.IO fans out to all.
+        if _existing_disconnect is not None:
+            result = _existing_disconnect(sid)
+            if inspect.isawaitable(result):
+                await result
         for doc_id in list(_rooms):
             if sid in _rooms[doc_id].sids:
                 await _drop_client(sid, doc_id)
@@ -157,12 +163,11 @@ async def _drop_client(sid: str, doc_id: str) -> None:
         return
     room.sids.discard(sid)
     await core.sio.leave_room(sid, _sio_room(doc_id))
-    # Tell remaining clients to forget this peer's awareness state.
-    await core.sio.emit(
-        'yjs_awareness_remove',
-        {'doc_id': doc_id, 'sid': sid},
-        room=_sio_room(doc_id),
-    )
+    # We deliberately do NOT broadcast a "remove this peer's awareness" message:
+    # mapping a Socket.IO sid to the right Yjs clientID requires tracking each
+    # client's local clientID on join, and y-protocols' Awareness already evicts
+    # stale peers via its built-in 30-second heartbeat timeout. A ~30 s ghost
+    # cursor is acceptable in exchange for a much smaller protocol surface.
     if not room.sids:
         _rooms.pop(doc_id, None)
 

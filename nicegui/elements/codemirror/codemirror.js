@@ -212,16 +212,10 @@ export default {
         if (data.doc_id !== docId) return;
         CM.applyAwarenessUpdate(this.awareness, new Uint8Array(data.update), YJS_REMOTE);
       };
-      this._onYjsAwarenessRemove = (data) => {
-        if (data.doc_id !== docId) return;
-        // Force a non-existent client to be removed from local awareness state.
-        CM.removeAwarenessStates(this.awareness, [data.sid_id || 0], YJS_REMOTE);
-      };
 
       window.socket.on("yjs_init", this._onYjsInit);
       window.socket.on("yjs_update", this._onYjsUpdate);
       window.socket.on("yjs_awareness", this._onYjsAwareness);
-      window.socket.on("yjs_awareness_remove", this._onYjsAwarenessRemove);
 
       this._ydocUpdateHandler = (update, origin) => {
         if (origin === YJS_REMOTE) return;
@@ -245,7 +239,6 @@ export default {
       window.socket.off("yjs_init", this._onYjsInit);
       window.socket.off("yjs_update", this._onYjsUpdate);
       window.socket.off("yjs_awareness", this._onYjsAwareness);
-      window.socket.off("yjs_awareness_remove", this._onYjsAwarenessRemove);
       this.ydoc.off("update", this._ydocUpdateHandler);
       this.awareness.off("update", this._awarenessUpdateHandler);
       this.awareness.destroy();

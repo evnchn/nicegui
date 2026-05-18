@@ -6,6 +6,7 @@ Selenium. End-to-end two-browser propagation is covered separately in
 """
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
@@ -25,10 +26,23 @@ def _reset_yjs_room() -> None:
     yjs_room._handlers_installed = False
 
 
-@pytest.fixture
-def fake_sio(monkeypatch: pytest.MonkeyPatch) -> MagicMock:
+class _SioHandlers(dict):
+    """Stand-in for ``socketio.AsyncServer.handlers`` that works two ways.
+
+    ``sio.handlers['/']`` returns the inner namespace dict (real python-socketio shape,
+    needed by ``yjs_room.py``); ``sio.handlers['yjs_join']`` returns the handler
+    directly (convenience for these tests). Both views stay in sync because they
+    share the same underlying dict.
+    """
+
+    def __init__(self, existing: dict[str, Any] | None = None) -> None:
+        super().__init__(existing or {})
+        self['/'] = self
+
+
+def _build_fake_sio(monkeypatch: pytest.MonkeyPatch, existing_handlers: dict[str, Any] | None = None) -> MagicMock:
     sio = MagicMock()
-    sio.handlers: dict[str, Any] = {}
+    sio.handlers = _SioHandlers(existing_handlers)
 
     def _on(event: str):
         def decorator(fn):
@@ -42,6 +56,11 @@ def fake_sio(monkeypatch: pytest.MonkeyPatch) -> MagicMock:
     sio.leave_room = AsyncMock()
     monkeypatch.setattr(yjs_room.core, 'sio', sio)
     return sio
+
+
+@pytest.fixture
+def fake_sio(monkeypatch: pytest.MonkeyPatch) -> MagicMock:
+    return _build_fake_sio(monkeypatch)
 
 
 async def test_prepare_room_is_idempotent(fake_sio: MagicMock) -> None:
@@ -171,3 +190,73 @@ async def test_invalid_payload_is_ignored(fake_sio: MagicMock) -> None:
     await fake_sio.handlers['yjs_update']('sid-1', {'doc_id': 123, 'update': b''})
     await fake_sio.handlers['yjs_awareness']('sid-1', {'doc_id': 'doc-A', 'update': 'not bytes'})
     fake_sio.emit.assert_not_awaited()
+
+
+async def test_disconnect_chains_to_preexisting_handler(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Regression for the Copilot finding: python-socketio replaces handlers on
+    # re-registration, so yjs_room must call whatever 'disconnect' handler was
+    # registered before it (e.g. NiceGUI core's client cleanup).
+    calls: list[tuple[str, str]] = []
+
+    def existing(sid: str) -> None:
+        calls.append(('existing', sid))
+
+    sio = _build_fake_sio(monkeypatch, existing_handlers={'disconnect': existing})
+    yjs_room.ensure_handlers_installed()
+    await sio.handlers['yjs_join']('sid-1', {'doc_id': 'doc-A'})
+
+    await sio.handlers['disconnect']('sid-1')
+
+    assert ('existing', 'sid-1') in calls
+    assert 'doc-A' not in yjs_room._rooms  # our own cleanup also ran
+
+
+async def test_disconnect_chains_to_async_preexisting_handler(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[str, str]] = []
+
+    async def existing_async(sid: str) -> None:
+        calls.append(('existing-async', sid))
+
+    sio = _build_fake_sio(monkeypatch, existing_handlers={'disconnect': existing_async})
+    yjs_room.ensure_handlers_installed()
+    await sio.handlers['disconnect']('sid-1')
+
+    assert calls == [('existing-async', 'sid-1')]
+
+
+async def test_update_acquires_per_room_lock(fake_sio: MagicMock) -> None:
+    # Regression for the Copilot finding: concurrent yjs_update handlers must not
+    # call pycrdt.Doc.apply_update in parallel; per-room asyncio.Lock serializes them.
+    yjs_room.ensure_handlers_installed()
+    await fake_sio.handlers['yjs_join']('sid-1', {'doc_id': 'doc-A'})
+
+    room = yjs_room._rooms['doc-A']
+    assert isinstance(room.lock, asyncio.Lock)
+
+    # Verify the lock is actually held during apply_update by holding it externally
+    # and confirming the handler awaits without raising.
+    async with room.lock:
+        client_doc = pycrdt.Doc()
+        client_doc['text'] = pycrdt.Text()
+        client_doc['text'] += 'x'
+        task = asyncio.create_task(
+            fake_sio.handlers['yjs_update']('sid-1', {'doc_id': 'doc-A', 'update': client_doc.get_update()})
+        )
+        await asyncio.sleep(0)  # let the task start; it should now be blocked on the lock
+        assert not task.done()
+    await task
+    server_doc = yjs_room._rooms['doc-A'].doc
+    server_doc['text'] = pycrdt.Text()
+    assert str(server_doc['text']) == 'x'
+
+
+async def test_async_access_check_via_future_is_handled(fake_sio: MagicMock) -> None:
+    # Regression for the Copilot finding: asyncio.iscoroutine() misses Futures and
+    # other awaitables; inspect.isawaitable() catches all of them.
+    loop = asyncio.get_event_loop()
+    fut: asyncio.Future[bool] = loop.create_future()
+    fut.set_result(True)
+
+    yjs_room.register_access_check('doc-A', lambda _doc_id, _sid: fut)
+    await fake_sio.handlers['yjs_join']('sid-1', {'doc_id': 'doc-A'})
+    assert 'sid-1' in yjs_room._rooms['doc-A'].sids

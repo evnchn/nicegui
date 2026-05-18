@@ -377,11 +377,13 @@ class CodeMirror(ValueElement[str], DisableableElement,
         joins explicitly. ``access_check`` receives ``(doc_id, sid)`` and may be sync or
         async; return ``False`` to deny.
 
-        The ``value`` parameter passed at construction time seeds the initial document
-        only if the room is empty when the first client connects. Runtime ``editor.value
-        = ...`` mutations are intentionally not supported while collaboration is active —
-        use the pycrdt API directly on ``yjs_room._rooms[doc_id].doc`` if you need
-        server-side edits.
+        The ``value`` parameter passed at construction time is **ignored** while
+        collaboration is active — the document content is whatever the Y.Doc holds
+        when the client connects (empty for the first client of a fresh room). To
+        seed initial content, write it into the pycrdt ``Doc`` on the server before
+        any client joins, via ``nicegui.yjs_room._rooms[doc_id].doc``. Runtime
+        ``editor.value = ...`` mutations are likewise unsupported; use the pycrdt
+        API directly for server-side edits.
 
         Requires the ``[crdt]`` extra: ``pip install "nicegui[crdt]"``.
 
