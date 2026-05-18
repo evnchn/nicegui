@@ -367,10 +367,16 @@ class CodeMirror(ValueElement[str], DisableableElement,
         """Enable real-time collaborative editing for this editor.
 
         All ``ui.codemirror`` instances sharing the same ``doc_id``, across any number of
-        browser tabs and Python processes connected to the same NiceGUI server, edit a
-        single shared document. Edits, cursors and selections are kept in sync through a
-        Yjs (CRDT) document held server-side via `pycrdt <https://github.com/y-crdt/pycrdt>`_;
+        browser tabs connected to a *single* NiceGUI server process, edit a single shared
+        document. Edits, cursors and selections are kept in sync through a Yjs (CRDT)
+        document held server-side via `pycrdt <https://github.com/y-crdt/pycrdt>`_;
         no individual server-to-client value sync is performed while collaboration is on.
+
+        Multi-process deployments are **not** transparently supported: the room registry
+        lives in a per-process in-memory dict, so unless a load balancer pins clients
+        sharing a ``doc_id`` to the same worker (sticky sessions on the ``client_id``
+        cookie, for example), they will edit divergent copies. A future iteration may
+        add a Redis-backed registry.
 
         The ``doc_id`` is the room name. Any client that knows it can join, so treat it
         as a soft secret (long unguessable strings) or supply ``access_check`` to gate
@@ -381,15 +387,16 @@ class CodeMirror(ValueElement[str], DisableableElement,
         collaboration is active — the document content is whatever the Y.Doc holds
         when the client connects (empty for the first client of a fresh room). To
         seed initial content, fetch the server-side pycrdt ``Doc`` via
-        ``nicegui.yjs_room.get_doc(doc_id)`` and write to it before any client
-        connects::
+        ``nicegui.yjs_room.get_doc(doc_id)`` and write to its ``'codemirror'`` Y.Text
+        (matching the shared-type name the client binding uses internally) before
+        any client connects::
 
             from nicegui import yjs_room
             from pycrdt import Text
 
             doc = yjs_room.get_doc('shared-doc')
-            doc['text'] = Text()
-            doc['text'] += '# Initial content\\n'
+            doc['codemirror'] = Text()
+            doc['codemirror'] += '# Initial content\\n'
 
             ui.codemirror(language='Markdown').with_crdt('shared-doc')
 

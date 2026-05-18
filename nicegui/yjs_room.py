@@ -182,8 +182,11 @@ def _install_handlers_once() -> None:
             result = _existing_disconnect(sid)
             if inspect.isawaitable(result):
                 await result
+        # Snapshot the doc_ids; another task can evict a room between iterations
+        # (we await inside the loop), so look up via .get and skip if it vanished.
         for doc_id in list(_rooms):
-            if sid in _rooms[doc_id].sids:
+            room = _rooms.get(doc_id)
+            if room is not None and sid in room.sids:
                 await _drop_client(sid, doc_id)
 
     _handlers_installed = True
