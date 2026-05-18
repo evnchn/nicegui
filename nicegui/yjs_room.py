@@ -25,14 +25,13 @@ try:
 except ImportError:
     _PycrdtDoc = None  # type: ignore[assignment, misc]
 
-# Register shared yjs ESM modules so any CRDT-capable element can mark them external
-# in its own rollup config and pick them up via the browser's import map — instead of
-# inlining a fresh ~100 KB of yjs into every consumer's bundle.
+# Shared yjs core bundle, registered like any other element-level ESM module.
+# Consumers (ui.codemirror today, ui.tiptap tomorrow) mark `yjs` external in their
+# own rollup and inline whatever protocol helpers they need (y-protocols/awareness,
+# y-prosemirror, etc.) — those are tiny and consumer-specific.
 _YJS_DIST = Path(__file__).parent / 'elements' / '_yjs_bundle' / 'dist'
-for _name, _subdir in (('yjs', 'yjs'), ('y-protocols/awareness', 'y-protocols-awareness')):
-    _path = _YJS_DIST / _subdir
-    if _path.is_dir():
-        register_esm(_name, _path, max_time=_path.stat().st_mtime)
+if _YJS_DIST.is_dir():
+    register_esm('yjs', _YJS_DIST, max_time=_YJS_DIST.stat().st_mtime)
 
 AccessCheck = Callable[[str, str], bool | Awaitable[bool]]
 
