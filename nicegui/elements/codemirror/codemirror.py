@@ -3,10 +3,12 @@ from typing import Literal, get_args
 
 from typing_extensions import Self
 
+from ... import yjs_room
 from ...defaults import DEFAULT_PROP, resolve_defaults
 from ...elements.mixins.disableable_element import DisableableElement
 from ...elements.mixins.value_element import ValueElement
 from ...events import GenericEventArguments, Handler, ValueChangeEventArguments
+from ...yjs_room import AccessCheck
 
 SUPPORTED_LANGUAGES = Literal[
     'Angular Template',
@@ -359,6 +361,38 @@ class CodeMirror(ValueElement[str], DisableableElement,
         *Added in version 3.2.0*
         """
         self._props['line-wrapping'] = value
+        return self
+
+    def with_crdt(self, doc_id: str, *, access_check: AccessCheck | None = None) -> Self:
+        """Enable real-time collaborative editing for this editor.
+
+        All ``ui.codemirror`` instances sharing the same ``doc_id``, across any number of
+        browser tabs and Python processes connected to the same NiceGUI server, edit a
+        single shared document. Edits, cursors and selections are kept in sync through a
+        Yjs (CRDT) document held server-side via `pycrdt <https://github.com/y-crdt/pycrdt>`_;
+        no individual server-to-client value sync is performed while collaboration is on.
+
+        The ``doc_id`` is the room name. Any client that knows it can join, so treat it
+        as a soft secret (long unguessable strings) or supply ``access_check`` to gate
+        joins explicitly. ``access_check`` receives ``(doc_id, sid)`` and may be sync or
+        async; return ``False`` to deny.
+
+        The ``value`` parameter passed at construction time seeds the initial document
+        only if the room is empty when the first client connects. Runtime ``editor.value
+        = ...`` mutations are intentionally not supported while collaboration is active —
+        use the pycrdt API directly on ``yjs_room._rooms[doc_id].doc`` if you need
+        server-side edits.
+
+        Requires the ``[crdt]`` extra: ``pip install "nicegui[crdt]"``.
+
+        :param doc_id: name of the shared room (clients sharing this id share the document)
+        :param access_check: optional callable ``(doc_id, sid) -> bool`` to gate joins
+        """
+        self._props['crdt-doc-id'] = doc_id
+        if access_check is not None:
+            yjs_room.register_access_check(doc_id, access_check)
+        else:
+            yjs_room.ensure_handlers_installed()
         return self
 
     def _event_args_to_value(self, e: GenericEventArguments) -> str:
