@@ -26,8 +26,8 @@ except ImportError:
     _PycrdtDoc = None  # type: ignore[assignment, misc]
     _PYCRDT_AVAILABLE = False
 
+# AccessCheck is a callable ``(doc_id, sid) -> bool`` invoked on every join; may be async.
 AccessCheck = Callable[[str, str], bool | Awaitable[bool]]
-'''Callable ``(doc_id, sid) -> bool`` invoked on every join; may be async.'''
 
 # pycrdt's apply_update is a blocking Rust call. Payloads above this threshold get
 # offloaded to a worker thread so a large paste doesn't stall the event loop.
@@ -158,9 +158,12 @@ def _install_handlers_once() -> None:
         room = _rooms.get(doc_id)
         if room is None or sid not in room.sids:
             return
+        # Don't leak the originator's Socket.IO sid to peers — the client binding
+        # doesn't use it, and Yjs's awareness payload already carries a clientID
+        # for whatever peer identification a future consumer might want.
         await sio.emit(
             'yjs_awareness',
-            {'doc_id': doc_id, 'update': bytes(update), 'sid': sid},
+            {'doc_id': doc_id, 'update': bytes(update)},
             room=_sio_room(doc_id),
             skip_sid=sid,
         )

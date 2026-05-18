@@ -178,7 +178,7 @@ async def test_awareness_relay_only(fake_sio: MagicMock) -> None:
     name, body = fake_sio.emit.await_args.args[:2]
     assert name == 'yjs_awareness'
     assert body['update'] == payload
-    assert body['sid'] == 'sid-1'
+    assert 'sid' not in body  # originator sid is intentionally not leaked to peers
     assert fake_sio.emit.await_args.kwargs.get('skip_sid') == 'sid-1'
 
 
