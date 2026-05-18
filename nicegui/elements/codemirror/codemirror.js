@@ -1,5 +1,5 @@
 import * as CM from "nicegui-codemirror";
-import { Awareness, applyAwarenessUpdate, encodeAwarenessUpdate, yCollab } from "nicegui-codemirror/yjs-binding.js";
+import { Awareness, applyAwarenessUpdate, encodeAwarenessUpdate, yCollab } from "nicegui-codemirror";
 import * as Y from "yjs";
 
 // Origin tag for Yjs updates applied locally from a remote source; used to suppress

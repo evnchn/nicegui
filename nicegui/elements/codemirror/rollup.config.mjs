@@ -1,13 +1,15 @@
 import nodeResolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
 
-const main = {
+export default {
   input: "./src/index.mjs",
   output: {
     dir: "./dist/",
     format: "es",
     sourcemap: true,
   },
+  // yjs core resolved at runtime via NiceGUI's shared _yjs_bundle ESM module.
+  external: ["yjs"],
   plugins: [
     nodeResolve(),
     terser({
@@ -15,6 +17,3 @@ const main = {
     }),
   ],
 };
-
-// Separate pass for the CRDT binding so it doesn't perturb the main bundle's chunking.
-export default [main, { ...main, input: "./src/yjs-binding.mjs", external: ["yjs"] }];
