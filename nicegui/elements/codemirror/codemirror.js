@@ -6,6 +6,13 @@ import * as Y from "yjs";
 // the echo back to the server which would otherwise cause an infinite update storm.
 const YJS_REMOTE = "yjs-remote";
 
+// Per-page registry of shared Y.Doc / Awareness state, keyed by doc_id. Multiple
+// ui.codemirror instances in the same browser tab with the same doc_id share one
+// Y.Doc — their yCollab extensions all subscribe to the same Y.Text, so in-tab
+// edits propagate locally via Yjs observers (no server round-trip needed; the
+// server's broadcast deliberately skips the originator sid for cross-tab clients).
+const yjsRooms = new Map();
+
 export default {
   template: `
     <div></div>
@@ -186,62 +193,74 @@ export default {
       return extensions;
     },
     _setupCrdt() {
-      this.ydoc = new Y.Doc();
-      this.ytext = this.ydoc.getText("codemirror");
-      this.awareness = new Awareness(this.ydoc);
-
       const docId = this.crdtDocId;
+      let room = yjsRooms.get(docId);
+      if (!room) {
+        const ydoc = new Y.Doc();
+        const awareness = new Awareness(ydoc);
+        room = { ydoc, awareness, refs: 0, handlers: null };
+        yjsRooms.set(docId, room);
 
-      this._onYjsInit = (data) => {
-        if (data.doc_id !== docId) return;
-        const update = new Uint8Array(data.update);
-        if (update.length === 0) return;
-        Y.applyUpdate(this.ydoc, update, YJS_REMOTE);
-      };
-      this._onYjsUpdate = (data) => {
-        if (data.doc_id !== docId) return;
-        Y.applyUpdate(this.ydoc, new Uint8Array(data.update), YJS_REMOTE);
-      };
-      this._onYjsAwareness = (data) => {
-        if (data.doc_id !== docId) return;
-        applyAwarenessUpdate(this.awareness, new Uint8Array(data.update), YJS_REMOTE);
-      };
+        room.handlers = {
+          onInit: (data) => {
+            if (data.doc_id !== docId) return;
+            const update = new Uint8Array(data.update);
+            if (update.length > 0) Y.applyUpdate(ydoc, update, YJS_REMOTE);
+          },
+          onUpdate: (data) => {
+            if (data.doc_id !== docId) return;
+            Y.applyUpdate(ydoc, new Uint8Array(data.update), YJS_REMOTE);
+          },
+          onAwareness: (data) => {
+            if (data.doc_id !== docId) return;
+            applyAwarenessUpdate(awareness, new Uint8Array(data.update), YJS_REMOTE);
+          },
+          onDocUpdate: (update, origin) => {
+            if (origin === YJS_REMOTE) return;
+            window.socket.emit("yjs_update", { doc_id: docId, update });
+          },
+          onAwarenessUpdate: ({ added, updated, removed }, origin) => {
+            if (origin === YJS_REMOTE) return;
+            const update = encodeAwarenessUpdate(awareness, added.concat(updated, removed));
+            window.socket.emit("yjs_awareness", { doc_id: docId, update });
+          },
+        };
 
-      this._ydocUpdateHandler = (update, origin) => {
-        if (origin === YJS_REMOTE) return;
-        window.socket.emit("yjs_update", { doc_id: docId, update });
-      };
-      this._awarenessUpdateHandler = ({ added, updated, removed }, origin) => {
-        if (origin === YJS_REMOTE) return;
-        const update = encodeAwarenessUpdate(this.awareness, added.concat(updated, removed));
-        window.socket.emit("yjs_awareness", { doc_id: docId, update });
-      };
-
-      // window.socket only exists after NiceGUI's handshake, which races with this
-      // mount hook on first load; defer registration until the socket is ready.
-      const wireSocket = () => {
-        window.socket.on("yjs_init", this._onYjsInit);
-        window.socket.on("yjs_update", this._onYjsUpdate);
-        window.socket.on("yjs_awareness", this._onYjsAwareness);
-        this.ydoc.on("update", this._ydocUpdateHandler);
-        this.awareness.on("update", this._awarenessUpdateHandler);
-        window.socket.emit("yjs_join", { doc_id: docId });
-      };
-      const tryWire = () => (window.socket && window.did_handshake) ? wireSocket() : setTimeout(tryWire, 10);
-      tryWire();
+        // window.socket only exists after NiceGUI's handshake, which races with this
+        // mount hook on first load; defer registration until the socket is ready.
+        const wireSocket = () => {
+          window.socket.on("yjs_init", room.handlers.onInit);
+          window.socket.on("yjs_update", room.handlers.onUpdate);
+          window.socket.on("yjs_awareness", room.handlers.onAwareness);
+          ydoc.on("update", room.handlers.onDocUpdate);
+          awareness.on("update", room.handlers.onAwarenessUpdate);
+          window.socket.emit("yjs_join", { doc_id: docId });
+        };
+        const tryWire = () => (window.socket && window.did_handshake) ? wireSocket() : setTimeout(tryWire, 10);
+        tryWire();
+      }
+      room.refs++;
+      this.ydoc = room.ydoc;
+      this.ytext = room.ydoc.getText("codemirror");
+      this.awareness = room.awareness;
     },
     _teardownCrdt() {
-      if (!this.ydoc) return;
+      const docId = this.crdtDocId;
+      const room = yjsRooms.get(docId);
+      if (!room) return;
+      room.refs--;
+      if (room.refs > 0) return;
       if (window.socket) {
-        window.socket.emit("yjs_leave", { doc_id: this.crdtDocId });
-        window.socket.off("yjs_init", this._onYjsInit);
-        window.socket.off("yjs_update", this._onYjsUpdate);
-        window.socket.off("yjs_awareness", this._onYjsAwareness);
+        window.socket.emit("yjs_leave", { doc_id: docId });
+        window.socket.off("yjs_init", room.handlers.onInit);
+        window.socket.off("yjs_update", room.handlers.onUpdate);
+        window.socket.off("yjs_awareness", room.handlers.onAwareness);
       }
-      this.ydoc.off("update", this._ydocUpdateHandler);
-      this.awareness.off("update", this._awarenessUpdateHandler);
-      this.awareness.destroy();
-      this.ydoc.destroy();
+      room.ydoc.off("update", room.handlers.onDocUpdate);
+      room.awareness.off("update", room.handlers.onAwarenessUpdate);
+      room.awareness.destroy();
+      room.ydoc.destroy();
+      yjsRooms.delete(docId);
     },
   },
   async mounted() {
