@@ -35,3 +35,13 @@ def test_module_access_does_not_import_others():
         sys.exit('button' in sys.modules.keys())
     ''')], capture_output=True, text=True, timeout=30, check=False)
     assert result.returncode == 0, 'button should not be imported when accessing label'
+
+
+def test_importing_nicegui_testing_does_not_clobber_storage_path():
+    result = subprocess.run(['python3', '-c', dedent('''\
+        from nicegui.storage import Storage
+        orig = Storage.path
+        from nicegui.testing import Screen, User  # noqa: F401
+        assert Storage.path == orig, f"Storage.path was clobbered: {orig!r} -> {Storage.path!r}"
+    ''')], capture_output=True, text=True, timeout=30, check=False)
+    assert result.returncode == 0, result.stderr
