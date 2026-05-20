@@ -8,6 +8,10 @@ from pathlib import Path
 from typing import Any
 
 import socketio
+from engineio.async_server import AsyncServer  # type: ignore[import-untyped]
+from engineio.async_socket import AsyncSocket  # type: ignore[import-untyped]
+from engineio.base_server import BaseServer  # type: ignore[import-untyped]
+from engineio.packet import PING, PONG, Packet  # type: ignore[import-untyped]
 from fastapi import HTTPException, Request
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import FileResponse, Response
@@ -26,6 +30,43 @@ from .persistence import PersistentDict
 from .slot import Slot
 from .staticfiles import CacheControlledStaticFiles
 from .version import __version__
+
+BaseServer.event_names.append('ping')
+BaseServer.event_names.append('pong')
+
+
+_original_asyncsocket_init = AsyncSocket.__init__
+
+
+def _patched_asyncsocket_init(self: AsyncSocket, *args: Any, **kwargs: Any) -> None:
+    _original_asyncsocket_init(self, *args, **kwargs)
+
+    original_send = self.send
+
+    async def patched_send(pkt: Packet) -> None:
+        try:
+            if pkt.packet_type == PING:  # PING
+                assert isinstance(self.server, AsyncServer)
+                await self.server._trigger_event('ping', self.sid, pkt.packet_type, run_async=self.server.async_handlers)  # pylint: disable=protected-access
+        except Exception:
+            helpers.warn_once('Unable to patch ping handling for AsyncSocket.')
+        return await original_send(pkt)
+    self.send = patched_send
+
+    original_receive = self.receive
+
+    async def patched_receive(pkt: Packet) -> None:
+        try:
+            if pkt.packet_type == PONG:  # PONG
+                assert isinstance(self.server, AsyncServer)
+                await self.server._trigger_event('pong', self.sid, pkt.packet_type, run_async=self.server.async_handlers)  # pylint: disable=protected-access
+        except Exception:
+            helpers.warn_once('Unable to patch pong handling for AsyncSocket.')
+        return await original_receive(pkt)
+    self.receive = patched_receive
+
+
+AsyncSocket.__init__ = _patched_asyncsocket_init
 
 
 @asynccontextmanager
@@ -256,6 +297,20 @@ def _on_ack(_: str, msg: dict) -> None:
 def _on_log(_: str, msg: dict) -> None:
     if client := Client.instances.get(msg['client_id']):
         client.handle_log_message(msg)
+
+
+@sio.eio.on('ping')
+async def _on_ping(sid: str, _: Any) -> None:
+    client = Client.sid_to_client.get(sio.manager.sid_from_eio_sid(sid, '/'))
+    if client:
+        client._last_ping = time.time()  # pylint: disable=protected-access
+
+
+@sio.eio.on('pong')
+async def _on_pong(sid: str, _: Any) -> None:
+    client = Client.sid_to_client.get(sio.manager.sid_from_eio_sid(sid, '/'))
+    if client:
+        client._latency = time.time() - client._last_ping  # pylint: disable=protected-access
 
 
 async def prune_tab_storage(*, force: bool = False) -> None:
