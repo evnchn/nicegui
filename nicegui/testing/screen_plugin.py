@@ -15,7 +15,6 @@ from .filelock import FileLock
 from .general_fixtures import (  # noqa: F401  # pylint: disable=unused-import
     nicegui_reset_globals,
     pytest_addoption,
-    pytest_unconfigure,
 )
 from .general_fixtures import pytest_configure as _general_pytest_configure
 from .screen import Screen
