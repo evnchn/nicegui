@@ -26,9 +26,10 @@ def pytest_configure(config: pytest.Config) -> None:
     _general_pytest_configure(config)
     global DOWNLOAD_DIR  # pylint: disable=global-statement # noqa: PLW0603
     Screen.PORT = helpers.find_free_port()
-    Screen.SCREENSHOT_DIR = Path('screenshots') / str(os.getpid())
+    Screen.SCREENSHOT_DIR = (Path('screenshots') / str(os.getpid())).resolve()  # freeze location against os.chdir
     DOWNLOAD_DIR = Path(tempfile.mkdtemp(prefix='nicegui-test-download-'))
-    atexit.register(shutil.rmtree, DOWNLOAD_DIR, ignore_errors=True)  # safety net for aborted session
+    owner_pid = os.getpid()  # don't let a forked subprocess's atexit rmtree our dir
+    atexit.register(lambda: shutil.rmtree(DOWNLOAD_DIR, ignore_errors=True) if os.getpid() == owner_pid else None)
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)

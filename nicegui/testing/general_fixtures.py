@@ -1,4 +1,5 @@
 import atexit
+import os
 import shutil
 import tempfile
 from pathlib import Path
@@ -26,7 +27,8 @@ def pytest_configure(config: pytest.Config) -> None:
         return  # already configured (e.g. plugin.py + user_plugin.py both loaded)
     _configured = True
     Storage.path = Path(tempfile.mkdtemp(prefix='nicegui-test-storage-')).resolve()
-    atexit.register(shutil.rmtree, Storage.path, ignore_errors=True)
+    owner_pid = os.getpid()  # don't let a forked subprocess's atexit rmtree our dir
+    atexit.register(lambda: shutil.rmtree(Storage.path, ignore_errors=True) if os.getpid() == owner_pid else None)
     app.storage = Storage()  # rebuild app.storage so its FilePersistentDict picks up the new path
     config.addinivalue_line('markers', 'nicegui_main_file: specify the main file for the test')
 
