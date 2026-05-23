@@ -33,6 +33,22 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line('markers', 'nicegui_main_file: specify the main file for the test')
 
 
+def pytest_unconfigure(config: pytest.Config) -> None:  # pylint: disable=unused-argument
+    """Reset configured sentinel and clean up session-unique storage at pytest session end.
+
+    Enables in-process re-runs (pytest.main() called twice in one Python process, custom
+    test runners): each new session gets a fresh tempdir and a rebuilt app.storage instead
+    of silently sharing state with the previous one. atexit still runs at process exit as
+    a safety net for aborted sessions; shutil.rmtree(..., ignore_errors=True) makes the
+    potential double-cleanup harmless.
+    """
+    global _configured  # pylint: disable=global-statement  # noqa: PLW0603
+    if not _configured:
+        return
+    shutil.rmtree(Storage.path, ignore_errors=True)
+    _configured = False
+
+
 def get_path_to_main_file(request: pytest.FixtureRequest) -> Path | None:
     """Get the path to the main file from the test marker or global config."""
     marker = next((m for m in request.node.iter_markers('nicegui_main_file')), None)
