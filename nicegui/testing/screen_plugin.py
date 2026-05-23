@@ -68,7 +68,14 @@ def nicegui_chrome_options() -> webdriver.ChromeOptions:
 @pytest.fixture(scope='session')
 def nicegui_remove_all_screenshots() -> None:
     """Prune directories of finished concurrent runs and remove screenshots from previous runs."""
-    FileLock(Screen.SCREENSHOT_DIR / '.lock').acquire()
+    # Hold the lock for the session lifetime: os.open returns a raw kernel fd that Python's GC
+    # doesn't close, so the anonymous FileLock instance leaves the flock held until process exit.
+    # The OS releases it on process death — clean exit or SIGKILL/OOM. Without the assert, a
+    # failed initial acquire (FS error: permission, disk full) would cascade — the prune loop
+    # below would treat our own PID's unlocked .lock as a sign of a dead owner and rmtree the
+    # active session's screenshot dir.
+    assert FileLock(Screen.SCREENSHOT_DIR / '.lock').acquire(), \
+        f'failed to acquire own screenshot dir lock at {Screen.SCREENSHOT_DIR}'
     if Screen.SCREENSHOT_DIR.parent.exists():
         for path in Screen.SCREENSHOT_DIR.parent.iterdir():
             if path.is_dir() and path.name.isdigit() and (probe := FileLock(path / '.lock')).acquire():
