@@ -47,6 +47,14 @@ class AgGrid(Element, component='aggrid.js', esm={'nicegui-aggrid': 'dist'}, def
         self._migrate_deprecated_checkbox_renderer(options)  # DEPRECATED: remove in NiceGUI 4.0
 
         super().__init__()
+        if auto_size_columns and self._uses_flex(options):
+            helpers.warn_once(
+                'AG Grid: auto_size_columns=True injects autoSizeStrategy, which AG Grid ignores '
+                'when columns use "flex" — and with some row models (e.g. the infinite row model) '
+                'this can leave the grid blank.\n'
+                'Pass auto_size_columns=False to keep your flex sizing.\n'
+                'See https://github.com/zauberzeug/nicegui/issues/5087'
+            )
         self._props['options'] = {
             'theme': theme or 'quartz',
             **({'autoSizeStrategy': {'type': 'fitGridWidth'}} if auto_size_columns else {}),
@@ -78,6 +86,18 @@ class AgGrid(Element, component='aggrid.js', esm={'nicegui-aggrid': 'dist'}, def
                 "    'editable': True,\n"
                 'Please migrate ASAP as the backwards-compatibility will be removed in NiceGUI 4.0.'
             )
+
+    @staticmethod
+    def _uses_flex(options: dict) -> bool:
+        """Whether the grid requests flex column sizing.
+
+        ``flex`` and ``autoSizeStrategy`` are mutually exclusive in AG Grid: when both are set,
+        AG Grid ignores ``flex`` (and with some row models the grid renders blank). See #5087.
+        """
+        if options.get('defaultColDef', {}).get('flex') is not None:
+            return True
+        return any(isinstance(col, dict) and col.get('flex') is not None
+                   for col in options.get('columnDefs', []))
 
     @classmethod
     def from_pandas(cls,
