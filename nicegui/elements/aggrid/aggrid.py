@@ -49,7 +49,8 @@ class AgGrid(Element, component='aggrid.js', esm={'nicegui-aggrid': 'dist'}, def
         super().__init__()
         self._props['options'] = {
             'theme': theme or 'quartz',
-            **({'autoSizeStrategy': {'type': 'fitGridWidth'}} if auto_size_columns else {}),
+            **({'autoSizeStrategy': {'type': 'fitGridWidth'}}
+               if auto_size_columns and not self._uses_flex(options) else {}),
             **options,
         }
         self._props['html-columns'] = html_columns[:]
@@ -78,6 +79,18 @@ class AgGrid(Element, component='aggrid.js', esm={'nicegui-aggrid': 'dist'}, def
                 "    'editable': True,\n"
                 'Please migrate ASAP as the backwards-compatibility will be removed in NiceGUI 4.0.'
             )
+
+    @staticmethod
+    def _uses_flex(options: dict) -> bool:
+        """Whether the grid requests flex column sizing.
+
+        ``flex`` and ``autoSizeStrategy`` are mutually exclusive in AG Grid: when both are set,
+        AG Grid ignores ``flex`` (and with some row models the grid renders blank). See #5087.
+        """
+        if options.get('defaultColDef', {}).get('flex') is not None:
+            return True
+        return any(isinstance(col, dict) and col.get('flex') is not None
+                   for col in options.get('columnDefs', []))
 
     @classmethod
     def from_pandas(cls,
