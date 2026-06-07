@@ -58,6 +58,19 @@ async def test_ua_fallback_serves_markdown_for_known_agent_with_wildcard_accept(
     assert 'text/markdown' in response.headers['content-type']
 
 
+async def test_ua_fallback_respects_markdown_coming_before_html(user: User):
+    """A known-agent UA asking for `text/markdown, text/html` gets markdown because it's requested first."""
+    @ui.page('/', markdown=True)
+    def page():
+        ui.label('Hello')
+
+    response = await user.http_client.get('/', headers={
+        'Accept': 'text/markdown, text/html',
+        'User-Agent': 'GPTBot/1.1',
+    })
+    assert 'text/markdown' in response.headers['content-type']
+
+
 async def test_ua_fallback_respects_explicit_html_preference(user: User):
     """A known-agent UA asking for `text/html` still gets HTML — explicit Accept always wins."""
     @ui.page('/', markdown=True)
