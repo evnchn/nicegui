@@ -27,6 +27,8 @@ def main_demo() -> None:
     - The first argument is a callback that is invoked when the action button is clicked.
     - You can set `no_dismiss=True` to prevent the notification from being dismissed when the action is clicked.
     - The `color` parameter accepts Quasar colors, Tailwind colors, or CSS colors.
+
+    *Added in version 3.14.0*
 ''')
 def notification_with_actions_demo() -> None:
     def spawn_notification():

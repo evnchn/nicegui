@@ -2,184 +2,159 @@ from nicegui import ui
 from nicegui.testing import Screen
 
 
-def test_add_action_basic_structure(screen: Screen):
-    n = None
-
+def test_add_action_renders_label_and_icon(screen: Screen):
     @ui.page('/')
     def page():
-        nonlocal n
         n = ui.notification('Test', timeout=None)
-        n.add_action(lambda: None, text='Click me')
+        n.add_action(lambda: None, text='Click me', icon='check')
 
     screen.open('/')
     screen.should_contain('Test')
-    actions = n._props['options']['actions']
-    assert len(actions) == 1
-    assert actions[0]['label'] == 'Click me'
-    assert actions[0]['noDismiss'] is False
-    assert 'icon' not in actions[0]
-    assert ':handler' in actions[0]
+    screen.should_contain('Click me')
+    assert screen.find_by_css('.q-notification__actions .q-icon').text == 'check'
 
 
-def test_add_action_with_icon(screen: Screen):
-    n = None
-
+def test_add_action_dismisses_notification(screen: Screen):
     @ui.page('/')
     def page():
-        nonlocal n
         n = ui.notification('Test', timeout=None)
-        n.add_action(lambda: None, text='With icon', icon='check')
-        n.add_action(lambda: None, text='No icon')
+        n.add_action(lambda: None, text='OK')
 
     screen.open('/')
-    actions = n._props['options']['actions']
-    assert actions[0]['icon'] == 'check'
-    assert 'icon' not in actions[1]
+    screen.should_contain('Test')
+    screen.click('OK')
+    screen.wait(1.5)
+    screen.should_not_contain('Test')
 
 
-def test_add_action_no_dismiss(screen: Screen):
-    n = None
-
+def test_add_action_no_dismiss_keeps_notification(screen: Screen):
     @ui.page('/')
     def page():
-        nonlocal n
         n = ui.notification('Test', timeout=None)
-        n.add_action(lambda: None, text='Dismiss', no_dismiss=False)
         n.add_action(lambda: None, text='Stay', no_dismiss=True)
 
     screen.open('/')
-    actions = n._props['options']['actions']
-    assert actions[0]['noDismiss'] is False
-    assert actions[1]['noDismiss'] is True
+    screen.should_contain('Test')
+    screen.click('Stay')
+    screen.wait(1.5)
+    screen.should_contain('Test')
 
 
 def test_add_action_quasar_color(screen: Screen):
-    n = None
-
     @ui.page('/')
     def page():
-        nonlocal n
         n = ui.notification('Test', timeout=None)
         n.add_action(lambda: None, text='Primary', color='primary')
 
     screen.open('/')
-    action = n._props['options']['actions'][0]
-    assert action['color'] == 'primary'
-    assert 'class' not in action
-    assert 'style' not in action
+    screen.should_contain('Primary')
+    button = screen.find_by_css('.q-notification__actions .q-btn')
+    assert button.value_of_css_property('color') == 'rgba(88, 152, 212, 1)'
 
 
 def test_add_action_tailwind_color(screen: Screen):
-    n = None
-
     @ui.page('/')
     def page():
-        nonlocal n
         n = ui.notification('Test', timeout=None)
         n.add_action(lambda: None, text='Blue', color='blue-500')
 
     screen.open('/')
-    action = n._props['options']['actions'][0]
-    assert action['class'] == 'text-blue-500'
-    assert 'color' not in action
-    assert 'style' not in action
+    screen.should_contain('Blue')
+    button = screen.find_by_css('.q-notification__actions .q-btn')
+    assert 'text-blue-500' in button.get_attribute('class')
 
 
 def test_add_action_css_color(screen: Screen):
-    n = None
-
     @ui.page('/')
     def page():
-        nonlocal n
         n = ui.notification('Test', timeout=None)
         n.add_action(lambda: None, text='Custom', color='#ff0000')
 
     screen.open('/')
-    action = n._props['options']['actions'][0]
-    assert action['style'] == 'color: #ff0000;'
-    assert 'color' not in action
-    assert 'class' not in action
+    screen.should_contain('Custom')
+    button = screen.find_by_css('.q-notification__actions .q-btn')
+    assert button.value_of_css_property('color') == 'rgba(255, 0, 0, 1)'
 
 
-def test_add_action_no_color(screen: Screen):
+def test_add_action_color_encoding(screen: Screen):
+    """White-box: whether a color lands in the "color" prop, "class" or "style" is not observable in the rendered DOM."""
     n = None
 
     @ui.page('/')
     def page():
         nonlocal n
         n = ui.notification('Test', timeout=None)
-        n.add_action(lambda: None, text='No color', color=None)
+        n.add_action(lambda: None, text='Quasar', color='primary')
+        n.add_action(lambda: None, text='Tailwind', color='blue-500')
+        n.add_action(lambda: None, text='CSS', color='#ff0000')
+        n.add_action(lambda: None, text='None', color=None)
 
     screen.open('/')
-    action = n._props['options']['actions'][0]
-    assert 'color' not in action
-    assert 'class' not in action
-    assert 'style' not in action
+    screen.should_contain('Test')
+    quasar, tailwind, css, none = n._props['options']['actions']
+    assert quasar['color'] == 'primary' and 'class' not in quasar and 'style' not in quasar
+    assert tailwind['class'] == 'text-blue-500' and 'color' not in tailwind and 'style' not in tailwind
+    assert css['style'] == 'color: #ff0000;' and 'color' not in css and 'class' not in css
+    assert all(key not in none for key in ('color', 'class', 'style'))
 
 
-def test_add_action_kwargs_override_color(screen: Screen):
-    n = None
-
+def test_add_action_kwargs_merge_with_color_class(screen: Screen):
     @ui.page('/')
     def page():
-        nonlocal n
         n = ui.notification('Test', timeout=None)
-        n.add_action(lambda: None, text='Test', color='blue-500', **{'class': 'my-class'})
+        n.add_action(lambda: None, text='Merged', color='blue-500', **{'class': 'my-class'})
 
     screen.open('/')
-    action = n._props['options']['actions'][0]
-    # explicit kwargs win: user's class clobbers the color-derived class
-    assert action['class'] == 'my-class'
+    screen.should_contain('Merged')
+    classes = screen.find_by_css('.q-notification__actions .q-btn').get_attribute('class')
+    assert 'text-blue-500' in classes, 'color must not be dropped when a "class" kwarg is passed'
+    assert 'my-class' in classes
 
 
-def test_add_action_multiple_actions(screen: Screen):
-    n = None
-
+def test_add_action_kwargs_merge_with_color_style(screen: Screen):
     @ui.page('/')
     def page():
-        nonlocal n
         n = ui.notification('Test', timeout=None)
-        n.add_action(lambda: None, text='Action 1')
-        n.add_action(lambda: None, text='Action 2')
-        n.add_action(lambda: None, text='Action 3')
+        n.add_action(lambda: None, text='Styled', color='#ff0000', style='padding-top: 30px;')
 
     screen.open('/')
-    actions = n._props['options']['actions']
-    assert len(actions) == 3
-    assert actions[0]['label'] == 'Action 1'
-    assert actions[1]['label'] == 'Action 2'
-    assert actions[2]['label'] == 'Action 3'
-    assert 'index: 0' in actions[0][':handler']
-    assert 'index: 1' in actions[1][':handler']
-    assert 'index: 2' in actions[2][':handler']
+    screen.should_contain('Styled')
+    button = screen.find_by_css('.q-notification__actions .q-btn')
+    assert button.value_of_css_property('color') == 'rgba(255, 0, 0, 1)', \
+        'color must not be dropped when a "style" kwarg is passed'
+    assert button.value_of_css_property('padding-top') == '30px'
 
 
-def test_add_action_returns_self(screen: Screen):
-    n = None
-
-    @ui.page('/')
-    def page():
-        nonlocal n
-        n = ui.notification('Test', timeout=None)
-        result = n.add_action(lambda: None, text='Test')
-        assert result is n
-
-    screen.open('/')
-
-
-def test_add_action_on_click_fires(screen: Screen):
+def test_add_action_each_callback_fires(screen: Screen):
     clicked: list[str] = []
 
     @ui.page('/')
     def page():
         n = ui.notification('Decide', timeout=None)
-        n.add_action(lambda: clicked.append('yes'), text='Yes')
-        n.add_action(lambda: clicked.append('no'), text='No')
+        n.add_action(lambda: clicked.append('one'), text='One', no_dismiss=True)
+        n.add_action(lambda: clicked.append('two'), text='Two', no_dismiss=True)
+        n.add_action(lambda: clicked.append('three'), text='Three', no_dismiss=True)
 
     screen.open('/')
-    screen.click('No')  # click the second action to verify the index dispatch picks the right handler
+    screen.should_contain('Decide')
+    screen.click('Two')
     screen.wait(0.5)
-    assert clicked == ['no']
+    screen.click('One')
+    screen.wait(0.5)
+    screen.click('Three')
+    screen.wait(0.5)
+    assert clicked == ['two', 'one', 'three']
+
+
+def test_add_action_returns_self(screen: Screen):
+    @ui.page('/')
+    def page():
+        n = ui.notification('Test', timeout=None)
+        result = n.add_action(lambda: None, text='Test')
+        assert result is n
+
+    screen.open('/')
+    screen.should_contain('Test')
 
 
 def test_add_action_after_render_no_duplicate(screen: Screen):
