@@ -35,7 +35,9 @@ class Plotly(Element, component='plotly.js', esm={'nicegui-plotly': 'dist'}):
         :param n_samples: If set, enables dynamic resampling for large datasets.
                           Only the specified number of samples will be sent to the client,
                           with automatic resampling on zoom/pan using the LTTB algorithm.
+                          Only "scatter" and "scattergl" traces are resampled.
                           For better performance, install ``pip install nicegui[tsdownsample]``.
+                          *Added in version 3.14.0*
         """
         super().__init__()
 
@@ -68,7 +70,7 @@ class Plotly(Element, component='plotly.js', esm={'nicegui-plotly': 'dist'}):
         for idx, trace in enumerate(traces):
             trace_dict = trace.to_plotly_json() if hasattr(trace, 'to_plotly_json') else trace
             if trace_dict.get('type', 'scatter') not in ('scatter', 'scattergl'):
-                continue
+                continue  # NOTE: Plotly has no "line" trace type; line charts are scatter traces with mode='lines'
 
             x = trace_dict.get('x')
             y = trace_dict.get('y')

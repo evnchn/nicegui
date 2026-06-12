@@ -16,7 +16,7 @@ except ImportError:
 class Downsampler(Protocol):
     """Protocol for downsampling algorithms."""
 
-    def downsample(self, x: np.ndarray, y: np.ndarray, n_out: int) -> np.ndarray:
+    def downsample(self, x: np.ndarray, y: np.ndarray, *, n_out: int) -> np.ndarray:
         """Downsample data to n_out points, returning indices of selected points."""
 
 
@@ -27,7 +27,7 @@ class _NumpyLTTBDownsampler:
     Rust-based tsdownsample, it produces good visual results for time series data.
     """
 
-    def downsample(self, x: np.ndarray, y: np.ndarray, n_out: int) -> np.ndarray:
+    def downsample(self, x: np.ndarray, y: np.ndarray, *, n_out: int) -> np.ndarray:
         """Downsample data using the LTTB algorithm.
 
         :param x: x-axis values (must be sorted)
