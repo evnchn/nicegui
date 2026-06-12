@@ -182,6 +182,10 @@ def activate(protocol: str, host: str, port: int, title: str, width: int, height
             time.sleep(0.1)
         if shutdown_event is not None:
             shutdown_event.set()
+        # The window is closed, so bound the connection drain, which can hang forever on Windows (#5443).
+        # Without auto-reloading the server runs in this very process and never sees a shutdown event,
+        # so the timeout must be set here as well. Lifespan shutdown (with app.on_shutdown callbacks) is unaffected.
+        Server.instance.config.timeout_graceful_shutdown = 1
         Server.instance.should_exit = True
         while not core.app.is_stopped:
             time.sleep(0.1)
