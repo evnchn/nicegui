@@ -3,24 +3,13 @@
 set -euo pipefail
 
 request() {
-    local url="$1"
-    uv run --no-sync python - "$url" <<'PY'
-import sys
-import urllib.error
-import urllib.request
-
-url = sys.argv[1]
-try:
-    with urllib.request.urlopen(url, timeout=5) as response:
-        response.read()
-        if response.status >= 500:
-            raise SystemExit(f'{url} returned HTTP {response.status}')
-except urllib.error.HTTPError as e:
-    if e.code >= 500:
-        raise SystemExit(f'{url} returned HTTP {e.code}') from e
-except Exception as e:
-    raise SystemExit(f'Failed to request {url}: {e}') from e
-PY
+    local url="$1" code
+    # NOTE servers with reload=True log their URL before the socket accepts connections, so retry refused connections
+    code=$(curl --silent --location --retry 5 --retry-connrefused --retry-delay 1 --output /dev/null --write-out '%{http_code}' --max-time 5 "$url" || true)
+    if [[ $code -lt 200 || $code -ge 500 ]]; then
+        echo "Request to $url failed with HTTP status $code"
+        return 1
+    fi
 }
 
 run() {
@@ -28,7 +17,9 @@ run() {
     local output_file
     output_file=$(mktemp)
     local exitcode=0
-    { timeout 10 uv run --no-sync ./"$1" "${@:2}"; } > "$output_file" 2>&1 &
+    # NOTE keep stdin open for examples which read from it (e.g. threaded_nicegui); a no-op for all other examples
+    # NOTE no brace group, so $pid is the timeout process itself, which forwards SIGTERM to the server's process group
+    timeout 10 uv run --no-sync ./"$1" "${@:2}" < <(sleep 15) > "$output_file" 2>&1 &
     local pid=$!
 
     local ready=0
@@ -43,21 +34,28 @@ run() {
         sleep 0.2
     done
 
+    local request_output=""
     if [[ $ready -eq 1 ]]; then
         local url
         url=$(grep -Eo "http://(127\.0\.0\.1|localhost):[0-9]+" "$output_file" | head -n 1 || true)
-        request "${url:-http://127.0.0.1:8080}/" || exitcode=1
+        if request_output=$(request "${url:-http://127.0.0.1:8080}/" 2>&1); then
+            kill "$pid" 2>/dev/null || true # NOTE stop the server right after a successful request instead of waiting out the timeout
+        else
+            exitcode=1
+        fi
     else
         exitcode=1
     fi
 
     local process_exit=0
-    wait "$pid" || process_exit=$?
+    wait "$pid" 2>/dev/null || process_exit=$? # NOTE suppress the asynchronous "Terminated" job notification after stopping the server early
     [[ $process_exit -eq 124 ]] && process_exit=0 # exitcode 124 is coming from "timeout command above"
+    [[ $process_exit -eq 143 ]] && process_exit=0 # exitcode 143 (SIGTERM) is coming from stopping the server early after a successful request
     [[ $process_exit -ne 0 ]] && exitcode=$process_exit
     local output
     output=$(cat "$output_file")
     rm "$output_file"
+    [[ -n $request_output ]] && output+=$'\n'"$request_output" # NOTE append the request failure reason so it shows up in the failure dump
     echo "$output" | grep -qE "NiceGUI ready to go|Uvicorn running on http://127.0.0.1:8000" || exitcode=1
     echo "$output" | grep -qE "Traceback|Error" && exitcode=1
     if [[ $exitcode -ne 0 ]]; then
