@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import _thread
+import asyncio
 import multiprocessing as mp
+import os
 import pickle
 import queue
 import socket
@@ -18,7 +19,6 @@ from typing import Any
 
 from .. import core, helpers, optional_features
 from ..logging import log
-from ..server import Server
 from . import native, window_icon
 from .event_manager import event_manager
 
@@ -173,6 +173,26 @@ def _warn_if_esm_unsupported(window: webview.Window) -> None:
     window.events.loaded += check
 
 
+def _hard_exit_after_shutdown() -> None:
+    """Run NiceGUI's own shutdown (app.on_shutdown callbacks), then hard-exit the process.
+
+    The native window is closed, so there is no live browser left to gracefully say goodbye to.
+    We drive `app.stop()` directly on the running event loop instead of relying on uvicorn's
+    own lifespan shutdown: uvicorn runs its connection drain *before* lifespan shutdown, and that
+    drain can hang forever on a ghost Windows connection (#5443). Running `app.stop()` ourselves
+    lets the user's `on_shutdown` work complete first, then `os._exit(0)` bypasses the stuck drain.
+    Because the process exits here, uvicorn never reaches its own lifespan shutdown, so the
+    handlers run exactly once.
+    """
+    if core.loop is not None and core.loop.is_running() and not core.app.is_stopped:
+        future = asyncio.run_coroutine_threadsafe(core.app.stop(), core.loop)
+        with suppress(Exception):
+            future.result(timeout=30)
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(0)
+
+
 def activate(protocol: str, host: str, port: int, title: str, width: int, height: int, fullscreen: bool, frameless: bool,
              shutdown_event: MultiprocessingEvent | None = None,
              favicon: str | Path | None = None) -> None:
@@ -182,12 +202,7 @@ def activate(protocol: str, host: str, port: int, title: str, width: int, height
             time.sleep(0.1)
         if shutdown_event is not None:
             shutdown_event.set()
-        Server.instance.should_exit = True
-        while not core.app.is_stopped:
-            time.sleep(0.1)
-        _thread.interrupt_main()
-        event_manager.stop()
-        native.remove_queues()
+        _hard_exit_after_shutdown()
 
     if not optional_features.has('webview'):
         log.error('Native mode is not supported in this configuration.\n'
