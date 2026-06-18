@@ -10,6 +10,13 @@
     />
     <link href="{{ favicon_url }}" rel="shortcut icon" />
     <style>
+      {#
+        `prefix` is reflected below (and in <script src>, the JS `prefix:` string, and CSS @import) with `| safe`.
+        A scanner flagging this as XSS is seeing a bounded case: `prefix` is the X-Forwarded-Prefix request header
+        (+ root_path), client-settable only on a directly-exposed app — and then it's self-XSS, since a browser
+        cannot be made to send a victim's custom header cross-origin. It becomes victim-reachable only via a
+        pass-through proxy or an unkeyed shared cache.
+      #}
       @layer theme, base, quasar, nicegui, components, utilities, overrides, quasar_importants;
       @import url("{{ prefix | safe }}/_nicegui/{{version}}/static/fonts.css") layer(base);
       {% if prod_js %}
