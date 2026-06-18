@@ -9,6 +9,7 @@ from collections import defaultdict
 from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, cast
+from urllib.parse import quote
 
 from fastapi import Request
 from fastapi.responses import Response
@@ -172,10 +173,12 @@ class Client:
                 background=BackgroundTask(self.delete),
             )
         self.outbox.updates.clear()
-        # `prefix` is reflected raw into the page (importmap, <script src>, JS `prefix:`, CSS @import) via `| safe`.
-        # It comes from the X-Forwarded-Prefix header: client-settable only on a directly-exposed app (then self-XSS,
-        # since a browser cannot send a victim's custom header cross-origin), or via a pass-through proxy / unkeyed cache.
-        prefix = request.headers.get('X-Forwarded-Prefix', '') + request.scope.get('root_path', '')
+        # Defense in depth: `prefix` is reflected into the page (importmap, <script src>, JS `prefix:`, CSS @import)
+        # via `| safe`, and the X-Forwarded-Prefix part is client-controllable on a directly-exposed app or a
+        # pass-through proxy. Percent-encode it so no structural char (`"` `'` `<` `>` `` ` `` `$` `\` space) can break
+        # out of any context. A legitimate mount prefix is a URL path, so `quote(safe='/%')` is a no-op for real
+        # deployments (`%` is kept safe to avoid double-encoding an already-encoded prefix).
+        prefix = quote(request.headers.get('X-Forwarded-Prefix', ''), safe='/%') + request.scope.get('root_path', '')
         elements = json.dumps({
             id: element._to_dict() for id, element in self.elements.items()  # pylint: disable=protected-access
         })
