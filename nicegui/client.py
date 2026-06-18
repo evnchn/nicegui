@@ -172,6 +172,9 @@ class Client:
                 background=BackgroundTask(self.delete),
             )
         self.outbox.updates.clear()
+        # `prefix` is reflected raw into the page (importmap, <script src>, JS `prefix:`, CSS @import) via `| safe`.
+        # It comes from the X-Forwarded-Prefix header: client-settable only on a directly-exposed app (then self-XSS,
+        # since a browser cannot send a victim's custom header cross-origin), or via a pass-through proxy / unkeyed cache.
         prefix = request.headers.get('X-Forwarded-Prefix', '') + request.scope.get('root_path', '')
         elements = json.dumps({
             id: element._to_dict() for id, element in self.elements.items()  # pylint: disable=protected-access
