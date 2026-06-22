@@ -43,6 +43,6 @@ async def test_scoped_search_for_elements(user: User) -> None:
     with left_card:
         await user.should_see(marker='duplicate-button', content='Shared Action Left')
         await user.should_see(marker='scope-title left')
-        await user.should_not_see(marker='duplicate-button', content='Shared Action Right')
-        await user.should_not_see(marker='scope-title right')
-        assert len(user.find(marker='duplicated-marker').elements) == 1
+        await user.should_not_see(marker='duplicate-button', content='Shared Action Right', scoped=True)
+        await user.should_not_see(marker='scope-title right', scoped=True)
+        assert len(user.find(marker='duplicated-marker', scoped=True).elements) == 1

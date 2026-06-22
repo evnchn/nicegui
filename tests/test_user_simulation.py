@@ -937,6 +937,24 @@ async def test_scoped_search_for_elements(user: User) -> None:
         assert len(user.find(marker='duplicated-marker', scoped=True).elements) == 1
 
 
+async def test_scoped_search_at_page_level_includes_layout(user: User) -> None:
+    @ui.page('/')
+    def page():
+        ui.label('in content').mark('content-label')
+        with ui.header():
+            ui.label('in header').mark('header-label')
+        with ui.footer():
+            ui.label('in footer').mark('footer-label')
+
+    await user.open('/')
+    # Without a surrounding `with element:` there is no narrower scope to apply,
+    # so `scoped=True` must still search the whole layout including header/footer.
+    await user.should_see(marker='content-label', scoped=True)
+    await user.should_see(marker='header-label', scoped=True)
+    await user.should_see(marker='footer-label', scoped=True)
+    assert len(user.find(marker='header-label', scoped=True).elements) == 1
+
+
 async def test_switching_between_sub_pages(user: User) -> None:
     calls = {'index': 0, 'a': 0, 'b': 0, 'other': 0}
 

@@ -148,9 +148,13 @@ class User:
 
         By default `should_see` makes three attempts to find the element before failing.
         This can be adjusted with the `retries` parameter.
+
+        Set `scoped=True` to limit the search to the current element scope, e.g. inside a `with element:` block;
+        outside any `with element:` block it has no effect.
         """
         for _ in range(retries):
-            if self.notify.contains(target) or self._gather_elements(scoped, target=target, kind=kind, marker=marker, content=content):
+            if self.notify.contains(target) or self._gather_elements(
+                    target=target, kind=kind, marker=marker, content=content, scoped=scoped):
                 return
             await asyncio.sleep(0.1)
         raise AssertionError('expected to see at least one ' + self._build_error_message(target, kind, marker, content))
@@ -184,9 +188,14 @@ class User:
                              retries: int = 3,
                              scoped: bool = False,
                              ) -> None:
-        """Assert that the page does not contain an input with the given value."""
+        """Assert that the page does not contain an input with the given value.
+
+        Set `scoped=True` to limit the search to the current element scope, e.g. inside a `with element:` block;
+        outside any `with element:` block it has no effect.
+        """
         for _ in range(retries):
-            if not self.notify.contains(target) and not self._gather_elements(scoped, target=target, kind=kind, marker=marker, content=content):
+            if not self.notify.contains(target) and not self._gather_elements(
+                    target=target, kind=kind, marker=marker, content=content, scoped=scoped):
                 return
             await asyncio.sleep(0.05)
         raise AssertionError('expected not to see any ' + self._build_error_message(target, kind, marker, content))
@@ -234,8 +243,12 @@ class User:
              content: str | list[str] | None = None,
              scoped: bool = False,
              ) -> UserInteraction[T]:
-        """Select elements for interaction."""
-        elements = self._gather_elements(scoped, target=target, kind=kind, marker=marker, content=content)
+        """Select elements for interaction.
+
+        Set `scoped=True` to limit the search to the current element scope, e.g. inside a `with element:` block;
+        outside any `with element:` block it has no effect.
+        """
+        elements = self._gather_elements(target=target, kind=kind, marker=marker, content=content, scoped=scoped)
         if not elements:
             raise AssertionError('expected to find at least one ' +
                                  self._build_error_message(target, kind, marker, content))
@@ -248,25 +261,31 @@ class User:
 
     def _gather_elements(
         self,
-        scoped: bool,
         *,
         target: str | type[T] | None = None,
         kind: type[T] | None = None,
         marker: str | list[str] | None = None,
         content: str | list[str] | None = None,
+        scoped: bool = False,
     ) -> set[T]:
-        with self._scope:
+        scope = self._scope
+        # Only narrow the search when the scope resolved to a real sub-element;
+        # at page level `_scope` falls back to the client, where narrowing would
+        # exclude the layout shells (header, drawer, footer, notifications).
+        local_scope = scoped and not isinstance(scope, Client)
+        with scope:
             if target is None:
                 if kind is None:
-                    elements = set(ElementFilter(marker=marker, content=content, only_visible=True, local_scope=scoped))
+                    elements = set(ElementFilter(marker=marker, content=content,
+                                   only_visible=True, local_scope=local_scope))
                 else:
                     elements = set(ElementFilter(kind=kind, marker=marker,
-                                                 content=content, only_visible=True, local_scope=scoped))
+                                                 content=content, only_visible=True, local_scope=local_scope))
             elif isinstance(target, str):
-                elements = set(ElementFilter(marker=target, only_visible=True, local_scope=scoped)) \
-                    .union(ElementFilter(content=target, only_visible=True, local_scope=scoped))
+                elements = set(ElementFilter(marker=target, only_visible=True, local_scope=local_scope)) \
+                    .union(ElementFilter(content=target, only_visible=True, local_scope=local_scope))
             else:
-                elements = set(ElementFilter(kind=target, only_visible=True, local_scope=scoped))
+                elements = set(ElementFilter(kind=target, only_visible=True, local_scope=local_scope))
         return elements  # type: ignore
 
     def _build_error_message(self,
