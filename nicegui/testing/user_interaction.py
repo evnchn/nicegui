@@ -27,6 +27,28 @@ class UserInteraction(Generic[T]):
             assert isinstance(element, ui.element)
         self.elements = elements
         self.target = target
+        self._scope_element: T | None = None
+        self._previous_auto_scope = False
+
+    def __enter__(self) -> Self:
+        """Enter the single matched element so that lookups inside the block are scoped to it.
+
+        This is the context-manager alternative to passing ``scoped=True`` on every call::
+
+            with user.find('left-card'):
+                await user.should_see('Button')  # only searches inside the left card
+        """
+        assert len(self.elements) == 1, 'scoping requires exactly one matched element'
+        self._scope_element = next(iter(self.elements))
+        self._previous_auto_scope = self.user._auto_scope  # pylint: disable=protected-access
+        self.user._auto_scope = True  # pylint: disable=protected-access
+        self._scope_element.__enter__()
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        assert self._scope_element is not None
+        self.user._auto_scope = self._previous_auto_scope  # pylint: disable=protected-access
+        self._scope_element.__exit__(exc_type, exc_val, exc_tb)
 
     def trigger(self, event: str, args: Any = None) -> Self:
         """Trigger the given event on the elements selected by the simulated user.

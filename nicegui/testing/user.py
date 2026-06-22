@@ -37,6 +37,7 @@ class User:
         self.notify = UserNotify()
         self.download = UserDownload(self)
         self.tab_id = str(uuid4())
+        self._auto_scope = False  # set while inside a `with user.find(...):` block
         self.javascript_rules: dict[re.Pattern, Callable[[re.Match], Any]] = {
             re.compile('.*__IS_DRAWER_OPEN__'): lambda _: True,  # see https://github.com/zauberzeug/nicegui/issues/4508
         }
@@ -272,7 +273,9 @@ class User:
         # Only narrow the search when the scope resolved to a real sub-element;
         # at page level `_scope` falls back to the client, where narrowing would
         # exclude the layout shells (header, drawer, footer, notifications).
-        local_scope = scoped and not isinstance(scope, Client)
+        # `_auto_scope` is set while inside a `with user.find(...):` block, so the
+        # block scopes every lookup without needing the explicit `scoped=True` flag.
+        local_scope = (scoped or self._auto_scope) and not isinstance(scope, Client)
         with scope:
             if target is None:
                 if kind is None:

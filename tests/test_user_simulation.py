@@ -937,6 +937,24 @@ async def test_scoped_search_for_elements(user: User) -> None:
         assert len(user.find(marker='duplicated-marker', scoped=True).elements) == 1
 
 
+async def test_scoped_search_via_context_manager(user: User) -> None:
+    @ui.page('/')
+    def page():
+        with ui.card().mark('scope-card left'):
+            ui.button('Shared Action Left').mark('duplicate-button')
+        with ui.card().mark('scope-card right'):
+            ui.button('Shared Action Right').mark('duplicate-button')
+
+    await user.open('/')
+    # Entering a found element scopes every assertion inside the block -- no `scoped=True` flag needed.
+    with user.find(marker='scope-card left'):
+        await user.should_see(content='Shared Action Left')
+        await user.should_not_see(content='Shared Action Right')
+        assert len(user.find(marker='duplicate-button').elements) == 1
+    # Outside the block the search is global again.
+    assert len(user.find(marker='duplicate-button').elements) == 2
+
+
 async def test_scoped_search_at_page_level_includes_layout(user: User) -> None:
     @ui.page('/')
     def page():
