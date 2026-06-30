@@ -171,6 +171,8 @@ export default {
         linux, // unset linux will fall back to key
         win, // unset win will fall back to key
         run: () => {
+          // while disabled, don't fire or swallow the key: return false so the browser default and lower bindings run
+          if (this.disable) return false;
           this.$emit("keybinding", { key });
           return preventDefault;
         },
