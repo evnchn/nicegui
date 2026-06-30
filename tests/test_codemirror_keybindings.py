@@ -21,6 +21,21 @@ def _press(screen: Screen, key: str, *, ctrl: bool = False) -> None:
     ''')
 
 
+def _press_default_prevented(screen: Screen, key: str, *, ctrl: bool = False) -> bool:
+    args = {
+        'key': key,
+        'code': f'Key{key.upper()}' if len(key) == 1 else key,
+        'ctrlKey': ctrl,
+        'bubbles': True,
+        'cancelable': True,
+    }
+    return screen.selenium.execute_script(f'''
+        const ev = new KeyboardEvent("keydown", {json.dumps(args)});
+        document.querySelector(".cm-content").dispatchEvent(ev);
+        return ev.defaultPrevented;
+    ''')
+
+
 def test_map_and_unmap_callbacks(screen: Screen):
     @ui.page('/')
     def page():
@@ -94,6 +109,27 @@ def test_keymap_does_not_fire_while_disabled(screen: Screen):
     screen.should_contain('enabled=True')
     _press(screen, 'x')
     screen.wait_for(lambda: events == ['fired while enabled'] * 2)
+
+
+def test_disabled_editor_does_not_swallow_keybinding(screen: Screen):
+    @ui.page('/')
+    def page():
+        editor = ui.codemirror('hello', keymap={
+            'Ctrl-b': ui.codemirror.KeyBinding(lambda: None, prevent_default=True),
+        })
+        ui.button('Disable', on_click=editor.disable)
+        ui.label().bind_text_from(editor, 'enabled', lambda value: f'enabled={value}')
+
+    screen.open('/')
+    screen.should_contain('hello')
+
+    # while enabled, prevent_default=True suppresses the browser default
+    assert _press_default_prevented(screen, 'b', ctrl=True) is True
+
+    screen.click('Disable')
+    screen.should_contain('enabled=False')
+    # while disabled, the keybinding must not swallow the key, so the browser default proceeds
+    assert _press_default_prevented(screen, 'b', ctrl=True) is False
 
 
 @pytest.mark.parametrize('keybinding, error', [
