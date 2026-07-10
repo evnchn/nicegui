@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import copyreg
 import dataclasses
+import itertools
 import time
 import weakref
 from collections import defaultdict
@@ -23,12 +24,23 @@ MAX_PROPAGATION_TIME = 0.01
 propagation_visited: ContextVar[set[tuple[int, tuple[str, ...]]] | None] = \
     ContextVar('propagation_visited', default=None)
 
+BindingKey = tuple[int, tuple[str, ...]]
+
+# Each key maps to a dict of {entry id -> (source, target, target_name, transform)} so that a single
+# entry can be removed in O(1) by id, even when many bindings share one source (and thus one key).
 bindings: defaultdict[
-    tuple[int, tuple[str, ...]],
-    list[tuple[Any, Any, tuple[str, ...], Callable[[Any], Any] | None]]
-] = defaultdict(list)
-bindable_properties: weakref.WeakValueDictionary[tuple[int, tuple[str, ...]], Any] = weakref.WeakValueDictionary()
-active_links: list[tuple[Any, tuple[str, ...], Any, tuple[str, ...], Callable[[Any], Any] | None]] = []
+    BindingKey,
+    dict[int, tuple[Any, Any, tuple[str, ...], Callable[[Any], Any] | None]]
+] = defaultdict(dict)
+_binding_entry_ids = itertools.count()
+# Reverse index: object id -> set of (key, entry id) the object participates in (as source or target).
+# Lets ``remove`` touch only the bindings of the given objects instead of scanning all of them.
+_bindings_by_obj: defaultdict[int, set[tuple[BindingKey, int]]] = defaultdict(set)
+bindable_properties: weakref.WeakValueDictionary[BindingKey, Any] = weakref.WeakValueDictionary()
+active_links: dict[int, tuple[Any, tuple[str, ...], Any, tuple[str, ...], Callable[[Any], Any] | None]] = {}
+_active_link_ids = itertools.count()
+# Reverse index: object id -> set of active-link ids the object participates in (as source or target).
+_active_links_by_obj: defaultdict[int, set[int]] = defaultdict(set)
 _active_links_added = asyncio.Event()
 
 TC = TypeVar('TC', bound=type)
@@ -80,7 +92,9 @@ async def refresh_loop() -> None:
 
 def _refresh_step() -> None:
     t = time.time()
-    for link in active_links:
+    for link_id, link in list(active_links.items()):  # snapshot: a transform may call remove() and mutate active_links
+        if link_id not in active_links:  # this link was removed reentrantly (e.g. remove() from a transform)
+            continue
         (source_obj, source_name, target_obj, target_name, transform) = link
         if (source_value := _get_attribute(source_obj, source_name)) is not _MISSING:
             value = transform(source_value) if transform else source_value
@@ -112,7 +126,12 @@ def _propagate_recursively(source_obj: Any, source_name: tuple[str, ...]) -> Non
     if (source_value := _get_attribute(source_obj, source_name)) is _MISSING:
         return
 
-    for _, target_obj, target_name, transform in bindings.get((source_obj_id, source_name), []):
+    # snapshot: a transform may call remove() and mutate this binding dict during iteration
+    entries = bindings.get((source_obj_id, source_name), {})
+    for entry_id, entry in list(entries.items()):
+        if entry_id not in entries:  # this binding was removed reentrantly (e.g. remove() from a transform)
+            continue
+        _, target_obj, target_name, transform = entry
         if (id(target_obj), target_name) in visited:
             continue
 
@@ -151,6 +170,22 @@ def _check_self_and_other_attribute(self_obj: Any, self_name: tuple[str, ...], o
         _check_attribute_exists(other_obj, other_name, role='other')
 
 
+def _register_binding(source_obj: Any, source_name: tuple[str, ...], target_obj: Any, target_name: tuple[str, ...],
+                      transform: Callable[[Any], Any] | None) -> None:
+    """Register a one-way binding ``source_obj.source_name`` -> ``target_obj.target_name`` and index it."""
+    key = (id(source_obj), source_name)
+    entry_id = next(_binding_entry_ids)
+    bindings[key][entry_id] = (source_obj, target_obj, target_name, transform)
+    _bindings_by_obj[id(source_obj)].add((key, entry_id))
+    _bindings_by_obj[id(target_obj)].add((key, entry_id))
+    if key not in bindable_properties:
+        link_id = next(_active_link_ids)
+        active_links[link_id] = (source_obj, source_name, target_obj, target_name, transform)
+        _active_links_by_obj[id(source_obj)].add(link_id)
+        _active_links_by_obj[id(target_obj)].add(link_id)
+        _active_links_added.set()
+
+
 def bind_to(self_obj: Any, self_name: str | tuple[str, ...], other_obj: Any, other_name: str | tuple[str, ...],
             forward: Callable[[Any], Any] | None = None, *,
             self_strict: bool | None = None, other_strict: bool | None = None) -> None:
@@ -173,10 +208,7 @@ def bind_to(self_obj: Any, self_name: str | tuple[str, ...], other_obj: Any, oth
     self_name_tuple = _normalize_name(self_name)
     other_name_tuple = _normalize_name(other_name)
     _check_self_and_other_attribute(self_obj, self_name_tuple, other_obj, other_name_tuple, self_strict, other_strict)
-    bindings[(id(self_obj), self_name_tuple)].append((self_obj, other_obj, other_name_tuple, forward))
-    if (id(self_obj), self_name_tuple) not in bindable_properties:
-        active_links.append((self_obj, self_name_tuple, other_obj, other_name_tuple, forward))
-        _active_links_added.set()
+    _register_binding(self_obj, self_name_tuple, other_obj, other_name_tuple, forward)
     _propagate(self_obj, self_name_tuple)
 
 
@@ -202,10 +234,7 @@ def bind_from(self_obj: Any, self_name: str | tuple[str, ...], other_obj: Any, o
     self_name_tuple = _normalize_name(self_name)
     other_name_tuple = _normalize_name(other_name)
     _check_self_and_other_attribute(self_obj, self_name_tuple, other_obj, other_name_tuple, self_strict, other_strict)
-    bindings[(id(other_obj), other_name_tuple)].append((other_obj, self_obj, self_name_tuple, backward))
-    if (id(other_obj), other_name_tuple) not in bindable_properties:
-        active_links.append((other_obj, other_name_tuple, self_obj, self_name_tuple, backward))
-        _active_links_added.set()
+    _register_binding(other_obj, other_name_tuple, self_obj, self_name_tuple, backward)
     _propagate(other_obj, other_name_tuple)
 
 
@@ -267,6 +296,7 @@ class BindableProperty:
 
     def __set_name__(self, _, name: str) -> None:
         self.name = name  # pylint: disable=attribute-defined-outside-init
+        _bindable_property_names_cache.clear()  # a class gained a bindable property; drop the memoized names
 
     def __get__(self, owner: Any, _=None) -> Any:
         return getattr(owner, '___' + self.name)
@@ -285,28 +315,69 @@ class BindableProperty:
             self._change_handler(owner, value)
 
 
+_bindable_property_names_cache: dict[type, tuple[tuple[str, ...], ...]] = {}
+
+
+def _bindable_property_names(cls: type) -> tuple[tuple[str, ...], ...]:
+    """Return the ``bindable_properties`` key-names a class can register (cached per class).
+
+    Entries in ``bindable_properties`` are only ever created by ``BindableProperty.__set__``,
+    always keyed by a single-element name tuple whose descriptor lives on the owner's class.
+    The cache is invalidated by ``BindableProperty.__set_name__`` whenever a class gains one.
+    """
+    if cls not in _bindable_property_names_cache:
+        _bindable_property_names_cache[cls] = tuple({
+            (attr,)
+            for base in cls.__mro__
+            for attr, value in vars(base).items()
+            if isinstance(value, BindableProperty)
+        })
+    return _bindable_property_names_cache[cls]
+
+
+def _discard_from_index(index: defaultdict[int, set], obj_id: int, value: Any) -> None:
+    """Discard ``value`` from ``index[obj_id]``, dropping the entry entirely once empty."""
+    entries = index.get(obj_id)
+    if entries is not None:
+        entries.discard(value)
+        if not entries:
+            del index[obj_id]
+
+
 def remove(objects: Iterable[Any]) -> None:
     """Remove all bindings that involve the given objects.
 
     :param objects: The objects to remove.
     """
+    objects = list(objects)  # may be a one-shot iterable, and we iterate it more than once
     object_ids = set(map(id, objects))
-    active_links[:] = [
-        (source_obj, source_name, target_obj, target_name, transform)
-        for source_obj, source_name, target_obj, target_name, transform in active_links
-        if id(source_obj) not in object_ids and id(target_obj) not in object_ids
-    ]
-    for key, binding_list in list(bindings.items()):
-        binding_list[:] = [
-            (source_obj, target_obj, target_name, transform)
-            for source_obj, target_obj, target_name, transform in binding_list
-            if id(source_obj) not in object_ids and id(target_obj) not in object_ids
-        ]
-        if not binding_list:
+
+    link_ids = set().union(*(_active_links_by_obj.pop(obj_id, set()) for obj_id in object_ids))
+    for link_id in link_ids:
+        link = active_links.pop(link_id, None)
+        if link is None:
+            continue
+        for participant in (link[0], link[2]):
+            if id(participant) not in object_ids:  # keep the surviving counterpart's index consistent
+                _discard_from_index(_active_links_by_obj, id(participant), link_id)
+
+    refs = set().union(*(_bindings_by_obj.pop(obj_id, set()) for obj_id in object_ids))
+    for key, entry_id in refs:
+        entries = bindings.get(key)
+        if entries is None:
+            continue
+        entry = entries.pop(entry_id, None)
+        if entry is None:
+            continue
+        for participant in (entry[0], entry[1]):  # keep the surviving counterpart's index consistent
+            if id(participant) not in object_ids:
+                _discard_from_index(_bindings_by_obj, id(participant), (key, entry_id))
+        if not entries:
             del bindings[key]
-    for obj_id, name in list(bindable_properties):
-        if obj_id in object_ids:
-            del bindable_properties[(obj_id, name)]
+
+    for obj in objects:
+        for name in _bindable_property_names(type(obj)):
+            bindable_properties.pop((id(obj), name), None)
 
 
 def reset() -> None:
@@ -315,8 +386,11 @@ def reset() -> None:
     This function is intended for testing purposes only.
     """
     bindings.clear()
+    _bindings_by_obj.clear()
     bindable_properties.clear()
     active_links.clear()
+    _active_links_by_obj.clear()
+    _bindable_property_names_cache.clear()
 
 
 @dataclass_transform()

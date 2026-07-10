@@ -146,7 +146,7 @@ def test_bindable_dataclass(screen: Screen):
 
     assert len(binding.bindings) == 2
     assert len(binding.active_links) == 1
-    assert binding.active_links[0][1] == ('not_bindable',)  # Names are now normalized to tuples
+    assert next(iter(binding.active_links.values()))[1] == ('not_bindable',)  # Names are now normalized to tuples
 
 
 async def test_copy_instance_with_bindable_property(user: User):
@@ -211,6 +211,118 @@ def test_automatic_cleanup(screen: Screen):
     binding.remove([label1])
     assert not is_alive(ref1) and not has_bindable_property(model_id1)
     assert is_alive(ref2) and has_bindable_property(model_id2)
+
+
+def test_remove_only_affects_given_objects():
+    """``remove`` must drop only the given objects' bindings and leave unrelated ones working (issue #6150)."""
+    binding.reset()
+
+    class Model:
+        value = binding.BindableProperty()
+
+        def __init__(self) -> None:
+            self.value = 0
+
+    a_source, a_target = Model(), Model()
+    b_source, b_target = Model(), Model()
+    binding.bind_to(a_source, 'value', a_target, 'value')
+    binding.bind_to(b_source, 'value', b_target, 'value')
+
+    binding.remove(obj for obj in (a_source, a_target))  # also covers one-shot iterable input
+
+    a_source.value = 1
+    b_source.value = 2
+    assert a_target.value == 0, 'removed binding must no longer propagate'
+    assert b_target.value == 2, 'unrelated binding must stay intact'
+
+
+def test_repeated_bind_remove_does_not_accumulate_state():
+    """Refresh-style bind/remove cycles must not accumulate binding state, not even in reverse indexes (issue #6150).
+
+    This is the regression guard for the quadratic-CPU bug: if ``remove`` left dangling entries behind,
+    the global structures (and the work ``remove`` does) would grow without bound across refreshes.
+    """
+    binding.reset()
+
+    class Model:
+        value = binding.BindableProperty()
+
+        def __init__(self) -> None:
+            self.value = 0
+
+    shared_source = {'value': 0}
+    for _ in range(5):
+        distinct_sources = [Model() for _ in range(20)]
+        targets = [Model() for _ in range(20)]
+        for source, target in zip(distinct_sources, targets, strict=True):
+            binding.bind_to(source, 'value', target, 'value')  # distinct-source binding
+            binding.bind_from(target, 'value', shared_source, 'value')  # shared-source active link
+        binding.remove(distinct_sources + targets)
+
+    assert not binding.bindings
+    assert not binding.active_links
+    assert not binding.bindable_properties
+    assert not binding._bindings_by_obj, 'stale bindings index entries leaked'  # pylint: disable=protected-access
+    assert not binding._active_links_by_obj, 'stale active-links index entries leaked'  # pylint: disable=protected-access
+
+
+def test_remove_during_propagation_does_not_crash():
+    """A transform calling ``remove`` mid-propagation must not raise (dict iterated during mutation, issue #6150)."""
+    binding.reset()
+
+    class Model:
+        value = binding.BindableProperty()
+
+        def __init__(self) -> None:
+            self.value = 0
+
+    source = Model()
+    target_a, target_b = Model(), Model()
+
+    def forward(value):
+        binding.remove([target_b])  # mutate the shared binding dict while it is being iterated
+        return value
+
+    binding.bind_to(source, 'value', target_a, 'value', forward=forward)
+    binding.bind_to(source, 'value', target_b, 'value')
+
+    source.value = 5  # must not raise RuntimeError('dictionary changed size during iteration')
+    assert target_a.value == 5
+    assert target_b.value == 0, 'a reentrantly-removed target must not be written by a stale snapshot entry'
+    assert not any(obj_id == id(target_b) for obj_id, _ in binding.bindable_properties), \
+        'a reentrantly-removed target must not be resurrected into bindable_properties'
+
+
+def test_remove_after_class_gains_bindable_property():
+    """A bindable property added to a class at runtime must still be cleaned by ``remove`` (issue #6150).
+
+    ``remove`` derives a class's bindable-property names from a per-class cache; adding a property
+    must invalidate that cache, otherwise the new property would leak past ``remove``.
+    """
+    binding.reset()
+
+    class Model:
+        a = binding.BindableProperty()
+
+        def __init__(self) -> None:
+            self.a = 0
+
+    warmup = Model()
+    warmup.a = 1
+    binding.remove([warmup])  # populates the per-class name cache for Model
+
+    extra = binding.BindableProperty()
+    extra.__set_name__(Model, 'b')
+    Model.b = extra  # type: ignore[attr-defined]
+
+    model = Model()
+    model.a = 1
+    model.b = 2  # type: ignore[attr-defined]
+    assert any(obj_id == id(model) and name == ('b',) for obj_id, name in binding.bindable_properties)
+
+    binding.remove([model])
+    assert not any(obj_id == id(model) for obj_id, _ in binding.bindable_properties), \
+        'the runtime-added bindable property must be cleaned by remove'
 
 
 async def test_nested_propagation(user: User):
