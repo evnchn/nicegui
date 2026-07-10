@@ -82,6 +82,7 @@ _LAZY_IMPORTS = {
     'parallax': ('.elements.parallax', 'Parallax'),
     'plotly': ('.elements.plotly', 'Plotly'),
     'popup_edit': ('.elements.popup_edit', 'PopupEdit'),
+    'popup_edit_awaitable': ('.elements.popup_edit_awaitable', 'PopupEditAwaitable'),
     'circular_progress': ('.elements.progress', 'CircularProgress'),
     'linear_progress': ('.elements.progress', 'LinearProgress'),
     'matplotlib': ('.elements.pyplot', 'Matplotlib'),
@@ -242,6 +243,7 @@ __all__ = [
     'parallax',
     'plotly',
     'popup_edit',
+    'popup_edit_awaitable',
     'pyplot',
     'query',
     'radio',
@@ -372,6 +374,7 @@ if TYPE_CHECKING:
     from .elements.parallax import Parallax as parallax
     from .elements.plotly import Plotly as plotly
     from .elements.popup_edit import PopupEdit as popup_edit
+    from .elements.popup_edit_awaitable import PopupEditAwaitable as popup_edit_awaitable
     from .elements.progress import CircularProgress as circular_progress
     from .elements.progress import LinearProgress as linear_progress
     from .elements.pyplot import Matplotlib as matplotlib
