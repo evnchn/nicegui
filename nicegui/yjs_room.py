@@ -39,6 +39,11 @@ AccessCheck = Callable[[str, str], bool | Awaitable[bool]]
 # doesn't stall the event loop.
 _OFFLOAD_BYTES = 32 * 1024
 
+# Engine.IO rejects incoming messages above ~1 MB (`max_http_buffer_size`), so both
+# directions split larger updates into parts which the receiver reassembles in order.
+_CHUNK_BYTES = 500 * 1024
+_MAX_CHUNKS = 256
+
 _rooms: dict[str, _Room] = {}
 _access_checks: dict[str, list[AccessCheck]] = {}
 _clients_with_hook: set[str] = set()
@@ -53,7 +58,9 @@ class _Room:
         self.doc: Any = _PycrdtDoc()
         self.sids: set[str] = set()
         # pycrdt.Doc isn't thread-safe; serialize all apply_update / get_update calls.
+        # The lock also serializes chunked emits so parts of two transfers never interleave.
         self.lock = asyncio.Lock()
+        self.rx: dict[str, tuple[int, dict[int, bytes]]] = {}  # per-sid (parts, buffer) for chunked updates
 
 
 def ensure_handlers_installed() -> None:
@@ -138,7 +145,7 @@ def _install_handlers_once() -> None:
         await sio.enter_room(sid, _sio_room(doc_id))
         async with room.lock:
             state: bytes = room.doc.get_update()
-        await sio.emit('yjs_init', {'doc_id': doc_id, 'update': state}, to=sid)
+            await _emit_chunked('yjs_init', doc_id, state, to=sid)
 
     @sio.on('yjs_update')
     async def _on_update(sid: str, data: dict[str, Any]) -> None:
@@ -151,14 +158,15 @@ def _install_handlers_once() -> None:
         room = _rooms.get(doc_id)
         if room is None or sid not in room.sids:
             return
-        update_bytes = bytes(update)
+        update_bytes = _reassemble(room, sid, bytes(update), data)
+        if update_bytes is None:
+            return
         async with room.lock:
             if len(update_bytes) > _OFFLOAD_BYTES:
                 await asyncio.to_thread(room.doc.apply_update, update_bytes)
             else:
                 room.doc.apply_update(update_bytes)
-        await sio.emit('yjs_update', {'doc_id': doc_id, 'update': update_bytes},
-                       room=_sio_room(doc_id), skip_sid=sid)
+            await _emit_chunked('yjs_update', doc_id, update_bytes, room=_sio_room(doc_id), skip_sid=sid)
 
     @sio.on('yjs_awareness')
     async def _on_awareness(sid: str, data: dict[str, Any]) -> None:
@@ -185,11 +193,45 @@ def _install_handlers_once() -> None:
     _handlers_installed = True
 
 
+async def _emit_chunked(event: str, doc_id: str, update: bytes, **emit_kwargs: Any) -> None:
+    if len(update) <= _CHUNK_BYTES:
+        await core.sio.emit(event, {'doc_id': doc_id, 'update': update}, **emit_kwargs)
+        return
+    parts = [update[i:i + _CHUNK_BYTES] for i in range(0, len(update), _CHUNK_BYTES)]
+    for i, part in enumerate(parts):
+        await core.sio.emit(event, {'doc_id': doc_id, 'update': part, 'part': i, 'parts': len(parts)},
+                            **emit_kwargs)
+
+
+def _reassemble(room: _Room, sid: str, update: bytes, data: dict[str, Any]) -> bytes | None:
+    """Buffer chunked updates until complete; return the full update or ``None`` while pending.
+
+    Parts are keyed by index rather than appended, so reassembly does not depend on
+    Socket.IO's ``async_handlers`` background tasks preserving dispatch order.
+    """
+    parts = data.get('parts')
+    if parts is None:
+        return update
+    part = data.get('part')
+    if not isinstance(parts, int) or not isinstance(part, int) or not 2 <= parts <= _MAX_CHUNKS or not 0 <= part < parts:
+        room.rx.pop(sid, None)
+        return None
+    if sid not in room.rx or room.rx[sid][0] != parts:  # new transfer supersedes any stale one
+        room.rx[sid] = (parts, {})
+    buffer = room.rx[sid][1]
+    buffer[part] = update
+    if len(buffer) < parts:
+        return None
+    room.rx.pop(sid, None)
+    return b''.join(buffer[i] for i in range(parts))
+
+
 async def _drop_client(sid: str, doc_id: str) -> None:
     room = _rooms.get(doc_id)
     if room is None:
         return
     room.sids.discard(sid)
+    room.rx.pop(sid, None)
     await core.sio.leave_room(sid, _sio_room(doc_id))
     # Awareness removal is left to y-protocols' 30 s heartbeat — mapping sid to
     # Yjs clientID would need separate tracking and isn't worth it for an MVP.

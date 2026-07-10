@@ -13,6 +13,47 @@ const YJS_REMOTE = "yjs-remote";
 // server's broadcast deliberately skips the originator sid for cross-tab clients).
 const yjsRooms = new Map();
 
+// Engine.IO rejects incoming messages above ~1 MB, so updates larger than this are
+// split into parts which the receiver reassembles (see yjs_room.py, incl. the parts cap).
+const YJS_CHUNK_BYTES = 500 * 1024;
+const YJS_MAX_CHUNKS = 256;
+
+function emitChunked(event, docId, update) {
+  if (update.length <= YJS_CHUNK_BYTES) {
+    window.socket.emit(event, { doc_id: docId, update });
+    return;
+  }
+  const parts = Math.ceil(update.length / YJS_CHUNK_BYTES);
+  if (parts > YJS_MAX_CHUNKS) {
+    console.error(`Yjs update of ${update.length} bytes exceeds the ${YJS_MAX_CHUNKS * YJS_CHUNK_BYTES}-byte transfer limit; not sent.`);
+    return;
+  }
+  for (let i = 0; i < parts; i++) {
+    const chunk = update.subarray(i * YJS_CHUNK_BYTES, (i + 1) * YJS_CHUNK_BYTES);
+    window.socket.emit(event, { doc_id: docId, update: chunk, part: i, parts });
+  }
+}
+
+function reassemble(buffers, event, data, apply) {
+  const update = new Uint8Array(data.update);
+  if (data.parts === undefined) return apply(update);
+  if (!buffers[event] || buffers[event].parts !== data.parts) {
+    buffers[event] = { parts: data.parts, chunks: new Map() }; // new transfer supersedes any stale one
+  }
+  const { chunks } = buffers[event];
+  chunks.set(data.part, update);
+  if (chunks.size < data.parts) return;
+  delete buffers[event];
+  const ordered = Array.from({ length: data.parts }, (_, i) => chunks.get(i));
+  const joined = new Uint8Array(ordered.reduce((total, chunk) => total + chunk.length, 0));
+  let offset = 0;
+  for (const chunk of ordered) {
+    joined.set(chunk, offset);
+    offset += chunk.length;
+  }
+  apply(joined);
+}
+
 // Zero-width range so CM6's RangeSet.map() carries each tooltip through edits.
 class TooltipValue extends CM.RangeValue {
   constructor(content) {
@@ -303,18 +344,19 @@ export default {
       if (!room) {
         const ydoc = new Y.Doc();
         const awareness = new Awareness(ydoc);
-        room = { ydoc, awareness, refs: 0, handlers: null };
+        room = { ydoc, awareness, refs: 0, handlers: null, rx: {} };
         yjsRooms.set(docId, room);
 
         room.handlers = {
           onInit: (data) => {
             if (data.doc_id !== docId) return;
-            const update = new Uint8Array(data.update);
-            if (update.length > 0) Y.applyUpdate(ydoc, update, YJS_REMOTE);
+            reassemble(room.rx, "yjs_init", data, (update) => {
+              if (update.length > 0) Y.applyUpdate(ydoc, update, YJS_REMOTE);
+            });
           },
           onUpdate: (data) => {
             if (data.doc_id !== docId) return;
-            Y.applyUpdate(ydoc, new Uint8Array(data.update), YJS_REMOTE);
+            reassemble(room.rx, "yjs_update", data, (update) => Y.applyUpdate(ydoc, update, YJS_REMOTE));
           },
           onAwareness: (data) => {
             if (data.doc_id !== docId) return;
@@ -322,7 +364,7 @@ export default {
           },
           onDocUpdate: (update, origin) => {
             if (origin === YJS_REMOTE) return;
-            window.socket.emit("yjs_update", { doc_id: docId, update });
+            emitChunked("yjs_update", docId, update);
           },
           onAwarenessUpdate: ({ added, updated, removed }, origin) => {
             if (origin === YJS_REMOTE) return;

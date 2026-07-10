@@ -18,8 +18,10 @@ class CrdtElement(Element):
         """Enable shared Yjs collaboration for this element.
 
         All elements sharing ``doc_id`` on the same NiceGUI process edit the
-        same Y.Doc. Multi-process deployments need sticky sessions on the
-        client_id cookie or shared state will diverge.
+        same Y.Doc. Rooms live in process memory: multi-process deployments must
+        route all collaborators of a ``doc_id`` to the same process (per-document
+        affinity, which plain per-client sticky sessions do NOT guarantee) or
+        shared state will diverge. Cross-process room sync is out of scope.
 
         Seed initial content via ``yjs_room.get_doc(doc_id)`` before any
         client connects. The Y.Text key the element binds to is element-specific.
