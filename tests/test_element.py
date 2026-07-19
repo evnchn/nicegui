@@ -1,3 +1,4 @@
+import platform
 import weakref
 
 import pytest
@@ -426,6 +427,10 @@ def test_update_before_client_connection(screen: Screen):
     screen.should_contain('Hello again!')
 
 
+@pytest.mark.skipif(platform.python_implementation() == 'PyPy',
+                    reason='relies on CPython refcounting to free acyclic garbage immediately; '
+                           'PyPy has no refcounting, and gc.collect() would also free cycles, '
+                           'defeating the no-cyclic-references check')
 def test_no_cyclic_references_when_deleting_elements(screen: Screen):
     elements: weakref.WeakSet = weakref.WeakSet()
 
@@ -444,6 +449,10 @@ def test_no_cyclic_references_when_deleting_elements(screen: Screen):
     assert len(elements) == 0, 'all elements should be deleted immediately'
 
 
+@pytest.mark.skipif(platform.python_implementation() == 'PyPy',
+                    reason='relies on CPython refcounting to free acyclic garbage immediately; '
+                           'PyPy has no refcounting, and gc.collect() would also free cycles, '
+                           'defeating the no-cyclic-references check')
 def test_no_cyclic_references_when_deleting_clients(screen: Screen):
     labels = weakref.WeakSet()
 
