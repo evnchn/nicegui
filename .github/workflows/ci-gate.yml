@@ -27,6 +27,26 @@ jobs:
       python-versions: '["3.10", "3.11", "3.12", "3.13", "3.14"]'
       scope: '["pytest", "startup"]'
 
+  windows-storage:
+    name: windows / storage
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Install Python
+        run: uv python install 3.10
+      - name: Install dependencies
+        run: uv sync --locked
+      - name: file-lock tests (the ones this fix targets)
+        run: uv run pytest tests/test_storage.py -k "awaiting_backup_scheduled_during_teardown or unlinking_storage_files_waits_out_transient_holders" -v
+      - name: full storage suite (informational - browser tests are Windows-flaky)
+        continue-on-error: true
+        run: uv run pytest tests/test_storage.py -v
+
   quick-test-gate:
     runs-on: ubuntu-latest
     needs: [check, quick-test]
