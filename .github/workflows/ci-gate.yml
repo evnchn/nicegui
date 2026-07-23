@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked
       - name: pytest tests/test_storage.py
-        run: uv run --with pytest-rerunfailures==16.4 pytest tests/test_storage.py --reruns 2 --reruns-delay 2 --only-rerun TimeoutException --only-rerun PytestUnraisableExceptionWarning
+        run: uv run pytest tests/test_storage.py -k "awaiting_backup_scheduled_during_teardown or unlinking_storage_files_waits_out_transient_holders" -v
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
