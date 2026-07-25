@@ -231,8 +231,12 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
     vue_scripts: list[str] = []
     vue_html: list[str] = []
     vue_styles: list[str] = []
+    elements = list(elements)
+    needs_compiler = bool(vue_components) or \
+        any(slot.template for element in elements for slot in element.slots.values())
+    vue_build = 'vue.esm-browser' if needs_compiler else 'vue.runtime.esm-browser'
     imports: dict[str, str] = {
-        'vue': f'{prefix}/_nicegui/{__version__}/static/vue.esm-browser{".prod" if core.app.config.prod_js else ""}.js',
+        'vue': f'{prefix}/_nicegui/{__version__}/static/{vue_build}{".prod" if core.app.config.prod_js else ""}.js',
         'sass': f'{prefix}/_nicegui/{__version__}/static/sass.default.js',
         'immutable': f'{prefix}/_nicegui/{__version__}/static/immutable.es.js',
         'dompurify': f'{prefix}/_nicegui/{__version__}/static/dompurify.mjs',
