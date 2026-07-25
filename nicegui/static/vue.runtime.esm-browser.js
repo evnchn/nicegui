@@ -930,13 +930,13 @@ function addSub(link) {
 }
 const targetMap = /* @__PURE__ */ new WeakMap();
 const ITERATE_KEY = Symbol(
-  "Object iterate" 
+  "Object iterate"
 );
 const MAP_KEY_ITERATE_KEY = Symbol(
-  "Map keys iterate" 
+  "Map keys iterate"
 );
 const ARRAY_ITERATE_KEY = Symbol(
-  "Array iterate" 
+  "Array iterate"
 );
 function track(target, type, key) {
   if (shouldTrack && activeSub) {
@@ -5268,7 +5268,7 @@ const publicPropertiesMap = (
       queueJob(i.update);
     }),
     $nextTick: (i) => i.n || (i.n = nextTick.bind(i.proxy)),
-    $watch: (i) => instanceWatch.bind(i) 
+    $watch: (i) => instanceWatch.bind(i)
   })
 );
 const isReservedPrefix = (key) => key === "_" || key === "$";
@@ -8338,14 +8338,14 @@ function watchPostEffect(effect, options) {
   return doWatch(
     effect,
     null,
-    extend({}, options, { flush: "post" }) 
+    extend({}, options, { flush: "post" })
   );
 }
 function watchSyncEffect(effect, options) {
   return doWatch(
     effect,
     null,
-    extend({}, options, { flush: "sync" }) 
+    extend({}, options, { flush: "sync" })
   );
 }
 function watch(source, cb, options) {
