@@ -5,7 +5,7 @@ const {
   CSS3DObject,
   CSS3DRenderer,
   DragControls,
-  GLTFLoader,
+  loadGLTFLoader,
   MapControls,
   OrbitControls,
   TrackballControls,
@@ -256,7 +256,6 @@ export default {
 
     this.texture_loader = new THREE.TextureLoader();
     this.stl_loader = new STLLoader();
-    this.gltf_loader = new GLTFLoader();
 
     const connectInterval = setInterval(() => {
       if (window.socket.id === undefined) return;
@@ -327,19 +326,21 @@ export default {
         mesh = new THREE.Group();
         mesh.userData.isGltf = true;
         mesh.userData.loaded = false;
-        this.gltf_loader.load(
-          url,
-          (gltf) => {
-            mesh.add(gltf.scene);
-            mesh.userData.loaded = true;
-            if (mesh.userData.pendingMaterialInfo) {
-              const { color, opacity, side } = mesh.userData.pendingMaterialInfo;
-              delete mesh.userData.pendingMaterialInfo;
-              this.material(id, color, opacity, side);
-            }
-          },
-          undefined,
-          (error) => console.error("GLTF load error:", error),
+        (this.gltf_loader ??= loadGLTFLoader().then((GLTFLoader) => new GLTFLoader())).then((loader) =>
+          loader.load(
+            url,
+            (gltf) => {
+              mesh.add(gltf.scene);
+              mesh.userData.loaded = true;
+              if (mesh.userData.pendingMaterialInfo) {
+                const { color, opacity, side } = mesh.userData.pendingMaterialInfo;
+                delete mesh.userData.pendingMaterialInfo;
+                this.material(id, color, opacity, side);
+              }
+            },
+            undefined,
+            (error) => console.error("GLTF load error:", error),
+          ),
         );
       } else if (type == "stl") {
         const url = args[0];
