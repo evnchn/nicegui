@@ -226,6 +226,8 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
                                                                           list[str],
                                                                           list[str]]:
     """Generate the resources required by the elements to be sent to the client."""
+    elements = list(elements)
+    needed_esm = {name for element in elements for name in type(element).esm_names}
     done_libraries: set[str] = set()
     done_components: set[str] = set()
     vue_scripts: list[str] = []
@@ -248,6 +250,8 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
 
     # build the importmap structure for ESM modules
     for key, esm_module in esm_modules.items():
+        if esm_module.name not in needed_esm:
+            continue
         imports[f'{esm_module.name}'] = f'{prefix}/_nicegui/{__version__}/esm/{key}/index.js'
         imports[f'{esm_module.name}/'] = f'{prefix}/_nicegui/{__version__}/esm/{key}/'
 

@@ -1,0 +1,14 @@
+<script type="importmap">{"imports":{"a":"data:text/javascript,export default 1"}}</script>
+<script type="module">
+  (async () => {
+    const out = [];
+    try { await import("a"); out.push("first-map OK"); } catch (e) { out.push("first-map FAIL: " + e.message); }
+    const s = document.createElement("script");
+    s.type = "importmap";
+    s.textContent = JSON.stringify({imports:{"b":"data:text/javascript,export default 2"}});
+    document.head.appendChild(s);
+    await new Promise(r => setTimeout(r, 50));
+    try { await import("b"); out.push("second-map OK"); } catch (e) { out.push("second-map FAIL: " + e.message); }
+    document.title = out.join(" | ");
+  })();
+</script>
