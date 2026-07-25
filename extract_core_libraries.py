@@ -53,6 +53,13 @@ def _extract_headwind_css(quasar_css_path: Path) -> None:
     (STATIC / 'headwind.css').write_text(css)
 
 
+def _write_brotli_sidecars() -> None:
+    import brotli  # pylint: disable=import-outside-toplevel
+    for path in STATIC.rglob('*'):
+        if path.suffix in {'.css', '.js', '.json', '.map', '.mjs', '.svg'} and path.stat().st_size >= 500:
+            path.with_name(path.name + '.br').write_bytes(brotli.compress(path.read_bytes(), quality=11))
+
+
 def _minify_js(input_path: Path, output_path: Path) -> None:
     subprocess.run(['npx', '--yes', 'terser', str(input_path), '--compress', '--mangle', '--output', str(output_path)],
                    capture_output=True, text=True, check=True)
@@ -86,3 +93,5 @@ shutil.copy2(NODE_MODULES / '@unocss' / 'runtime' / 'preset-wind4.global.js',
              STATIC / 'unocss' / 'preset-wind4.global.js')
 
 _minify_js(NODE_MODULES / 'dompurify' / 'dist' / 'purify.es.mjs', STATIC / 'dompurify.mjs')
+
+_write_brotli_sidecars()
