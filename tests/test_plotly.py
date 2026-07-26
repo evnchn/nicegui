@@ -193,3 +193,14 @@ def test_upgrade_for_traces_passed_as_a_figure(screen: Screen):
     screen.wait(3.0)
     assert _loaded_bundles(screen) == {'index.js', 'full.js'}
     assert _rendered_trace_types(screen) == ['scatter3d']
+
+
+def test_one_complex_figure_makes_the_page_skip_the_light_bundle(screen: Screen):
+    @ui.page('/')
+    def page():
+        ui.plotly(go.Figure(go.Scatter3d(x=[1, 2], y=[1, 2], z=[1, 2])))  # NOTE: only plots mounting after this one
+        ui.plotly(go.Figure(go.Scatter(x=[1, 2], y=[1, 2])))
+
+    screen.open('/')
+    screen.wait(2.5)
+    assert _loaded_bundles(screen) == {'full.js'}

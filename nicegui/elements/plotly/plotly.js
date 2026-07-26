@@ -1,5 +1,6 @@
 import { convertDynamicProperties } from "../../static/utils/dynamic_properties.js";
 
+const FULL = "nicegui-plotly/full.js";
 const bundles = {};
 const traceTypes = new WeakMap();
 
@@ -12,7 +13,8 @@ function tracesOf(value) {
 }
 
 function loadBundle(full) {
-  const specifier = full ? "nicegui-plotly/full.js" : "nicegui-plotly";
+  // once the page needs the full bundle anywhere, the light one is dead weight for every plot on it
+  const specifier = full || FULL in bundles ? FULL : "nicegui-plotly";
   bundles[specifier] ??= import(specifier).then(({ Plotly }) => {
     traceTypes.set(Plotly, new Set(Object.keys(Plotly.PlotSchema.get().traces)));
     return Plotly;
