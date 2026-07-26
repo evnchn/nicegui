@@ -43,7 +43,7 @@ class AppConfig:
     prod_js: bool = field(init=False)
     show_welcome_message: bool = field(init=False)
     markdown: bool = field(init=False)
-    precompile_tailwind: bool = True
+    precompile_tailwind: bool = False
     _has_run_config: bool = False
 
     def add_run_config(self,
