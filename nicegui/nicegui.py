@@ -14,7 +14,7 @@ from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import FileResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from . import air, core, favicon, helpers, json, run, welcome
+from . import air, core, favicon, helpers, json, quasar_css, run, welcome
 from .app import App
 from .client import Client
 from .dependencies import (
@@ -95,6 +95,14 @@ def _get_component(key: str) -> Response:
     elif key in vue_components:
         return Response(vue_components[key].script, media_type='text/javascript')
     raise HTTPException(status_code=404, detail=f'component "{key}" not found')
+
+
+@app.get(f'/_nicegui/{__version__}' + '/quasar-css/{sheet}/{family}.css')
+def _get_quasar_css(sheet: str, family: str) -> Response:
+    css = quasar_css.chunk(sheet, '' if family == '_base' else family) if sheet in quasar_css.LAYERS else None
+    if css is None:
+        raise HTTPException(status_code=404, detail=f'CSS chunk "{sheet}/{family}" not found')
+    return Response(css, media_type='text/css', headers={'Cache-Control': 'public, max-age=31536000'})
 
 
 @app.get(f'/_nicegui/{__version__}' + '/resources/{key}/{path:path}')

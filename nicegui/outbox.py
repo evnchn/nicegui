@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import time
 import weakref
 from collections import deque
 from typing import TYPE_CHECKING, Any
 
-from . import background_tasks, core
+from . import background_tasks, core, quasar_css
 from .dependencies import JsComponent, component_query
 
 if TYPE_CHECKING:
@@ -42,6 +43,7 @@ class Outbox:
         self.next_message_id: int = 0
 
         self._loaded_components: set[str] = set()
+        self.loaded_css_families: set[str] = set()
         self._should_stop = False
         self._enqueue_event: asyncio.Event | None = None
 
@@ -111,6 +113,14 @@ class Outbox:
                         and isinstance((component := element.component), JsComponent)
                         and component.name not in self._loaded_components
                     ]
+                    new_families = quasar_css.families_of(
+                        element for element in self.updates.values() if not isinstance(element, Deleted)
+                    ) - self.loaded_css_families
+                    if new_families and not os.environ.get('SPIKE_NO_LOAD_CSS'):
+                        coros.append(self._emit((client.id, 'load_css', {
+                            'chunks': quasar_css.paths(new_families),
+                        })))
+                        self.loaded_css_families.update(new_families)
                     if js_components:
                         coros.append(self._emit((client.id, 'load_js_components', {
                             'components': [{'key': c.key + component_query(), 'tag': c.tag} for c in js_components],

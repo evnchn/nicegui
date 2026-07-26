@@ -494,6 +494,15 @@ function createApp(elements, options) {
         disconnect: () => {
           document.getElementById("popup").ariaHidden = false;
         },
+        load_css: async (msg) => {
+          await Promise.all(
+            msg.chunks.map(async (c) => {
+              const url = `${options.prefix}/_nicegui/${options.version}/${c.path}`;
+              const css = await (await fetch(url)).text();
+              addStyle(`@layer ${c.layer} { ${css} }`);
+            })
+          );
+        },
         load_js_components: async (msg) => {
           const urls = msg.components.map((c) => `${options.prefix}/_nicegui/${options.version}/components/${c.key}`);
           const imports = await Promise.all(urls.map((url) => import(url)));

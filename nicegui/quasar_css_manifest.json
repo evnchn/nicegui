@@ -1,0 +1,134 @@
+{
+ "": [
+  "q-layout",
+  "q-loading-bar",
+  "q-notifications",
+  "q-page",
+  "q-page-container"
+ ],
+ "Button": [
+  "q-anchor",
+  "q-btn",
+  "q-btn-item",
+  "q-focus-helper",
+  "q-focusable",
+  "q-hoverable"
+ ],
+ "Card": [
+  "q-card"
+ ],
+ "CardActions": [
+  "q-card"
+ ],
+ "CardSection": [
+  "q-card"
+ ],
+ "Checkbox": [
+  "q-anchor",
+  "q-checkbox",
+  "q-ma-none",
+  "q-pa-none"
+ ],
+ "Input": [
+  "q-anchor",
+  "q-field",
+  "q-input",
+  "q-placeholder"
+ ],
+ "Label": [],
+ "Select": [
+  "q-anchor",
+  "q-field",
+  "q-icon",
+  "q-select"
+ ],
+ "Slider": [
+  "q-slider"
+ ],
+ "Spinner": [
+  "q-spinner",
+  "q-spinner-mat"
+ ],
+ "Step": [
+  "q-focus-helper",
+  "q-icon",
+  "q-panel",
+  "q-panel-parent",
+  "q-stepper"
+ ],
+ "Stepper": [
+  "q-focus-helper",
+  "q-icon",
+  "q-panel",
+  "q-panel-parent",
+  "q-stepper"
+ ],
+ "StepperNavigation": [
+  "q-focus-helper",
+  "q-icon",
+  "q-panel",
+  "q-panel-parent",
+  "q-stepper"
+ ],
+ "Switch": [
+  "q-anchor",
+  "q-ma-none",
+  "q-pa-none",
+  "q-toggle"
+ ],
+ "Tab": [
+  "q-anchor",
+  "q-focus-helper",
+  "q-focusable",
+  "q-hoverable",
+  "q-icon",
+  "q-panel",
+  "q-panel-parent",
+  "q-tab",
+  "q-tab-panel",
+  "q-tab-panels",
+  "q-tabs"
+ ],
+ "TabPanel": [
+  "q-anchor",
+  "q-focus-helper",
+  "q-focusable",
+  "q-hoverable",
+  "q-icon",
+  "q-panel",
+  "q-panel-parent",
+  "q-tab",
+  "q-tab-panel",
+  "q-tab-panels",
+  "q-tabs"
+ ],
+ "TabPanels": [
+  "q-anchor",
+  "q-focus-helper",
+  "q-focusable",
+  "q-hoverable",
+  "q-icon",
+  "q-panel",
+  "q-panel-parent",
+  "q-tab",
+  "q-tab-panel",
+  "q-tab-panels",
+  "q-tabs"
+ ],
+ "Table": [
+  "q-table"
+ ],
+ "Tabs": [
+  "q-anchor",
+  "q-focus-helper",
+  "q-focusable",
+  "q-hoverable",
+  "q-icon",
+  "q-panel",
+  "q-panel-parent",
+  "q-tab",
+  "q-tab-panel",
+  "q-tab-panels",
+  "q-tabs"
+ ]
+}

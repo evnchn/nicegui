@@ -16,7 +16,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.background import BackgroundTask
 from typing_extensions import Self
 
-from . import background_tasks, binding, core, helpers, json, storage
+from . import background_tasks, binding, core, helpers, json, quasar_css, storage
 from .awaitable_response import AwaitableResponse
 from .dependencies import generate_resources
 from .element import Element
@@ -211,6 +211,8 @@ class Client:
         }
         vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls = \
             generate_resources(prefix, self.elements.values())
+        css_families = quasar_css.families_of(self.elements.values())
+        self.outbox.loaded_css_families = set(css_families)
         html_lang = self.page.resolve_language()
         language = html_lang or 'en-US'
         quasar_config = core.app.config.quasar_config
@@ -244,6 +246,7 @@ class Client:
                 'unocss': core.app.config.unocss,
                 'headwind_css': HEADWIND_CONTENT if core.app.config.tailwind else '',
                 'prod_js': core.app.config.prod_js,
+                'quasar_css': quasar_css.urls(prefix, css_families),
                 'socket_io_js_query_params': socket_io_js_query_params,
                 'socket_io_js_extra_headers': core.app.config.socket_io_js_extra_headers,
                 'socket_io_js_transports': core.app.config.socket_io_js_transports,
