@@ -54,6 +54,7 @@ def nicegui_reset_globals():
     default_markdown_extras = ui.markdown.default_extras[:]
 
     dependencies.importmap_overrides.clear()
+    dependencies.resolve_component_source.cache_clear()
     Client.instances.clear()
     Client.page_routes.clear()
     Client.shared_head_html = ''

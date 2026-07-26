@@ -7,7 +7,7 @@ from collections import deque
 from typing import TYPE_CHECKING, Any
 
 from . import background_tasks, core
-from .dependencies import JsComponent
+from .dependencies import JsComponent, component_query
 
 if TYPE_CHECKING:
     from .client import Client
@@ -113,7 +113,7 @@ class Outbox:
                     ]
                     if js_components:
                         coros.append(self._emit((client.id, 'load_js_components', {
-                            'components': [{'key': c.key, 'tag': c.tag} for c in js_components],
+                            'components': [{'key': c.key + component_query(), 'tag': c.tag} for c in js_components],
                         })))
                         self._loaded_components.update(c.name for c in js_components)
                     coros.append(self._emit((client.id, 'update', data)))

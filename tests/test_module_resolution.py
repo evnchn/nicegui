@@ -3,7 +3,13 @@ from selenium.webdriver.common.by import By
 
 from nicegui import client as client_module
 from nicegui import ui
-from nicegui.dependencies import _SPECIFIER_PATTERN, js_components, resolve_component_source, vue_components
+from nicegui.dependencies import (
+    _SPECIFIER_PATTERN,
+    component_query,
+    js_components,
+    resolve_component_source,
+    vue_components,
+)
 from nicegui.testing import Screen, User
 
 
@@ -15,6 +21,15 @@ def test_component_sources_have_no_bare_specifiers(user: User):
         for match in _SPECIFIER_PATTERN.finditer(source):
             specifier = match.group(2)
             assert specifier.startswith(('.', '/', 'http')), f'bare specifier "{specifier}" in {component.name}'
+
+
+def test_importmap_override_changes_the_component_url(user: User):
+    """A component's URL must change with its resolved source, or a cached client keeps the stale one."""
+    key = next(key for key, component in js_components.items() if component.name == 'aggrid')
+    assert component_query() == ''
+    ui.aggrid.set_module_source('https://cdn.example.com/aggrid.js')
+    assert component_query() != ''
+    assert '"https://cdn.example.com/aggrid.js"' in resolve_component_source(key)
 
 
 @pytest.mark.parametrize('element', ['echart', 'mermaid', 'codemirror'])

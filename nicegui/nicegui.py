@@ -117,7 +117,7 @@ def _get_dynamic_resource(name: str) -> Response:
 
 
 @app.get(f'/_nicegui/{__version__}' + '/esm/{key}/{path:path}')
-def _get_esm(key: str, path: str) -> FileResponse:
+def _get_esm(key: str, path: str) -> Response:
     if key in esm_modules:
         filepath = esm_modules[key].path / path
         if not filepath.resolve().is_relative_to(esm_modules[key].path.resolve()):
