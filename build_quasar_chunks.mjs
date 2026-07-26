@@ -20,7 +20,7 @@ const OUT = path.join(ROOT, 'nicegui', 'static', 'quasar');
 const TMP = path.join(ROOT, '.quasar-entries');
 
 // Plugins kept out of the always-loaded core because they drag whole components in.
-const LAZY_PLUGINS = process.env.FAT_CORE ? [] : ['Dialog', 'BottomSheet', 'Loading', 'LoadingBar'];
+const LAZY_PLUGINS = process.env.FAT_CORE ? [] : ['Dialog', 'BottomSheet', 'Loading', 'LoadingBar', 'Notify'];
 
 const kebab = (n) => n.replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/([A-Z])([A-Z][a-z])/g, '$1-$2').toLowerCase();
 
@@ -62,34 +62,54 @@ for (const name of LAZY_PLUGINS) {
   entryPoints[`p/${name}`] = p;
 }
 const eagerPlugins = Object.keys(pluginFile).filter((n) => !LAZY_PLUGINS.includes(n));
+const LEAN = !process.env.FAT_CORE;
+// `utils` and `composables` are only reachable as `window.Quasar.*` -- nothing in NiceGUI calls them, and
+// they drag in morph (15 kB) / date (12 kB) / QUploader (7 kB). Keep them out of the always-loaded core.
 const coreEntry = path.join(TMP, '__core.js');
 fs.writeFileSync(coreEntry, `
 import installQuasar from ${JSON.stringify(path.join(QSRC, 'install-quasar.js'))}
 import * as directives from ${JSON.stringify(path.join(QSRC, 'directives.js'))}
-import * as utils from ${JSON.stringify(path.join(QSRC, 'utils.js'))}
-import * as composables from ${JSON.stringify(path.join(QSRC, 'composables.js'))}
+${LEAN ? '' : `import * as utils from ${JSON.stringify(path.join(QSRC, 'utils.js'))}
+import * as composables from ${JSON.stringify(path.join(QSRC, 'composables.js'))}`}
 ${eagerPlugins.map((n) => `import ${n} from ${JSON.stringify(pluginFile[n])}`).join('\n')}
 
 const plugins = { ${eagerPlugins.join(', ')} }
+let pluginOpts
+const pending = {}
 const Quasar = {
   version: ${JSON.stringify(VERSION)},
-  install (app, opts) { installQuasar(app, { directives, plugins, ...opts }) },
+  install (app, opts) {
+    // components come from window.__nicegui_quasar_components so that registering them stays tied to
+    // app.use(Quasar, ...) -- an app that replaces vue_config_script gets no Quasar at all, as before.
+    installQuasar(app, { components: window.__nicegui_quasar_components, directives, plugins, ...opts })
+    pluginOpts = { parentApp: app, $q: app.config.globalProperties.$q,
+                   lang: opts.lang, iconSet: opts.iconSet, onSSRHydrated: [] }
+    Quasar.installed = true
+  },
+  // Load one of the plugins that were left out of the core, install it and expose it as Quasar.<name>.
+  loadPlugin (name) {
+    return (pending[name] ||= import(new URL('./p/' + name + '.js', import.meta.url).href).then(({ default: p }) => {
+      if (p.__installed !== true) { p.install(pluginOpts); p.__installed = true }
+      Quasar[name] = p
+      return p
+    }))
+  },
+  installed: false,
+  // the names the lazy resolver in nicegui.js is allowed to fetch a chunk for
+  componentNames: new Set(${JSON.stringify(Object.keys(comps).flatMap((n) => [n, kebab(n)]))}),
   lang: Lang,
   iconSet: IconSet,
   ...directives,
-  ...plugins,
-  ...composables,
-  ...utils
+  ...plugins${LEAN ? '' : ',\n  ...composables,\n  ...utils'}
 }
 window.Quasar = Quasar
 export default Quasar
 `);
 entryPoints.core = coreEntry;
 
-const result = await esbuild.build({
-  entryPoints,
+const SPLIT_CORE = !!process.env.SPLIT_CORE;
+const common = {
   bundle: true,
-  splitting: true,
   format: 'esm',
   outdir: OUT,
   chunkNames: 's/[hash]',
@@ -106,7 +126,19 @@ const result = await esbuild.build({
     __QUASAR_SSR_PWA__: 'false',
     __Q_META__: 'false',
   },
-});
+};
+let result;
+if (SPLIT_CORE) {
+  result = await esbuild.build({ ...common, entryPoints, splitting: true });
+} else {
+  // core is always loaded in full, so bundle it as ONE file (no splitting -> one request);
+  // components are split among themselves and may duplicate a little of what core holds.
+  const { core, ...rest } = entryPoints;
+  const a = await esbuild.build({ ...common, entryPoints: { core }, splitting: false });
+  const b = await esbuild.build({ ...common, entryPoints: rest, splitting: true });
+  result = { metafile: { inputs: { ...a.metafile.inputs, ...b.metafile.inputs },
+                         outputs: { ...a.metafile.outputs, ...b.metafile.outputs } } };
+}
 fs.rmSync(TMP, { recursive: true, force: true });
 
 // ---- manifest ------------------------------------------------------------
@@ -149,7 +181,7 @@ const realistic = ['q-btn', 'q-icon', 'q-input', 'q-select', 'q-table', 'q-th', 
   'q-card-section', 'q-dialog', 'q-checkbox', 'q-toggle', 'q-slider', 'q-tabs', 'q-tab', 'q-tab-panels',
   'q-tab-panel', 'q-menu', 'q-list', 'q-item', 'q-item-section', 'q-separator', 'q-spinner', 'q-tooltip',
   'q-badge', 'q-avatar', 'q-drawer', 'q-header', 'q-toolbar', 'q-layout', 'q-page', 'q-page-container'];
-console.log('realistic (33 comps)    ', cost(realistic, ['Dialog']));
+console.log('realistic (33 comps)    ', cost(realistic, ['Dialog', 'Notify']));
 console.log('EVERYTHING              ', cost(Object.keys(manifest.components), LAZY_PLUGINS));
 const umd = path.join(ROOT, 'nicegui', 'static', 'quasar.umd.prod.js');
 console.log('baseline quasar.umd.prod.js raw=' + fs.statSync(umd).size,

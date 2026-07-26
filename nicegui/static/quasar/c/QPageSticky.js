@@ -1,1 +1,1 @@
-import{a as e,b as o}from"../s/ILYHN4KZ.js";import"../s/CCL2IXGK.js";import"../s/N4MYZB23.js";import{c as t}from"../s/N5XILCAW.js";import"../s/ETMBBUUW.js";var a=t({name:"QPageSticky",props:e,setup(m,{slots:r}){let{getStickyContent:p}=o();return()=>p(r)}});export{a as default};
+import{a as e,b as o}from"../s/ILYHN4KZ.js";import"../s/CCL2IXGK.js";import"../s/N4MYZB23.js";import{c as t}from"../s/N5XILCAW.js";var a=t({name:"QPageSticky",props:e,setup(m,{slots:r}){let{getStickyContent:p}=o();return()=>p(r)}});export{a as default};

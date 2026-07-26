@@ -261,6 +261,7 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
                                                                           list[str],
                                                                           dict[str, str],
                                                                           list[str],
+                                                                          list[str],
                                                                           list[str]]:
     """Generate the resources required by the elements to be sent to the client."""
     done_libraries: set[str] = set()
@@ -314,13 +315,15 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
                 js_imports_urls.append(url)
                 done_components.add(js_component.key)
 
-    # statically import the Quasar components this page is known to need, so they are registered before mount
+    # statically import the Quasar components this page is known to need; these must run before
+    # `app.use(Quasar, ...)`, which is what actually registers them
     manifest = _quasar_manifest()
+    quasar_imports: list[str] = []
     for i, tag in enumerate(_quasar_tags(elements)):
         url = f'{prefix}/_nicegui/{__version__}/static/quasar/{manifest["components"][tag]["entry"]}'
-        js_imports.append(f'import {{ default as Q{i} }} from "{url}";')
-        js_imports.append(f'app.component("{tag}", Q{i});')
+        quasar_imports.append(f'import {{ default as Q{i} }} from "{url}";')
+        quasar_imports.append(f'registerQuasarComponent(Q{i});')
         js_imports_urls.extend(f'{prefix}/_nicegui/{__version__}/static/quasar/{file}'
                                for file in manifest['components'][tag]['files'])
 
-    return vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls
+    return vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls, quasar_imports

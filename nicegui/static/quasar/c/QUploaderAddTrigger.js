@@ -1,1 +1,1 @@
-import{h as t,i as e}from"../s/CCL2IXGK.js";import{c as o}from"../s/N5XILCAW.js";import"../s/ETMBBUUW.js";import{inject as d}from"vue";var p=o({name:"QUploaderAddTrigger",setup(){let r=d(t,e);return r===e&&console.error("QUploaderAddTrigger needs to be child of QUploader"),r}});export{p as default};
+import{h as t,i as e}from"../s/CCL2IXGK.js";import{c as o}from"../s/N5XILCAW.js";import{inject as d}from"vue";var p=o({name:"QUploaderAddTrigger",setup(){let r=d(t,e);return r===e&&console.error("QUploaderAddTrigger needs to be child of QUploader"),r}});export{p as default};

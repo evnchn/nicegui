@@ -151,6 +151,7 @@
       const dark = {{ dark }};
       const language = "{{ language }}";
       const vue_config = {{ vue_config | safe }};
+      {{ quasar_imports | safe }}
       {{ vue_config_script | safe }}
 
       {{ js_imports | safe }}

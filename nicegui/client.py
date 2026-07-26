@@ -209,7 +209,7 @@ class Client:
             'next_message_id': self.outbox.next_message_id,
             'implicit_handshake': not _is_prefetch(request),
         }
-        vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls = \
+        vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls, quasar_imports = \
             generate_resources(prefix, self.elements.values())
         html_lang = self.page.resolve_language()
         language = html_lang or 'en-US'
@@ -229,6 +229,7 @@ class Client:
                 'vue_scripts': '\n'.join(vue_scripts),
                 'imports': json.dumps(imports),
                 'js_imports': '\n'.join(js_imports),
+                'quasar_imports': '\n'.join(quasar_imports),
                 'js_imports_urls': js_imports_urls,
                 'vue_config': json.dumps(quasar_config),
                 'vue_config_script': core.app.config.vue_config_script,

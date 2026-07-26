@@ -1,1 +1,1 @@
-import{a as e}from"../s/N4MYZB23.js";import{c as t}from"../s/N5XILCAW.js";import"../s/ETMBBUUW.js";import{h as o}from"vue";var p=t({name:"QStepperNavigation",setup(a,{slots:r}){return()=>o("div",{class:"q-stepper__nav"},e(r.default))}});export{p as default};
+import{a as e}from"../s/N4MYZB23.js";import{c as t}from"../s/N5XILCAW.js";import{h as o}from"vue";var p=t({name:"QStepperNavigation",setup(a,{slots:r}){return()=>o("div",{class:"q-stepper__nav"},e(r.default))}});export{p as default};
