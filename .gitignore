@@ -17,3 +17,6 @@ node_modules/
 .playwright-mcp/
 .claude/settings.local.json
 CLAUDE.local.md
+
+# generated at build time by build.py, never committed
+nicegui/static/**/*.br
