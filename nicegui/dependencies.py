@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import functools
 import importlib
+import re
 import sys
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
@@ -132,6 +133,7 @@ def register_library(path: Path, *, max_time: float | None) -> Library:
         if key in libraries and libraries[key].path == path:
             return libraries[key]
         libraries[key] = Library(key=key, name=name, path=path)
+        _resolve_component_source.cache_clear()
         return libraries[key]
     raise ValueError(f'Unsupported library type "{path.suffix}"')
 
@@ -159,6 +161,7 @@ def register_esm(name: str, path: Path, *, max_time: float | None) -> None:
             return
         raise ValueError(f'Conflicting ESM registration for key "{key}": "{esm_modules[key].name}" vs "{name}"')
     esm_modules[key] = EsmModule(name=name, path=path)
+    _resolve_component_source.cache_clear()
 
 
 def setup_esm_package(package_file: str, package_name: str, esm_name: str, exports: dict[str, str]) \
@@ -197,6 +200,64 @@ def setup_esm_package(package_file: str, package_name: str, esm_name: str, expor
 def register_importmap_override(import_name: str, url: str) -> None:
     """Register an importmap override."""
     importmap_overrides[import_name] = url
+    _resolve_component_source.cache_clear()
+
+
+_SPECIFIER_PATTERN = re.compile(r'''(?<![$\w.])(?:from|import)\s*(?:\(\s*)?(['"])([^'"\n]+)\1''')
+
+
+def core_module_paths() -> dict[str, str]:
+    """Return the paths of the ESM modules NiceGUI itself ships, relative to ``/_nicegui/{version}/``."""
+    return {
+        'vue': f'static/vue.esm-browser{".prod" if core.app.config.prod_js else ""}.js',
+        'sass': 'static/sass.default.js',
+        'immutable': 'static/immutable.es.js',
+        'dompurify': 'static/dompurify.mjs',
+    }
+
+
+def _resolve_specifier(specifier: str, up: str) -> str | None:
+    """Resolve a bare module specifier to a URL relative to a component, or None if it is not registered."""
+    if specifier in importmap_overrides:
+        return importmap_overrides[specifier]
+    if specifier in (core_modules := core_module_paths()):
+        return up + core_modules[specifier]
+    for key, esm_module in esm_modules.items():
+        if specifier == esm_module.name:
+            return f'{up}esm/{key}/index.js'
+        if specifier.startswith(esm_module.name + '/'):
+            return f'{up}esm/{key}/{specifier[len(esm_module.name) + 1:]}'
+    for key, library in libraries.items():
+        if specifier == library.name:
+            return f'{up}libraries/{key}'
+    return None
+
+
+def resolve_component_source(key: str) -> str | None:
+    """Return the component's JS with bare module specifiers resolved to URLs, or None if there is nothing to resolve.
+
+    This makes component modules self-contained, so that components loaded after the page has rendered
+    (i.e. elements created dynamically over the websocket) do not depend on the page's importmap.
+    """
+    return _resolve_component_source(key, core.app.config.prod_js)
+
+
+@functools.cache
+def _resolve_component_source(key: str, prod_js: bool) -> str | None:  # pylint: disable=unused-argument
+    if key in js_components:
+        source = js_components[key].path.read_text(encoding='utf-8')
+    elif key in vue_components:
+        source = vue_components[key].script
+    else:
+        return None
+    up = '../' * (key.count('/') + 1)
+
+    def replace(match: re.Match) -> str:
+        url = _resolve_specifier(match.group(2), up)
+        return match.group(0) if url is None else match.group(0).replace(match.group(2), url)
+
+    resolved = _SPECIFIER_PATTERN.sub(replace, source)
+    return resolved if resolved != source else None
 
 
 @functools.cache
@@ -232,10 +293,7 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
     vue_html: list[str] = []
     vue_styles: list[str] = []
     imports: dict[str, str] = {
-        'vue': f'{prefix}/_nicegui/{__version__}/static/vue.esm-browser{".prod" if core.app.config.prod_js else ""}.js',
-        'sass': f'{prefix}/_nicegui/{__version__}/static/sass.default.js',
-        'immutable': f'{prefix}/_nicegui/{__version__}/static/immutable.es.js',
-        'dompurify': f'{prefix}/_nicegui/{__version__}/static/dompurify.mjs',
+        name: f'{prefix}/_nicegui/{__version__}/{path}' for name, path in core_module_paths().items()
     }
     js_imports: list[str] = []
     js_imports_urls: list[str] = [imports['vue']]
