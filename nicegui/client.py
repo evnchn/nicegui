@@ -16,7 +16,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.background import BackgroundTask
 from typing_extensions import Self
 
-from . import background_tasks, binding, core, helpers, json, storage
+from . import background_tasks, binding, core, helpers, json, storage, tailwind_precompile
 from .awaitable_response import AwaitableResponse
 from .dependencies import generate_resources
 from .element import Element
@@ -86,6 +86,7 @@ class Client:
         self.created = time.time()
         self.instances[self.id] = self
 
+        self._precompiled_classes: set[str] | None = None
         self.elements: dict[int, Element] = {}
         self.next_element_id: int = 0
         self._waiting_for_connection = asyncio.Event()
@@ -211,6 +212,12 @@ class Client:
         }
         vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls = \
             generate_resources(prefix, self.elements.values())
+        tailwind_css = tailwind_precompile.compile_page(
+            {c for element in self.elements.values() for c in element._classes},  # pylint: disable=protected-access
+            [self.head_html, self.body_html, *vue_html, *vue_scripts],
+        ) if core.app.config.tailwind and core.app.config.precompile_tailwind else None
+        self._precompiled_classes = None if tailwind_css is None else \
+            {c for element in self.elements.values() for c in element._classes}  # pylint: disable=protected-access
         html_lang = self.page.resolve_language()
         language = html_lang or 'en-US'
         quasar_config = core.app.config.quasar_config
@@ -241,6 +248,7 @@ class Client:
                 'translations': translations.get(language, translations['en-US']),
                 'prefix': prefix,
                 'tailwind': core.app.config.tailwind,
+                'tailwind_css': tailwind_css,
                 'unocss': core.app.config.unocss,
                 'headwind_css': HEADWIND_CONTENT if core.app.config.tailwind else '',
                 'prod_js': core.app.config.prod_js,
@@ -251,6 +259,28 @@ class Client:
             status_code=status_code,
             headers={'Cache-Control': 'no-store', 'X-NiceGUI-Content': 'page'},
         )
+
+    def precompile_tailwind_classes(self, tokens: Iterable[str]) -> None:
+        """Ship CSS for classes that appeared after the page was rendered.
+
+        Only relevant when the Tailwind JIT was left out because every class of the initial
+        page could be precompiled: the server stays the authority and pushes the few extra
+        rules, or -- if it cannot resolve them -- loads the JIT after all.
+        """
+        if self._precompiled_classes is None:
+            return
+        new = {token for token in tokens if token not in self._precompiled_classes}
+        if not new:
+            return
+        self._precompiled_classes |= new
+        css = tailwind_precompile.compile_classes(new, preflight=False)
+        if css is not None:
+            self.run_javascript(f'addStyle({json.dumps(css)})')
+        else:
+            self._precompiled_classes = None
+            url = f'/_nicegui/{__version__}/static/tailwindcss.min.js'
+            self.run_javascript(
+                f'document.body.append(Object.assign(document.createElement("script"), {{src: {json.dumps(url)}}}))')
 
     def resolve_title(self) -> str:
         """Return the title of the page."""

@@ -40,6 +40,7 @@ class Classes(ObservableList, Generic[T]):
             return
         element = self._element()
         if element is not None:
+            element.client.precompile_tailwind_classes(self)
             element.update()
 
     def __call__(self,

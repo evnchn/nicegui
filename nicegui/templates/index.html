@@ -49,9 +49,15 @@
     <link rel="modulepreload" href="{{ url }}" />
     {% endfor %}
     <!-- prevent Prettier from removing this line -->
-    {% if tailwind %}
+    {% if tailwind and not tailwind_css %}
     <style type="text/tailwindcss">
       @custom-variant dark (&:where(body.body--dark, body.body--dark *));
+    </style>
+    {% endif %}
+    <!-- prevent Prettier from removing this line -->
+    {% if tailwind_css %}
+    <style>
+      {{ tailwind_css | safe }}
     </style>
     {% endif %}
     <!-- prevent Prettier from removing this line -->
@@ -87,7 +93,7 @@
   </head>
   <body>
     <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/socket.io.min.js"></script>
-    {% if tailwind %}
+    {% if tailwind and not tailwind_css %}
     <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/tailwindcss.min.js"></script>
     {% endif %}
     <script type="module">
