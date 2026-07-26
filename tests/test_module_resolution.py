@@ -25,9 +25,9 @@ def test_component_sources_have_no_bare_specifiers(user: User):
 
 def test_importmap_override_changes_the_component_url(user: User):
     """A component's URL must change with its resolved source, or a cached client keeps the stale one."""
-    key = next(key for key, component in js_components.items() if component.name == 'aggrid')
     assert component_query() == ''
     ui.aggrid.set_module_source('https://cdn.example.com/aggrid.js')
+    key = next(key for key, component in js_components.items() if component.name == 'aggrid')
     assert component_query() != ''
     assert '"https://cdn.example.com/aggrid.js"' in resolve_component_source(key)
 
