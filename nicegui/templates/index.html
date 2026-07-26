@@ -95,11 +95,7 @@
       globalThis.Vue = Vue;
       document.getElementById("esm-fallback")?.remove();
     </script>
-    {% if prod_js %}
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/quasar.umd.prod.js"></script>
-    {% else %}
-    <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/quasar.umd.js"></script>
-    {% endif %}
+    <script type="module" src="{{ prefix | safe }}/_nicegui/{{version}}/static/quasar/core.js"></script>
     <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/nicegui.js"></script>
 
     <script defer src="{{ prefix | safe }}/_nicegui/{{version}}/static/lang/{{ language }}.umd.prod.js"></script>
@@ -159,6 +155,8 @@
 
       {{ js_imports | safe }}
       {{ vue_scripts | safe }}
+
+      installQuasarComponentResolver(app, "{{ prefix | safe }}/_nicegui/{{version}}/static/quasar/c/");
 
       app.mount("#app");
 

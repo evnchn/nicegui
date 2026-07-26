@@ -1,0 +1,1 @@
+import{a as r}from"./EM3KO45D.js";import{a as o}from"./N4MYZB23.js";import{c as e}from"./N5XILCAW.js";import{h as a}from"vue";var i=e({name:"QTabPanel",props:r,setup(p,{slots:t}){return()=>a("div",{class:"q-tab-panel",role:"tabpanel"},o(t.default))}});export{i as a};

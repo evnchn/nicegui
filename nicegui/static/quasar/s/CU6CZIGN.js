@@ -1,0 +1,1 @@
+import{b as o}from"./J6UMZDZO.js";var e=[];function i(n){e[e.length-1](n)}function s(n){o.is.desktop===!0&&(e.push(n),e.length===1&&document.body.addEventListener("focusin",i))}function u(n){let t=e.indexOf(n);t!==-1&&(e.splice(t,1),e.length===0&&document.body.removeEventListener("focusin",i))}export{s as a,u as b};

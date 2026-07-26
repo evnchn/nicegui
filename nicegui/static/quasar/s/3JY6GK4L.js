@@ -1,0 +1,1 @@
+function i(r){let e=!1,a,n;function t(){n=arguments,e!==!0&&(e=!0,a=window.requestAnimationFrame(()=>{r.apply(this,n),n=void 0,e=!1}))}return t.cancel=()=>{window.cancelAnimationFrame(a),e=!1},t}export{i as a};

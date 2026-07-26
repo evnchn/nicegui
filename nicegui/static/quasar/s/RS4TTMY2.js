@@ -1,0 +1,1 @@
+import{d as o}from"./2QMDWGBP.js";import{onDeactivated as i,onBeforeUnmount as m,getCurrentInstance as l}from"vue";function a(){let e=null,n=l();function t(){e!==null&&(clearTimeout(e),e=null)}return i(t),m(t),{removeTimeout:t,registerTimeout(r,u){t(),o(n)===!1&&(e=setTimeout(()=>{e=null,r()},u))}}}export{a};

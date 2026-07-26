@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import functools
 import importlib
+import json
+import re
 import sys
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
@@ -219,6 +221,41 @@ def _get_name(path: Path) -> str:
     return path.name.split('.', 1)[0]
 
 
+QUASAR_STATIC = Path(__file__).parent / 'static' / 'quasar'
+QUASAR_TAG_PATTERN = re.compile(r'<(q-[a-z0-9-]+)')
+
+
+@functools.cache
+def _quasar_manifest() -> dict:
+    return json.loads((QUASAR_STATIC / 'manifest.json').read_text())
+
+
+@functools.cache
+def _quasar_tags_in_file(path: Path) -> frozenset[str]:
+    return frozenset(QUASAR_TAG_PATTERN.findall(path.read_text(encoding='utf-8', errors='ignore')))
+
+
+def _quasar_tags(elements: Iterable[Element]) -> list[str]:
+    """Collect the Quasar component tags a page needs before its first render.
+
+    Anything missed here still works: `nicegui.js` falls back to an async component that fetches its own
+    chunk. This scan only avoids that extra round trip for the tags the server can see up front.
+    """
+    known = _quasar_manifest()['components']
+    tags: set[str] = set()
+    for element in elements:
+        if element.tag.startswith('q-'):
+            tags.add(element.tag)
+        for slot in element.slots.values():
+            if slot.template:
+                tags.update(QUASAR_TAG_PATTERN.findall(slot.template))
+        if element.component:
+            tags.update(_quasar_tags_in_file(element.component.path))
+    for vue_component in vue_components.values():
+        tags.update(QUASAR_TAG_PATTERN.findall(vue_component.html))
+    return sorted(tag for tag in tags if tag in known)
+
+
 def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[str],
                                                                           list[str],
                                                                           list[str],
@@ -276,5 +313,14 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
                 js_imports.append(f'app.component("{js_component.tag}", {js_component.name});')
                 js_imports_urls.append(url)
                 done_components.add(js_component.key)
+
+    # statically import the Quasar components this page is known to need, so they are registered before mount
+    manifest = _quasar_manifest()
+    for i, tag in enumerate(_quasar_tags(elements)):
+        url = f'{prefix}/_nicegui/{__version__}/static/quasar/{manifest["components"][tag]["entry"]}'
+        js_imports.append(f'import {{ default as Q{i} }} from "{url}";')
+        js_imports.append(f'app.component("{tag}", Q{i});')
+        js_imports_urls.extend(f'{prefix}/_nicegui/{__version__}/static/quasar/{file}'
+                               for file in manifest['components'][tag]['files'])
 
     return vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls

@@ -4,6 +4,29 @@ const None = undefined;
 
 let app = undefined;
 let mounted_app = undefined;
+let quasar_chunk_prefix = undefined;
+
+// Lazily resolve Quasar components that were not statically registered for this page.
+// `Vue.resolveComponent` is synchronous, but the component object it hands back may be async --
+// so an unknown `q-*` tag becomes a `defineAsyncComponent` that fetches its own chunk.
+const quasar_async_components = {};
+function resolveQuasarComponent(name) {
+  const pascal = /^[qQ][-A-Z]/.test(name)
+    ? name.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase()).replace(/^q/, "Q")
+    : undefined;
+  if (!pascal || quasar_chunk_prefix === undefined) return undefined;
+  return (quasar_async_components[pascal] ||= Vue.defineAsyncComponent(() =>
+    import(`${quasar_chunk_prefix}${pascal}.js`),
+  ));
+}
+
+function installQuasarComponentResolver(app, prefix) {
+  quasar_chunk_prefix = prefix;
+  app._context.components = new Proxy(app._context.components, {
+    get: (target, name) =>
+      name in target || typeof name !== "string" ? target[name] : resolveQuasarComponent(name),
+  });
+}
 
 function initUnoCss() {
   if (window.__unocss_runtime === undefined) return;
