@@ -1,11 +1,11 @@
 import pytest
 from selenium.webdriver.common.by import By
 
-from nicegui import client as client_module
 from nicegui import ui
 from nicegui.dependencies import (
     _SPECIFIER_PATTERN,
     component_query,
+    generate_resources,
     js_components,
     resolve_component_source,
     vue_components,
@@ -32,17 +32,24 @@ def test_importmap_override_changes_the_component_url(user: User):
     assert '"https://cdn.example.com/aggrid.js"' in resolve_component_source(key)
 
 
+@pytest.mark.parametrize('path,expected', [('/plain', []), ('/esm', ['nicegui-mermaid', 'nicegui-mermaid/'])])
+async def test_importmap_only_lists_esm_modules_of_rendered_elements(user: User, path: str, expected: list[str]):
+    @ui.page('/plain')
+    def plain():
+        ui.label('hello')
+
+    @ui.page('/esm')
+    def esm():
+        ui.mermaid('graph TD; Node_A --> Node_B;')
+
+    client = await user.open(path)
+    imports = generate_resources('', client.elements.values())[3]
+    assert [key for key in imports if key.startswith('nicegui-')] == expected
+
+
 @pytest.mark.parametrize('element', ['echart', 'mermaid', 'codemirror'])
-def test_create_dynamically_without_importmap(screen: Screen, monkeypatch: pytest.MonkeyPatch, element: str):
-    """Elements added after the page has rendered must work even if the importmap lists no ESM modules."""
-    original = client_module.generate_resources
-
-    def without_esm_modules(prefix, elements):
-        vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls = original(prefix, elements)
-        imports = {key: url for key, url in imports.items() if not key.startswith('nicegui-')}
-        return vue_html, vue_styles, vue_scripts, imports, js_imports, js_imports_urls
-    monkeypatch.setattr(client_module, 'generate_resources', without_esm_modules)
-
+def test_create_dynamically_without_importmap(screen: Screen, element: str):
+    """Elements added after the page has rendered must work although the importmap lists no ESM modules."""
     @ui.page('/')
     def page():
         creators = {

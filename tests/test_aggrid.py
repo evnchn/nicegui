@@ -353,6 +353,7 @@ def test_get_client_data(screen: Screen):
 def test_version_matches_js(screen: Screen):
     @ui.page('/')
     async def page():
+        ui.aggrid({'columnDefs': [], 'rowData': []})  # the importmap only lists modules used on the page
         ui.label(await ui.run_javascript('return (await import("nicegui-aggrid")).AllCommunityModule.version'))
 
     screen.open('/')
