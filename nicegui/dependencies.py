@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import functools
+import hashlib
 import importlib
+import re
 import sys
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
@@ -199,6 +201,64 @@ def register_importmap_override(import_name: str, url: str) -> None:
     importmap_overrides[import_name] = url
 
 
+_SPECIFIER_PATTERN = re.compile(
+    r'''(?<![$\w.])(?P<head>(?:from|import)\s*(?:\(\s*)?)(?P<quote>['"])(?P<specifier>[^'"\n]+)(?P=quote)''')
+
+
+def component_query() -> str:
+    """Return a query string that changes whenever an importmap override changes the resolved component sources."""
+    return f'?{hashlib.md5(str(sorted(importmap_overrides.items())).encode()).hexdigest()[:8]}' \
+        if importmap_overrides else ''
+
+
+def _resolve_specifier(specifier: str, up: str) -> str | None:
+    """Resolve a bare module specifier to a URL relative to a component, or None if it is not registered."""
+    if specifier in importmap_overrides:
+        url = importmap_overrides[specifier]
+        # a document-relative override would resolve differently inside a module, so leave those to the importmap
+        return url if url.startswith(('/', 'http://', 'https://', '//')) else None
+    for key, esm_module in esm_modules.items():
+        if specifier == esm_module.name:
+            return f'{up}esm/{key}/index.js'
+        if specifier.startswith(esm_module.name + '/'):
+            return f'{up}esm/{key}/{specifier[len(esm_module.name) + 1:]}'
+    for key, library in libraries.items():
+        if specifier == library.name:
+            return f'{up}libraries/{key}'
+    return None
+
+
+def _component_source(key: str) -> str | None:
+    """Return the JS of a registered component, or None if the key is unknown."""
+    if key in js_components:
+        return js_components[key].path.read_text(encoding='utf-8')
+    if key in vue_components:
+        return vue_components[key].script
+    return None
+
+
+def resolve_component_source(key: str) -> str | None:
+    """Return the component's JS with bare module specifiers resolved to URLs, or None if there is nothing to resolve.
+
+    This makes component modules self-contained, so that components loaded after the page has rendered
+    (i.e. elements created dynamically over the websocket) do not depend on the page's importmap.
+    """
+    source = _component_source(key)
+    if source is None:
+        return None
+    up = '../' * (key.count('/') + 1)
+
+    def replace(match: re.Match) -> str:
+        url = _resolve_specifier(match.group('specifier'), up)
+        if url is None:
+            return match.group(0)
+        quote = match.group('quote')
+        return match.group('head') + quote + url + quote
+
+    resolved = _SPECIFIER_PATTERN.sub(replace, source)
+    return resolved if resolved != source else None
+
+
 @functools.cache
 def compute_key(path: Path, *, max_time: float | None) -> str:
     """Compute a key for a given path using a hash function.
@@ -226,6 +286,7 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
                                                                           list[str],
                                                                           list[str]]:
     """Generate the resources required by the elements to be sent to the client."""
+    elements = list(elements)
     done_libraries: set[str] = set()
     done_components: set[str] = set()
     vue_scripts: list[str] = []
@@ -237,6 +298,7 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
         'immutable': f'{prefix}/_nicegui/{__version__}/static/immutable.es.js',
         'dompurify': f'{prefix}/_nicegui/{__version__}/static/dompurify.mjs',
     }
+    query = component_query()
     js_imports: list[str] = []
     js_imports_urls: list[str] = [imports['vue']]
 
@@ -258,7 +320,7 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
     for key, vue_component in vue_components.items():
         if key not in done_components:
             vue_html.append(vue_component.html)
-            url = f'{prefix}/_nicegui/{__version__}/components/{vue_component.key}'
+            url = f'{prefix}/_nicegui/{__version__}/components/{vue_component.key}{query}'
             js_imports.append(f'import {{ default as {vue_component.name} }} from "{url}";')
             js_imports.append(f"{vue_component.name}.template = '#tpl-{vue_component.name}';")
             js_imports.append(f'app.component("{vue_component.tag}", {vue_component.name});')
@@ -271,7 +333,7 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
         if element.component:
             js_component = element.component
             if js_component.key not in done_components and js_component.path.suffix.lower() == '.js':
-                url = f'{prefix}/_nicegui/{__version__}/components/{js_component.key}'
+                url = f'{prefix}/_nicegui/{__version__}/components/{js_component.key}{query}'
                 js_imports.append(f'import {{ default as {js_component.name} }} from "{url}";')
                 js_imports.append(f'app.component("{js_component.tag}", {js_component.name});')
                 js_imports_urls.append(url)

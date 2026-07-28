@@ -17,7 +17,15 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from . import air, core, favicon, helpers, json, run, welcome
 from .app import App
 from .client import Client
-from .dependencies import dynamic_resources, esm_modules, js_components, libraries, resources, vue_components
+from .dependencies import (
+    dynamic_resources,
+    esm_modules,
+    js_components,
+    libraries,
+    resolve_component_source,
+    resources,
+    vue_components,
+)
 from .error import error_content
 from .json import NiceGUIJSONResponse
 from .logging import log
@@ -80,6 +88,8 @@ def _get_library(key: str) -> FileResponse:
 
 @app.get(f'/_nicegui/{__version__}' + '/components/{key:path}')
 def _get_component(key: str) -> Response:
+    if source := resolve_component_source(key):
+        return Response(source, media_type='text/javascript')
     if key in js_components and js_components[key].path.is_file():
         return FileResponse(js_components[key].path, media_type='text/javascript')
     elif key in vue_components:
