@@ -88,6 +88,9 @@ def _get_library(key: str) -> FileResponse:
 
 @app.get(f'/_nicegui/{__version__}' + '/components/{key:path}')
 def _get_component(key: str) -> Response:
+    if key not in js_components and key not in vue_components:
+        directory, _, name = key.partition('/')
+        key = f'{directory.split("-")[0]}/{name}'  # drop the resolution digest
     if source := resolve_component_source(key):
         return Response(source, media_type='text/javascript')
     if key in js_components and js_components[key].path.is_file():

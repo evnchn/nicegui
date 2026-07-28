@@ -4,7 +4,7 @@ from nicegui import ui
 from nicegui.dependencies import (
     _SPECIFIER_PATTERN,
     _component_source,
-    component_query,
+    component_url_key,
     js_components,
     resolve_component_source,
     vue_components,
@@ -22,10 +22,11 @@ def test_component_sources_have_no_bare_specifiers(user: User):
 
 
 def test_importmap_override_changes_the_component_url(user: User):
-    assert component_query() == ''
-    ui.aggrid.set_module_source('https://cdn.example.com/aggrid.js')
+    aggrid = ui.aggrid  # trigger the lazy import so the component is registered
     key = next(key for key, component in js_components.items() if component.name == 'aggrid')
-    assert component_query() != ''
+    url_key_before = component_url_key(key)
+    aggrid.set_module_source('https://cdn.example.com/aggrid.js')
+    assert component_url_key(key) != url_key_before
     assert '"https://cdn.example.com/aggrid.js"' in resolve_component_source(key)
 
 

@@ -219,10 +219,16 @@ def _core_module_paths() -> dict[str, str]:
     return {'vue': f'static/vue.esm-browser{prod}.js', **_CORE_MODULE_PATHS}
 
 
-def component_query() -> str:
-    """Return a query string that changes whenever an importmap override changes the resolved component sources."""
-    return f'?{hashlib.md5(str(sorted(importmap_overrides.items())).encode()).hexdigest()[:8]}' \
-        if importmap_overrides else ''
+def component_url_key(key: str) -> str:
+    """Return the component's key, prefixed with a digest of its resolved source when specifiers were rewritten.
+
+    This keeps the URL a function of the bytes served at it, so a client never caches a stale resolution.
+    """
+    source = resolve_component_source(key)
+    if source is None:
+        return key
+    directory, _, name = key.partition('/')
+    return f'{directory}-{hashlib.md5(source.encode()).hexdigest()[:8]}/{name}'
 
 
 def _resolve_specifier(specifier: str, up: str) -> str | None:
@@ -311,7 +317,6 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
     imports: dict[str, str] = {
         name: f'{prefix}/_nicegui/{__version__}/{path}' for name, path in _core_module_paths().items()
     }
-    query = component_query()
     js_imports: list[str] = []
     js_imports_urls: list[str] = [imports['vue']]
 
@@ -333,7 +338,7 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
     for key, vue_component in vue_components.items():
         if key not in done_components:
             vue_html.append(vue_component.html)
-            url = f'{prefix}/_nicegui/{__version__}/components/{vue_component.key}{query}'
+            url = f'{prefix}/_nicegui/{__version__}/components/{component_url_key(vue_component.key)}'
             js_imports.append(f'import {{ default as {vue_component.name} }} from "{url}";')
             js_imports.append(f"{vue_component.name}.template = '#tpl-{vue_component.name}';")
             js_imports.append(f'app.component("{vue_component.tag}", {vue_component.name});')
@@ -346,7 +351,7 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
         if element.component:
             js_component = element.component
             if js_component.key not in done_components and js_component.path.suffix.lower() == '.js':
-                url = f'{prefix}/_nicegui/{__version__}/components/{js_component.key}{query}'
+                url = f'{prefix}/_nicegui/{__version__}/components/{component_url_key(js_component.key)}'
                 js_imports.append(f'import {{ default as {js_component.name} }} from "{url}";')
                 js_imports.append(f'app.component("{js_component.tag}", {js_component.name});')
                 js_imports_urls.append(url)
