@@ -203,13 +203,15 @@ class Air:
         if self.connecting:
             self.log.debug('Already connecting.')
             return
-        if self.relay.connected:
+        if self.relay.connected and self.relay.eio.state != 'disconnected':
             return
         self.log.debug('Going to connect...')
         self.connecting = True
         try:
             if self.relay.connected:
+                self.log.warning('Socket.IO is connected while Engine.IO is not. Resetting the connection.')
                 await asyncio.wait_for(self.disconnect(), timeout=5)
+                self.relay.connected = False  # a dead transport leaves this flag set, blocking any reconnect
             self.log.debug('Connecting...')
             await self.relay.connect(
                 f'{RELAY_HOST}?device_token={self.token}',
