@@ -1,10 +1,14 @@
 from pathlib import Path
 
+import pytest
+from selenium.webdriver.common.by import By
+
 from nicegui import ui
 from nicegui.dependencies import (
     _SPECIFIER_PATTERN,
     _component_source,
     component_query,
+    generate_resources,
     js_components,
     resolve_component_source,
     vue_components,
@@ -57,3 +61,42 @@ def test_esm_module_registered_after_render(screen: Screen, tmp_path: Path):
     screen.open('/')
     screen.click('Create')
     screen.should_contain('late module loaded')
+
+
+@pytest.mark.parametrize('path,expected', [('/plain', []), ('/esm', ['nicegui-mermaid', 'nicegui-mermaid/'])])
+async def test_importmap_only_lists_esm_modules_of_rendered_elements(user: User, path: str, expected: list[str]):
+    @ui.page('/plain')
+    def plain():
+        ui.label('hello')
+
+    @ui.page('/esm')
+    def esm():
+        ui.mermaid('graph TD; Node_A --> Node_B;')
+
+    client = await user.open(path)
+    imports = generate_resources('', client.elements.values())[3]
+    assert [key for key in imports if key.startswith('nicegui-')] == expected
+
+
+@pytest.mark.parametrize('element', ['echart', 'mermaid', 'codemirror'])
+def test_create_dynamically_without_importmap(screen: Screen, element: str):
+    @ui.page('/')
+    def page():
+        creators = {
+            'echart': lambda: ui.echart({'xAxis': {'type': 'value'},
+                                         'yAxis': {'type': 'category', 'data': ['A']},
+                                         'series': [{'type': 'line', 'data': [0.1]}]}),
+            'mermaid': lambda: ui.mermaid('graph TD; Node_A --> Node_B;'),
+            'codemirror': lambda: ui.codemirror('print("hello")', language='Python'),
+        }
+        ui.button('Create', on_click=creators[element])
+
+    screen.open('/')
+    screen.click('Create')
+    screen.should_not_contain('Failed to resolve module specifier')
+    if element == 'echart':
+        assert screen.find_by_tag('canvas')
+    elif element == 'mermaid':
+        assert screen.selenium.find_element(By.XPATH, '//span[p[contains(text(), "Node_B")]]')
+    else:
+        assert screen.find_by_class('cm-editor')

@@ -42,6 +42,7 @@ TAG_PATTERN = re.compile(fr'^({TAG_START_CHAR})({TAG_CHAR})*$')
 class Element(Visibility):
     component: Component | None = None
     exposed_libraries: ClassVar[list[Library]] = []
+    esm_names: ClassVar[list[str]] = []
     _default_props: ClassVar[dict[str, Any]] = {}
     _default_classes: ClassVar[list[str]] = []
     _default_style: ClassVar[dict[str, str]] = {}
@@ -108,6 +109,7 @@ class Element(Visibility):
 
         cls.component = copy(cls.component)
         cls.exposed_libraries = copy(cls.exposed_libraries)
+        cls.esm_names = copy(cls.esm_names)
         if component:
             max_time = max((path.stat().st_mtime for path in glob_absolute_paths(component)), default=None)
             for path in glob_absolute_paths(component):
@@ -122,6 +124,7 @@ class Element(Visibility):
                 path = base / path
             max_time = max((path.stat().st_mtime for path in glob_absolute_paths(path)), default=None)
             register_esm(key, path, max_time=max_time)
+            cls.esm_names.append(key)
 
         cls._default_props = copy(cls._default_props)
         cls._default_classes = copy(cls._default_classes)

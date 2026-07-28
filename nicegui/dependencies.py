@@ -308,10 +308,13 @@ def generate_resources(prefix: str, elements: Iterable[Element]) -> tuple[list[s
             imports[library.name] = f'{prefix}/_nicegui/{__version__}/libraries/{key}'
             done_libraries.add(key)
 
-    # build the importmap structure for ESM modules
+    # build the importmap structure for the ESM modules used on this page
+    # (components resolve their own imports server-side, so modules of dynamically added elements need no entry)
+    needed_esm = {name for element in elements for name in type(element).esm_names}
     for key, esm_module in esm_modules.items():
-        imports[f'{esm_module.name}'] = f'{prefix}/_nicegui/{__version__}/esm/{key}/index.js'
-        imports[f'{esm_module.name}/'] = f'{prefix}/_nicegui/{__version__}/esm/{key}/'
+        if esm_module.name in needed_esm:
+            imports[f'{esm_module.name}'] = f'{prefix}/_nicegui/{__version__}/esm/{key}/index.js'
+            imports[f'{esm_module.name}/'] = f'{prefix}/_nicegui/{__version__}/esm/{key}/'
 
     # update the importmap with the overrides
     imports.update(importmap_overrides)
