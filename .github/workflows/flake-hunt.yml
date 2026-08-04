@@ -27,7 +27,7 @@ jobs:
         run: uv sync --locked
       - name: A/B the fullscreen test
         env:
-          REPEATS: '30'
+          REPEATS: '100'
         # never fail the job: we want the counts, not a red X
         run: |
           uv run pytest tests/test_zz_flakehunt.py -q > result.txt 2>&1 || true
