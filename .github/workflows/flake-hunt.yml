@@ -1,0 +1,43 @@
+name: Flake Hunt
+
+# THROWAWAY — fork-only, never merge upstream.
+on:
+  push:
+    branches: ['verify/**']
+
+jobs:
+  hunt:
+    name: shard ${{ matrix.shard }} / py${{ matrix.python }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+        python: ['3.12']
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Install Python
+        run: uv python install ${{ matrix.python }}
+      - name: Install dependencies
+        run: uv sync --locked
+      - name: A/B the fullscreen test
+        env:
+          REPEATS: '30'
+        # never fail the job: we want the counts, not a red X
+        run: |
+          uv run pytest tests/test_zz_flakehunt.py -q > result.txt 2>&1 || true
+          echo "===== shard ${{ matrix.shard }} ====="
+          grep -E "^(FAILED|ERROR)" result.txt || echo "(no failures)"
+          tail -3 result.txt
+      - name: Upload raw output
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: flakehunt-shard-${{ matrix.shard }}
+          path: result.txt
+          retention-days: 3
