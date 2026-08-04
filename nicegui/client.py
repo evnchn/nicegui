@@ -381,11 +381,12 @@ class Client:
 
         async def delete_content() -> None:
             await asyncio.sleep(self.page.resolve_reconnect_timeout())
+            self._delete_tasks.pop(document_id, None)
             if self._num_connections[document_id] == 0:
                 self._num_connections.pop(document_id)
-                self._delete_tasks.pop(document_id)
                 await core.app.storage.close_tab(tab_id_to_close)
-                self.delete()
+                if not self._delete_tasks and self.id in self.instances:
+                    self.delete()  # the last teardown out deletes the client, unless one already did
         self._delete_tasks[document_id] = \
             background_tasks.create(delete_content(), name=f'delete content {document_id}')
 

@@ -1,8 +1,10 @@
 import asyncio
 import re
+from uuid import uuid4
 
 from nicegui import Client, app, ui
-from nicegui.testing import Screen
+from nicegui.nicegui import _on_handshake
+from nicegui.testing import Screen, User
 
 
 def test_adding_elements_during_onconnect_on_auto_index_page(screen: Screen):
@@ -161,3 +163,29 @@ def test_no_double_delete(screen: Screen):
     Client.prune_instances(client_age_threshold=0)  # should do nothing because client is still trying to reconnect
     screen.wait(4)  # meanwhile client.delete() will be called without raising KeyError
     assert len(events) == 1, 'delete event should be called only once'
+
+
+async def test_two_documents_delete_the_client_only_once(user: User):
+    deletes = {'count': 0}
+    exceptions: list[Exception] = []
+    app.on_exception(exceptions.append)
+
+    @ui.page('/', reconnect_timeout=0.1)
+    def page():
+        ui.context.client.on_delete(lambda: deletes.update(count=deletes['count'] + 1))
+        ui.label('Hello')
+
+    await user.open('/')
+    client = user.client
+    assert client is not None
+    for socket_id in list(client._socket_to_document_id):  # pylint: disable=protected-access
+        client.handle_disconnect(socket_id)  # drop the fixture's socket, so only the ones below are live
+
+    for name in ['test-a', 'test-b']:  # two documents of the same client, e.g. two sockets sharing a client id
+        await _on_handshake(name, {'client_id': client.id, 'tab_id': str(uuid4()), 'document_id': name})
+    for name in ['test-a', 'test-b']:
+        client.handle_disconnect(name)
+    await asyncio.sleep(0.3)  # > reconnect_timeout, so every pending delete task has run
+
+    assert deletes['count'] == 1, 'the client must be deleted exactly once, however many teardowns are pending'
+    assert not exceptions, f'deleting twice raised: {exceptions}'
