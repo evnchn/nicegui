@@ -449,13 +449,17 @@ def test_client_side_fullscreen_syncs_back(screen: Screen):
         table = ui.table(rows=[{'name': 'Alice'}])
         table.add_slot('top', '<q-btn dense flat label="FS" @click="props.toggleFullscreen" />')
 
+    def click_fullscreen_button() -> bool:
+        screen.click('FS')  # wait_for retries if entering fullscreen re-rendered the button
+        return True
+
     screen.open('/')
     assert table.is_fullscreen is False
 
     screen.click('FS')
     screen.wait_for(lambda: table.is_fullscreen is True)
 
-    screen.click('FS')
+    screen.wait_for(click_fullscreen_button)
     screen.wait_for(lambda: table.is_fullscreen is False)
 
 
