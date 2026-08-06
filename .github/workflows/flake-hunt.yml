@@ -6,13 +6,13 @@ on:
     branches: ['verify/**']
 
 jobs:
-  hunt:
-    name: shard ${{ matrix.shard }} / py${{ matrix.python }}
+  # A/B/C of the fullscreen test: current logic vs the proposed fix vs the reviewer's alternative.
+  ab:
+    name: ab shard ${{ matrix.shard }}
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8]
-        python: ['3.12']
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
@@ -21,23 +21,50 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
-      - name: Install Python
-        run: uv python install ${{ matrix.python }}
-      - name: Install dependencies
-        run: uv sync --locked
-      - name: A/B the fullscreen test
+      - run: uv python install 3.12
+      - run: uv sync --locked
+      - name: A/B/C the fullscreen test
         env:
-          REPEATS: '100'
-        # never fail the job: we want the counts, not a red X
+          REPEATS: '60'
         run: |
           uv run pytest tests/test_zz_flakehunt.py -q > result.txt 2>&1 || true
-          echo "===== shard ${{ matrix.shard }} ====="
-          grep -E "^(FAILED|ERROR)" result.txt || echo "(no failures)"
+          echo "===== ab shard ${{ matrix.shard }} ====="
+          grep -E "^FAILED" result.txt || echo "(no failures)"
           tail -3 result.txt
-      - name: Upload raw output
+      - uses: actions/upload-artifact@v7
         if: always()
-        uses: actions/upload-artifact@v7
         with:
-          name: flakehunt-shard-${{ matrix.shard }}
+          name: ab-shard-${{ matrix.shard }}
           path: result.txt
+          retention-days: 3
+
+  # Broad screen: run the WHOLE suite repeatedly and collect every failure.
+  screen:
+    name: full-suite screen ${{ matrix.shard }} / py${{ matrix.python }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+        python: ['3.10', '3.12', '3.14']
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - run: uv python install ${{ matrix.python }}
+      - run: uv sync --locked
+      - name: full suite (excluding the throwaway harness)
+        run: |
+          uv run pytest --ignore=tests/test_zz_flakehunt.py -q -rf > suite.txt 2>&1 || true
+          echo "===== screen shard ${{ matrix.shard }} py${{ matrix.python }} ====="
+          grep -E "^FAILED" suite.txt || echo "(no failures)"
+          tail -3 suite.txt
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: screen-${{ matrix.python }}-${{ matrix.shard }}
+          path: suite.txt
           retention-days: 3

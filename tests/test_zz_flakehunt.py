@@ -40,6 +40,25 @@ def test_original(screen: Screen, run: int):
 
 
 @pytest.mark.parametrize('run', range(REPEATS))
+def test_body_class_wait(screen: Screen, run: int):
+    """Reviewer's proposal: wait for Quasar's fullscreen body class, then a plain second click.
+
+    Hypothesis: this is a no-op. The class is added synchronously inside setFullscreen(),
+    before the watcher that emits update:fullscreen ever flushes, so it is already set by
+    the time the server flag flips. It should fail at the same rate as test_original.
+    """
+    holder = _make_table(screen)
+    assert holder['table'].is_fullscreen is False
+
+    screen.click('FS')
+    screen.wait_for(lambda: holder['table'].is_fullscreen is True)
+    screen.wait_for(lambda: 'q-body--fullscreen-mixin' in screen.find_by_tag('body').get_attribute('class'))
+
+    screen.click('FS')
+    screen.wait_for(lambda: holder['table'].is_fullscreen is False)
+
+
+@pytest.mark.parametrize('run', range(REPEATS))
 def test_patched(screen: Screen, run: int):
     """The proposed fix — the second click retried through wait_for."""
     holder = _make_table(screen)
