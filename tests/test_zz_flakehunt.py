@@ -40,6 +40,20 @@ def test_original(screen: Screen, run: int):
 
 
 @pytest.mark.parametrize('run', range(REPEATS))
+def test_upstream_sleep(screen: Screen, run: int):
+    """What upstream shipped in c16dc58b: a fixed 0.5 s sleep before the second click."""
+    holder = _make_table(screen)
+    assert holder['table'].is_fullscreen is False
+
+    screen.click('FS')
+    screen.wait_for(lambda: holder['table'].is_fullscreen is True)
+    screen.wait(0.5)  # HACK: wait for the echoed fullscreen update
+
+    screen.click('FS')
+    screen.wait_for(lambda: holder['table'].is_fullscreen is False)
+
+
+@pytest.mark.parametrize('run', range(REPEATS))
 def test_body_class_wait(screen: Screen, run: int):
     """Reviewer's proposal: wait for Quasar's fullscreen body class, then a plain second click.
 
