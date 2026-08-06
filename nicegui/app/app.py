@@ -415,6 +415,7 @@ async def prune_tab_storage(*, force: bool = False) -> None:
             if isinstance(tab, PersistentDict):
                 await tab.close()
             del tab_storages[tab_id]
+            core.app.storage._tab_owners.pop(tab_id, None)  # pylint: disable=protected-access
 
 
 async def prune_user_storage(*, force: bool = False) -> None:

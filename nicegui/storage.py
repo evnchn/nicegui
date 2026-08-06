@@ -16,6 +16,7 @@ from starlette.responses import Response
 
 from . import core, helpers, observables
 from .context import context
+from .logging import log
 from .observables import ObservableDict
 from .persistence import FilePersistentDict, PersistentDict, ReadOnlyDict, RedisPersistentDict
 from .persistence.pseudo_persistent_dict import PseudoPersistentDict
@@ -97,6 +98,9 @@ class Storage:
         self._general = Storage._create_persistent_dict(GENERAL_ID)
         self._users: dict[str, PersistentDict] = {}
         self._tabs: dict[str, ObservableDict] = {}
+        self._tab_owners: dict[str, str] = {}
+        '''Session id that created each tab storage, so copy_tab only serves a requester from the same
+        browser session (the legitimate tab-duplication case) and never another user's tab.'''
         self._active_request_sessions: Counter[str] = Counter()
         '''Number of in-flight HTTP requests per session id, so prune_user_storage does not remove
         user storage out from under a request that has not yet accessed app.storage.user.'''
@@ -178,7 +182,7 @@ class Storage:
         assert client.tab_id in self._tabs, f'tab storage for {client.tab_id} should be created before accessing it'
         return self._tabs[client.tab_id]
 
-    async def _create_tab_storage(self, tab_id: str) -> None:
+    async def _create_tab_storage(self, tab_id: str, *, owner_session_id: str | None = None) -> None:
         """Create tab storage for the given tab ID."""
         if tab_id not in self._tabs:
             if Storage.redis_url:
@@ -188,15 +192,24 @@ class Storage:
                 await tab.initialize()
             else:
                 self._tabs[tab_id] = ObservableDict()
+            if owner_session_id is not None:
+                self._tab_owners[tab_id] = owner_session_id
 
-    def copy_tab(self, old_tab_id: str, tab_id: str) -> None:
+    def copy_tab(self, old_tab_id: str, tab_id: str, *, owner_session_id: str | None = None) -> None:
         """Copy the tab storage to a new tab. (For internal use only.)"""
-        if old_tab_id in self._tabs:
-            if Storage.redis_url:
-                self._tabs[tab_id] = Storage._create_persistent_dict(f'{TAB_PREFIX}{tab_id}')
-            else:
-                self._tabs[tab_id] = ObservableDict()
-            self._tabs[tab_id].update(self._tabs[old_tab_id])
+        if old_tab_id not in self._tabs:
+            return
+        owner = self._tab_owners.get(old_tab_id)
+        if owner is not None and owner_session_id is not None and owner != owner_session_id:
+            log.warning('refusing to copy tab storage %s owned by another session', old_tab_id)
+            return  # only the browser session that created the tab may duplicate it
+        if Storage.redis_url:
+            self._tabs[tab_id] = Storage._create_persistent_dict(f'{TAB_PREFIX}{tab_id}')
+        else:
+            self._tabs[tab_id] = ObservableDict()
+        if owner_session_id is not None:
+            self._tab_owners[tab_id] = owner_session_id
+        self._tabs[tab_id].update(self._tabs[old_tab_id])
 
     async def close_tab(self, tab_id: str | None) -> None:
         """Close the tab storage. (For internal use only.)"""
@@ -210,6 +223,7 @@ class Storage:
         if not helpers.is_pytest():
             context.client.storage.clear()
         self._tabs.clear()
+        self._tab_owners.clear()
         for filepath in self.path.glob('storage-*.json'):
             helpers.unlink_with_retry(filepath, missing_ok=True)
         for tmp_path in self.path.glob('storage-*.json.tmp'):

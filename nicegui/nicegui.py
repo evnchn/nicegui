@@ -200,13 +200,22 @@ async def _on_connect(sid: str, data: dict[str, Any], _=None) -> None:
         raise socketio.exceptions.ConnectionRefusedError('Implicit handshake failed')
 
 
+def _handshake_session_id(client: Client) -> str | None:
+    """Best-effort session id of the client that opened the page, or None if sessions are unavailable."""
+    try:
+        return client.request.session.get('id')
+    except Exception:  # no request / no SessionMiddleware / storage_secret unset
+        return None
+
+
 @sio.on('handshake')
 async def _on_handshake(sid: str, data: dict[str, Any]) -> bool:
     client = Client.instances.get(data['client_id'])
     if not client:
         return False
+    session_id = _handshake_session_id(client)
     if data.get('old_tab_id'):
-        app.storage.copy_tab(data['old_tab_id'], data['tab_id'])
+        app.storage.copy_tab(data['old_tab_id'], data['tab_id'], owner_session_id=session_id)
     client.tab_id = data['tab_id']
     if sid.startswith('test-'):
         client.environ = {'asgi.scope': {'description': 'test client', 'type': 'test'}}
@@ -216,7 +225,7 @@ async def _on_handshake(sid: str, data: dict[str, Any]) -> bool:
     client.handle_handshake(sid, data['document_id'],
                             int(data['next_message_id']) if 'next_message_id' in data else None)
     assert client.tab_id is not None
-    await core.app.storage._create_tab_storage(client.tab_id)  # pylint: disable=protected-access
+    await core.app.storage._create_tab_storage(client.tab_id, owner_session_id=session_id)  # pylint: disable=protected-access
     return True
 
 
