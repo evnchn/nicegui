@@ -10,6 +10,11 @@ with suppress(ImportError):
     import plotly.graph_objects as go
     optional_features.register('plotly')
 
+LIGHT_TRACE_TYPES = {  # trace types registered in dist/index.js, see src/index.mjs
+    'bar', 'box', 'contour', 'heatmap', 'histogram', 'histogram2d', 'histogram2dcontour',
+    'image', 'indicator', 'pie', 'scatter', 'table', 'violin',
+}
+
 
 class Plotly(Element, component='plotly.js', esm={'nicegui-plotly': 'dist'}):
 
@@ -24,6 +29,9 @@ class Plotly(Element, component='plotly.js', esm={'nicegui-plotly': 'dist'}):
         * Pass a Python `dict` object with keys `data`, `layout`, `config` (optional), see https://plotly.com/javascript/
 
         For best performance, use the declarative `dict` approach for creating a Plotly chart.
+
+        Figures using only common trace types load a light plotly.js bundle roughly a third the size of the full one.
+        The full bundle is fetched instead as soon as a figure needs a trace type the light bundle does not contain.
 
         :param figure: Plotly figure to be rendered. Can be either a `go.Figure` instance, or
                        a `dict` object with keys `data`, `layout`, `config` (optional).
@@ -63,7 +71,25 @@ class Plotly(Element, component='plotly.js', esm={'nicegui-plotly': 'dist'}):
     def update(self) -> None:
         with self._props.suspend_updates():
             self._props['options'] = self._get_figure_json()
+            if not self._props.get('full'):  # NOTE: never switch back, the client has loaded the full bundle already
+                self._props['full'] = self._needs_full_bundle()
         super().update()
+
+    def _needs_full_bundle(self) -> bool:
+        options = self._props['options']
+        try:
+            traces = [*(options.get('data') or []),
+                      *(trace for frame in options.get('frames') or [] for trace in frame.get('data') or [])]
+        except (AttributeError, TypeError):
+            return True  # an unexpected figure shape is not worth guessing about
+        for trace in traces:
+            try:
+                trace_type = trace['type'] or 'scatter'
+            except (KeyError, TypeError):
+                trace_type = 'scatter'
+            if trace_type not in LIGHT_TRACE_TYPES:
+                return True
+        return False
 
     def _get_figure_json(self) -> dict:
         if optional_features.has('plotly') and isinstance(self.figure, go.Figure):
