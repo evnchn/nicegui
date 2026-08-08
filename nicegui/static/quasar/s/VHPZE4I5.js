@@ -1,0 +1,1 @@
+import{computed as i}from"vue";var n={xs:18,sm:24,md:32,lg:38,xl:46},s={size:String};function u(e,t=n){return i(()=>e.size!==void 0?{fontSize:e.size in t?`${t[e.size]}px`:e.size}:null)}export{n as a,s as b,u as c};

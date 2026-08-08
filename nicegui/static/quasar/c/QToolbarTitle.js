@@ -1,0 +1,1 @@
+import{a as t}from"../s/N4MYZB23.js";import{c as o}from"../s/N5XILCAW.js";import{h as s,computed as a}from"vue";var i=o({name:"QToolbarTitle",props:{shrink:Boolean},setup(e,{slots:r}){let l=a(()=>"q-toolbar__title ellipsis"+(e.shrink===!0?" col-shrink":""));return()=>s("div",{class:l.value},t(r.default))}});export{i as default};

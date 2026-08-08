@@ -4,6 +4,40 @@ const None = undefined;
 
 let app = undefined;
 let mounted_app = undefined;
+let quasar_chunk_prefix = undefined;
+
+// Lazily resolve Quasar components that were not statically registered for this page.
+// `Vue.resolveComponent` is synchronous, but the component object it hands back may be async --
+// so an unknown `q-*` tag becomes a `defineAsyncComponent` that fetches its own chunk.
+const quasar_async_components = {};
+const quasar_components = (window.__nicegui_quasar_components = {});
+
+// Quasar components the server knows the page needs are imported statically and handed to
+// `app.use(Quasar, ...)`, which registers them under their own name (e.g. "QBtn").
+function registerQuasarComponent(component) {
+  quasar_components[component.name] = component;
+}
+
+function quasarComponentName(name) {
+  if (typeof name !== "string" || !/^[qQ][-A-Z]/.test(name)) return undefined;
+  const pascal = name.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase()).replace(/^q/, "Q");
+  return window.Quasar?.componentNames?.has(name) ? pascal : undefined;
+}
+
+function installQuasarComponentResolver(app, prefix) {
+  quasar_chunk_prefix = prefix;
+  app._context.components = new Proxy(app._context.components, {
+    get(target, name) {
+      if (typeof name !== "string" || name in target) return target[name];
+      const pascal = quasarComponentName(name);
+      // `pascal in target` means Vue's own camelize/capitalize fallback will find the registered one
+      if (!pascal || pascal in target || !window.Quasar?.installed) return undefined;
+      return (quasar_async_components[pascal] ||= Vue.defineAsyncComponent(() =>
+        import(`${quasar_chunk_prefix}${pascal}.js`),
+      ));
+    },
+  });
+}
 
 function initUnoCss() {
   if (window.__unocss_runtime === undefined) return;
@@ -544,7 +578,7 @@ function createApp(elements, options) {
           window.open(url, target);
         },
         download: (msg) => download(msg.src, msg.filename, msg.media_type, options.prefix),
-        notify: (msg) => Quasar.Notify.create(msg),
+        notify: async (msg) => (await Quasar.loadPlugin("Notify")).create(msg),
       };
       const socketMessageQueue = [];
       let isProcessingSocketMessage = false;

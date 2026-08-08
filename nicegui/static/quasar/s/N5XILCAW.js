@@ -1,0 +1,1 @@
+function o(e,t,n,r){return Object.defineProperty(e,t,{get:n,set:r,enumerable:!0}),e}function a(e,t){for(let n in t)o(e,n,t[n]);return e}import{defineComponent as u,markRaw as i,reactive as p}from"vue";function l(e){return i(u(e))}function R(e){return i(e)}var _=(e,t)=>{let n=p(e);for(let r in e)o(t,r,()=>n[r],c=>{n[r]=c});return t};export{o as a,a as b,l as c,R as d,_ as e};
