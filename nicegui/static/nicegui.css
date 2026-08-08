@@ -377,3 +377,12 @@ h6.q-timeline__title {
 .nicegui-error-popup:dir(rtl) > span:first-child::before {
   right: 1.5em;
 }
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
