@@ -70,6 +70,7 @@ class Upload(LabelElement, DisableableElement, component='upload.js'):
         self._begin_upload_handlers = [on_begin_upload] if on_begin_upload else []
         self._upload_handlers = [on_upload] if on_upload else []
         self._multi_upload_handlers = [on_multi_upload] if on_multi_upload else []
+        self._rejected_handlers: list[Handler[UiEventArguments]] = []
 
         @app.post(self._props['url'], include_in_schema=core.app.config.endpoint_documentation in {'internal', 'all'})
         async def upload_route(request: Request) -> dict[str, str]:
@@ -114,8 +115,16 @@ class Upload(LabelElement, DisableableElement, component='upload.js'):
 
     def on_rejected(self, callback: Handler[UiEventArguments]) -> Self:
         """Add a callback to be invoked when one or more files have been rejected during file selection."""
-        self.on('rejected', lambda: handle_event(callback, UiEventArguments(sender=self, client=self.client)), args=[])
+        if not self._rejected_handlers:
+            # Subscribed on first use so an upload without callbacks does not pay for the event at all.
+            self.on('rejected', self._handle_rejected, args=[])
+        self._rejected_handlers.append(callback)
         return self
+
+    def _handle_rejected(self) -> None:
+        args = UiEventArguments(sender=self, client=self.client)
+        for rejected_handler in self._rejected_handlers:
+            handle_event(rejected_handler, args)
 
     def reset(self) -> Self:
         """Clear the upload queue."""
