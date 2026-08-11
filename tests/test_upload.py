@@ -200,3 +200,19 @@ async def test_spilled_temp_file_cleaned_up_on_error(monkeypatch: pytest.MonkeyP
         await create_file_upload(FlakyUpload(BytesIO(b''), filename='big.bin'), chunk_size=16)
 
     assert not any(tmp_path.iterdir()), 'spilled temp file should be removed when the upload fails'
+
+
+def test_rejected_callbacks(screen: Screen):
+    upload: ui.upload = None  # type: ignore[assignment]
+    rejected: list[str] = []
+
+    @ui.page('/')
+    def page():
+        nonlocal upload
+        upload = ui.upload(max_file_size=1, on_rejected=lambda: rejected.append('constructor'))
+
+    screen.open('/')
+    upload.on_rejected(lambda: rejected.append('runtime'))  # registered after the first render
+    screen.find_by_class('q-uploader__input').send_keys(str(test_path1))
+    screen.wait_for(lambda: rejected == ['constructor', 'runtime'])
+    assert 'Event listeners changed after initial definition.' not in screen.render_js_logs()
