@@ -214,6 +214,5 @@ def test_rejected_callbacks(screen: Screen):
     screen.open('/')
     upload.on_rejected(lambda: rejected.append('runtime'))  # registered after the first render
     screen.find_by_class('q-uploader__input').send_keys(str(test_path1))
-    screen.wait(0.5)
-    assert rejected == ['constructor', 'runtime']
+    screen.wait_for(lambda: rejected == ['constructor', 'runtime'])
     assert 'Event listeners changed after initial definition.' not in screen.render_js_logs()

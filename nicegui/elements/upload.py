@@ -123,7 +123,7 @@ class Upload(LabelElement, DisableableElement, component='upload.js'):
 
     def _handle_rejected(self) -> None:
         args = UiEventArguments(sender=self, client=self.client)
-        for rejected_handler in self._rejected_handlers:
+        for rejected_handler in list(self._rejected_handlers):
             handle_event(rejected_handler, args)
 
     def reset(self) -> Self:
