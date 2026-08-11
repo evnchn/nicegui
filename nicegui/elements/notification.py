@@ -86,13 +86,22 @@ class Notification(Element, component='notification.js'):
                 self._props['options']['icon'] = icon
             self._props['options'].update(kwargs)
 
+        self._dismiss_handlers: list[Handler[UiEventArguments]] = []
         if on_dismiss:
             self.on_dismiss(on_dismiss)
+
+        def dispatch_dismiss() -> None:
+            args = UiEventArguments(sender=self, client=self.client)
+            for handler in list(self._dismiss_handlers):
+                handle_event(handler, args)
 
         async def handle_dismiss() -> None:
             if not self._deleted:
                 self.clear()
                 self.delete()
+        # Two fixed listeners, callbacks before cleanup: an async callback is only scheduled by
+        # handle_event, so dispatching it from the cleanup handler would run it after delete().
+        self.on('dismiss', dispatch_dismiss)
         self.on('dismiss', handle_dismiss)
 
     @property
@@ -190,7 +199,7 @@ class Notification(Element, component='notification.js'):
 
     def on_dismiss(self, callback: Handler[UiEventArguments]) -> Self:
         """Add a callback to be invoked when the notification is dismissed."""
-        self.on('dismiss', lambda _: handle_event(callback, UiEventArguments(sender=self, client=self.client)), [])
+        self._dismiss_handlers.append(callback)
         return self
 
     def dismiss(self) -> None:
