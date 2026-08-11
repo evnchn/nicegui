@@ -90,14 +90,18 @@ class Notification(Element, component='notification.js'):
         if on_dismiss:
             self.on_dismiss(on_dismiss)
 
-        async def handle_dismiss() -> None:
-            # Callbacks run before the element is deleted, as they did when each was its own listener.
+        def dispatch_dismiss() -> None:
             args = UiEventArguments(sender=self, client=self.client)
-            for handler in self._dismiss_handlers:
+            for handler in list(self._dismiss_handlers):
                 handle_event(handler, args)
+
+        async def handle_dismiss() -> None:
             if not self._deleted:
                 self.clear()
                 self.delete()
+        # Two fixed listeners, callbacks before cleanup: an async callback is only scheduled by
+        # handle_event, so dispatching it from the cleanup handler would run it after delete().
+        self.on('dismiss', dispatch_dismiss)
         self.on('dismiss', handle_dismiss)
 
     @property

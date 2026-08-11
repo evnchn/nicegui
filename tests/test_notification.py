@@ -36,6 +36,10 @@ def test_dismiss(screen: Screen):
     n = None
     b = None
     dismissed: list[str] = []
+    seen_deleted: list[bool] = []
+
+    async def async_dismiss(e) -> None:
+        seen_deleted.append(e.sender.is_deleted)
 
     @ui.page('/')
     def page():
@@ -47,12 +51,14 @@ def test_dismiss(screen: Screen):
     screen.should_contain('Hi!')
     assert len(b.client.layout.default_slot.children) == 2
     n.on_dismiss(lambda: dismissed.append('runtime'))  # registered after the first render
+    n.on_dismiss(async_dismiss)
     screen.wait(1)
     screen.click('Dismiss')
     screen.wait(1.5)
     screen.should_not_contain('Hi!')
     assert len(b.client.layout.default_slot.children) == 1
     assert dismissed == ['constructor', 'runtime']
+    assert seen_deleted == [False], 'an async callback must run before the notification is deleted'
     assert 'Event listeners changed after initial definition.' not in screen.render_js_logs()
 
 
