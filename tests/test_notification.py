@@ -35,21 +35,25 @@ def test_close_button(screen: Screen):
 def test_dismiss(screen: Screen):
     n = None
     b = None
+    dismissed: list[str] = []
 
     @ui.page('/')
     def page():
         nonlocal n, b
-        n = ui.notification('Hi!', timeout=None)
+        n = ui.notification('Hi!', timeout=None, on_dismiss=lambda: dismissed.append('constructor'))
         b = ui.button('Dismiss', on_click=n.dismiss)
 
     screen.open('/')
     screen.should_contain('Hi!')
     assert len(b.client.layout.default_slot.children) == 2
+    n.on_dismiss(lambda: dismissed.append('runtime'))  # registered after the first render
     screen.wait(1)
     screen.click('Dismiss')
     screen.wait(1.5)
     screen.should_not_contain('Hi!')
     assert len(b.client.layout.default_slot.children) == 1
+    assert dismissed == ['constructor', 'runtime']
+    assert 'Event listeners changed after initial definition.' not in screen.render_js_logs()
 
 
 def test_no_reset_by_other_notifications(screen: Screen):
