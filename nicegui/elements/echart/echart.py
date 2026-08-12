@@ -84,21 +84,21 @@ class EChart(Element, component='echart.js', esm={'nicegui-echart': 'dist'}, def
     def _handle_point_click(self, e: GenericEventArguments) -> None:
         if e.args['componentType'] != 'series':
             return
-        args = EChartPointClickEventArguments(
-            sender=self,
-            client=self.client,
-            component_type=e.args['componentType'],
-            series_type=e.args['seriesType'],
-            series_index=e.args['seriesIndex'],
-            series_name=e.args['seriesName'],
-            name=e.args['name'],
-            data_index=e.args['dataIndex'],
-            data=e.args['data'],
-            data_type=e.args.get('dataType'),
-            value=e.args['value'],
-        )
         for point_click_handler in list(self._point_click_handlers):
-            handle_event(point_click_handler, args)
+            # Fresh arguments per callback, as each had when it owned its own listener.
+            handle_event(point_click_handler, EChartPointClickEventArguments(
+                sender=self,
+                client=self.client,
+                component_type=e.args['componentType'],
+                series_type=e.args['seriesType'],
+                series_index=e.args['seriesIndex'],
+                series_name=e.args['seriesName'],
+                name=e.args['name'],
+                data_index=e.args['dataIndex'],
+                data=e.args['data'],
+                data_type=e.args.get('dataType'),
+                value=e.args['value'],
+            ))
 
     def on_click(self, callback: Handler[EChartComponentClickEventArguments]) -> Self:
         """Add a callback to be invoked when any component is clicked."""
@@ -112,14 +112,14 @@ class EChart(Element, component='echart.js', esm={'nicegui-echart': 'dist'}, def
         return self
 
     def _handle_click(self, e: GenericEventArguments) -> None:
-        args = EChartComponentClickEventArguments(
-            sender=self,
-            client=self.client,
-            component_type=e.args['componentType'],
-            name=e.args.get('name'),
-        )
         for click_handler in list(self._click_handlers):
-            handle_event(click_handler, args)
+            # Fresh arguments per callback, as each had when it owned its own listener.
+            handle_event(click_handler, EChartComponentClickEventArguments(
+                sender=self,
+                client=self.client,
+                component_type=e.args['componentType'],
+                name=e.args.get('name'),
+            ))
 
     @classmethod
     def from_pyecharts(cls, chart: 'Chart', on_point_click: Callable | None = None) -> Self:
