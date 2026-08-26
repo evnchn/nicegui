@@ -262,6 +262,12 @@ def run(root: Callable | None = None, *,
         native = False
         show_welcome_message = False
 
+    env_port = os.environ.get('NICEGUI_PORT')
+    if env_port is not None and env_port != str(port):
+        log.warning(f'Ignoring the environment variable NICEGUI_PORT={env_port}: '
+                    'it is only used internally to pass the port to reload subprocesses. '
+                    'Use ui.run(port=...) to change the port.')
+
     # We save host and port in environment variables so the subprocess started in reload mode can access them.
     os.environ['NICEGUI_HOST'] = host
     os.environ['NICEGUI_PORT'] = str(port)
