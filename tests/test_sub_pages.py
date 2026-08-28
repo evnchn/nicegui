@@ -7,7 +7,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
 from nicegui import APIRouter, PageArguments, app, background_tasks, ui
-from nicegui.testing import Screen
+from nicegui.testing import Screen, User
 
 # pylint: disable=missing-function-docstring
 
@@ -1474,3 +1474,21 @@ def test_ctrl_click_opens_link_in_new_tab(screen: Screen):
     modifier = Keys.COMMAND if sys.platform == 'darwin' else Keys.CONTROL
     ActionChains(screen.selenium).key_down(modifier).click(element).key_up(modifier).perform()
     screen.wait_for(lambda: len(screen.selenium.window_handles) == 2)
+
+
+async def test_rejected_route_does_not_break_page_and_client_deletion(user: User):
+    """A route rejected by the constructor must not leave a half-built element behind.
+
+    The element is registered by ``Element.__init__`` before the route validation runs,
+    so anything ``_handle_delete`` and the router rely on must exist by then (#6313).
+    """
+    @ui.page('/')
+    def index():
+        with pytest.raises(ValueError):
+            ui.sub_pages({'/{x:path}': lambda: None})
+        ui.label('Index page')
+
+    client = await user.open('/')
+    await user.should_see('Index page')
+    client.delete()  # must not abort halfway, leaving elements and the client behind
+    assert not client.elements
