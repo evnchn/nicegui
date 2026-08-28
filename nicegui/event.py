@@ -114,7 +114,13 @@ class Event(Generic[P]):
     async def emitted(self, timeout: float | None = None) -> Any:
         """Wait for an event to be fired and return its arguments.
 
+        The awaiting task is cancelled when the current client is deleted, e.g. because the browser disconnected:
+        ``emitted()`` has no "didn't happen" return channel, so resuming it would be indistinguishable
+        from the event actually being fired.
+
         :param timeout: the maximum time to wait for the event to be fired (default: ``None`` meaning no timeout)
+
+        *Updated in version 3.17.0: The awaiting task is cancelled when the client is deleted.*
         """
         future: asyncio.Future[Any] = asyncio.Future()
 
@@ -123,6 +129,10 @@ class Event(Generic[P]):
                 future.set_result(args[0] if len(args) == 1 else args if args else None)
 
         self.subscribe(callback, expect_args=True)
+        if Slot.get_stack() and not core.is_script_mode_preflight():
+            # otherwise the task would wait forever and keep the page alive;
+            # wrapped in a lambda because `safe_invoke` would pass the client into `cancel(msg)`
+            context.client.on_delete(lambda: future.cancel())
         try:
             return await asyncio.wait_for(future, timeout)
         except asyncio.TimeoutError as error:
