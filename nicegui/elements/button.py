@@ -12,6 +12,7 @@ from .mixins.text_element import TextElement
 
 
 class Button(IconElement, TextElement, DisableableElement, BackgroundColorElement, CancelableWaitElement):
+    _has_click_waiter_listener: bool = False  # class-level default: set on the instance when clicked() first registers
 
     @resolve_defaults
     def __init__(self,
@@ -60,14 +61,23 @@ class Button(IconElement, TextElement, DisableableElement, BackgroundColorElemen
     def _text_to_model_text(self, text: str) -> None:
         self._props['label'] = text
 
+    def _notify_click_waiters(self) -> None:
+        for event in self._waiting_tasks.values():
+            event.set()
+
     async def clicked(self) -> None:
         """Wait until the button is clicked.
 
         *Updated in version 3.17.0: Awaiting the button click cancels the awaiting task
-        when the button is deleted, e.g. because the client disconnected.*
+        when the button is deleted, e.g. because the client disconnected.
+        Repeated awaits share a single click listener instead of adding one per call.*
         """
         event = asyncio.Event()
         with self._cancel_when_deleted(event):
-            self.on('click', event.set, [])
+            if not self._has_click_waiter_listener:
+                # register once: a listener per call would multiply the events sent per click
+                # and re-render the button on every registration after the initial render (#6312)
+                self.on('click', self._notify_click_waiters, [])
+                self._has_click_waiter_listener = True
             await self.client.connected()
             await event.wait()

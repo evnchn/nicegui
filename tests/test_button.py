@@ -206,3 +206,55 @@ async def test_click_that_deletes_the_button_is_still_delivered(user: User):
     user.find('Click me').click()
     await asyncio.sleep(0.1)  # let the async on_click handler delete the button
     assert results == ['clicked'], 'a real click must not be swallowed by the deletion it triggers'
+
+
+async def test_repeated_awaits_share_one_click_listener(user: User):
+    """Awaiting the same button in a loop must not add a click listener per await (#6312)."""
+    buttons: list[ui.button] = []
+    clicks: list[int] = []
+
+    @ui.page('/')
+    def page():
+        button = ui.button('Click me')
+        buttons.append(button)
+
+        async def wait_repeatedly() -> None:
+            while True:
+                await button.clicked()
+                clicks.append(len(clicks) + 1)
+
+        ui.button('Start', on_click=wait_repeatedly)
+
+    await user.open('/')
+    user.find('Start').click()
+    await asyncio.sleep(0.1)  # let the loop start awaiting the click
+    for _ in range(3):
+        user.find('Click me').click()
+        await asyncio.sleep(0.1)  # let the loop resume and await again
+    assert clicks == [1, 2, 3], 'every click must still resume the awaiting loop'
+    click_listeners = [listener
+                       for listener in buttons[0]._event_listeners.values()  # pylint: disable=protected-access
+                       if listener.type == 'click']
+    assert len(click_listeners) == 1, 'repeated awaits must reuse the listener registered by the first one'
+
+
+async def test_concurrent_awaits_are_all_resumed_by_one_click(user: User):
+    """A single click must resume every task awaiting the same button."""
+    results: list[str] = []
+
+    @ui.page('/')
+    def page():
+        button = ui.button('Click me')
+
+        async def wait(name: str) -> None:
+            await button.clicked()
+            results.append(name)
+
+        ui.button('Start', on_click=lambda: (background_tasks.create(wait('a')), background_tasks.create(wait('b'))))
+
+    await user.open('/')
+    user.find('Start').click()
+    await asyncio.sleep(0.1)  # let both tasks start awaiting the click
+    user.find('Click me').click()
+    await asyncio.sleep(0.1)  # let both tasks resume
+    assert sorted(results) == ['a', 'b'], 'one click must resume all pending awaits'
