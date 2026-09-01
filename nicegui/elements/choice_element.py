@@ -43,7 +43,11 @@ class ChoiceElement(ValueElement[Any]):
 
     def _update_options(self) -> None:
         before_value = self.value
-        self._props['options'] = [{'value': index, 'label': option} for index, option in enumerate(self._labels)]
+        old = self._props.get('options')  # only rebuild if the labels changed (#6317)
+        if old is None or len(old) != len(self._labels) or \
+                any(o['label'] is not label for o, label in zip(old, self._labels, strict=True)):
+            self._props['options'] = [{'value': index, 'label': option}
+                                      for index, option in enumerate(self._labels)]
         self._props[self.VALUE_PROP] = self._value_to_model_value(before_value)
         if not isinstance(before_value, list):  # no need to update value in case of multi-select
             self.value = before_value if before_value in self._values else None
