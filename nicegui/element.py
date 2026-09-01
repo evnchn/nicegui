@@ -428,6 +428,10 @@ class Element(Visibility):
 
     def update(self) -> None:
         """Update the element on the client side."""
+        self._enqueue_update()
+
+    def _enqueue_update(self) -> None:
+        """Send the element to the client, bypassing subclass `update()` overrides (#6317)."""
         if not self._is_safe_to_interact():
             return
         self.client.outbox.enqueue_update(self)

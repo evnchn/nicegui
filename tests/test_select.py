@@ -326,3 +326,25 @@ def test_popup_scroll_behavior(screen: Screen):
     screen.type(Keys.ESCAPE)
     screen.wait(0.2)
     assert screen.selenium.execute_script('return window.scrollY') == position
+
+
+async def test_options_are_not_reprocessed_for_each_prop(user: User):
+    class CountingList(list):
+        count = 0
+
+        def __iter__(self):
+            CountingList.count += 1
+            return super().__iter__()
+
+    counts: list[int] = []
+
+    @ui.page('/')
+    def page():
+        ui.select(options=CountingList(['A', 'B', 'C']))
+        counts.append(CountingList.count)
+        CountingList.count = 0
+        ui.select(options=CountingList(['A', 'B', 'C']), label='x', value='A', clearable=True, multiple=True)
+        counts.append(CountingList.count)
+
+    await user.open('/')
+    assert counts[0] == counts[1]
