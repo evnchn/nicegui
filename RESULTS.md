@@ -1,56 +1,73 @@
-# Issue #6353: `make_sortable` does nothing inside `ui.dialog`
+# Issue 6353: `make_sortable` does nothing inside `ui.dialog`
 
-**Verdict:** Confirmed on `upstream/main` @ `80a74f1`. The bug is not specific to dialogs. The `Sortable` controller binds SortableJS once, when the controller mounts. Any container whose DOM doesn't exist yet at that moment, or gets re-created later, is never bound. That covers dialogs, tab panels that aren't selected yet, and `move()`. **I did not commit a fix.** The obvious one-liner causes a regression, and the fix that works needs a design decision (options below).
+Confirmed on `upstream/main` @ `80a74f1`, and it is wider than dialogs. No fix committed yet: picking one needs a design call.
 
-## Root cause
+## What happens
 
-- `nicegui/elements/mixins/sortable_element.py:48`: `with self.client.layout:`. The `Sortable` controller element is created in the page layout, not next to the container. So it mounts once, when it is created: on page load when `make_sortable` is called while the page is being built, as in the issue.
-- `nicegui/elements/sortable/sortable.js:4-5`: in `mounted()`, `document.getElementById(this.elementId)` is passed straight to `Sortable.create(...)`. There is no retry and no re-bind.
-- QDialog (and QTabPanels for panels that aren't active) don't render their content until opened. So at mount time `getElementById` returns `null`, and `Sortable.create` throws (`Sortable: \`el\` must be an HTMLElement…`). Vue logs the rejected async `mounted()`, which is why the log points at `vue.esm-browser.prod.js`. No instance is ever attached. When the dialog opens later, a fresh card node appears and nothing binds to it. Closing and reopening re-creates the node again: a marker set on the card node after the first open is gone after reopen (`DIALOG same card node after reopen: False`).
+```python
+with ui.dialog() as dialog, ui.card() as card:
+    ...
+card.make_sortable()  # SortableJS binds now, but the card is not in the DOM yet
+dialog.open()         # the card appears; nothing ever binds to it
+```
 
-### Evidence (real Chromium 141 through the repo's `Screen` fixture)
+- `nicegui/elements/mixins/sortable_element.py:48`: the `Sortable` controller is created in `client.layout`, so it mounts once, at page load.
+- `nicegui/elements/sortable/sortable.js:4-5`: `mounted()` calls `Sortable.create(document.getElementById(...))` once. No retry, no re-bind.
+- The browser logs `Sortable: el must be an HTMLElement, not [object Null]`.
 
-The probe runs in the browser: `[card in DOM, card has a SortableJS expando]`. SortableJS stores its instance on the element under a `Sortable<id>` key.
+## Measured (Chromium 141, the repo's `Screen` fixture, clean main)
 
-| Case (main, unpatched) | probe | order after dragging Alpha below Beta |
+| Case | Card in DOM, bound? | Drag works? |
 |---|---|---|
-| Control: card on the page | `[True, True]` | `['Beta', 'Alpha', 'Gamma']` ✅ |
-| Dialog, before open | `[False, False]` | – |
-| Dialog, after open | `[True, False]` | `['Alpha', 'Beta', 'Gamma']` ❌ |
-| Dialog, after close + reopen (drag Alpha below Gamma; new DOM node) | `[True, False]` | `['Alpha', 'Beta', 'Gamma']` ❌ |
-| Tab panel not selected at first, after switching to it | `[True, False]` | `['Alpha', 'Beta', 'Gamma']` ❌ |
-| Sortable card after `card.move(other_column)` (**pre-existing, same cause**) | `[True, True]` → `[True, False]` | `['Alpha', 'Beta', 'Gamma']` ❌ |
+| Card on the page (control) | yes, yes | ✅ |
+| Inside a dialog, after open | yes, **no** | ❌ |
+| Dialog closed and reopened (new DOM node) | yes, **no** | ❌ |
+| Tab panel not selected at first, after switching | yes, **no** | ❌ |
+| Sortable card after `card.move(other_column)` | yes, **no** | ❌ |
 
-Browser console on the dialog and tab cases (in the tab case the `Screen` fixture fails at teardown with "JavaScript console error"):
+The issue's own MRE, with the handle, gives the same result.
+
+## Options
+
+| | Dialog, reopen, tab | `move()` | Nested sortables | Status |
+|---|---|---|---|---|
+| A. Controller next to the card (`with self.parent_slot or self.client.layout:`) | ✅ | ❌ | ❌ drag lands one slot off | measured |
+| B. A + skip non-DOM children in index math | ✅ | ❌ | probably ✅ | not built |
+| C. Re-bind in `sortable.js` via a `MutationObserver` | ✅ | ✅ | ✅ | prototyped, existing 5/5 sortable tests pass |
+| D. Container owns SortableJS through its own mount/unmount | expected ✅ | expected ✅ | expected ✅ | not built, bigger change |
+| E. Document it: call `make_sortable()` after opening | partly | ❌ | – | breaks again on reopen |
+
+- **Rule:** a fix has to cover every row of the measured table without breaking nested sortables. That rules out A, B and E.
+- **The question left:** is one document-wide `MutationObserver` per sortable acceptable? It does an O(1) `getElementById` per DOM mutation batch, but the work scales with sortables × DOM churn, and I have not measured it on a busy page.
+  - Yes: **C**, already prototyped (patch below).
+  - No: **D**.
+
+My lean is C as the smallest patch. D is the cleaner lifecycle if the observer cost is unwelcome.
+
+## Open risks for C
+
+- `mounted()` is async and the observer attaches after `await import(...)`. If the container is deleted first, the observer leaks. A real patch needs an "already unmounted" guard after the await.
+- With `group: {pull: 'clone'}` and a dragged item that wraps a sortable, two nodes can briefly share an id, and the observer could rebind to the clone mid-drag. Untested.
+- After a dialog closes, the old instance stays on the detached node until the next rebind. Harmless, not cleaned up.
+- Not checked: `ui.menu`, `ui.expansion`, `ui.stepper`. The mechanism predicts the same bug wherever Quasar renders content lazily.
+
+## Evidence
+
+<details><summary>Why A breaks nested sortables (measured)</summary>
+
+The controller becomes a hidden child of the card's parent, so SortableJS DOM indices stop matching the server's slot indices when that parent is sortable too:
+
 ```
-vue.esm-browser.prod.js 4:22172 "Sortable: `el` must be an HTMLElement, not [object Null]"
-```
-I also ran an adapted version of the issue's MRE: same dialog, card, rows, `drag_indicator` icon and `handle='.handle'`, plus a probe button and `data-name` props so the handles can be targeted. It gave the same result: the card is not in the DOM before open, the same console error appears, and after open the drag does nothing. The same code outside a dialog reorders fine. Its output (first pass, not pasted verbatim): `card in DOM before open: False`, `card in DOM after open: True`, `ORDER inside dialog: ['drag_indicator', 'Alice', 'drag_indicator', 'Bob', 'drag_indicator', 'Carol']` (unchanged), and `ORDER outside dialog: ['drag_indicator', 'Bob', 'drag_indicator', 'Alice', 'drag_indicator', 'Carol']`. That script was later replaced by the one below.
-
-## Why the obvious one-liner is wrong
-
-`with self.parent_slot or self.client.layout:` puts the controller next to the container, so they mount together. In the browser it fixes the dialog, reopen and tab cases (all probes `[True, True]`, drags work). **But** the controller then becomes a hidden child of the container's parent. If that parent is itself sortable, the DOM indices SortableJS reports no longer match the server's slot indices:
-
-```
-outer column (sortable): Xray, card(sortable), <card's controller>, Yank
+outer column (sortable): Xray, card (sortable), <card's controller>, Yank
 drag Xray below Yank
-  main:       ['Alpha','Beta','Gamma','Yank','Xray']   ✅
-  one-liner:  ['Alpha','Beta','Gamma','Xray','Yank']   ❌ Xray lands above Yank
+  main:  ['Alpha','Beta','Gamma','Yank','Xray']   ✅
+  A:     ['Alpha','Beta','Gamma','Xray','Yank']   ❌ Xray lands above Yank
 ```
-It also doesn't fix the `move()` case, because the probe stays `[True, False]` after the move.
+A also leaves `move()` unbound (probe stays `[True, False]`).
+</details>
 
-## Options (design decision needed)
+<details><summary>Prototype patch for C (not committed)</summary>
 
-1. **Re-bind in `sortable.js` whenever the target element changes.** A `MutationObserver` on `document.body` (childList + subtree) calls `bind()`. `bind()` does `getElementById`. If the node is present and differs from `this.sortable.el`, it destroys the old instance and creates a new one. The observer is disconnected in `unmounted`.
-   - I prototyped this, but did **not** commit it (patch below). In the browser it fixes dialog, reopen, tab panel **and** the pre-existing `move()` case, with no index regression (the "Xray below Yank" case gives `['Alpha','Beta','Gamma','Yank','Xray']`). The existing `tests/test_sortable.py` passes (5/5).
-   - Cost: one document-wide observer per sortable. It runs an O(1) `getElementById` on every DOM mutation batch. That's cheap per call, but it's global work that scales with the number of sortables × DOM churn. Maintainers may not want that.
-2. **Let the container own SortableJS.** Bind and unbind from the container's own mount/unmount lifecycle, for example through a hook in the generic element renderer or a mixin-level JS hook, instead of a separate controller in `client.layout`. This follows the DOM exactly and needs no global observer, but it's a bigger change that touches how `SortableElement` is rendered.
-3. **Controller as a sibling (`parent_slot`) plus index correction.** Keep the one-liner and make `onEnd` / `slot.ids` splicing skip non-DOM children. Fragile: it still doesn't fix `move()`, and it spreads index bookkeeping into more places.
-4. **Document the limitation.** Tell users to call `make_sortable()` after the dialog opens. That's a workaround, not a fix, and it still breaks after close + reopen.
-
-My recommendation is (1) as the minimal patch, or (2) if maintainers prefer lifecycle-correct binding over a global observer.
-
-### Prototype patch for option 1 (not committed)
 ```diff
 diff --git a/nicegui/elements/sortable/sortable.js b/nicegui/elements/sortable/sortable.js
 index 89063a3..f715842 100644
@@ -91,7 +108,9 @@ index 89063a3..f715842 100644
    watch: {
 ```
 
-## Reproduction script used
+</details>
+
+<details><summary>Repro script (run as tests/test_zz_repro_6353.py, not committed; prints instead of asserting)</summary>
 
 I ran this temporarily as `tests/test_zz_repro_6353.py` so it picked up the repo's `Screen` fixture and conftest. It is **not** committed. It prints results instead of asserting; the numbers above come from its output.
 
@@ -264,7 +283,9 @@ def test_ctrl_between_items_down(screen: Screen):
     print('\nDOWN order right after drag + server sync:', screen.find_by_class('outer').text.splitlines())
 ```
 
-## Commands run (with real output)
+</details>
+
+<details><summary>Environment, commands and raw output</summary>
 
 Environment setup. Selenium Manager can't download a driver here (no network to googlechromelabs), and `/opt/node22/bin/chromedriver` is 147 while the preinstalled Chromium is 141. So I fetched a matching driver:
 ```
@@ -370,12 +391,7 @@ $ uv run pytest tests/test_sortable.py     # main (prototype reverted)
 ============================== 5 passed in 8.27s ===============================
 ```
 
-## Uncertain / not done
 
-- No fix is committed, and no regression test was added to `tests/test_sortable.py`, because the fix needs the design decision above. Once an option is chosen, the test should copy `test_basic_reorder`: a `.card` with A/B/C inside `ui.dialog`, click open, `_drag`, `_assert_order`, then close, reopen and drag again.
-- **Race in the option-1 prototype:** `mounted` is async, and the observer is attached only after `await import(...)`. If the container is deleted before the import resolves, `unmounted` runs first with nothing to disconnect, and the observer attaches afterwards and leaks. A real patch needs an "already unmounted" guard after the await.
-- **Prototype, untested edge (from the skeptic review):** SortableJS's `clone()` removes only the top-level `id`. With `group: {pull: 'clone'}`, and a dragged item that wraps a sortable container, the page could briefly hold two nodes with the same id. `getElementById` might then make the observer rebind to the clone mid-drag. Also, after a dialog closes, the old instance stays attached to the detached node until the next rebind. That's harmless but not cleaned up.
-- I haven't measured the performance cost of the option-1 observer on large or busy pages.
-- I haven't checked whether other lazily rendered containers (`ui.menu`, `ui.expansion`, `ui.stepper`) behave the same. The mechanism predicts they will whenever Quasar renders their content lazily.
-- My repro script prints results instead of asserting. The only automatic failure was the teardown console-error check in the tab case.
-- The clone is shallow, so I couldn't find in git history why `client.layout` was chosen. My inference: it keeps the controller out of the container's own slot, which is sortable.
+- The clone was shallow, so git history does not say why `client.layout` was chosen. Likely to keep the controller out of the container's own sortable slot.
+- No regression test added yet. Once an option is picked, copy `test_basic_reorder` in `tests/test_sortable.py`: a card inside `ui.dialog`, open, drag, assert order, close, reopen, drag again.
+</details>
