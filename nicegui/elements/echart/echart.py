@@ -54,6 +54,8 @@ class EChart(Element, component='echart.js', esm={'nicegui-echart': 'dist'}, def
         self._props['theme'] = theme
         self._update_method = 'update_chart'
 
+        self._point_click_handlers: list[Handler[EChartPointClickEventArguments]] = []
+        self._click_handlers: list[Handler[EChartComponentClickEventArguments]] = []
         if on_point_click:
             self.on_point_click(on_point_click)
         if on_click:
@@ -63,10 +65,28 @@ class EChart(Element, component='echart.js', esm={'nicegui-echart': 'dist'}, def
 
     def on_point_click(self, callback: Handler[EChartPointClickEventArguments]) -> Self:
         """Add a callback to be invoked when a point is clicked."""
-        def handle_point_click(e: GenericEventArguments) -> None:
-            if e.args['componentType'] != 'series':
-                return
-            handle_event(callback, EChartPointClickEventArguments(
+        if not self._point_click_handlers:
+            # Subscribed on first use so a chart without point-click callbacks does not pay for the event.
+            self.on('componentClick', self._handle_point_click, [
+                'componentType',
+                'seriesType',
+                'seriesIndex',
+                'seriesName',
+                'name',
+                'dataIndex',
+                'data',
+                'dataType',
+                'value',
+            ])
+        self._point_click_handlers.append(callback)
+        return self
+
+    def _handle_point_click(self, e: GenericEventArguments) -> None:
+        if e.args['componentType'] != 'series':
+            return
+        for point_click_handler in list(self._point_click_handlers):
+            # Fresh arguments per callback, as each had when it owned its own listener.
+            handle_event(point_click_handler, EChartPointClickEventArguments(
                 sender=self,
                 client=self.client,
                 component_type=e.args['componentType'],
@@ -79,33 +99,27 @@ class EChart(Element, component='echart.js', esm={'nicegui-echart': 'dist'}, def
                 data_type=e.args.get('dataType'),
                 value=e.args['value'],
             ))
-        self.on('componentClick', handle_point_click, [
-            'componentType',
-            'seriesType',
-            'seriesIndex',
-            'seriesName',
-            'name',
-            'dataIndex',
-            'data',
-            'dataType',
-            'value',
-        ])
-        return self
 
     def on_click(self, callback: Handler[EChartComponentClickEventArguments]) -> Self:
         """Add a callback to be invoked when any component is clicked."""
-        def handle_click(e: GenericEventArguments) -> None:
-            handle_event(callback, EChartComponentClickEventArguments(
+        if not self._click_handlers:
+            # Kept separate from the point-click listener: it asks the client for two fields, not nine.
+            self.on('componentClick', self._handle_click, [
+                'componentType',
+                'name',
+            ])
+        self._click_handlers.append(callback)
+        return self
+
+    def _handle_click(self, e: GenericEventArguments) -> None:
+        for click_handler in list(self._click_handlers):
+            # Fresh arguments per callback, as each had when it owned its own listener.
+            handle_event(click_handler, EChartComponentClickEventArguments(
                 sender=self,
                 client=self.client,
                 component_type=e.args['componentType'],
                 name=e.args.get('name'),
             ))
-        self.on('componentClick', handle_click, [
-            'componentType',
-            'name',
-        ])
-        return self
 
     @classmethod
     def from_pyecharts(cls, chart: 'Chart', on_point_click: Callable | None = None) -> Self:
