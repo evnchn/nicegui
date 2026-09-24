@@ -4,9 +4,9 @@
 
 ## Root cause
 
-- `nicegui/elements/mixins/sortable_element.py:48`: `with self.client.layout:`. The `Sortable` controller element is created in the page layout, not next to the container. So it mounts once, on page load.
+- `nicegui/elements/mixins/sortable_element.py:48`: `with self.client.layout:`. The `Sortable` controller element is created in the page layout, not next to the container. So it mounts once, when it is created: on page load when `make_sortable` is called while the page is being built, as in the issue.
 - `nicegui/elements/sortable/sortable.js:4-5`: in `mounted()`, `document.getElementById(this.elementId)` is passed straight to `Sortable.create(...)`. There is no retry and no re-bind.
-- QDialog (and QTabPanels for panels that aren't active) don't render their content until opened. So at mount time `getElementById` returns `null`, and SortableJS logs an error and never attaches. When the dialog opens later, a fresh card node appears and nothing binds to it. Closing and reopening re-creates the node again.
+- QDialog (and QTabPanels for panels that aren't active) don't render their content until opened. So at mount time `getElementById` returns `null`, and `Sortable.create` throws (`Sortable: \`el\` must be an HTMLElement…`). Vue logs the rejected async `mounted()`, which is why the log points at `vue.esm-browser.prod.js`. No instance is ever attached. When the dialog opens later, a fresh card node appears and nothing binds to it. Closing and reopening re-creates the node again: a marker set on the card node after the first open is gone after reopen (`DIALOG same card node after reopen: False`).
 
 ### Evidence (real Chromium 141 through the repo's `Screen` fixture)
 
@@ -17,7 +17,7 @@ The probe runs in the browser: `[card in DOM, card has a SortableJS expando]`. S
 | Control: card on the page | `[True, True]` | `['Beta', 'Alpha', 'Gamma']` ✅ |
 | Dialog, before open | `[False, False]` | – |
 | Dialog, after open | `[True, False]` | `['Alpha', 'Beta', 'Gamma']` ❌ |
-| Dialog, after close + reopen | `[True, False]` | `['Alpha', 'Beta', 'Gamma']` ❌ |
+| Dialog, after close + reopen (drag Alpha below Gamma; new DOM node) | `[True, False]` | `['Alpha', 'Beta', 'Gamma']` ❌ |
 | Tab panel not selected at first, after switching to it | `[True, False]` | `['Alpha', 'Beta', 'Gamma']` ❌ |
 | Sortable card after `card.move(other_column)` (**pre-existing, same cause**) | `[True, True]` → `[True, False]` | `['Alpha', 'Beta', 'Gamma']` ❌ |
 
@@ -25,7 +25,7 @@ Browser console on the dialog and tab cases (in the tab case the `Screen` fixtur
 ```
 vue.esm-browser.prod.js 4:22172 "Sortable: `el` must be an HTMLElement, not [object Null]"
 ```
-I also ran the issue's exact MRE (handle icon + `handle='.handle'`) and got the same result: the card is not in the DOM before open, the same console error appears, and after open the drag does nothing. The same code outside a dialog reorders fine.
+I also ran an adapted version of the issue's MRE: same dialog, card, rows, `drag_indicator` icon and `handle='.handle'`, plus a probe button and `data-name` props so the handles can be targeted. It gave the same result: the card is not in the DOM before open, the same console error appears, and after open the drag does nothing. The same code outside a dialog reorders fine. Its output (first pass, not pasted verbatim): `card in DOM before open: False`, `card in DOM after open: True`, `ORDER inside dialog: ['drag_indicator', 'Alice', 'drag_indicator', 'Bob', 'drag_indicator', 'Carol']` (unchanged), and `ORDER outside dialog: ['drag_indicator', 'Bob', 'drag_indicator', 'Alice', 'drag_indicator', 'Carol']`. That script was later replaced by the one below.
 
 ## Why the obvious one-liner is wrong
 
@@ -144,6 +144,7 @@ def test_dialog(screen: Screen):
     screen.click('Open')
     screen.wait(0.5)
     print('DIALOG probe after open:', screen.selenium.execute_script(PROBE))
+    screen.selenium.execute_script('document.querySelector(".card").__mark = 1')
     _drag(screen, 'Alpha', 'Beta')
     print('DIALOG order after 1st open:', _order(screen)[:3])
     screen.click('Shut')
@@ -151,6 +152,7 @@ def test_dialog(screen: Screen):
     screen.click('Open')
     screen.wait(0.5)
     print('DIALOG probe after reopen:', screen.selenium.execute_script(PROBE))
+    print('DIALOG same card node after reopen:', screen.selenium.execute_script('return document.querySelector(".card").__mark === 1'))
     _drag(screen, 'Alpha', 'Gamma')
     print('DIALOG order after reopen:', _order(screen)[:3])
     print(screen.render_js_logs())
@@ -236,6 +238,7 @@ def test_move_sortable_card(screen: Screen):
             right = ui.column()
         ui.button('Move', on_click=lambda: card.move(right))
     screen.open('/')
+    print('\nMOVED probe before move:', screen.selenium.execute_script(PROBE))
     screen.click('Move')
     screen.wait(0.5)
     print('\nMOVED probe:', screen.selenium.execute_script(PROBE))
@@ -273,28 +276,75 @@ $ export PATH=<scratchpad>/chromedriver/linux-141.0.7390.37/chromedriver-linux64
          CHROME_BINARY_LOCATION=/opt/pw-browsers/chromium-1194/chrome-linux/chrome SE_OFFLINE=true
 ```
 
-Repro on main:
+All browser runs went through this wrapper, saved as `../run.sh`. It filters out Selenium Manager warnings, blank lines and server banners:
+```bash
+export PATH=/tmp/claude-0/-home-user-nicegui/9da6a4db-254a-5f3f-88d1-312f40cf830d/scratchpad/chromedriver/linux-141.0.7390.37/chromedriver-linux64:$PATH CHROME_BINARY_LOCATION=/opt/pw-browsers/chromium-1194/chrome-linux/chrome SE_OFFLINE=true
+cd /home/user/nicegui && timeout 500 uv run pytest -p no:cacheprovider "$@" 2>&1 | grep -v "^WARNING\|^$\|ready to go\|Storing screenshot"
 ```
-$ uv run pytest -p no:cacheprovider tests/test_zz_repro_6353.py -s
+
+Repro on clean main, final version of the script. This is raw output from `timeout 500 uv run pytest -p no:cacheprovider tests/test_zz_repro_6353.py -s 2>&1 | grep -v "^WARNING"` (blank lines removed):
+```
+Building nicegui @ file:///home/user/nicegui
+      Built nicegui @ file:///home/user/nicegui
+Uninstalled 1 package in 0.41ms
+Installed 1 package in 0.71ms
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0
+driver: Chrome
+sensitiveurl: .*
+rootdir: /home/user/nicegui
+configfile: pyproject.toml
+plugins: html-4.2.0, metadata-3.1.1, order-1.3.0, anyio-4.14.2, asyncio-1.3.0, selenium-4.1.0, variables-3.1.0, base-url-2.1.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collected 7 items
+tests/test_zz_repro_6353.py NiceGUI ready to go on http://localhost:39105, and http://192.0.2.2:39105
 CONTROL probe [in DOM, Sortable bound]: [True, True]
 CONTROL order: ['Beta', 'Alpha', 'Gamma']
+.Storing screenshot to /home/user/nicegui/screenshots/3537/test_control.png
+NiceGUI ready to go on http://localhost:39105, and http://192.0.2.2:39105
 DIALOG probe before open: [False, False]
 DIALOG probe after open: [True, False]
 DIALOG order after 1st open: ['Alpha', 'Beta', 'Gamma']
 DIALOG probe after reopen: [True, False]
+DIALOG same card node after reopen: False
 DIALOG order after reopen: ['Alpha', 'Beta', 'Gamma']
 -- console logs ---
-.../vue.esm-browser.prod.js 4:22172 "Sortable: `el` must be an HTMLElement, not [object Null]"
+http://localhost:39105/_nicegui/0.0.0.post87.dev0+e498335/static/vue.esm-browser.prod.js 4:22172 "Sortable: `el` must be an HTMLElement, not [object Null]"
+---------------------
+.Storing screenshot to /home/user/nicegui/screenshots/3537/test_dialog.png
+NiceGUI ready to go on http://localhost:39105, and http://192.0.2.2:39105
 TAB probe before switch: [False, False]
 TAB probe after switch: [True, False]
 TAB order: ['Alpha', 'Beta', 'Gamma']
+.Storing screenshot to /home/user/nicegui/screenshots/3537/test_tab_panel.png
+ENiceGUI ready to go on http://localhost:39105, and http://192.0.2.2:39105
 NESTED outer text: ['Alpha', 'Beta', 'Gamma', 'Yank', 'Xray']
-ERROR at teardown of test_tab_panel: JavaScript console error: ... "Sortable: `el` must be an HTMLElement, not [object Null]"
+-- console logs ---
+---------------------
+.Storing screenshot to /home/user/nicegui/screenshots/3537/test_nested_sortable.png
+NiceGUI ready to go on http://localhost:39105, and http://192.0.2.2:39105
+BETWEEN outer DOM children: ['DIV#c5', 'DIV#c6', 'DIV#c11']
+BETWEEN outer DOM after drag: ['Yank', 'Xray', 'Alpha', 'Beta', 'Gamma']
+BETWEEN notifications: ['outer Label [text=Yank] 2->0', 'server: Label, Label, Card']
+.Storing screenshot to /home/user/nicegui/screenshots/3537/test_ctrl_between_items.png
+NiceGUI ready to go on http://localhost:39105, and http://192.0.2.2:39105
+MOVED probe before move: [True, True]
 MOVED probe: [True, False]
 MOVED order: ['Alpha', 'Beta', 'Gamma']
+.Storing screenshot to /home/user/nicegui/screenshots/3537/test_move_sortable_card.png
+NiceGUI ready to go on http://localhost:39105, and http://192.0.2.2:39105
 DOWN order right after drag + server sync: ['Alpha', 'Beta', 'Gamma', 'Yank', 'Xray']
+.Storing screenshot to /home/user/nicegui/screenshots/3537/test_ctrl_between_items_down.png
+==================================== ERRORS ====================================
+_____________________ ERROR at teardown of test_tab_panel ______________________
+JavaScript console error:
+{'level': 'SEVERE', 'message': 'http://localhost:39105/_nicegui/0.0.0.post87.dev0+e498335/static/vue.esm-browser.prod.js 4:22172 "Sortable: `el` must be an HTMLElement, not [object Null]"', 'source': 'console-api', 'timestamp': 1790222140340}
+=========================== short test summary info ============================
+ERROR tests/test_zz_repro_6353.py::test_tab_panel - Failed: JavaScript consol...
+========================= 7 passed, 1 error in 17.56s ==========================
 ```
-(These lines are collected from the main-branch runs. I added the MOVED/DOWN tests in a second pass.)
+
+The one-liner and prototype blocks below are **excerpts**: I grepped earlier runs of the same script for `probe|order|DOWN|MOVED|passed` via `bash ../run.sh ... -s | grep -E ...`. Those runs predate the marker line and the pre-move probe.
 
 One-liner (`parent_slot`) applied:
 ```
@@ -303,6 +353,7 @@ DIALOG probe after reopen: [True, True]    DIALOG order after reopen: ['Beta', '
 TAB probe after switch: [True, True]       TAB order: ['Beta', 'Alpha', 'Gamma']
 MOVED probe: [True, False]                 MOVED order: ['Alpha', 'Beta', 'Gamma']
 DOWN order right after drag + server sync: ['Alpha', 'Beta', 'Gamma', 'Xray', 'Yank']   <- regression
+# first one-liner run (control/dialog/tab/nested only): ============ 4 passed in 11.27s ============ (no teardown error)
 ```
 
 Option-1 prototype applied:
@@ -322,6 +373,8 @@ $ uv run pytest tests/test_sortable.py     # main (prototype reverted)
 ## Uncertain / not done
 
 - No fix is committed, and no regression test was added to `tests/test_sortable.py`, because the fix needs the design decision above. Once an option is chosen, the test should copy `test_basic_reorder`: a `.card` with A/B/C inside `ui.dialog`, click open, `_drag`, `_assert_order`, then close, reopen and drag again.
+- **Race in the option-1 prototype:** `mounted` is async, and the observer is attached only after `await import(...)`. If the container is deleted before the import resolves, `unmounted` runs first with nothing to disconnect, and the observer attaches afterwards and leaks. A real patch needs an "already unmounted" guard after the await.
+- **Prototype, untested edge (from the skeptic review):** SortableJS's `clone()` removes only the top-level `id`. With `group: {pull: 'clone'}`, and a dragged item that wraps a sortable container, the page could briefly hold two nodes with the same id. `getElementById` might then make the observer rebind to the clone mid-drag. Also, after a dialog closes, the old instance stays attached to the detached node until the next rebind. That's harmless but not cleaned up.
 - I haven't measured the performance cost of the option-1 observer on large or busy pages.
 - I haven't checked whether other lazily rendered containers (`ui.menu`, `ui.expansion`, `ui.stepper`) behave the same. The mechanism predicts they will whenever Quasar renders their content lazily.
 - My repro script prints results instead of asserting. The only automatic failure was the teardown console-error check in the tab case.
