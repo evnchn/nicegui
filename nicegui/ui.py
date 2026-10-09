@@ -453,5 +453,5 @@ def __getattr__(name: str) -> object:
 for _dist in sorted(Path(__file__).parent.glob('elements/*/dist')):
     importlib.import_module(f'.elements.{_dist.parent.name}', package='nicegui')
 # The external highcharts package has no 'dist' dir here, so import it explicitly if installed.
-if importlib.util.find_spec('nicegui_highcharts'):
+if 'nicegui_highcharts' not in sys.modules and importlib.util.find_spec('nicegui_highcharts'):
     importlib.import_module('.elements.highchart', package='nicegui')
