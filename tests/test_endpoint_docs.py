@@ -1,7 +1,7 @@
 import httpx
 import pytest
 
-from nicegui import __version__, ui
+from nicegui import APIRouter, __version__, app, ui
 from nicegui.testing import Screen
 
 
@@ -46,3 +46,22 @@ def test_endpoint_documentation(screen: Screen, endpoint_documentation: str):
         raise ValueError(f'Unknown endpoint documentation setting: {endpoint_documentation}')
 
     assert set(httpx.get(f'http://localhost:{Screen.PORT}/openapi.json', timeout=5).json()['paths']) == expected_paths
+
+
+def test_endpoint_documentation_of_nested_router_page(screen: Screen):
+    screen.ui_run_kwargs['fastapi_docs'] = True
+    screen.ui_run_kwargs['endpoint_documentation'] = 'page'
+    inner = APIRouter(prefix='/inner')
+    outer = APIRouter(prefix='/outer')
+
+    @inner.page('/page')
+    def page():
+        ui.label('Nested page')
+
+    outer.include_router(inner)
+    app.include_router(outer)
+
+    screen.open('/outer/inner/page')
+    screen.should_contain('Nested page')
+    assert set(httpx.get(f'http://localhost:{Screen.PORT}/openapi.json', timeout=5).json()['paths']) == {
+        '/outer/inner/page'}

@@ -327,9 +327,23 @@ class Client:
 
         return AwaitableResponse(send_and_forget, send_and_wait)
 
+    @classmethod
+    def page_path(cls, target: Callable) -> str:
+        """Return the full path of a page builder, including the prefixes of all routers it was included with."""
+        path = cls.page_routes[target]
+        for route in core.app._iter_http_routes():  # pylint: disable=protected-access
+            if cls.page_builder_of(route) is target and route.path.endswith(path):
+                return route.path
+        return path
+
+    @staticmethod
+    def page_builder_of(route: Any) -> Callable | None:
+        """Return the page builder behind a route or ``None`` if the route is not a page."""
+        return getattr(getattr(getattr(route, 'original_route', route), 'endpoint', None), '__wrapped__', None)
+
     def open(self, target: Callable | str, new_tab: bool = False) -> None:
         """Open a new page in the client."""
-        path = target if isinstance(target, str) else self.page_routes[target]
+        path = target if isinstance(target, str) else self.page_path(target)
         self.outbox.enqueue_message('open', {'path': path, 'new_tab': new_tab}, self.id)
 
     def download(self, src: str | bytes, filename: str | None = None, media_type: str = '') -> None:

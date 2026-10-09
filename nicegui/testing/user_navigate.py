@@ -23,7 +23,7 @@ class UserNavigate(Navigate):
         if isinstance(target, ui.element):
             # navigation to an element does not do anything in the user simulation (the whole content is always visible)
             return
-        path = Client.page_routes[target] if callable(target) else target
+        path = Client.page_path(target) if callable(target) else target
         background_tasks.create(self._open(path, clear_forward_history=True), name=f'navigate to {path}')
 
     def back(self) -> None:

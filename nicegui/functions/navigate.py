@@ -62,7 +62,7 @@ class Navigate:
         elif isinstance(target, Element):
             path = f'#{target.html_id}'
         elif callable(target):
-            path = Client.page_routes[target]
+            path = Client.page_path(target)
         else:
             raise TypeError(f'Invalid target type: {type(target)}')
 

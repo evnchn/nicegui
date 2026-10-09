@@ -189,7 +189,7 @@ def run(root: Callable | None = None, *,
             continue
         if route.path.startswith('/_nicegui') and hasattr(route, 'methods'):
             route.include_in_schema = endpoint_documentation in {'internal', 'all'}
-        if route.path == '/' or route.path in Client.page_routes.values():
+        if route.path == '/' or Client.page_builder_of(route) in Client.page_routes:
             route.include_in_schema = endpoint_documentation in {'page', 'all'}
 
     if fastapi_docs:
