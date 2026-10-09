@@ -101,6 +101,7 @@ class Scene(CancelableWaitElement, component='scene.js', esm={'nicegui-scene': '
         :param show_stats: whether to show performance stats (default: ``False``, *added in version 3.2.0*)
         """
         super().__init__()
+        self._views: weakref.WeakSet[CancelableWaitElement] = weakref.WeakSet()
         self._props['width'] = width
         self._props['height'] = height
         self._props['fps'] = fps
@@ -312,6 +313,10 @@ class Scene(CancelableWaitElement, component='scene.js', esm={'nicegui-scene': '
         return await self.run_method('get_camera')
 
     def _handle_delete(self) -> None:
+        for view in list(self._views):  # a view cannot initialize without its scene
+            slot = view.parent_slot
+            if not view.is_deleted and slot is not None and view in slot.children:
+                view.delete()
         binding.remove(list(self.objects.values()))
         super()._handle_delete()
 

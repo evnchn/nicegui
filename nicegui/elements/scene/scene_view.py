@@ -51,6 +51,7 @@ class SceneView(CancelableWaitElement, component='scene_view.js', default_classe
         self._props['fps'] = fps
         self._props['show-stats'] = show_stats
         self._props['scene-id'] = scene.id
+        scene._views.add(self)  # pylint: disable=protected-access
         self.camera = camera or Scene.perspective_camera()
         self._props['camera-type'] = self.camera.type
         self._props['camera-params'] = self.camera.params

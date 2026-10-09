@@ -1,3 +1,4 @@
+import asyncio
 import gc
 import weakref
 from typing import Literal
@@ -448,6 +449,21 @@ async def test_bound_object_is_released_on_delete(user: User):
     await user.open('/')
     gc.collect()
     assert len(objects) == 0
+
+
+async def test_scene_view_initialization_is_cancelled_when_scene_is_deleted(user: User):
+    @ui.page('/')
+    async def page():
+        scene = ui.scene()
+        view = ui.scene_view(scene)
+        scene.delete()
+        try:
+            await view.initialized()
+        except asyncio.CancelledError:
+            ui.label('cancelled')
+
+    await user.open('/')
+    await user.should_see('cancelled')
 
 
 async def test_scene_is_collected_after_client_deletion(user: User):
