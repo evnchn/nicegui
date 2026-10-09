@@ -1095,6 +1095,39 @@ def test_disabling_404(screen: Screen):
     screen.should_contain('main page')
 
 
+@pytest.mark.parametrize('target, content', [
+    ('/', 'Index page'),
+    ('/other', 'Other page'),
+    ('/administrator', 'Administrator page'),
+])
+def test_navigate_outside_root_path(screen: Screen, target: str, content: str):
+    @ui.page('/')
+    def index():
+        ui.label('Index page')
+
+    @ui.page('/other')
+    def other():
+        ui.label('Other page')
+
+    @ui.page('/administrator')
+    def administrator():
+        ui.label('Administrator page')
+
+    @ui.page('/admin')
+    @ui.page('/admin/{_:path}')
+    def admin():
+        ui.link('Leave', target)
+        ui.sub_pages({
+            '/': lambda: ui.label('Admin overview'),
+            '/istrator': lambda: ui.label('Admin istrator'),
+        }, root_path='/admin')
+
+    screen.open('/admin/')
+    screen.should_contain('Admin overview')
+    screen.click('Leave')
+    screen.should_contain(content)
+
+
 def test_navigate_from_404_to_root_path(screen: Screen):
     @ui.page('/')
     @ui.page('/{_:path}')

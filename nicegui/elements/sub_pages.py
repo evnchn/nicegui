@@ -144,6 +144,10 @@ class SubPages(Element, component='sub_pages.js', default_classes='nicegui-sub-p
 
     def _find_matching_path(self) -> RouteMatch | None:
         match: RouteMatch | None = None
+        root_path = (self._root_path or '').rstrip('/')
+        current_path = urlparse(self._router.current_path).path
+        if root_path and current_path != root_path and not current_path.startswith(root_path + '/'):
+            return None
         relative_path = self._router.current_path[len(self._root_path or ''):]
         if not relative_path.startswith('/'):
             relative_path = '/' + relative_path
