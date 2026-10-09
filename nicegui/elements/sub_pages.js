@@ -8,7 +8,9 @@ function getCurrentPath() {
 
 function stripPathPrefix(path) {
   const prefix = getPathPrefix();
-  return prefix && path.startsWith(prefix) ? path.substring(prefix.length) : path;
+  return prefix && path.startsWith(prefix) && /^([/?#]|$)/.test(path.substring(prefix.length))
+    ? path.substring(prefix.length)
+    : path;
 }
 
 function getCleanCurrentPath() {

@@ -1475,3 +1475,20 @@ def test_ctrl_click_opens_link_in_new_tab(screen: Screen):
     modifier = Keys.COMMAND if sys.platform == 'darwin' else Keys.CONTROL
     ActionChains(screen.selenium).key_down(modifier).click(element).key_up(modifier).perform()
     screen.wait_for(lambda: len(screen.selenium.window_handles) == 2)
+
+
+def test_link_to_sibling_of_path_prefix_is_not_stripped(screen: Screen):
+    @ui.page('/')
+    @ui.page('/{_:path}')
+    def index():
+        ui.run_javascript('window.path_prefix = "/admin"')
+        ui.html('<a href="/admin_panel">Go to admin_panel</a>', sanitize=False)
+        ui.sub_pages({
+            '/': lambda: ui.label('main page'),
+            '/admin_panel': lambda: ui.label('admin panel page'),
+        })
+
+    screen.open('/')
+    screen.should_contain('main page')
+    screen.click('Go to admin_panel')
+    screen.should_contain('admin panel page')
