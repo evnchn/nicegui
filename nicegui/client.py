@@ -331,10 +331,9 @@ class Client:
     def page_path(cls, target: Callable) -> str:
         """Return the full path of a page builder, including the prefixes of all routers it was included with."""
         path = cls.page_routes[target]
-        for route in core.app._iter_http_routes():  # pylint: disable=protected-access
-            if cls.page_builder_of(route) is target and route.path.endswith(path):
-                return route.path
-        return path
+        paths = [route.path for route in core.app._iter_http_routes()  # pylint: disable=protected-access
+                 if cls.page_builder_of(route) is target]
+        return path if path in paths else next((p for p in paths if p.endswith(path)), path)
 
     @staticmethod
     def page_builder_of(route: Any) -> Callable | None:

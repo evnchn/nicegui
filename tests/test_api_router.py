@@ -88,9 +88,10 @@ async def test_page_function_target_of_included_router(user: User, how: str, lay
     assert user.back_history[-1] == expected_path
 
 
-async def test_page_function_target_with_two_paths(user: User):
+@pytest.mark.parametrize('other_path', ['/admin/{_:path}', '/legacy/admin'])
+async def test_page_function_target_with_two_paths(user: User, other_path: str):
     @ui.page('/admin')
-    @ui.page('/admin/{_:path}')
+    @ui.page(other_path)
     def admin():
         ui.label('Admin')
 
