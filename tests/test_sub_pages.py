@@ -1128,6 +1128,15 @@ def test_navigate_outside_root_path(screen: Screen, target: str, content: str):
     screen.should_contain(content)
 
 
+def test_root_path_with_semicolon(screen: Screen):
+    @ui.page('/admin;v1')
+    def admin():
+        ui.sub_pages({'/': lambda: ui.label('Admin overview')}, root_path='/admin;v1')
+
+    screen.open('/admin;v1')
+    screen.should_contain('Admin overview')
+
+
 def test_navigate_from_404_to_root_path(screen: Screen):
     @ui.page('/')
     @ui.page('/{_:path}')
