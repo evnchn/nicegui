@@ -25,7 +25,8 @@ export default {
       handler(options) {
         const grid = this.$el.parentElement?.gridstack;
         if (!grid) return this.writeAttributes(); // GridStack will read the attributes when it initializes
-        grid.update(this.$el, Object.fromEntries(Object.entries(options).filter(([, value]) => value !== null)));
+        const { x, y, ...rest } = options; // null min/max clear a limit, null x/y keep the current position
+        grid.update(this.$el, { ...rest, ...(x === null ? {} : { x }), ...(y === null ? {} : { y }) });
       },
     },
   },

@@ -449,6 +449,12 @@ class DashboardChangeEventArguments(UiEventArguments):
 
 
 @dataclass(kw_only=True, slots=True)
+class DashboardItemResizeEventArguments(UiEventArguments):
+    w: int
+    h: int
+
+
+@dataclass(kw_only=True, slots=True)
 class CodeMirrorKeyBindingEventArguments(UiEventArguments):
     key: str
 

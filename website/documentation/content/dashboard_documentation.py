@@ -38,20 +38,21 @@ def layout_changes() -> None:
 
 @doc.demo('Changing Tiles from Python', '''
     Setting `x`, `y`, `w` or `h` moves or resizes a tile; other tiles make room.
+    `min_w`, `max_w`, `min_h` and `max_h` limit the size, both for the user and for Python.
     Tiles can also be added and removed at runtime,
     and `editable` locks the whole layout.
 ''')
 def change_from_python() -> None:
     with ui.dashboard(columns=4, cell_height=50).classes('w-full') as dashboard:
-        with ui.dashboard_item(x=0, y=0, w=1, h=1) as item:
-            ui.label('Grow me').classes('w-full h-full bg-green-100 p-2 rounded')
+        with ui.dashboard_item(x=0, y=0, w=1, h=1, max_w=3) as item:
+            ui.label('Grow me (up to 3)').classes('w-full h-full bg-green-100 p-2 rounded')
 
     def add() -> None:
         with dashboard, ui.dashboard_item(w=1, h=1):
             ui.label('New').classes('w-full h-full bg-orange-100 p-2 rounded')
 
     with ui.row():
-        ui.button('Grow', on_click=lambda: setattr(item, 'w', min(item.w + 1, 4)))
+        ui.button('Grow', on_click=lambda: setattr(item, 'w', item.w + 1))
         ui.button('Add', on_click=add)
         ui.switch('Editable', value=True).bind_value(dashboard, 'editable')
 

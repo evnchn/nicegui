@@ -6,7 +6,15 @@ from typing import Any
 from typing_extensions import Self
 
 from ...element import Element
-from ...events import DashboardChangeEventArguments, GenericEventArguments, Handler, handle_event
+from ...events import (
+    DashboardChangeEventArguments,
+    DashboardItemResizeEventArguments,
+    GenericEventArguments,
+    Handler,
+    handle_event,
+)
+
+_LIMITS = {'min_w': 'minW', 'max_w': 'maxW', 'min_h': 'minH', 'max_h': 'maxH'}
 
 
 class Dashboard(Element, component='dashboard.js', esm={'nicegui-dashboard': 'dist'}, default_classes='nicegui-dashboard'):
@@ -70,7 +78,12 @@ class Dashboard(Element, component='dashboard.js', esm={'nicegui-dashboard': 'di
         return items
 
     def _handle_change(self, e: GenericEventArguments) -> None:
+        sizes = {entry['id']: (entry['w'], entry['h']) for entry in e.args}
+        resized = [item for item in self.default_slot.children
+                   if isinstance(item, DashboardItem) and item.id in sizes and sizes[item.id] != (item.w, item.h)]
         items = self._sync(e)
+        for item in resized:
+            item._handle_resize()  # pylint: disable=protected-access
         for handler in self._change_handlers:
             handle_event(handler, DashboardChangeEventArguments(sender=self, client=self.client, items=items))
 
@@ -102,6 +115,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
                  max_h: int | None = None,
                  movable: bool = True,
                  resizable: bool = True,
+                 on_resize: Handler[DashboardItemResizeEventArguments] | None = None,
                  ) -> None:
         """Dashboard Item
 
@@ -119,14 +133,42 @@ class DashboardItem(Element, component='dashboard_item.js'):
         :param max_h: maximum height in rows
         :param movable: whether the user can move this tile (default: ``True``)
         :param resizable: whether the user can resize this tile (default: ``True``)
+        :param on_resize: callback invoked when the user changes the width or height of this tile
         """
         super().__init__()
         self._props['options'] = {
             'x': x, 'y': y, 'w': w, 'h': h,
-            'minW': min_w, 'maxW': max_w, 'minH': min_h, 'maxH': max_h,
+            'minW': None, 'maxW': None, 'minH': None, 'maxH': None,
             'noMove': not movable, 'noResize': not resizable,
             'autoPosition': x is None or y is None,
         }
+        self._set_limits(min_w=min_w, max_w=max_w, min_h=min_h, max_h=max_h)
+        self._resize_handlers: list[Handler[DashboardItemResizeEventArguments]] = []
+        if on_resize:
+            self.on_resize(on_resize)
+
+    def on_resize(self, callback: Handler[DashboardItemResizeEventArguments]) -> Self:
+        """Add a callback to be invoked when the user changes the width or height of this tile."""
+        self._resize_handlers.append(callback)
+        return self
+
+    def _handle_resize(self) -> None:
+        for handler in self._resize_handlers:
+            handle_event(handler, DashboardItemResizeEventArguments(
+                sender=self, client=self.client, w=self.w, h=self.h))
+
+    def _set_limits(self, **limits: int | None) -> None:
+        options = {**self._props['options'], **{_LIMITS[name]: value for name, value in limits.items()}}
+        for name, key in _LIMITS.items():
+            value = options[key]
+            if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value < 1):
+                raise ValueError(f'{name} must be a positive integer or None, got {value!r}')
+        for size in ('w', 'h'):
+            low, high = options[f'min{size.upper()}'], options[f'max{size.upper()}']
+            if low is not None and high is not None and low > high:
+                raise ValueError(f'min_{size} ({low}) must not be greater than max_{size} ({high})')
+            options[size] = _clamp(options[size], low, high)
+        self._props['options'].update(options)
 
     @property
     def geometry(self) -> dict[str, int | None]:
@@ -161,7 +203,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
 
     @w.setter
     def w(self, value: int) -> None:
-        self._props['options']['w'] = value
+        self._props['options']['w'] = _clamp(value, self.min_w, self.max_w)
 
     @property
     def h(self) -> int:
@@ -170,4 +212,48 @@ class DashboardItem(Element, component='dashboard_item.js'):
 
     @h.setter
     def h(self, value: int) -> None:
-        self._props['options']['h'] = value
+        self._props['options']['h'] = _clamp(value, self.min_h, self.max_h)
+
+    @property
+    def min_w(self) -> int | None:
+        """Minimum width in columns (``None`` for no limit); the current width grows to meet it."""
+        return self._option('minW')
+
+    @min_w.setter
+    def min_w(self, value: int | None) -> None:
+        self._set_limits(min_w=value)
+
+    @property
+    def max_w(self) -> int | None:
+        """Maximum width in columns (``None`` for no limit); the current width shrinks to meet it."""
+        return self._option('maxW')
+
+    @max_w.setter
+    def max_w(self, value: int | None) -> None:
+        self._set_limits(max_w=value)
+
+    @property
+    def min_h(self) -> int | None:
+        """Minimum height in rows (``None`` for no limit); the current height grows to meet it."""
+        return self._option('minH')
+
+    @min_h.setter
+    def min_h(self, value: int | None) -> None:
+        self._set_limits(min_h=value)
+
+    @property
+    def max_h(self) -> int | None:
+        """Maximum height in rows (``None`` for no limit); the current height shrinks to meet it."""
+        return self._option('maxH')
+
+    @max_h.setter
+    def max_h(self, value: int | None) -> None:
+        self._set_limits(max_h=value)
+
+
+def _clamp(value: int, low: int | None, high: int | None) -> int:
+    if high is not None:
+        value = min(value, high)
+    if low is not None:
+        value = max(value, low)
+    return value
