@@ -134,3 +134,23 @@ def test_resize_callback(screen: Screen):
     screen.click('Python resize')
     screen.wait_for(lambda: screen.find_by_class('b').size['width'] > 550)
     assert resizes == [(2, 1)]
+
+
+def test_geometry_respects_columns_and_max_row(screen: Screen):
+    items: list[ui.dashboard_item] = []
+
+    @ui.page('/')
+    def page():
+        with ui.dashboard(columns=4, options={'maxRow': 3}):
+            items.append(ui.dashboard_item(x=3, y=0, w=9, h=1, min_w=6))
+            items.append(ui.dashboard_item(x=0, y=0, w=1, h=1))
+        assert items[0].geometry == {'x': 0, 'y': 0, 'w': 4, 'h': 1}
+        ui.label('ready')
+
+    screen.open('/')
+    screen.should_contain('ready')
+    items[1].w = 3
+    items[1].x = 9
+    items[1].h = 5
+    items[1].y = 7
+    assert items[1].geometry == {'x': 1, 'y': 0, 'w': 3, 'h': 3}

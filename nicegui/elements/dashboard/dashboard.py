@@ -170,6 +170,21 @@ class DashboardItem(Element, component='dashboard_item.js'):
                 raise ValueError(f'min_{size} ({low}) must not be greater than max_{size} ({high})')
             options[size] = _clamp(options[size], low, high)
         self._props['options'].update(options)
+        self._fit_grid()
+
+    def _fit_grid(self) -> None:
+        options = self._props['options']
+        grid = self.parent_slot.parent._props.get('options', {}) if self.parent_slot else {
+        }  # pylint: disable=protected-access
+        columns, max_row = grid.get('column'), grid.get('maxRow')
+        if isinstance(columns, int) and columns > 0:
+            options['w'] = min(options['w'], columns)
+            if options['x'] is not None:
+                options['x'] = max(0, min(options['x'], columns - options['w']))
+        if isinstance(max_row, int) and max_row > 0:
+            options['h'] = min(options['h'], max_row)
+            if options['y'] is not None:
+                options['y'] = max(0, min(options['y'], max_row - options['h']))
 
     @property
     def geometry(self) -> dict[str, int | None]:
@@ -187,6 +202,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
     @x.setter
     def x(self, value: int) -> None:
         self._props['options'].update(x=value, autoPosition=False)
+        self._fit_grid()
 
     @property
     def y(self) -> int | None:
@@ -196,6 +212,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
     @y.setter
     def y(self, value: int) -> None:
         self._props['options'].update(y=value, autoPosition=False)
+        self._fit_grid()
 
     @property
     def w(self) -> int:
@@ -205,6 +222,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
     @w.setter
     def w(self, value: int) -> None:
         self._props['options']['w'] = _clamp(value, self.min_w, self.max_w)
+        self._fit_grid()
 
     @property
     def h(self) -> int:
@@ -214,6 +232,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
     @h.setter
     def h(self, value: int) -> None:
         self._props['options']['h'] = _clamp(value, self.min_h, self.max_h)
+        self._fit_grid()
 
     @property
     def min_w(self) -> int | None:
