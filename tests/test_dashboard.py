@@ -87,6 +87,7 @@ def test_min_max_sizes_are_clamped(screen: Screen):
 
         def widen() -> None:
             a.w = 4
+            ui.label(f'a.w={a.w}')
         ui.button('Widen', on_click=widen)
         ui.button('Grow', on_click=lambda: setattr(b, 'min_w', 3))
         ui.button('Show layout', on_click=lambda: ui.label(str(dashboard.layout)))
@@ -96,6 +97,7 @@ def test_min_max_sizes_are_clamped(screen: Screen):
     tile_a = screen.find_by_class('a')
     tile_b = screen.find_by_class('b')
     screen.click('Widen')
+    screen.should_contain('a.w=2')
     screen.click('Grow')
     screen.wait_for(lambda: tile_b.size['width'] > 550)
     assert 350 < tile_a.size['width'] < 450
@@ -112,8 +114,9 @@ def test_resize_callback(screen: Screen):
             with ui.dashboard_item(x=0, y=0, w=1, h=1, max_w=2, on_resize=lambda e: resizes.append((e.w, e.h))) \
                     .classes('a'):
                 ui.label('A')
-            with ui.dashboard_item(x=0, y=1, w=1, h=1, on_resize=lambda e: resizes.append((e.w, e.h))):
+            with ui.dashboard_item(x=0, y=1, w=1, h=1, on_resize=lambda e: resizes.append((e.w, e.h))).classes('b') as b:
                 ui.label('B')
+        ui.button('Python resize', on_click=lambda: setattr(b, 'w', 5))
 
     screen.open('/')
     screen.wait_for_js('!!document.querySelector(".grid-stack").gridstack', True)
@@ -128,3 +131,6 @@ def test_resize_callback(screen: Screen):
     screen.wait_for(lambda: bool(resizes))
     assert resizes == [(2, 1)]
     assert 350 < tile.size['width'] < 450
+    screen.click('Python resize')
+    screen.wait_for(lambda: screen.find_by_class('b').size['width'] > 550)
+    assert resizes == [(2, 1)]

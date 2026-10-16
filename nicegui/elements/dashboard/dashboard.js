@@ -15,6 +15,11 @@ export default {
     const geometry = (items) =>
       items.map((item) => ({ id: parseInt(item.el.id.substring(1)), x: item.x, y: item.y, w: item.w, h: item.h }));
     this.grid.on("change", (_, items) => this.$emit("layout_change", geometry(items)));
+    this.grid.on("resizestart", (_, el) => (this.resizeStart = { w: el.gridstackNode.w, h: el.gridstackNode.h }));
+    this.grid.on("resizestop", (_, el) => {
+      const node = el.gridstackNode;
+      if (node.w !== this.resizeStart?.w || node.h !== this.resizeStart?.h) this.$emit("item_resize", geometry([node]));
+    });
     this.grid.on("added", (_, items) => this.$emit("layout_sync", geometry(items)));
     this.$emit("layout_sync", geometry(this.grid.engine.nodes));
   },

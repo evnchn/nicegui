@@ -60,6 +60,7 @@ class Dashboard(Element, component='dashboard.js', esm={'nicegui-dashboard': 'di
         self._change_handlers: list[Handler[DashboardChangeEventArguments]] = []
         self.on('layout_change', self._handle_change)
         self.on('layout_sync', self._sync)
+        self.on('item_resize', self._handle_item_resize)
         if on_change:
             self.on_change(on_change)
 
@@ -77,13 +78,13 @@ class Dashboard(Element, component='dashboard.js', esm={'nicegui-dashboard': 'di
                 items.append(item)
         return items
 
+    def _handle_item_resize(self, e: GenericEventArguments) -> None:
+        for item in self._sync(e):
+            if isinstance(item, DashboardItem):
+                item._handle_resize()  # pylint: disable=protected-access
+
     def _handle_change(self, e: GenericEventArguments) -> None:
-        sizes = {entry['id']: (entry['w'], entry['h']) for entry in e.args}
-        resized = [item for item in self.default_slot.children
-                   if isinstance(item, DashboardItem) and item.id in sizes and sizes[item.id] != (item.w, item.h)]
         items = self._sync(e)
-        for item in resized:
-            item._handle_resize()  # pylint: disable=protected-access
         for handler in self._change_handlers:
             handle_event(handler, DashboardChangeEventArguments(sender=self, client=self.client, items=items))
 
