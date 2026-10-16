@@ -49,21 +49,27 @@ def test_python_changes_move_tiles(screen: Screen):
     screen.wait_for(lambda: tile.size['width'] > 550 and tile.location['x'] > 150)
 
 
-def test_items_added_later_become_tiles(screen: Screen):
+def test_auto_placed_and_late_tiles_report_geometry(screen: Screen):
     @ui.page('/')
     def page():
         with ui.dashboard(columns=4, cell_height=50).classes('w-[800px]') as dashboard:
             with ui.dashboard_item(x=0, y=0, w=4, h=1):
                 ui.label('A')
+            with ui.dashboard_item(w=2, h=1):
+                ui.label('B')
 
         def add() -> None:
             with dashboard:
                 with ui.dashboard_item(w=2, h=1).classes('late'):
-                    ui.label('B')
+                    ui.label('C')
         ui.button('Add', on_click=add)
+        ui.button('Show layout', on_click=lambda: ui.label(str(dashboard.layout)))
 
     screen.open('/')
+    screen.wait_for_js('!!document.querySelector(".grid-stack").gridstack', True)
     screen.click('Add')
-    screen.should_contain('B')
     late = screen.find_by_class('late')
     screen.wait_for(lambda: late.get_attribute('gs-y') == '1' and late.size['width'] > 350)
+    screen.click('Show layout')
+    screen.should_contain(
+        "[{'x': 0, 'y': 0, 'w': 4, 'h': 1}, {'x': 0, 'y': 1, 'w': 2, 'h': 1}, {'x': 2, 'y': 1, 'w': 2, 'h': 1}]")

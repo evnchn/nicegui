@@ -51,6 +51,7 @@ class Dashboard(Element, component='dashboard.js', esm={'nicegui-dashboard': 'di
         self.add_resource(Path(__file__).parent / 'dist')
         self._change_handlers: list[Handler[DashboardChangeEventArguments]] = []
         self.on('layout_change', self._handle_change)
+        self.on('layout_sync', self._sync)
         if on_change:
             self.on_change(on_change)
 
@@ -59,14 +60,17 @@ class Dashboard(Element, component='dashboard.js', esm={'nicegui-dashboard': 'di
         self._change_handlers.append(callback)
         return self
 
-    def _handle_change(self, e: GenericEventArguments) -> None:
+    def _sync(self, e: GenericEventArguments) -> list[Element]:
         items: list[Element] = []
         for entry in e.args:
             item = self.client.elements.get(entry['id'])
-            if not isinstance(item, DashboardItem):
-                continue
-            item.props['options'].update({key: entry[key] for key in ('x', 'y', 'w', 'h')})
-            items.append(item)
+            if isinstance(item, DashboardItem):
+                item.props['options'].update({key: entry[key] for key in ('x', 'y', 'w', 'h')}, autoPosition=False)
+                items.append(item)
+        return items
+
+    def _handle_change(self, e: GenericEventArguments) -> None:
+        items = self._sync(e)
         for handler in self._change_handlers:
             handle_event(handler, DashboardChangeEventArguments(sender=self, client=self.client, items=items))
 
@@ -80,8 +84,8 @@ class Dashboard(Element, component='dashboard.js', esm={'nicegui-dashboard': 'di
         self._props['options']['staticGrid'] = not value
 
     @property
-    def layout(self) -> list[dict[str, int]]:
-        """The current position and size of all tiles."""
+    def layout(self) -> list[dict[str, int | None]]:
+        """The current position and size of all tiles (``x`` and ``y`` are ``None`` for auto-placed tiles not yet shown)."""
         return [item.geometry for item in self.default_slot.children if isinstance(item, DashboardItem)]
 
 
@@ -125,7 +129,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
         }
 
     @property
-    def geometry(self) -> dict[str, int]:
+    def geometry(self) -> dict[str, int | None]:
         """The position and size of this tile as a dictionary with keys ``x``, ``y``, ``w`` and ``h``."""
         return {key: self._props['options'][key] for key in ('x', 'y', 'w', 'h')}
 
