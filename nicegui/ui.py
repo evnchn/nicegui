@@ -33,6 +33,8 @@ _LAZY_IMPORTS = {
     'column': ('.elements.column', 'Column'),
     'context_menu': ('.elements.context_menu', 'ContextMenu'),
     'dark_mode': ('.elements.dark_mode', 'DarkMode'),
+    'dashboard': ('.elements.dashboard', 'Dashboard'),
+    'dashboard_item': ('.elements.dashboard', 'DashboardItem'),
     'date': ('.elements.date', 'Date'),
     'date_input': ('.elements.date_input', 'DateInput'),
     'dialog': ('.elements.dialog', 'Dialog'),
@@ -183,6 +185,8 @@ __all__ = [
     'context',
     'context_menu',
     'dark_mode',
+    'dashboard',
+    'dashboard_item',
     'date',
     'date_input',
     'dialog',
@@ -323,6 +327,8 @@ if TYPE_CHECKING:
     from .elements.column import Column as column
     from .elements.context_menu import ContextMenu as context_menu
     from .elements.dark_mode import DarkMode as dark_mode
+    from .elements.dashboard import Dashboard as dashboard
+    from .elements.dashboard import DashboardItem as dashboard_item
     from .elements.date import Date as date
     from .elements.date_input import DateInput as date_input
     from .elements.dialog import Dialog as dialog

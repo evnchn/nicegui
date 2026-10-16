@@ -14,6 +14,7 @@
 - @codemirror/theme-one-dark: 6.1.3 ([MIT](https://opensource.org/licenses/MIT))
 - @uiw/codemirror-themes-all: 4.25.2 ([MIT](https://opensource.org/licenses/MIT))
 - @babel/runtime: 7.28.4 ([MIT](https://opensource.org/licenses/MIT))
+- gridstack: 12.6.0 ([MIT](https://opensource.org/licenses/MIT))
 - echarts: 6.1.0 ([Apache-2.0](https://opensource.org/licenses/Apache-2.0))
 - echarts-gl: 2.1.0 ([MIT](https://opensource.org/licenses/MIT))
 - nipplejs: 0.10.2 ([MIT](https://opensource.org/licenses/MIT))

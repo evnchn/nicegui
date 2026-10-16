@@ -5,6 +5,7 @@ from . import (
     carousel_documentation,
     column_documentation,
     context_menu_documentation,
+    dashboard_documentation,
     dialog_documentation,
     doc,
     expansion_documentation,
@@ -92,6 +93,7 @@ def clear_containers_demo():
 
 
 doc.intro(sortable_documentation)
+doc.intro(dashboard_documentation)
 doc.intro(teleport_documentation)
 doc.intro(keep_alive_documentation)
 doc.intro(expansion_documentation)

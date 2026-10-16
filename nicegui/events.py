@@ -444,6 +444,11 @@ class SortableEventArguments(UiEventArguments):
 
 
 @dataclass(kw_only=True, slots=True)
+class DashboardChangeEventArguments(UiEventArguments):
+    items: list[Element]
+
+
+@dataclass(kw_only=True, slots=True)
 class CodeMirrorKeyBindingEventArguments(UiEventArguments):
     key: str
 
