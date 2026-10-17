@@ -174,8 +174,8 @@ class DashboardItem(Element, component='dashboard_item.js'):
 
     def _fit_grid(self) -> None:
         options = self._props['options']
-        grid = self.parent_slot.parent._props.get('options', {}) if self.parent_slot else {
-        }  # pylint: disable=protected-access
+        parent = self.parent_slot.parent if self.parent_slot else None
+        grid = parent._props.get('options', {}) if parent else {}  # pylint: disable=protected-access
         columns, max_row = grid.get('column'), grid.get('maxRow')
         if isinstance(columns, int) and columns > 0:
             options['w'] = min(options['w'], columns)
