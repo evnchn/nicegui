@@ -23,13 +23,14 @@ export default {
       items = items.filter((item) => !echo(item)); // skip tiles that just applied exactly what the server sent
       if (items.length) this.$emit("layout_change", geometry(items));
     });
-    const startGesture = (el) => (this.grid.gesture = el); // server updates wait, a batch would hide this gesture's change
+    const startGesture = (el) => (this.grid.gesture = el.gridstackNode); // server updates wait, a batch would hide this gesture's change
     const stopGesture = () => {
       delete this.grid.gesture;
       queueMicrotask(() => this.grid.flushAfterGesture?.()); // runs after GridStack reported the gesture's change
     };
     this.grid.on("dragstart", (_, el) => startGesture(el));
     this.grid.on("dragstop", stopGesture);
+    this.grid.on("removed", (_, items) => items.includes(this.grid.gesture) && stopGesture()); // deleted or dropped elsewhere
     this.grid.on("resizestart", (_, el) => {
       startGesture(el);
       this.resizeStart = { w: el.gridstackNode.w, h: el.gridstackNode.h };

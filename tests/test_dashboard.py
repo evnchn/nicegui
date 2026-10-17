@@ -314,3 +314,28 @@ def test_drag_survives_server_write_to_other_tile(screen: Screen, write: str):
     assert items[1].x == 3
     assert tile.get_attribute('gs-x') == '3'
     _assert_settled(screen, dashboards[0], [])
+
+
+def test_server_updates_apply_after_dragged_tile_is_deleted(screen: Screen):
+    items: list[ui.dashboard_item] = []
+
+    @ui.page('/')
+    def page():
+        with ui.dashboard(columns=4, cell_height=50).classes('w-[800px]'):
+            items.append(ui.dashboard_item(x=0, y=0, w=1, h=1).classes('a'))
+            items.append(ui.dashboard_item(x=1, y=0, w=1, h=1).classes('b'))
+
+    screen.open('/')
+    screen.wait_for_js('!!document.querySelector(".grid-stack").gridstack', True)
+    tile = screen.find_by_class('b')
+    ActionChains(screen.selenium).move_to_element(tile).click_and_hold().move_by_offset(20, 20).move_by_offset(400, 0) \
+        .perform()
+    screen.wait_for(lambda: 'ui-draggable-dragging' in (tile.get_attribute('class') or ''))
+    items[0].h = 2
+    screen.wait(0.5)
+    items[1].delete()
+    screen.wait(0.5)
+    ActionChains(screen.selenium).release().perform()
+    items[0].w = 2
+    screen.wait_for(lambda: screen.find_by_class('a').get_attribute('gs-h') == '2')
+    screen.wait_for(lambda: screen.find_by_class('a').get_attribute('gs-w') == '2')

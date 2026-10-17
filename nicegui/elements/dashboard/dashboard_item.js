@@ -36,7 +36,7 @@ export default {
 };
 
 function flush(grid) {
-  if (grid.gesture?.isConnected) return (grid.flushAfterGesture = () => flush(grid));
+  if (grid.gesture) return (grid.flushAfterGesture = () => flush(grid));
   delete grid.flushAfterGesture;
   const items = [...grid.pendingItems.values()];
   delete grid.pendingItems;
