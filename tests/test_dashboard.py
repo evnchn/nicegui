@@ -286,6 +286,7 @@ def test_resize_callback_can_undo_resize(screen: Screen):
 @pytest.mark.parametrize('write', ['grow', 'no-op'])
 def test_drag_survives_server_write_to_other_tile(screen: Screen, write: str):
     events: list[DashboardChangeEventArguments] = []
+    geometry_events: list[str] = []
     items: list[ui.dashboard_item] = []
     dashboards: list[ui.dashboard] = []
 
@@ -294,6 +295,7 @@ def test_drag_survives_server_write_to_other_tile(screen: Screen, write: str):
         with ui.dashboard(columns=4, cell_height=50, on_change=events.append).classes('w-[800px]') as dashboard:
             items.append(ui.dashboard_item(x=0, y=0, w=1, h=1))
             items.append(ui.dashboard_item(x=1, y=0, w=1, h=1).classes('b'))
+        _count_geometry_events(dashboard, geometry_events)
         dashboards.append(dashboard)
 
     screen.open('/')
@@ -313,7 +315,7 @@ def test_drag_survives_server_write_to_other_tile(screen: Screen, write: str):
     screen.wait(0.5)
     assert items[1].x == 3
     assert tile.get_attribute('gs-x') == '3'
-    _assert_settled(screen, dashboards[0], [])
+    _assert_settled(screen, dashboards[0], geometry_events)
 
 
 def test_server_updates_apply_after_dragged_tile_is_deleted(screen: Screen):
