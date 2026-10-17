@@ -341,3 +341,24 @@ def test_server_updates_apply_after_dragged_tile_is_deleted(screen: Screen):
     items[0].w = 2
     screen.wait_for(lambda: screen.find_by_class('a').get_attribute('gs-h') == '2')
     screen.wait_for(lambda: screen.find_by_class('a').get_attribute('gs-w') == '2')
+
+
+def test_on_change_skips_tile_python_just_placed(screen: Screen):
+    events: list[DashboardChangeEventArguments] = []
+    items: list[ui.dashboard_item] = []
+
+    @ui.page('/')
+    def page():
+        with ui.dashboard(columns=4, cell_height=50, on_change=events.append).classes('w-[800px]'):
+            items.append(ui.dashboard_item(x=0, y=0, w=1, h=1))
+            items.append(ui.dashboard_item(x=1, y=0, w=1, h=1).classes('b'))
+        ui.button('Move', on_click=lambda: setattr(items[0], 'x', 1))
+
+    screen.open('/')
+    screen.wait_for_js('!!document.querySelector(".grid-stack").gridstack', True)
+    screen.click('Move')
+    screen.wait_for(lambda: bool(events))
+    screen.wait(0.5)
+    assert [e.items for e in events] == [[items[1]]]
+    assert items[0].geometry == {'x': 1, 'y': 0, 'w': 1, 'h': 1}
+    assert items[1].geometry == {'x': 1, 'y': 1, 'w': 1, 'h': 1}
