@@ -343,6 +343,36 @@ def test_server_updates_apply_after_dragged_tile_is_deleted(screen: Screen):
     screen.wait_for(lambda: screen.find_by_class('a').get_attribute('gs-w') == '2')
 
 
+def test_drag_survives_deleting_other_tile(screen: Screen):
+    events: list[DashboardChangeEventArguments] = []
+    items: list[ui.dashboard_item] = []
+    dashboards: list[ui.dashboard] = []
+    geometry_events: list[str] = []
+
+    @ui.page('/')
+    def page():
+        with ui.dashboard(columns=4, cell_height=50, on_change=events.append).classes('w-[800px]') as dashboard:
+            items.append(ui.dashboard_item(x=0, y=0, w=1, h=1).classes('a'))
+            items.append(ui.dashboard_item(x=1, y=0, w=1, h=1).classes('b'))
+        _count_geometry_events(dashboard, geometry_events)
+        dashboards.append(dashboard)
+
+    screen.open('/')
+    screen.wait_for_js('!!document.querySelector(".grid-stack").gridstack', True)
+    tile = screen.find_by_class('b')
+    ActionChains(screen.selenium).move_to_element(tile).click_and_hold().move_by_offset(20, 20).move_by_offset(400, 0) \
+        .perform()
+    screen.wait_for(lambda: 'ui-draggable-dragging' in (tile.get_attribute('class') or ''))
+    items[0].delete()
+    screen.wait_for(lambda: not screen.find_all_by_class('a'))
+    ActionChains(screen.selenium).release().perform()
+    screen.wait(1)
+    assert tile.get_attribute('gs-x') == '3'
+    assert items[1].x == 3
+    assert any(items[1] in e.items for e in events)
+    _assert_settled(screen, dashboards[0], geometry_events)
+
+
 def test_on_change_skips_tile_python_just_placed(screen: Screen):
     events: list[DashboardChangeEventArguments] = []
     items: list[ui.dashboard_item] = []

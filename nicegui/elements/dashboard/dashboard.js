@@ -12,18 +12,22 @@ export default {
     await loadResource(window.path_prefix + `${this.resourcePath}/gridstack.min.css`);
     if (this.disposed) return;
     this.grid = GridStack.init({ ...this.options }, this.$el);
+    const tile = (item) => (item === this.grid.gesture ? this.gestureEl : item.el); // GridStack swaps in its placeholder while dragging
     const geometry = (items) =>
       items.map((item) => ({
-        id: parseInt(item.el.id.substring(1)),
+        id: parseInt(tile(item).id.substring(1)),
         ...{ x: item.x, y: item.y, w: item.w, h: item.h },
-        revision: item.el.revision,
+        revision: tile(item).revision,
       }));
-    const echo = (item) => ["x", "y", "w", "h"].every((key) => this.grid.applying?.get(item.el)?.[key] === item[key]);
+    const echo = (item) => ["x", "y", "w", "h"].every((key) => this.grid.applying?.get(tile(item))?.[key] === item[key]);
     this.grid.on("change", (_, items) => {
       items = items.filter((item) => !echo(item)); // skip tiles that just applied exactly what the server sent
       if (items.length) this.$emit("layout_change", geometry(items));
     });
-    const startGesture = (el) => (this.grid.gesture = el.gridstackNode); // server updates wait, a batch would hide this gesture's change
+    const startGesture = (el) => {
+      this.grid.gesture = el.gridstackNode; // server updates wait, a batch would hide this gesture's change
+      this.gestureEl = el;
+    };
     const stopGesture = () => {
       delete this.grid.gesture;
       queueMicrotask(() => this.grid.flushAfterGesture?.()); // runs after GridStack reported the gesture's change
