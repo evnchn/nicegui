@@ -201,6 +201,8 @@ def test_readback_does_not_override_on_change(screen: Screen):
     screen.wait_for_js('!!document.querySelector(".grid-stack").gridstack', True)
     screen.click('Move')
     screen.should_contain('moved')
-    screen.wait(1)
+    tile = screen.find_by_class('tile')
+    screen.wait_for(lambda: items[0].geometry == {'x': 2, 'y': 0, 'w': 1, 'h': 1} and tile.get_attribute('gs-x') == '2')
+    screen.wait(0.5)
     assert items[0].geometry == {'x': 2, 'y': 0, 'w': 1, 'h': 1}
-    assert screen.find_by_class('tile').get_attribute('gs-x') == '2'
+    assert tile.get_attribute('gs-x') == '2'
