@@ -84,6 +84,8 @@ class Dashboard(Element, component='dashboard.js', esm={'nicegui-dashboard': 'di
 
     def _handle_change(self, e: GenericEventArguments) -> None:
         items = self._sync(e)
+        if not items:
+            return
         for handler in self._change_handlers:
             handle_event(handler, DashboardChangeEventArguments(sender=self, client=self.client, items=items))
 
@@ -176,13 +178,11 @@ class DashboardItem(Element, component='dashboard_item.js'):
             if low is not None and high is not None and low > high:
                 raise ValueError(f'min_{size} ({low}) must not be greater than max_{size} ({high})')
             options[size] = _clamp(options[size], low, high)
-        self._props['options'].update(options)
-        self._fit_grid()
+        self._update(**options)
 
-    def _fit_grid(self) -> None:
+    def _update(self, **changes: Any) -> None:
         # every server-side geometry change ends here; the browser applies only new revisions
-        self._props['revision'] += 1
-        options = self._props['options']
+        options = {**self._props['options'], **changes}
         parent = self.parent_slot.parent if self.parent_slot else None
         grid = parent._props.get('options', {}) if parent else {}  # pylint: disable=protected-access
         columns, max_row = grid.get('column'), grid.get('maxRow')
@@ -194,6 +194,9 @@ class DashboardItem(Element, component='dashboard_item.js'):
             options['h'] = min(options['h'], max_row)
             if options['y'] is not None:
                 options['y'] = max(0, min(options['y'], max_row - options['h']))
+        if options != self._props['options']:
+            self._props['options'].update(options)
+            self._props['revision'] += 1
 
     @property
     def geometry(self) -> dict[str, int | None]:
@@ -210,8 +213,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
 
     @x.setter
     def x(self, value: int) -> None:
-        self._props['options'].update(x=value, autoPosition=False)
-        self._fit_grid()
+        self._update(x=value, autoPosition=False)
 
     @property
     def y(self) -> int | None:
@@ -220,8 +222,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
 
     @y.setter
     def y(self, value: int) -> None:
-        self._props['options'].update(y=value, autoPosition=False)
-        self._fit_grid()
+        self._update(y=value, autoPosition=False)
 
     @property
     def w(self) -> int:
@@ -230,8 +231,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
 
     @w.setter
     def w(self, value: int) -> None:
-        self._props['options']['w'] = _clamp(value, self.min_w, self.max_w)
-        self._fit_grid()
+        self._update(w=_clamp(value, self.min_w, self.max_w))
 
     @property
     def h(self) -> int:
@@ -240,8 +240,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
 
     @h.setter
     def h(self, value: int) -> None:
-        self._props['options']['h'] = _clamp(value, self.min_h, self.max_h)
-        self._fit_grid()
+        self._update(h=_clamp(value, self.min_h, self.max_h))
 
     @property
     def min_w(self) -> int | None:

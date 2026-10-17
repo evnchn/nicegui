@@ -1,3 +1,4 @@
+import pytest
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 
@@ -280,3 +281,36 @@ def test_resize_callback_can_undo_resize(screen: Screen):
     screen.wait_for(lambda: 'item_resize' in events)
     _assert_settled(screen, dashboards[0], events)
     assert dashboards[0].layout == [{'x': 0, 'y': 0, 'w': 1, 'h': 1}]
+
+
+@pytest.mark.parametrize('write', ['grow', 'no-op'])
+def test_drag_survives_server_write_to_other_tile(screen: Screen, write: str):
+    events: list[DashboardChangeEventArguments] = []
+    items: list[ui.dashboard_item] = []
+    dashboards: list[ui.dashboard] = []
+
+    @ui.page('/')
+    def page():
+        with ui.dashboard(columns=4, cell_height=50, on_change=events.append).classes('w-[800px]') as dashboard:
+            items.append(ui.dashboard_item(x=0, y=0, w=1, h=1))
+            items.append(ui.dashboard_item(x=1, y=0, w=1, h=1).classes('b'))
+        dashboards.append(dashboard)
+
+    screen.open('/')
+    screen.wait_for_js('!!document.querySelector(".grid-stack").gridstack', True)
+    tile = screen.find_by_class('b')
+    ActionChains(screen.selenium).move_to_element(tile).click_and_hold().move_by_offset(20, 20).move_by_offset(400, 0) \
+        .perform()
+    screen.wait_for(lambda: 'ui-draggable-dragging' in (tile.get_attribute('class') or ''))
+    a = items[0]
+    if write == 'grow':
+        a.h = 2
+    else:
+        a.w = a.w
+    screen.wait(0.5)
+    ActionChains(screen.selenium).release().perform()
+    screen.wait_for(lambda: any(items[1] in e.items for e in events))
+    screen.wait(0.5)
+    assert items[1].x == 3
+    assert tile.get_attribute('gs-x') == '3'
+    _assert_settled(screen, dashboards[0], [])
