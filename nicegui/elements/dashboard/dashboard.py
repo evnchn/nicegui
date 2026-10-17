@@ -73,8 +73,7 @@ class Dashboard(Element, component='dashboard.js', esm={'nicegui-dashboard': 'di
         items: list[Element] = []
         for entry in e.args:
             item = self.client.elements.get(entry['id'])
-            if isinstance(item, DashboardItem):
-                item.props['options'].update({key: entry[key] for key in ('x', 'y', 'w', 'h')}, autoPosition=False)
+            if isinstance(item, DashboardItem) and item._apply_report(entry):  # pylint: disable=protected-access
                 items.append(item)
         return items
 
@@ -143,9 +142,10 @@ class DashboardItem(Element, component='dashboard_item.js'):
             'noMove': not movable, 'noResize': not resizable,
             'autoPosition': x is None or y is None,
         }
+        self._props['revision'] = 0
         self._set_limits(min_w=min_w, max_w=max_w, min_h=min_h, max_h=max_h)
         self._resize_handlers: list[Handler[DashboardItemResizeEventArguments]] = []
-        self.on('geometry_sync', self._handle_geometry_sync)
+        self.on('geometry_sync', lambda e: self._apply_report(e.args))
         if on_resize:
             self.on_resize(on_resize)
 
@@ -154,9 +154,11 @@ class DashboardItem(Element, component='dashboard_item.js'):
         self._resize_handlers.append(callback)
         return self
 
-    def _handle_geometry_sync(self, e: GenericEventArguments) -> None:
-        if list(self.geometry.values()) == e.args['sent']:  # skip readbacks overtaken by newer server changes
-            self.props['options'].update(e.args['actual'], autoPosition=False)
+    def _apply_report(self, report: dict[str, Any]) -> bool:
+        if report['revision'] != self._props['revision']:  # the browser had not yet applied newer server changes
+            return False
+        self._props['options'].update({key: report[key] for key in ('x', 'y', 'w', 'h')}, autoPosition=False)
+        return True
 
     def _handle_resize(self) -> None:
         for handler in self._resize_handlers:
@@ -178,6 +180,8 @@ class DashboardItem(Element, component='dashboard_item.js'):
         self._fit_grid()
 
     def _fit_grid(self) -> None:
+        # every server-side geometry change ends here; the browser applies only new revisions
+        self._props['revision'] += 1
         options = self._props['options']
         parent = self.parent_slot.parent if self.parent_slot else None
         grid = parent._props.get('options', {}) if parent else {}  # pylint: disable=protected-access

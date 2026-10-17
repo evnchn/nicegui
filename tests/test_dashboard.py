@@ -206,3 +206,77 @@ def test_readback_does_not_override_on_change(screen: Screen):
     screen.wait(0.5)
     assert items[0].geometry == {'x': 2, 'y': 0, 'w': 1, 'h': 1}
     assert tile.get_attribute('gs-x') == '2'
+
+
+def _count_geometry_events(dashboard: ui.dashboard, events: list[str]) -> None:
+    for event in ('layout_change', 'layout_sync', 'item_resize'):
+        dashboard.on(event, lambda _, event=event: events.append(event))
+    for item in dashboard.default_slot.children:
+        item.on('geometry_sync', lambda: events.append('geometry_sync'))
+
+
+def _assert_settled(screen: Screen, dashboard: ui.dashboard, events: list[str]) -> None:
+    screen.wait(2)
+    count = len(events)
+    assert count < 20, f'{count} geometry events'
+    screen.wait(0.5)
+    assert len(events) == count, f'{len(events) - count} more geometry events after settling'
+    browser = screen.selenium.execute_script('''
+        return [...document.querySelectorAll(".grid-stack-item")]
+            .map(el => ({x: el.gridstackNode.x, y: el.gridstackNode.y, w: el.gridstackNode.w, h: el.gridstackNode.h}));
+    ''')
+    assert browser == dashboard.layout
+
+
+def test_swapping_tiles_settles(screen: Screen):
+    events: list[str] = []
+    items: list[ui.dashboard_item] = []
+    dashboards: list[ui.dashboard] = []
+
+    @ui.page('/')
+    def page():
+        with ui.dashboard(columns=4, cell_height=50).classes('w-[800px]') as dashboard:
+            for x, y in [(0, 0), (2, 0), (0, 1), (2, 1)]:
+                items.append(ui.dashboard_item(x=x, y=y, w=2, h=1))
+        _count_geometry_events(dashboard, events)
+        dashboards.append(dashboard)
+
+        def swap() -> None:
+            items[0].x = 2
+            items[1].x = 0
+        ui.button('Swap', on_click=swap)
+
+    screen.open('/')
+    screen.wait_for_js('!!document.querySelector(".grid-stack").gridstack', True)
+    screen.wait(0.5)
+    events.clear()
+    screen.click('Swap')
+    _assert_settled(screen, dashboards[0], events)
+    assert items[0].geometry == {'x': 2, 'y': 0, 'w': 2, 'h': 1}
+    assert items[1].geometry == {'x': 0, 'y': 0, 'w': 2, 'h': 1}
+
+
+def test_resize_callback_can_undo_resize(screen: Screen):
+    events: list[str] = []
+    dashboards: list[ui.dashboard] = []
+
+    @ui.page('/')
+    def page():
+        with ui.dashboard(columns=4, cell_height=50).classes('w-[800px]') as dashboard:
+            ui.dashboard_item(x=0, y=0, w=1, h=1, on_resize=lambda e: setattr(e.sender, 'w', 1)).classes('a')
+        _count_geometry_events(dashboard, events)
+        dashboards.append(dashboard)
+
+    screen.open('/')
+    screen.wait_for_js('!!document.querySelector(".grid-stack").gridstack', True)
+    tile = screen.find_by_class('a')
+    ActionChains(screen.selenium) \
+        .move_to_element(tile) \
+        .move_to_element(tile.find_element(By.CLASS_NAME, 'ui-resizable-se')) \
+        .click_and_hold() \
+        .move_by_offset(20, 0).move_by_offset(200, 0) \
+        .release() \
+        .perform()
+    screen.wait_for(lambda: 'item_resize' in events)
+    _assert_settled(screen, dashboards[0], events)
+    assert dashboards[0].layout == [{'x': 0, 'y': 0, 'w': 1, 'h': 1}]

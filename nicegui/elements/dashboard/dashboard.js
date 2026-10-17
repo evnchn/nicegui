@@ -13,8 +13,16 @@ export default {
     if (this.disposed) return;
     this.grid = GridStack.init({ ...this.options }, this.$el);
     const geometry = (items) =>
-      items.map((item) => ({ id: parseInt(item.el.id.substring(1)), x: item.x, y: item.y, w: item.w, h: item.h }));
-    this.grid.on("change", (_, items) => this.$emit("layout_change", geometry(items)));
+      items.map((item) => ({
+        id: parseInt(item.el.id.substring(1)),
+        ...{ x: item.x, y: item.y, w: item.w, h: item.h },
+        revision: item.el.revision,
+      }));
+    const known = (item) => ["x", "y", "w", "h"].every((key) => item.el.serverOptions?.[key] === item[key]);
+    this.grid.on("change", (_, items) => {
+      items = items.filter((item) => !known(item)); // the server already has this geometry
+      if (items.length) this.$emit("layout_change", geometry(items));
+    });
     this.grid.on("resizestart", (_, el) => (this.resizeStart = { w: el.gridstackNode.w, h: el.gridstackNode.h }));
     this.grid.on("resizestop", (_, el) => {
       const node = el.gridstackNode;
