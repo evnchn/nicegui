@@ -154,3 +154,24 @@ def test_geometry_respects_columns_and_max_row(screen: Screen):
     items[1].h = 5
     items[1].y = 7
     assert items[1].geometry == {'x': 1, 'y': 0, 'w': 3, 'h': 3}
+
+
+def test_server_follows_position_rejected_by_grid(screen: Screen):
+    items: list[ui.dashboard_item] = []
+
+    @ui.page('/')
+    def page():
+        with ui.dashboard(columns=4, cell_height=50).classes('w-[800px]'):
+            items.append(ui.dashboard_item(x=0, y=0, w=1, h=1).classes('tile'))
+
+        def move_down() -> None:
+            items[0].y = 1
+            ui.label('moved')
+        ui.button('Move down', on_click=move_down)
+
+    screen.open('/')
+    screen.wait_for_js('!!document.querySelector(".grid-stack").gridstack', True)
+    screen.click('Move down')
+    screen.should_contain('moved')
+    screen.wait_for(lambda: items[0].y == 0)
+    assert screen.find_by_class('tile').get_attribute('gs-y') in (None, '0')

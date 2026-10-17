@@ -44,7 +44,7 @@ class Dashboard(Element, component='dashboard.js', esm={'nicegui-dashboard': 'di
         :param editable: whether tiles can be moved and resized by the user (default: ``True``)
         :param animate: whether to animate layout changes (default: ``True``)
         :param options: dictionary of raw GridStack options (overrides named parameters if both are given)
-        :param on_change: callback invoked when the user moves or resizes tiles
+        :param on_change: callback invoked when tiles move or resize, by the user or as a result of other layout changes
         """
         super().__init__()
         self._props['options'] = {
@@ -65,7 +65,7 @@ class Dashboard(Element, component='dashboard.js', esm={'nicegui-dashboard': 'di
             self.on_change(on_change)
 
     def on_change(self, callback: Handler[DashboardChangeEventArguments]) -> Self:
-        """Add a callback to be invoked when the user moves or resizes tiles."""
+        """Add a callback to be invoked when tiles move or resize, by the user or as a result of other layout changes."""
         self._change_handlers.append(callback)
         return self
 
@@ -145,6 +145,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
         }
         self._set_limits(min_w=min_w, max_w=max_w, min_h=min_h, max_h=max_h)
         self._resize_handlers: list[Handler[DashboardItemResizeEventArguments]] = []
+        self.on('geometry_sync', lambda e: self.props['options'].update(e.args, autoPosition=False))
         if on_resize:
             self.on_resize(on_resize)
 

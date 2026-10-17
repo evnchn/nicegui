@@ -27,6 +27,9 @@ export default {
         if (!grid) return this.writeAttributes(); // GridStack will read the attributes when it initializes
         const { x, y, ...rest } = options; // null min/max clear a limit, null x/y keep the current position
         grid.update(this.$el, { ...rest, ...(x === null ? {} : { x }), ...(y === null ? {} : { y }) });
+        const node = this.$el.gridstackNode; // GridStack may pack or clip the update without emitting a change event
+        if (node && ["x", "y", "w", "h"].some((key) => options[key] !== null && options[key] !== node[key]))
+          this.$emit("geometry_sync", { x: node.x, y: node.y, w: node.w, h: node.h });
       },
     },
   },
