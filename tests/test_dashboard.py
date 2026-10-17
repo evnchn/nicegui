@@ -175,3 +175,32 @@ def test_server_follows_position_rejected_by_grid(screen: Screen):
     screen.should_contain('moved')
     screen.wait_for(lambda: items[0].y == 0)
     assert screen.find_by_class('tile').get_attribute('gs-y') in (None, '0')
+
+
+def test_readback_does_not_override_on_change(screen: Screen):
+    items: list[ui.dashboard_item] = []
+    corrections: list[int] = []
+
+    def correct() -> None:
+        if not corrections:
+            corrections.append(2)
+            items[0].x = 2
+
+    @ui.page('/')
+    def page():
+        with ui.dashboard(columns=4, cell_height=50, on_change=correct).classes('w-[800px]'):
+            items.append(ui.dashboard_item(x=0, y=0, w=1, h=1).classes('tile'))
+
+        def move() -> None:
+            items[0].x = 1
+            items[0].y = 1
+            ui.label('moved')
+        ui.button('Move', on_click=move)
+
+    screen.open('/')
+    screen.wait_for_js('!!document.querySelector(".grid-stack").gridstack', True)
+    screen.click('Move')
+    screen.should_contain('moved')
+    screen.wait(1)
+    assert items[0].geometry == {'x': 2, 'y': 0, 'w': 1, 'h': 1}
+    assert screen.find_by_class('tile').get_attribute('gs-x') == '2'

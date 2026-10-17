@@ -145,7 +145,7 @@ class DashboardItem(Element, component='dashboard_item.js'):
         }
         self._set_limits(min_w=min_w, max_w=max_w, min_h=min_h, max_h=max_h)
         self._resize_handlers: list[Handler[DashboardItemResizeEventArguments]] = []
-        self.on('geometry_sync', lambda e: self.props['options'].update(e.args, autoPosition=False))
+        self.on('geometry_sync', self._handle_geometry_sync)
         if on_resize:
             self.on_resize(on_resize)
 
@@ -153,6 +153,10 @@ class DashboardItem(Element, component='dashboard_item.js'):
         """Add a callback to be invoked when the user changes the width or height of this tile."""
         self._resize_handlers.append(callback)
         return self
+
+    def _handle_geometry_sync(self, e: GenericEventArguments) -> None:
+        if list(self.geometry.values()) == e.args['sent']:  # skip readbacks overtaken by newer server changes
+            self.props['options'].update(e.args['actual'], autoPosition=False)
 
     def _handle_resize(self) -> None:
         for handler in self._resize_handlers:

@@ -29,7 +29,10 @@ export default {
         grid.update(this.$el, { ...rest, ...(x === null ? {} : { x }), ...(y === null ? {} : { y }) });
         const node = this.$el.gridstackNode; // GridStack may pack or clip the update without emitting a change event
         if (node && ["x", "y", "w", "h"].some((key) => options[key] !== null && options[key] !== node[key]))
-          this.$emit("geometry_sync", { x: node.x, y: node.y, w: node.w, h: node.h });
+          this.$emit("geometry_sync", {
+            sent: [options.x, options.y, options.w, options.h],
+            actual: { x: node.x, y: node.y, w: node.w, h: node.h },
+          });
       },
     },
   },
