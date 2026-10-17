@@ -5,7 +5,6 @@ export default {
     revision: Number,
   },
   mounted() {
-    Object.defineProperty(this.$el, "serverOptions", { get: () => this.options });
     this.writeAttributes();
     this.$el.parentElement?.gridstack?.makeWidget(this.$el);
   },
@@ -45,7 +44,9 @@ function flush(grid) {
     item.$el.revision = item.revision;
     grid.update(item.$el, { ...rest, ...(x === null ? {} : { x }), ...(y === null ? {} : { y }) });
   }
+  grid.applying = new Map(items.map((item) => [item.$el, item.options]));
   grid.batchUpdate(false);
+  delete grid.applying;
   for (const item of items) {
     const node = item.$el.gridstackNode; // GridStack may pack or clip the update without emitting a change event
     if (node && ["x", "y", "w", "h"].some((key) => item.options[key] !== null && item.options[key] !== node[key]))

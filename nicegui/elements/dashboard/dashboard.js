@@ -18,9 +18,9 @@ export default {
         ...{ x: item.x, y: item.y, w: item.w, h: item.h },
         revision: item.el.revision,
       }));
-    const known = (item) => ["x", "y", "w", "h"].every((key) => item.el.serverOptions?.[key] === item[key]);
+    const echo = (item) => ["x", "y", "w", "h"].every((key) => this.grid.applying?.get(item.el)?.[key] === item[key]);
     this.grid.on("change", (_, items) => {
-      items = items.filter((item) => !known(item)); // the server already has this geometry
+      items = items.filter((item) => !echo(item)); // skip tiles that just applied exactly what the server sent
       if (items.length) this.$emit("layout_change", geometry(items));
     });
     this.grid.on("resizestart", (_, el) => (this.resizeStart = { w: el.gridstackNode.w, h: el.gridstackNode.h }));
