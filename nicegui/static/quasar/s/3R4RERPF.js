@@ -1,0 +1,1 @@
+import{a as r}from"./N4MYZB23.js";import{c as o}from"./N5XILCAW.js";import{h as n,computed as i}from"vue";var p=o({name:"QCardSection",props:{tag:{type:String,default:"div"},horizontal:Boolean},setup(t,{slots:e}){let a=i(()=>`q-card__section q-card__section--${t.horizontal===!0?"horiz row no-wrap":"vert"}`);return()=>n(t.tag,{class:a.value},r(e.default))}});export{p as a};

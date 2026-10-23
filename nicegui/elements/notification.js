@@ -2,14 +2,16 @@ import { convertDynamicProperties } from "../../static/utils/dynamic_properties.
 
 export default {
   mounted() {
-    this.notification = Quasar.Notify.create(this.convertedOptions);
+    this.ready = Quasar.loadPlugin("Notify").then((Notify) => {
+      this.notification = Notify.create(this.convertedOptions);
+    });
   },
   methods: {
     update_notification() {
-      this.notification(this.convertedOptions);
+      this.ready.then(() => this.notification(this.convertedOptions));
     },
     dismiss() {
-      this.notification();
+      this.ready.then(() => this.notification());
     },
   },
   computed: {

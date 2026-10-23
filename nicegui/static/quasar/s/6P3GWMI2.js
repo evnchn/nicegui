@@ -1,0 +1,1 @@
+import{h as u,computed as t}from"vue";var a={name:String};function i(e){return t(()=>({type:"hidden",name:e.name,value:e.modelValue}))}function c(e={}){return(n,r,o)=>{n[r](u("input",{class:"hidden"+(o||""),...e.value}))}}function s(e){return t(()=>e.name||e.for)}export{a,i as b,c,s as d};

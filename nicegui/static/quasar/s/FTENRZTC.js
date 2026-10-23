@@ -1,0 +1,1 @@
+var t={};var n=[],d=[],a=1,s=document.body;function f(l,o){let e=document.createElement("div");if(e.id=o!==void 0?`q-portal--${o}--${a++}`:l,t.globalNodes!==void 0){let i=t.globalNodes.class;i!==void 0&&(e.className=i)}return s.appendChild(e),n.push(e),d.push(o),e}function p(l){let o=n.indexOf(l);n.splice(o,1),d.splice(o,1),l.remove()}export{f as a,p as b};

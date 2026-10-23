@@ -1,0 +1,1 @@
+import{d as n}from"./2QMDWGBP.js";import{nextTick as i,onDeactivated as c,onBeforeUnmount as m,getCurrentInstance as f}from"vue";function v(){let e,r=f();function t(){e=void 0}return c(t),m(t),{removeTick:t,registerTick(o){e=o,i(()=>{e===o&&(n(r)===!1&&e(),e=void 0)})}}}export{v as a};

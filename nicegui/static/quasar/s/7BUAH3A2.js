@@ -1,0 +1,1 @@
+import{a as t}from"./VHPZE4I5.js";import{computed as i}from"vue";var s={size:{type:[String,Number],default:"1em"},color:String};function r(e){return{cSize:i(()=>e.size in t?`${t[e.size]}px`:e.size),classes:i(()=>"q-spinner"+(e.color?` text-${e.color}`:""))}}export{s as a,r as b};

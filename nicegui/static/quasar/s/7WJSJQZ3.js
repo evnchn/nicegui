@@ -1,0 +1,1 @@
+import{computed as e}from"vue";var u={ratio:[String,Number]};function n(r,t){return e(()=>{let o=Number(r.ratio||(t!==void 0?t.value:void 0));return isNaN(o)!==!0&&o>0?{paddingBottom:`${100/o}%`}:null})}export{u as a,n as b};

@@ -1,0 +1,1 @@
+import{computed as r}from"vue";var t={left:"start",center:"center",right:"end",between:"between",around:"around",evenly:"evenly",stretch:"stretch"},i=Object.keys(t),a={align:{type:String,validator:e=>i.includes(e)}};function c(e){return r(()=>{let n=e.align===void 0?e.vertical===!0?"stretch":"left":e.align;return`${e.vertical===!0?"items":"justify"}-${t[n]}`})}export{a,c as b};
