@@ -174,10 +174,13 @@ def test_theme_url(screen: Screen, test_route: str):  # pylint: disable=redefine
 
 def test_click(screen: Screen):
     events = []
+    late = []
+    chart: ui.echart = None  # type: ignore[assignment]
 
     @ui.page('/')
     def page():
-        ui.echart({
+        nonlocal chart
+        chart = ui.echart({
             'legend': {
                 'triggerEvent': True,
             },
@@ -204,6 +207,14 @@ def test_click(screen: Screen):
         ('component', 'legend', None),
         ('component', 'radar', 'C'),
     ]
+
+    # Callbacks added after the first render fire as well, without re-creating the element.
+    chart.on_point_click(lambda e: late.append(('point', e.name)))
+    chart.on_click(lambda e: late.append(('component', e.component_type)))
+    screen.click_at_position(echart, 0, 70)  # the legend click above toggled the series off
+    screen.click_at_position(echart, 20, 20)
+    screen.wait_for(lambda: ('point', 'Test') in late and ('component', 'series') in late)
+    assert 'Event listeners changed after initial definition.' not in screen.render_js_logs()
 
 
 def test_3d_chart(screen: Screen):
