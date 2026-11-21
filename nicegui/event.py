@@ -86,7 +86,7 @@ class Event(Generic[P]):
             func=callback,
             expect_args=helpers.expects_arguments(callback) or (
                 isinstance(getattr(callback, '__self__', None), Event) and
-                getattr(callback, '__name__', None) in {'emit', 'call'}
+                getattr(callback, '__name__', None) in {'emit', 'emit_locally', 'call'}
             ) if expect_args is None else expect_args,
             filepath=frame.f_code.co_filename,
             line=frame.f_lineno,
@@ -113,6 +113,16 @@ class Event(Generic[P]):
         """Fire the event without waiting for the subscribed callbacks to complete."""
         for callback in list(self.callbacks):  # a callback might unsubscribe (e.g. by deleting a client) during the emit
             _invoke_and_forget(callback, *args, **kwargs)
+
+    def emit_locally(self, *args: P.args, **kwargs: P.kwargs) -> None:
+        """Fire the event like ``Event.emit``, bypassing subclass overrides of ``emit``.
+
+        Subclasses that override ``emit`` to forward the event to other processes
+        can call this for events they receive from there, so that they are not forwarded back.
+
+        *Added in version X.Y.Z*
+        """
+        Event.emit(self, *args, **kwargs)
 
     async def call(self, *args: P.args, **kwargs: P.kwargs) -> None:
         """Fire the event and wait asynchronously until all subscribed callbacks are completed."""

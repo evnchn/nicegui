@@ -191,6 +191,29 @@ async def test_chaining_events(user: User):
     await user.should_see('Hello')
 
 
+async def test_emit_locally_bypasses_overridden_emit(user: User):
+    forwarded = []
+
+    class ForwardingEvent(Event[str]):
+        def emit(self, *args, **kwargs) -> None:
+            super().emit(*args, **kwargs)
+            forwarded.append(args)
+
+    event = ForwardingEvent()
+    received = Event[str]()
+
+    @ui.page('/')
+    def page():
+        ui.button('Click me', on_click=lambda: received.emit('Hello'))
+        received.subscribe(event.emit_locally)
+        event.subscribe(ui.notify)
+
+    await user.open('/')
+    user.find('Click me').click()
+    await user.should_see('Hello')
+    assert forwarded == []
+
+
 def test_reconnect(screen: Screen):
     event = Event()
 
